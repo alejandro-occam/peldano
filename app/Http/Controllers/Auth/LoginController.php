@@ -37,4 +37,10 @@ class LoginController extends Controller
     {
         $this->middleware('guest')->except('logout');
     }
+
+    protected function authenticated($request, $user)
+    {
+        // your code
+        return redirect()->intended($this->redirectTo); // add this line on the end of authenticated
+    }
 }
