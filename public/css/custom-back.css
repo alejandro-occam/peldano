@@ -1,0 +1,21 @@
+.container {
+    margin: 0;
+    max-width: inherit;
+}
+
+.menu-link.router-link-active {
+    background-color: #2ea4e0;
+}
+
+.menu-link.router-link-active>div>span.menu-text {
+    color: #FFF!important;
+}
+
+.select-custom {
+    border: 1px solid;
+}
+
+.search-input {
+    border: 1px solid;
+    border-radius: 10px;
+}

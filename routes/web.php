@@ -13,15 +13,15 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/admin', function () {
+Route::get('/', function () {
     return redirect('/login');
 })->name('login');
 
 Auth::routes();
 
-Route::group(['middleware' => ['auth', 'verified', 'admin']], function () {
+Route::group(['middleware' => ['auth', 'verified', 'admin'], 'prefix' => 'admin'], function () {
 
     Route::get('/{vue_capture?}', function () {
-        return view('layouts.app');
+        return view('layouts.back.admin');
     })->where('vue_capture', '[\/\w\.-]*');
 });

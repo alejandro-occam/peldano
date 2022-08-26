@@ -40,4 +40,19 @@ class User extends Authenticatable
     protected $casts = [
         'email_verified_at' => 'datetime',
     ];
+
+    public function roleUser()
+    {
+        return $this->hasOne(RoleUser::class, 'id_user');
+    }
+
+    public function getNameUser($id){
+        $user = User::find($id);
+        return $user->name;
+    }
+
+    public function getFirstLetterName($id){
+        $user = User::find($id);
+        return substr($user->name,0,1);
+    }
 }
