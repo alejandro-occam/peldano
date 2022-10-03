@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Capa_2" data-name="Capa 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 30 30">
+  <g id="content">
+    <g>
+      <rect y="0" width="30" height="30" rx="6" ry="6" fill="#f8fbff"/>
+      <g>
+        <g>
+          <path d="M10.216,23c-.7,0-1.27-.57-1.27-1.27V8.27c0-.7,.57-1.27,1.27-1.27h6.698c.082,0,.163,.033,.221,.092l3.827,3.827c.057,.057,.092,.14,.092,.221v10.589c0,.7-.57,1.27-1.27,1.27H10.216Z" fill="none" stroke="#b3b3c0" stroke-linejoin="round"/>
+          <path d="M17.225,9.986c0,.471,.383,.854,.854,.854h2.805l-3.658-3.659v2.805h0Z" fill="none" stroke="#b3b3c0" stroke-linejoin="round"/>
+        </g>
+        <line x1="11.326" y1="15" x2="18.462" y2="15" fill="none" stroke="#b3b3c0" stroke-linejoin="round"/>
+        <line x1="11.326" y1="17.484" x2="18.462" y2="17.484" fill="none" stroke="#b3b3c0" stroke-linejoin="round"/>
+      </g>
+    </g>
+  </g>
+</svg>

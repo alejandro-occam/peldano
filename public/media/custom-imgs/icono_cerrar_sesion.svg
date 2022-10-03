@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Capa_2" data-name="Capa 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26 26">
+  <g id="content">
+    <g>
+      <circle cx="13" cy="13" r="12.5" fill="none" stroke="#fff" stroke-miterlimit="10"/>
+      <g>
+        <path d="M10.241,6.987c-2.273,1.046-3.854,3.338-3.854,6.005,0,3.652,2.961,6.613,6.613,6.613s6.613-2.961,6.613-6.613c0-2.666-1.581-4.958-3.854-6.005" fill="none" stroke="#fff" stroke-miterlimit="10"/>
+        <line x1="13" y1="12.992" x2="13" y2="4.18" fill="none" stroke="#fff" stroke-miterlimit="10"/>
+      </g>
+    </g>
+  </g>
+</svg>

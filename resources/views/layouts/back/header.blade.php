@@ -1,5 +1,10 @@
 <div class="container-fluid d-flex align-items-stretch justify-content-between">
-    <div></div>
+    <div class="my-auto">
+        <img width=125 class="my-auto" src="../media/custom-imgs/logo_peldanno_login.svg" />
+    </div>
+    <div class="my-auto mr-auto ml-50">
+        <span class="color-white font-weight-bold font-size-base d-none d-md-inline mr-1">Hoy es: <b>{{ Date('l, j') }} de {{ Date('F') }}</b></span>
+    </div>
     <div class="topbar">
         <!--begin::User-->
         <div class="topbar-item">

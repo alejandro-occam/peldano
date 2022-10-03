@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Capa_2" data-name="Capa 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 26.507 19.953">
+  <g id="content">
+    <g>
+      <g>
+        <line x1="22.628" y1="7.683" x2="22.628" y2="14.442" fill="none" stroke="#fff" stroke-linecap="round" stroke-miterlimit="10"/>
+        <line x1="19.249" y1="11.062" x2="26.007" y2="11.062" fill="none" stroke="#fff" stroke-linecap="round" stroke-miterlimit="10"/>
+      </g>
+      <g>
+        <g>
+          <g>
+            <path d="M12.289,18.216c0,.682-.555,1.236-1.236,1.236H1.736c-.682,0-1.236-.555-1.236-1.236V5.111c0-.682,.555-1.236,1.236-1.236h6.521c.08,0,.159,.033,.216,.089l3.726,3.726c.056,.056,.089,.137,.089,.216v10.31Z" fill="none" stroke="#fff" stroke-linejoin="round"/>
+            <path d="M8.561,6.782c0,.458,.373,.831,.831,.831h2.731l-3.562-3.562v2.731h0Z" fill="none" stroke="#fff" stroke-linejoin="round"/>
+          </g>
+          <line x1="2.818" y1="11.664" x2="9.765" y2="11.664" fill="none" stroke="#fff" stroke-linejoin="round"/>
+          <line x1="2.818" y1="14.082" x2="9.765" y2="14.082" fill="none" stroke="#fff" stroke-linejoin="round"/>
+        </g>
+        <g>
+          <path d="M3.11,3.875V1.736c0-.682,.555-1.236,1.236-1.236h6.521c.08,0,.159,.033,.216,.089l3.726,3.726c.056,.056,.089,.137,.089,.216V14.841c0,.682-.555,1.236-1.236,1.236h-1.374" fill="none" stroke="#fff" stroke-linejoin="round"/>
+          <path d="M11.171,3.407c0,.458,.373,.831,.831,.831h2.731L11.171,.676V3.407h0Z" fill="none" stroke="#fff" stroke-linejoin="round"/>
+        </g>
+      </g>
+    </g>
+  </g>
+</svg>

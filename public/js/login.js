@@ -10,7 +10,6 @@ var KTLogin = (function () {
 
         _login.removeClass("login-forgot-on");
         _login.removeClass("login-signin-on");
-        _login.removeClass("login-signup-on");
 
         _login.addClass(cls);
 
@@ -92,96 +91,6 @@ var KTLogin = (function () {
         });
     };
 
-    var _handleSignUpForm = function (e) {
-        var validation;
-        var form = KTUtil.getById("kt_login_signup_form");
-
-        // Init form validation rules. For more info check the FormValidation plugin's official documentation:https://formvalidation.io/
-        validation = FormValidation.formValidation(form, {
-            fields: {
-                name: {
-                    validators: {
-                        notEmpty: {
-                            message: "El nombre es obligatorio",
-                        },
-                    },
-                },
-                email_r: {
-                    validators: {
-                        notEmpty: {
-                            message: "El email es obligatorio",
-                        },
-                        emailAddress: {
-                            message: "El email no es válido",
-                        },
-                    },
-                },
-                password_r: {
-                    validators: {
-                        notEmpty: {
-                            message: "La contraseña es obligatoria",
-                        },
-                    },
-                },
-                cpassword: {
-                    validators: {
-                        notEmpty: {
-                            message: "Debes confirmar la contraseña",
-                        },
-                        identical: {
-                            compare: function () {
-                                return form.querySelector('[name="password_r"]')
-                                    .value;
-                            },
-                            message: "Las contraseñas no coinciden",
-                        },
-                    },
-                },
-                agree: {
-                    validators: {
-                        notEmpty: {
-                            message: "Debes aceptar los terminos y condiciones",
-                        },
-                    },
-                },
-            },
-            plugins: {
-                trigger: new FormValidation.plugins.Trigger(),
-                bootstrap: new FormValidation.plugins.Bootstrap(),
-            },
-        });
-
-        $("#kt_login_signup_submit").on("click", function (e) {
-            e.preventDefault();
-
-            validation.validate().then(function (status) {
-                if (status == "Valid") {
-                    form.submit();
-                } else {
-                    Swal.fire({
-                        text: "Lo siento, debes completar todos los campos.",
-                        icon: "error",
-                        buttonsStyling: false,
-                        confirmButtonText: "Aceptar",
-                        customClass: {
-                            confirmButton:
-                                "btn font-weight-bold btn-light-primary",
-                        },
-                    }).then(function () {
-                        KTUtil.scrollTop();
-                    });
-                }
-            });
-        });
-
-        // Handle cancel button
-        $("#kt_login_signup_cancel").on("click", function (e) {
-            e.preventDefault();
-
-            _showForm("signin");
-        });
-    };
-
     var _handleForgotForm = function (e) {
         var validation;
         var form = KTUtil.getById("kt_login_forgot_form");
@@ -246,7 +155,6 @@ var KTLogin = (function () {
             _login = $("#kt_login");
 
             _handleSignInForm();
-            _handleSignUpForm();
             _handleForgotForm();
 
             if ($("input[name=error]").val() == 1) {

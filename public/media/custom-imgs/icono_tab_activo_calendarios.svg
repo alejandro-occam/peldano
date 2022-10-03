@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg id="Capa_2" data-name="Capa 2" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 33.196 29">
+  <g id="content">
+    <g>
+      <path d="M6.527,2.94h26.169V11.106c0,7.384-6.027,13.198-6.027,13.198H.5s5.951-5.502,5.951-13.198c0-4.732,.076-8.167,.076-8.167Z" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"/>
+      <polyline points="6.527 24.304 6.527 28.5 32.696 28.5 32.696 10.918" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="6.458" y1="8.511" x2="32.696" y2="8.511" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="12.554" y1=".5" x2="12.554" y2="4.732" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="19.581" y1=".5" x2="19.581" y2="4.732" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"/>
+      <line x1="26.607" y1=".5" x2="26.607" y2="4.732" fill="none" stroke="#fff" stroke-linecap="round" stroke-linejoin="round"/>
+    </g>
+  </g>
+</svg>

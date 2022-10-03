@@ -17,6 +17,11 @@ Route::get('/', function () {
     return redirect('/login');
 })->name('login');
 
+//Recuperar-Nueva contraseña
+Route::post('/send_email_reset_password', [App\Http\Controllers\Auth\ResetPasswordController::class, 'sendEmailResetPassword'])->name('send_email_reset_password');
+Route::get('/reset_password/{token}', [App\Http\Controllers\Auth\ResetPasswordController::class, 'resetPassword'])->name('reset_password');
+Route::post('/new_password', [App\Http\Controllers\Auth\ResetPasswordController::class, 'newPassword'])->name('new_password');
+
 Auth::routes();
 
 Route::group(['middleware' => ['auth', 'verified', 'admin'], 'prefix' => 'admin'], function () {

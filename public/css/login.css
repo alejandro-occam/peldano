@@ -39,8 +39,8 @@ body {
 
 .btn-login {
     color: #fff;
-    background-color: #e06b2f !important;
-    border-color: #e06b2f !important;
+    background-color: #0050db !important;
+    border-color: #0050db !important;
 }
 
 .btn-login-light,
@@ -65,11 +65,11 @@ body {
 }
 
 a.enlaces {
-    color: #9b9db2;
+    color: #2e49ff;
 }
 
 a.enlaces:hover {
-    color: #9b9db2;
+    color: #2e49ff;
 }
 
 .custom-footer {
@@ -87,11 +87,41 @@ a.enlaces:hover {
     background-image: linear-gradient(to bottom left, #2FA4E0, #e57887);
 }
 
-.bg-login {
-    background-image: url(../media/bg/bg-3.jpg);
+/*.bg-login {
+    background-image: url(../media/custom-imgs/login.jpg);
     background-repeat: no-repeat;
     background-position: right bottom;
     background-size: cover;
+}*/
+
+.text-align-center{
+    text-align: center;
+}
+
+.btn-cancel{
+    border-color: #2e49ff !important;
+    color: #2e49ff !important; 
+}
+
+.h-45{
+    height: 45%;;
+}
+
+/*.wrapper-custom{
+    width: 100%;
+    height: 50%;
+    background: url(../media/custom-imgs/login.jpg) no-repeat center center fixed;
+    -webkit-background-size: 100% 40%;
+    -moz-background-size: 100% 40%;
+    -o-background-size: 100% 40%;
+    background-size: 100% 40%;
+    background-position: top center;
+  }*/
+
+.title-login{
+    color: #fff;
+    font-weight: bolder;
+    font-size: 35px;
 }
 
 @media (min-width: 992px) {
@@ -166,6 +196,10 @@ a.enlaces:hover {
 #imgr2 {
     -webkit-animation-direction: reverse;
     animation-direction: reverse;
+}
+
+.borders-box{
+    border-color: #95a1ff !important;
 }
 
 @media (min-width: 992px) {

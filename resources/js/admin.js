@@ -11,14 +11,14 @@ window.Vue = require('vue').default;
 import VueRouter from "vue-router";
 Vue.use(VueRouter);
 
-import UsersIndex from "./components/Users.vue";
+import ConfigurationIndex from "./components/Configuration/ContentComponent.vue";
 
 const router = new VueRouter({
     mode: "history",
     routes: [
         {
-            path: "/users",
-            component: UsersIndex,
+            path: "/admin/configuration",
+            component: ConfigurationIndex,
         },
     ],
 });
@@ -40,7 +40,7 @@ const router = new VueRouter({
 const app = new Vue({
     el: "#adminapp",
     components: {
-        UsersIndex,
+        ConfigurationIndex,
     },
     router,
 });

@@ -50,16 +50,15 @@
 				<!--end::Toolbar-->
 			</div>
 			<!--end::Header Mobile-->
-			<div class="aside aside-left aside-fixed d-flex flex-column flex-row-auto" id="kt_aside">
-				@include('layouts.back.menu')
-			</div>
 			<div class="d-flex flex-column flex-row-fluid wrapper" id="kt_wrapper">
-				<div id="kt_header" class="header header-fixed">
+				<div id="kt_header" class="header header-fixed w-100 bg-azul" style="left: 0">
 					@include('layouts.back.header')
 				</div>
-				<div class="d-flex flex-column flex-column-fluid" id="kt_content">
-					@include('layouts.back.subheader')
-					<div class="content d-flex flex-column-fluid">
+				<div class="aside aside-left aside-fixed d-flex flex-column flex-row-auto" style="top: 65px"id="kt_aside">
+					@include('layouts.back.menu')
+				</div>
+				<div class="content d-flex flex-column flex-column-fluid" id="kt_content">
+					<div class="container">
 						<router-view></router-view>
 					</div>
 				</div>
@@ -68,16 +67,10 @@
 					<div class="container-fluid d-flex flex-column flex-md-row align-items-center justify-content-between">
 						<!--begin::Copyright-->
 						<div class="text-dark order-2 order-md-1">
-							<span class="color-blue font-weight-bold mr-2">{{ Date('Y') }}©</span>
+							<span class="font-weight-bold mr-2">{{ Date('Y') }}©</span>
 							<a href="script;" target="_blank" class="text-hover-primary color-blue">{{ env('APP_NAME') }}</a>
 						</div>
 						<!--end::Copyright-->
-						<!--begin::Nav-->
-						<div class="nav nav-dark">
-							<a href="#" target="_blank" class="nav-link pl-0 pr-5">Acerca de</a>
-							<a href="#" target="_blank" class="nav-link pl-0 pr-0">Contacto</a>
-						</div>
-						<!--end::Nav-->
 					</div>
 					<!--end::Container-->
 				</div>
