@@ -1,5 +1,5 @@
 <template>
-    <button type="button" class="d-flex align-items-center justify-content-center btn btn-gray px-0" :class="columns" >
+    <button type="button" class="d-flex align-items-center justify-content-center btn btn-gray px-0" :class="columns" :id="id">
         <img class="mr-2" width="16" height="16" src="/media/custom-imgs/icono_btn_annadir_usuario.svg" />
         {{ text }}
     </button>
@@ -8,7 +8,7 @@
 <script>
 export default {
     name: "SeachComponent",
-    props: ["columns", "text"],
+    props: ["columns", "text", "id"],
     data() {
         return {
             publicPath: window.location.origin,
