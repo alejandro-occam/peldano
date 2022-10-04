@@ -1,0 +1,30 @@
+// Fonts
+@import url("https://fonts.googleapis.com/css?family=Nunito");
+
+// Variables
+@import "variables";
+
+// Para la libreria Sweet Alert
+.swal2-icon.swal2-warning.swal2-icon-show {
+    margin: auto;
+}
+
+// Para el buscador con select
+.v-select.vs--single.vs--searchable {
+    height: calc(1.5em + 1.3rem + 2px);
+
+    .vs__dropdown-toggle {
+        height: 100%;
+        color: #3f4254;
+        background-color: #ffffff;
+        background-clip: padding-box;
+        border: 1px solid #e4e6ef;
+        border-radius: 0.42rem;
+
+        input {
+            &::placeholder {
+                color: #b5b5c3;
+            }
+        }
+    }
+}

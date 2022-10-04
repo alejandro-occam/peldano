@@ -1,6 +1,9 @@
 .container {
     margin: 0;
     max-width: inherit;
+    padding-left: 80px;
+    padding-right: 80px;
+    padding-top: 30px;
 }
 
 .menu-link.router-link-active {
@@ -20,8 +23,8 @@
 }
 
 .search-input {
-    border: 1px solid;
     border-radius: 10px;
+    width: 0.5% !important;
 }
 
 .bg-azul{

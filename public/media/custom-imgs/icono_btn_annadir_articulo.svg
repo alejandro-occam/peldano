@@ -3,16 +3,16 @@
   <g id="content">
     <g>
       <g>
-        <line x1="27.784" y1="7.707" x2="27.784" y2="14.465" fill="none" stroke="#fff" stroke-linecap="round" stroke-miterlimit="10"/>
-        <line x1="24.405" y1="11.086" x2="31.164" y2="11.086" fill="none" stroke="#fff" stroke-linecap="round" stroke-miterlimit="10"/>
+        <line x1="27.784" y1="7.707" x2="27.784" y2="14.465" fill="none" stroke="#0551d7" stroke-linecap="round" stroke-miterlimit="10"/>
+        <line x1="24.405" y1="11.086" x2="31.164" y2="11.086" fill="none" stroke="#0551d7" stroke-linecap="round" stroke-miterlimit="10"/>
       </g>
       <g>
-        <line x1=".5" y1="3.676" x2="21.494" y2="3.676" fill="none" stroke="#fff" stroke-miterlimit="10"/>
-        <line x1="4.193" y1="13.961" x2="17.801" y2="13.961" fill="none" stroke="#fff" stroke-miterlimit="10"/>
-        <line x1="4.193" y1="16.769" x2="10.653" y2="16.769" fill="none" stroke="#fff" stroke-miterlimit="10"/>
-        <rect x="4.193" y="6.926" width="13.664" height="4.247" fill="none" stroke="#fff" stroke-miterlimit="10"/>
-        <path d="M19.759,.5H2.236c-.959,0-1.736,.777-1.736,1.736v15.529c0,.959,.777,1.736,1.736,1.736H19.759c.958,0,1.735-.777,1.735-1.736V2.236c0-.959-.777-1.736-1.735-1.736Z" fill="none" stroke="#fff" stroke-miterlimit="10"/>
-        <line x1="17.801" y1="16.769" x2="11.341" y2="16.769" fill="none" stroke="#fff" stroke-miterlimit="10"/>
+        <line x1=".5" y1="3.676" x2="21.494" y2="3.676" fill="none" stroke="#0551d7" stroke-miterlimit="10"/>
+        <line x1="4.193" y1="13.961" x2="17.801" y2="13.961" fill="none" stroke="#0551d7" stroke-miterlimit="10"/>
+        <line x1="4.193" y1="16.769" x2="10.653" y2="16.769" fill="none" stroke="#0551d7" stroke-miterlimit="10"/>
+        <rect x="4.193" y="6.926" width="13.664" height="4.247" fill="none" stroke="#0551d7" stroke-miterlimit="10"/>
+        <path d="M19.759,.5H2.236c-.959,0-1.736,.777-1.736,1.736v15.529c0,.959,.777,1.736,1.736,1.736H19.759c.958,0,1.735-.777,1.735-1.736V2.236c0-.959-.777-1.736-1.735-1.736Z" fill="none" stroke="#0551d7" stroke-miterlimit="10"/>
+        <line x1="17.801" y1="16.769" x2="11.341" y2="16.769" fill="none" stroke="#0551d7" stroke-miterlimit="10"/>
       </g>
     </g>
   </g>

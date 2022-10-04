@@ -3,12 +3,12 @@
   <g id="content">
     <g>
       <g>
-        <circle cx="6.583" cy="3.879" r="3.379" fill="none" stroke="#fff" stroke-miterlimit="10"/>
-        <path d="M12.328,16.721c0-5.407-2.808-8.11-5.914-8.11S.5,11.314,.5,16.721c0,3.705,11.828,3.705,11.828,0Z" fill="none" stroke="#fff" stroke-miterlimit="10"/>
+        <circle cx="6.583" cy="3.879" r="3.379" fill="none" stroke="#0551d7" stroke-miterlimit="10"/>
+        <path d="M12.328,16.721c0-5.407-2.808-8.11-5.914-8.11S.5,11.314,.5,16.721c0,3.705,11.828,3.705,11.828,0Z" fill="none" stroke="#0551d7" stroke-miterlimit="10"/>
       </g>
       <g>
-        <line x1="17.617" y1="5.231" x2="17.617" y2="11.99" fill="none" stroke="#fff" stroke-linecap="round" stroke-miterlimit="10"/>
-        <line x1="14.238" y1="8.61" x2="20.996" y2="8.61" fill="none" stroke="#fff" stroke-linecap="round" stroke-miterlimit="10"/>
+        <line x1="17.617" y1="5.231" x2="17.617" y2="11.99" fill="none" stroke="#0551d7" stroke-linecap="round" stroke-miterlimit="10"/>
+        <line x1="14.238" y1="8.61" x2="20.996" y2="8.61" fill="none" stroke="#0551d7" stroke-linecap="round" stroke-miterlimit="10"/>
       </g>
     </g>
   </g>

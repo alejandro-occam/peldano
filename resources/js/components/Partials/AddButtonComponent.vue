@@ -1,0 +1,29 @@
+<template>
+    <button type="button" class="d-flex align-items-center justify-content-center btn btn-gray px-0" :class="columns" >
+        <img class="mr-2" width="16" height="16" src="/media/custom-imgs/icono_btn_annadir_usuario.svg" />
+        {{ text }}
+    </button>
+</template>
+
+<script>
+export default {
+    name: "SeachComponent",
+    props: ["columns", "text"],
+    data() {
+        return {
+            publicPath: window.location.origin,
+            error: null,
+        };
+    },
+};
+</script>
+
+<style lang="scss" scoped>
+@import 'resources/sass/app';
+
+.btn-gray {
+    color: $primary;
+    background-color: $gray;
+    font-weight: 500;
+}
+</style>

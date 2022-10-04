@@ -4,7 +4,7 @@
             <div class="wizard wizard-custom">
                 <div class="wizard-nav">
                     <div class="wizard-steps">
-                        <div id="tag_step1" data-wizard-type="step" data-wizard-state="current" class="wizard-step mr-1 cursor-pointer custom-wizard" @click="selectTab($event)">
+                        <div id="tag_step1" data-wizard-type="step" data-wizard-state="current" class="wizard-step mr-3 cursor-pointer custom-wizard" @click="selectTab($event)">
                             <div class="d-flex align-items-center justify-content-center my-15" >
                                 <img class="mr-2" id="img_configuration" width="35" height="30" src="/media/custom-imgs/icono_tab_activo_usuarios.svg"  />
                                 <div id="div_text_users" class="text-lightgreen ml-2" >
@@ -13,7 +13,7 @@
                             </div>
                         </div>
 
-                        <div id="tag_step2" data-wizard-type="step" data-wizard-state="pending" class="wizard-step mx-1 cursor-pointer custom-wizard" @click="selectTab($event)" >
+                        <div id="tag_step2" data-wizard-type="step" data-wizard-state="pending" class="wizard-step mx-3 cursor-pointer custom-wizard" @click="selectTab($event)" >
                             <div class="d-flex align-items-center justify-content-center my-15" >
                                 <img class="mr-2" width="35" height="30" src="/media/custom-imgs/icono_tab_desactivo_calendarios.svg" />
                                 <div id="div_text_profile" class="text-gray ml-2" >
@@ -22,7 +22,7 @@
                             </div>
                         </div>
 
-                        <div id="tag_step3" data-wizard-type="step" data-wizard-state="pending" class="wizard-step mx-1 cursor-pointer custom-wizard" @click="selectTab($event)" >
+                        <div id="tag_step3" data-wizard-type="step" data-wizard-state="pending" class="wizard-step ml-3 cursor-pointer custom-wizard" @click="selectTab($event)" >
                             <div class="d-flex align-items-center justify-content-center my-15" >
                                 <img class="mr-2" width="35" height="30" src="/media/custom-imgs/icono_tab_desactivo_articulos.svg" />
                                 <div id="div_text_banks" class="text-gray ml-2">
@@ -38,6 +38,7 @@
                         <div class="step" id="step_users" data-wizard-type="step-content" data-wizard-state="current" >
                             <div class="card card-custom shadow-none border-0">
                                 <div class="card-body body-tab-step">
+                                    <UsersComponent></UsersComponent>
                                 </div>
                             </div>
                         </div>
@@ -84,20 +85,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <div class="step" id="step_commissions" data-wizard-type="step-content" data-wizard-state="pending" >
-                            <div class="card card-custom shadow-none border-0">
-                                <div class="card-body body-tab-step">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="step" id="step_ars_quote" data-wizard-type="step-content" data-wizard-state="pending" >
-                            <div class="card card-custom shadow-none border-0">
-                                <div class="card-body body-tab-step">
-                                </div>
-                            </div>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -106,9 +93,14 @@
 </template>
 
 <script>
-/*import UserTableComponent from "./Users/TableComponent.vue";
+
 
 //Users
+import UsersComponent from "./Users/ContentComponent.vue";
+
+
+/*import UserTableComponent from "./Users/TableComponent.vue";
+
 import InfoUserProfile from "./Profile/InfoUserProfile.vue";
 import FormChangePasswordComponent from "./Profile/FormChangePasswordComponent.vue";
 
@@ -126,6 +118,7 @@ import ArsQuoteComponent from "./ArsQuote/ArsQuoteComponent.vue";*/
 export default {
     name: "ContentComponent",
     components: {
+        UsersComponent
         /*UserTableComponent,
         InfoUserProfile,
         FormChangePasswordComponent,
@@ -170,35 +163,21 @@ export default {
                     .children()
                     .attr(
                         "src",
-                        "/assets/media/custom_img/users_tab_active.svg"
+                        "/media/custom-imgs/icono_tab_activo_usuarios.svg"
                     );
                 $("#tag_step2")
                     .children()
                     .children()
                     .attr(
                         "src",
-                        "/assets/media/custom_img/profile_tab_deactivated.svg"
+                        "/media/custom-imgs/icono_tab_desactivo_calendarios.svg"
                     );
                 $("#tag_step3")
                     .children()
                     .children()
                     .attr(
                         "src",
-                        "/assets/media/custom_img/bank_tab_deactivated.svg"
-                    );
-                $("#tag_step4")
-                    .children()
-                    .children()
-                    .attr(
-                        "src",
-                        "/assets/media/custom_img/commissions_tab_deactivated.svg"
-                    );
-                $("#tag_step5")
-                    .children()
-                    .children()
-                    .attr(
-                        "src",
-                        "/assets/media/custom_img/quote_tab_deactivated.svg"
+                        "/media/custom-imgs/icono_tab_desactivo_articulos.svg"
                     );
 
                 document
@@ -245,35 +224,21 @@ export default {
                     .children()
                     .attr(
                         "src",
-                        "/assets/media/custom_img/users_menu_deactivated.svg"
+                        "/media/custom-imgs/icono_tab_desactivo_usuarios.svg"
                     );
                 $("#tag_step2")
                     .children()
                     .children()
                     .attr(
                         "src",
-                        "/assets/media/custom_img/profile_tab_active.svg"
+                        "/media/custom-imgs/icono_tab_activo_calendarios.svg"
                     );
                 $("#tag_step3")
                     .children()
                     .children()
                     .attr(
                         "src",
-                        "/assets/media/custom_img/bank_tab_deactivated.svg"
-                    );
-                $("#tag_step4")
-                    .children()
-                    .children()
-                    .attr(
-                        "src",
-                        "/assets/media/custom_img/commissions_tab_deactivated.svg"
-                    );
-                $("#tag_step5")
-                    .children()
-                    .children()
-                    .attr(
-                        "src",
-                        "/assets/media/custom_img/quote_tab_deactivated.svg"
+                        "/media/custom-imgs/icono_tab_desactivo_articulos.svg"
                     );
 
                 document
@@ -318,35 +283,21 @@ export default {
                     .children()
                     .attr(
                         "src",
-                        "/assets/media/custom_img/users_menu_deactivated.svg"
+                        "/media/custom-imgs/icono_tab_desactivo_usuarios.svg"
                     );
                 $("#tag_step2")
                     .children()
                     .children()
                     .attr(
                         "src",
-                        "/assets/media/custom_img/profile_tab_deactivated.svg"
+                        "/media/custom-imgs/icono_tab_desactivo_calendarios.svg"
                     );
                 $("#tag_step3")
                     .children()
                     .children()
                     .attr(
                         "src",
-                        "/assets/media/custom_img/bank_tab_active.svg"
-                    );
-                $("#tag_step4")
-                    .children()
-                    .children()
-                    .attr(
-                        "src",
-                        "/assets/media/custom_img/commissions_tab_deactivated.svg"
-                    );
-                $("#tag_step5")
-                    .children()
-                    .children()
-                    .attr(
-                        "src",
-                        "/assets/media/custom_img/quote_tab_deactivated.svg"
+                        "/media/custom-imgs/icono_tab_activo_articulos.svg"
                     );
 
                 document
