@@ -1,5 +1,9 @@
 const state = {
-    show_view_state: 0
-}
+    configuration: {
+        users: {
+            show_view_state: 0
+        }
+    }
+};
 
 export default state;

@@ -53,6 +53,7 @@
 //Users
 import UsersComponent from "./Users/ContentComponent.vue";
 
+
 export default {
     name: "ContentComponent",
     components: {

@@ -5679,14 +5679,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _TableComponent_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./TableComponent.vue */ "./resources/js/components/Configuration/Users/TableComponent.vue");
 /* harmony import */ var _FormUserComponent_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./FormUserComponent.vue */ "./resources/js/components/Configuration/Users/FormUserComponent.vue");
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm-bundler.js");
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -5700,7 +5692,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       publicPath: window.location.origin
     };
   },
-  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapState)(["show_view_state"])),
+  computed: {},
   methods: {},
   mounted: function mounted() {},
   watch: {}
@@ -5746,14 +5738,6 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */ });
 /* harmony import */ var _Partials_SearchComponent_vue__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ../../Partials/SearchComponent.vue */ "./resources/js/components/Partials/SearchComponent.vue");
 /* harmony import */ var _Partials_AddButtonComponent_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ../../Partials/AddButtonComponent.vue */ "./resources/js/components/Partials/AddButtonComponent.vue");
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm-bundler.js");
-function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
-
-function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
-
-function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
-
-
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
@@ -5767,7 +5751,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       publicPath: window.location.origin
     };
   },
-  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapMutations)(["changeShowView"])), {}, {
+  methods: {
     listUsers: function listUsers() {
       var me = this;
       $("#list_users").KTDatatable("destroy");
@@ -5955,7 +5939,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         $("#modal_delete_user").modal("show");
       });
     }
-  }),
+  },
   mounted: function mounted() {//this.listUsers();
   }
 });
@@ -6176,7 +6160,7 @@ var render = function render() {
   var _vm = this,
       _c = _vm._self._c;
 
-  return this.show_view_state == 1 ? _c("TableComponent") : _c("FormUserComponent");
+  return _c("FormUserComponent");
 };
 
 var staticRenderFns = [];
@@ -6201,7 +6185,420 @@ var render = function render() {
   var _vm = this,
       _c = _vm._self._c;
 
-  return _c("div");
+  return _c("div", [_c("h2", {
+    staticClass: "mx-auto color-blue",
+    attrs: {
+      id: "title_modal"
+    }
+  }, [_vm._v("Añadir usuario")]), _vm._v(" "), _c("div", {
+    staticClass: "col-6 pl-0"
+  }, [_c("div", {
+    staticClass: "d-flex input-group my-5"
+  }, [_c("span", {
+    staticClass: "my-auto mr-40"
+  }, [_vm._v("Identificador")]), _vm._v(" "), _c("div", {
+    staticClass: "w-50"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.surname,
+      expression: "surname"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text",
+      placeholder: "Apellidos"
+    },
+    domProps: {
+      value: _vm.surname
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.surname = $event.target.value;
+      }
+    }
+  }), _vm._v(" "), _vm.surname_error ? _c("small", {
+    staticClass: "text-danger"
+  }, [_vm._v("Los apellidos no son válidos")]) : _vm._e()])]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex input-group my-5"
+  }, [_c("span", {
+    staticClass: "my-auto mr-40"
+  }, [_vm._v("Nombre")]), _vm._v(" "), _c("div", {
+    staticClass: "w-50"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.surname,
+      expression: "surname"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text",
+      placeholder: "Apellidos"
+    },
+    domProps: {
+      value: _vm.surname
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.surname = $event.target.value;
+      }
+    }
+  }), _vm._v(" "), _vm.surname_error ? _c("small", {
+    staticClass: "text-danger"
+  }, [_vm._v("Los apellidos no son válidos")]) : _vm._e()])]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex input-group my-5"
+  }, [_c("span", {
+    staticClass: "my-auto mr-40"
+  }, [_vm._v("Apellidos")]), _vm._v(" "), _c("div", {
+    staticClass: "w-50"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.surname,
+      expression: "surname"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text",
+      placeholder: "Apellidos"
+    },
+    domProps: {
+      value: _vm.surname
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.surname = $event.target.value;
+      }
+    }
+  }), _vm._v(" "), _vm.surname_error ? _c("small", {
+    staticClass: "text-danger"
+  }, [_vm._v("Los apellidos no son válidos")]) : _vm._e()])]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex input-group my-5"
+  }, [_c("span", {
+    staticClass: "my-auto mr-40"
+  }, [_vm._v("Email")]), _vm._v(" "), _c("div", {
+    staticClass: "w-50"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.surname,
+      expression: "surname"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text",
+      placeholder: "Apellidos"
+    },
+    domProps: {
+      value: _vm.surname
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.surname = $event.target.value;
+      }
+    }
+  }), _vm._v(" "), _vm.surname_error ? _c("small", {
+    staticClass: "text-danger"
+  }, [_vm._v("Los apellidos no son válidos")]) : _vm._e()])]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex input-group my-5"
+  }, [_c("span", {
+    staticClass: "my-auto mr-40"
+  }, [_vm._v("Usuario")]), _vm._v(" "), _c("div", {
+    staticClass: "w-50"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.surname,
+      expression: "surname"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text",
+      placeholder: "Apellidos"
+    },
+    domProps: {
+      value: _vm.surname
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.surname = $event.target.value;
+      }
+    }
+  }), _vm._v(" "), _vm.surname_error ? _c("small", {
+    staticClass: "text-danger"
+  }, [_vm._v("Los apellidos no son válidos")]) : _vm._e()])]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex input-group my-5"
+  }, [_c("span", {
+    staticClass: "my-auto mr-40"
+  }, [_vm._v("Contraseña")]), _vm._v(" "), _c("div", {
+    staticClass: "w-50"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.surname,
+      expression: "surname"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text",
+      placeholder: "Apellidos"
+    },
+    domProps: {
+      value: _vm.surname
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.surname = $event.target.value;
+      }
+    }
+  }), _vm._v(" "), _vm.surname_error ? _c("small", {
+    staticClass: "text-danger"
+  }, [_vm._v("Los apellidos no son válidos")]) : _vm._e()])]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex input-group my-5"
+  }, [_c("span", {
+    staticClass: "my-auto mr-40"
+  }, [_vm._v("Cargo")]), _vm._v(" "), _c("div", {
+    staticClass: "w-50"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.surname,
+      expression: "surname"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text",
+      placeholder: "Apellidos"
+    },
+    domProps: {
+      value: _vm.surname
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.surname = $event.target.value;
+      }
+    }
+  }), _vm._v(" "), _vm.surname_error ? _c("small", {
+    staticClass: "text-danger"
+  }, [_vm._v("Los apellidos no son válidos")]) : _vm._e()])]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex input-group my-5"
+  }, [_c("span", {
+    staticClass: "my-auto mr-40"
+  }, [_vm._v("Extensión")]), _vm._v(" "), _c("div", {
+    staticClass: "w-50"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.surname,
+      expression: "surname"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text",
+      placeholder: "Apellidos"
+    },
+    domProps: {
+      value: _vm.surname
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.surname = $event.target.value;
+      }
+    }
+  }), _vm._v(" "), _vm.surname_error ? _c("small", {
+    staticClass: "text-danger"
+  }, [_vm._v("Los apellidos no son válidos")]) : _vm._e()])]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex input-group my-5"
+  }, [_c("span", {
+    staticClass: "my-auto mr-40"
+  }, [_vm._v("Móvil")]), _vm._v(" "), _c("div", {
+    staticClass: "w-50"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.surname,
+      expression: "surname"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text",
+      placeholder: "Apellidos"
+    },
+    domProps: {
+      value: _vm.surname
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.surname = $event.target.value;
+      }
+    }
+  }), _vm._v(" "), _vm.surname_error ? _c("small", {
+    staticClass: "text-danger"
+  }, [_vm._v("Los apellidos no son válidos")]) : _vm._e()])]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex input-group my-5"
+  }, [_c("span", {
+    staticClass: "my-auto mr-40"
+  }, [_vm._v("Fecha de Alta")]), _vm._v(" "), _c("div", {
+    staticClass: "w-50"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.surname,
+      expression: "surname"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text",
+      placeholder: "Apellidos"
+    },
+    domProps: {
+      value: _vm.surname
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.surname = $event.target.value;
+      }
+    }
+  }), _vm._v(" "), _vm.surname_error ? _c("small", {
+    staticClass: "text-danger"
+  }, [_vm._v("Los apellidos no son válidos")]) : _vm._e()])]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex input-group my-5"
+  }, [_c("span", {
+    staticClass: "my-auto mr-40"
+  }, [_vm._v("Extensión")]), _vm._v(" "), _c("div", {
+    staticClass: "w-50"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.surname,
+      expression: "surname"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text",
+      placeholder: "Apellidos"
+    },
+    domProps: {
+      value: _vm.surname
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.surname = $event.target.value;
+      }
+    }
+  }), _vm._v(" "), _vm.surname_error ? _c("small", {
+    staticClass: "text-danger"
+  }, [_vm._v("Los apellidos no son válidos")]) : _vm._e()])]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex input-group my-5"
+  }, [_c("span", {
+    staticClass: "my-auto mr-40"
+  }, [_vm._v("Rol")]), _vm._v(" "), _c("div", {
+    staticClass: "w-50"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.surname,
+      expression: "surname"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text",
+      placeholder: "Apellidos"
+    },
+    domProps: {
+      value: _vm.surname
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.surname = $event.target.value;
+      }
+    }
+  }), _vm._v(" "), _vm.surname_error ? _c("small", {
+    staticClass: "text-danger"
+  }, [_vm._v("Los apellidos no son válidos")]) : _vm._e()])]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex input-group my-5"
+  }, [_c("span", {
+    staticClass: "my-auto mr-40"
+  }, [_vm._v("Comisión")]), _vm._v(" "), _c("div", {
+    staticClass: "w-50"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.surname,
+      expression: "surname"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text",
+      placeholder: "Apellidos"
+    },
+    domProps: {
+      value: _vm.surname
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.surname = $event.target.value;
+      }
+    }
+  }), _vm._v(" "), _vm.surname_error ? _c("small", {
+    staticClass: "text-danger"
+  }, [_vm._v("Los apellidos no son válidos")]) : _vm._e()])]), _vm._v(" "), _c("div", {
+    staticClass: "d-flex input-group my-5"
+  }, [_c("span", {
+    staticClass: "my-auto mr-40"
+  }, [_vm._v("Activo")]), _vm._v(" "), _c("div", {
+    staticClass: "w-50"
+  }, [_c("input", {
+    directives: [{
+      name: "model",
+      rawName: "v-model",
+      value: _vm.surname,
+      expression: "surname"
+    }],
+    staticClass: "form-control",
+    attrs: {
+      type: "text",
+      placeholder: "Apellidos"
+    },
+    domProps: {
+      value: _vm.surname
+    },
+    on: {
+      input: function input($event) {
+        if ($event.target.composing) return;
+        _vm.surname = $event.target.value;
+      }
+    }
+  }), _vm._v(" "), _vm.surname_error ? _c("small", {
+    staticClass: "text-danger"
+  }, [_vm._v("Los apellidos no son válidos")]) : _vm._e()])])])]);
 };
 
 var staticRenderFns = [];
@@ -6240,11 +6637,6 @@ var render = function render() {
       columns: "col-1",
       text: "Añadir usuario",
       id: "btn_add_user"
-    },
-    nativeOn: {
-      click: function click($event) {
-        return _vm.changeShowView(2);
-      }
     }
   })], 1), _vm._v(" "), _vm._m(0)]);
 };
@@ -6373,8 +6765,7 @@ render._withStripped = true;
 __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_router__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! vue-router */ "./node_modules/vue-router/dist/vue-router.esm.js");
 /* harmony import */ var _components_Configuration_ContentComponent_vue__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./components/Configuration/ContentComponent.vue */ "./resources/js/components/Configuration/ContentComponent.vue");
-/* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm-bundler.js");
-/* harmony import */ var _store_index__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! ./store/index */ "./resources/js/store/index.js");
+/* harmony import */ var _store_index__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./store/index */ "./resources/js/store/index.js");
 /**
  * First we will load all of this project's JavaScript dependencies which
  * includes Vue and other libraries. It is a great starting point when
@@ -6393,8 +6784,9 @@ var router = new vue_router__WEBPACK_IMPORTED_MODULE_0__["default"]({
     component: _components_Configuration_ContentComponent_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
   }]
 });
-
-Vue.use(vuex__WEBPACK_IMPORTED_MODULE_2__["default"]); // Store
+/*import Vuex from 'vuex'
+Vue.use(Vuex)*/
+// Store
 
  // Axios
 
@@ -6417,7 +6809,8 @@ var app = new Vue({
   components: {
     ConfigurationIndex: _components_Configuration_ContentComponent_vue__WEBPACK_IMPORTED_MODULE_1__["default"]
   },
-  router: router
+  router: router,
+  store: _store_index__WEBPACK_IMPORTED_MODULE_2__["default"]
 });
 
 /***/ }),
@@ -6513,7 +6906,7 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vuex__WEBPACK_IMPORTED_MODULE_3__ = __webpack_require__(/*! vuex */ "./node_modules/vuex/dist/vuex.esm-bundler.js");
 /* harmony import */ var _state__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./state */ "./resources/js/store/state.js");
 /* harmony import */ var _mutations__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./mutations */ "./resources/js/store/mutations.js");
-/* harmony import */ var _actions_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./actions.js */ "./resources/js/store/actions.js");
+/* harmony import */ var _actions__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! ./actions */ "./resources/js/store/actions.js");
 
 
 
@@ -6521,7 +6914,7 @@ __webpack_require__.r(__webpack_exports__);
 var store = (0,vuex__WEBPACK_IMPORTED_MODULE_3__.createStore)({
   state: _state__WEBPACK_IMPORTED_MODULE_0__["default"],
   mutations: _mutations__WEBPACK_IMPORTED_MODULE_1__["default"],
-  actions: _actions_js__WEBPACK_IMPORTED_MODULE_2__["default"]
+  actions: _actions__WEBPACK_IMPORTED_MODULE_2__["default"]
 });
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (store);
 
@@ -6560,7 +6953,11 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 var state = {
-  show_view_state: 0
+  configuration: {
+    users: {
+      show_view_state: 0
+    }
+  }
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (state);
 

@@ -6,7 +6,6 @@
                 :model="model"
             />
             <AddButtonComponent
-                @click.native="changeShowView(2)"
                 :columns="'col-1'"
                 :text="'Añadir usuario'"
                 :id="'btn_add_user'"
@@ -26,7 +25,6 @@
     import SearchComponent from "../../Partials/SearchComponent.vue";
     import AddButtonComponent from "../../Partials/AddButtonComponent.vue";
 
-    import { mapMutations } from "vuex";
 
     export default {
         name: "TableComponent",
@@ -40,7 +38,6 @@
             };
         },
         methods: {
-            ...mapMutations(["changeShowView"]),
             listUsers() {
                 let me = this;
     

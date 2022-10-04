@@ -23,9 +23,8 @@ const router = new VueRouter({
     ],
 });
 
-import Vuex from 'vuex'
-Vue.use(Vuex)
-
+/*import Vuex from 'vuex'
+Vue.use(Vuex)*/
 
 // Store
 import store from "./store/index";
@@ -52,4 +51,5 @@ const app = new Vue({
         ConfigurationIndex,
     },
     router,
+    store,
 });
