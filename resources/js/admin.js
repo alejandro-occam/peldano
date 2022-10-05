@@ -3,33 +3,30 @@
  * includes Vue and other libraries. It is a great starting point when
  * building robust, powerful web applications using Vue and Laravel.
  */
-
 require('./bootstrap');
 
-window.Vue = require('vue').default;
+import { createApp, h } from "vue";
 
-import VueRouter from "vue-router";
-Vue.use(VueRouter);
+import { createWebHistory, createRouter } from "vue-router";
 
 import ConfigurationIndex from "./components/Configuration/ContentComponent.vue";
 
-const router = new VueRouter({
-    mode: "history",
-    routes: [
-        {
-            path: "/admin/configuration",
-            component: ConfigurationIndex,
-        },
-    ],
-});
+const routes = [
+    {
+      path: "/admin/configuration",
+      component: ConfigurationIndex,
+    },
+  ];
+  
+  const router = createRouter({
+    history: createWebHistory(),
+    routes,
+  });
 
-/*import Vuex from 'vuex'
-Vue.use(Vuex)*/
-
-// Store
 import store from "./store/index";
 
 // Axios
+import http from "./axios";
 
 /**
  * The following block of code may be used to automatically register your
@@ -45,11 +42,11 @@ import store from "./store/index";
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
-const app = new Vue({
-    el: "#adminapp",
-    components: {
-        ConfigurationIndex,
-    },
-    router,
-    store,
+const app = createApp({
 });
+app.use(router);
+app.mount('#adminapp');
+app.config.globalProperties.$store = store;
+
+
+

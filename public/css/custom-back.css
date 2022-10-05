@@ -458,3 +458,7 @@ input[type="radio"]:checked:after {
 .bg-green {
     background-color: #83ad88 !important;
 }
+
+.borders-box{
+    border-color: #95a1ff !important;
+}

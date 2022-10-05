@@ -26,6 +26,10 @@ Auth::routes();
 
 Route::group(['middleware' => ['auth', 'verified', 'admin'], 'prefix' => 'admin'], function () {
 
+    Route::post('/list_user', [App\Http\Controllers\ConfigurationController::class, 'listUsers'])->name('list_user');
+
+    
+
     Route::get('/{vue_capture?}', function () {
         return view('layouts.back.admin');
     })->where('vue_capture', '[\/\w\.-]*');

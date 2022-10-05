@@ -1,8 +1,12 @@
 <template>
-    <FormUserComponent ></FormUserComponent>
+    <TableComponent v-if="show_view_state == 1"></TableComponent>
+    <FormUserComponent v-else></FormUserComponent>
 </template>
 
 <script>
+
+import { mapState, mapActions } from "vuex";
+
 import TableComponent from "./TableComponent.vue";
 import FormUserComponent from "./FormUserComponent.vue";
 
@@ -19,11 +23,10 @@ export default {
         };
     },
     computed: {
-    },
-    
-    methods: {
+        ...mapState(["show_view_state"]),
     },
     mounted() {
+        console.log('show_view_state: '+this.show_view_state);
     },
     watch: {
         

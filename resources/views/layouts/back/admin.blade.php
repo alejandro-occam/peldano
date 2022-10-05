@@ -36,7 +36,7 @@
 			<div id="kt_header_mobile" class="header-mobile align-items-center header-mobile-fixed">
 				<!--begin::Logo-->
 				<a href="/">
-					<img style="width: 50px;" alt="Peldano" src="{{url('media/custom-imgs/seahold-logo-sf.png')}}" />
+					<img style="width: 50px;" alt="Peldano" src="{{url('media/custom-imgs/logo_peldanno_login.svg')}}" />
 				</a>
 				<!--end::Logo-->
 				<!--begin::Toolbar-->

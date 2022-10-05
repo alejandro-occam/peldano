@@ -6,9 +6,11 @@
                 :model="model"
             />
             <AddButtonComponent
+                @click.native="changeShowView(2)"
                 :columns="'col-1'"
                 :text="'Añadir usuario'"
                 :id="'btn_add_user'"
+                :src="'/media/custom-imgs/icono_btn_annadir_usuario.svg'"
             />
         </div>
         <div class="col-12">
@@ -22,9 +24,11 @@
 </template>
 
 <script>
+    import { mapMutations } from "vuex";
+
+
     import SearchComponent from "../../Partials/SearchComponent.vue";
     import AddButtonComponent from "../../Partials/AddButtonComponent.vue";
-
 
     export default {
         name: "TableComponent",
@@ -38,6 +42,7 @@
             };
         },
         methods: {
+            ...mapMutations(["changeShowView"]),
             listUsers() {
                 let me = this;
     
@@ -330,7 +335,7 @@
                     me.email_user = $(this).data("email");
                     $("#modal_delete_user").modal("show");
                 });
-            }
+            },
         },
         mounted() {
             //this.listUsers();
