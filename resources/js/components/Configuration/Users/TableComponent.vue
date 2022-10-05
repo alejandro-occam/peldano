@@ -3,7 +3,6 @@
         <div class="col-12 d-flex flex-wrap justify-content-between">
             <SearchComponent
                 :columns="'col-2'"
-                :model="model"
             />
             <AddButtonComponent
                 @click.native="changeShowView(2)"
@@ -24,7 +23,7 @@
 </template>
 
 <script>
-    import { mapMutations } from "vuex";
+    import { mapMutations, mapActions } from "vuex";
 
 
     import SearchComponent from "../../Partials/SearchComponent.vue";
@@ -55,7 +54,7 @@
                             read: {
                                 url:
                                     this.publicPath +
-                                    "/admin/configuration/list_users",
+                                    "/admin/list_users",
                                 headers: {
                                     "X-CSRF-TOKEN": $(
                                         'meta[name="csrf-token"]'
@@ -132,11 +131,7 @@
                             template: function (row, data, index) {
                                 if (row.block == 0) {
                                     return (
-                                        '<span class="w-100 label label-lg font-weight-bold label-inline tag-rol ' +
-                                        row.class_role +
-                                        '">' +
-                                        row.name_role +
-                                        "</span>"
+                                        '<span class="w-100 label label-lg font-weight-bold label-inline tag-rol>'+row.email+'</span>'
                                     );
                                 }
     
@@ -338,7 +333,7 @@
             },
         },
         mounted() {
-            //this.listUsers();
+            this.listUsers();
         },
     };
     </script>

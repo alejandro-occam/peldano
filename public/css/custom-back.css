@@ -28,7 +28,7 @@
 }
 
 .bg-azul{
-    background-color: #2e49ff;
+    background-color: #2e49ff !important;
 }
 
 .color-blue{
@@ -256,7 +256,6 @@ input[type="radio"]:checked:after {
 
 .select-custom {
     outline: 0;
-
     -webkit-user-select: none;
     -moz-user-select: -moz-none;
     -ms-user-select: none;
@@ -264,12 +263,13 @@ input[type="radio"]:checked:after {
     -webkit-appearance: none;
     -moz-appearance: radio-container;
     appearance: none;
-    background: url("../assets/media/custom_img/select_input_arrow.svg")
+    background: url("/media/custom-imgs/flecha_input_select.svg")
         no-repeat center right;
     background-size: 15px 10px;
     background-origin: content-box;
-    background-color: #f3f6f9;
-    border-width: 0px;
+    background-color: #fff;
+    border-width: 1px;
+    border-color: #95a1ff !important;
 }
 
 .border-radius-5 {
@@ -462,3 +462,55 @@ input[type="radio"]:checked:after {
 .borders-box{
     border-color: #95a1ff !important;
 }
+
+.bg-purple{
+    background-color: #95a1ff;
+}
+
+.color-white{
+    color: #fff;
+}
+
+.purple-border{
+    border-color: #95a1ff;
+}
+
+.purple-circle {
+    background-color:#95a1ff;
+    color:white;
+    width: 16px;
+    height: 16px;
+    border-radius:50%; 
+    text-align:center;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+}
+.white-circle-purple {
+    background-color: white;
+    color: #95a1ff;
+    width: 10px;
+    height: 10px; 
+    border-radius:50%;
+    margin: 0 auto;
+} 
+
+.white-circle {
+    background-color:#fff;
+    color:#95a1ff;
+    width: 16px;
+    height: 16px;
+    border-radius:50%; 
+    text-align:center;
+    margin: 0 auto;
+    display: flex;
+    align-items: center;
+}
+.purple-circle-white {
+    background-color: #95a1ff;
+    color: #fff;
+    width: 10px;
+    height: 10px; 
+    border-radius:50%;
+    margin: 0 auto;
+} 

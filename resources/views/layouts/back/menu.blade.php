@@ -8,7 +8,7 @@
                 <router-link to="/admin/configuration" class="menu-link">
                     <div style="padding: 9px 25px;">
                         <span class="svg-icon svg-icon-xl color-gray menu-text" >
-                            <img class="btn-folder mr-2" src="{{ Request::is('/admin/configuration') ? '/media/custom-imgs/icono_config_activo.svg' : '/media/custom-imgs/icono_config_desactivo.svg' }}" width="35px" height="35px"/>
+                            <img class="btn-folder mr-2" src="{{ Request::is('/admin/configuration') ? '/media/custom-imgs/icono_config_activo.svg' : '/media/custom-imgs/icono_config_desactivo.svg' }}" width="35" height="35"/>
                             <b>Configuración</b>
                         </span>
                     </div>

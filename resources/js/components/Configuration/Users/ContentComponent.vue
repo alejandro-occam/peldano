@@ -25,9 +25,6 @@ export default {
     computed: {
         ...mapState(["show_view_state"]),
     },
-    mounted() {
-        console.log('show_view_state: '+this.show_view_state);
-    },
     watch: {
         
     }
