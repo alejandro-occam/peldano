@@ -15,12 +15,13 @@ class AddColumnsUsersTable extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             //
-            $table->unsignedBigInteger('id_position')->after('name');
+            $table->string('surname')->nullable()->after('name');
+            $table->string('user')->nullable()->after('surname');
+            $table->unsignedBigInteger('id_position')->nullable()->after('user');
             $table->foreign('id_position')->references('id')->on('positions');
             $table->string('extension')->nullable()->after('id_position');
             $table->string('mobile')->nullable()->after('extension');
-            $table->string('discharge_date')->nullable()->after('mobile');
-            $table->string('commission')->nullable()->after('discharge_date');
+            $table->double('commission')->nullable()->after('discharge_date');
             $table->boolean('active')->default(false)->after('commission');
         });
     }

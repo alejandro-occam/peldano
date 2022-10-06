@@ -24,8 +24,15 @@ Route::post('/new_password', [App\Http\Controllers\Auth\ResetPasswordController:
 
 Auth::routes();
 
-Route::group(['middleware' => ['auth', 'verified', 'admin'], 'prefix' => 'admin'], function () {
-    Route::post('/list_user', [App\Http\Controllers\ConfigurationController::class, 'listUsers'])->name('list_user');
+Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
+    //CONFIGURATION
+    //List users
+    Route::post('/list_users', [App\Http\Controllers\ConfigurationController::class, 'listUsers'])->name('list_user');
+    //Add user 
+    Route::post('/add_user', [App\Http\Controllers\ConfigurationController::class, 'addUser'])->name('add_user');
+    //Información necesaria para el formulario de usuarios
+    Route::get('/get_info_form_add_user', [App\Http\Controllers\ConfigurationController::class, 'getInfoFormAddUser'])->name('get_info_form_add_user');
+    
 
     Route::get('/{vue_capture?}', function () {
         return view('layouts.back.admin');
