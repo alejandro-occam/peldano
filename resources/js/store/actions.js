@@ -35,6 +35,22 @@ const actions = {
             return error;
         }
     },
+
+    //Consultar informacion de un usuario
+    async getInfoUser({ state }, id){
+        try {
+            const response = await http({
+                url: "/admin/get_info_user/" + id,
+            });
+            
+            state.config.users.user_obj = response.data.user;
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
 }
 
 export default actions;

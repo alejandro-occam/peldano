@@ -23,7 +23,7 @@
 </template>
 
 <script>
-    import { mapMutations } from "vuex";
+    import { mapMutations, mapActions } from "vuex";
 
 
     import SearchComponent from "../../Partials/SearchComponent.vue";
@@ -41,6 +41,7 @@
             };
         },
         methods: {
+            ...mapActions(["getInfoUser"]),
             ...mapMutations(["changeShowView"]),
             listUsers() {
                 let me = this;
@@ -182,6 +183,8 @@
                 });
     
                 $("#list_users").on("click", ".btn-edit", function () {
+                    var id = $(this).data("id");
+                    me.getInfoUser(id);
                     me.changeShowView(2);
                 });
             },

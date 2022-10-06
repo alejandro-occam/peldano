@@ -280,6 +280,20 @@
                     swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
                 }
             },
+            '$store.state.config.users.user_obj': function() {
+                let user = this.config.users.user_obj;
+                this.name = user.name;
+                this.surname = user.surname;
+                this.user = user.user;
+                this.email = user.email;
+                this.id_position = user.id_position;
+                this.extension = user.extension;
+                this.mobile = user.nammobilee;
+                this.id_rol = user.id_rol;
+                this.commission = user.commission;
+                this.status = user.status;
+
+            },
         }
     };
 

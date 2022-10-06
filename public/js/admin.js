@@ -23336,6 +23336,19 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       } else {
         swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
       }
+    },
+    '$store.state.config.users.user_obj': function $storeStateConfigUsersUser_obj() {
+      var user = this.config.users.user_obj;
+      this.name = user.name;
+      this.surname = user.surname;
+      this.user = user.user;
+      this.email = user.email;
+      this.id_position = user.id_position;
+      this.extension = user.extension;
+      this.mobile = user.nammobilee;
+      this.id_rol = user.id_rol;
+      this.commission = user.commission;
+      this.status = user.status;
     }
   }
 });
@@ -23376,7 +23389,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       publicPath: window.location.origin
     };
   },
-  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapMutations)(["changeShowView"])), {}, {
+  methods: _objectSpread(_objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapActions)(["getInfoUser"])), (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapMutations)(["changeShowView"])), {}, {
     listUsers: function listUsers() {
       var me = this;
       $("#list_users").KTDatatable("destroy");
@@ -23484,6 +23497,8 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
         }]
       });
       $("#list_users").on("click", ".btn-edit", function () {
+        var id = $(this).data("id");
+        me.getInfoUser(id);
         me.changeShowView(2);
       });
     }
@@ -24506,6 +24521,41 @@ var actions = {
         }
       }, _callee2, null, [[1, 8]]);
     }))();
+  },
+  //Consultar informacion de un usuario
+  getInfoUser: function getInfoUser(_ref3, id) {
+    return _asyncToGenerator( /*#__PURE__*/_regeneratorRuntime().mark(function _callee3() {
+      var state, response;
+      return _regeneratorRuntime().wrap(function _callee3$(_context3) {
+        while (1) {
+          switch (_context3.prev = _context3.next) {
+            case 0:
+              state = _ref3.state;
+              _context3.prev = 1;
+              _context3.next = 4;
+              return (0,_axios__WEBPACK_IMPORTED_MODULE_0__["default"])({
+                url: "/admin/get_info_user/" + id
+              });
+
+            case 4:
+              response = _context3.sent;
+              state.config.users.user_obj = response.data.user;
+              _context3.next = 12;
+              break;
+
+            case 8:
+              _context3.prev = 8;
+              _context3.t0 = _context3["catch"](1);
+              console.error(_context3.t0);
+              return _context3.abrupt("return", _context3.t0);
+
+            case 12:
+            case "end":
+              return _context3.stop();
+          }
+        }
+      }, _callee3, null, [[1, 8]]);
+    }))();
   }
 };
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (actions);
@@ -24577,7 +24627,8 @@ var state = {
     users: {
       show_view_state: 1,
       array_positions: null,
-      array_roles: null
+      array_roles: null,
+      user_obj: null
     }
   },
   errors: {

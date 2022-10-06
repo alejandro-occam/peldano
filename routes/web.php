@@ -32,6 +32,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::post('/add_user', [App\Http\Controllers\ConfigurationController::class, 'addUser'])->name('add_user');
     //Información necesaria para el formulario de usuarios
     Route::get('/get_info_form_add_user', [App\Http\Controllers\ConfigurationController::class, 'getInfoFormAddUser'])->name('get_info_form_add_user');
+    //Consultar información de un usuario
+    Route::get('/get_info_user/{id}', [App\Http\Controllers\ConfigurationController::class, 'getInfoUser'])->name('get_info_user');
     
 
     Route::get('/{vue_capture?}', function () {

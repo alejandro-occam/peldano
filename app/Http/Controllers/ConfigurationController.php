@@ -144,10 +144,17 @@ class ConfigurationController extends Controller
         return response()->json($response);
     }
 
+    //Consultar información de un usuario
+    function getInfoUser($id){
+        $user = User::find($id);
+        $response['user'] = $user;
+        $response['code'] = 1000;
+        return response()->json($response);
+    }
+
     //UTILS
     //Cambiar de formato la fecha
-    public function customDate($date)
-    {
+    public function customDate($date){
         $aux1 = explode(" ", $date);
         $aux2 = explode('-', $aux1[0]);
         return $order_date = $aux2[2] . '/' . $aux2[1] . '/' . $aux2[0];
