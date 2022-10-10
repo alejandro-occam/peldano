@@ -51,6 +51,40 @@ const actions = {
             return error;
         }
     },
+
+    //Actualizar usuario 
+    async updateUser({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/update_user",
+                params: params,
+                method: 'post'
+            });
+
+            state.errors.code = response.data.code;
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
+
+     //Eliminar un usuario
+    async deleteUser({ state }, id){
+        try {
+            const response = await http({
+                url: "/admin/delete_user/" + id,
+            });
+            
+            state.errors.code = response.data.code;
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
 }
 
 export default actions;

@@ -31,7 +31,7 @@
     background-color: #2e49ff !important;
 }
 
-.color-blue{
+.color-blue, .color-blue:hover{
     color: #2e49ff;
 }
 
@@ -41,6 +41,10 @@
 
 .color-gray{
     color: #b5b5c2;
+}
+
+.color-dark-gray{
+    color: #6c6d82;
 }
 
 .ml-50{
@@ -343,6 +347,8 @@ input[type="radio"]:checked:after {
     display: grid;
 }
 
+
+
 .bootstrap-select > .dropdown-toggle.bs-placeholder.btn {
     color: #b3b3b7;
 }
@@ -514,3 +520,19 @@ input[type="radio"]:checked:after {
     border-radius:50%;
     margin: 0 auto;
 } 
+
+input[type="password"]:disabled.borders-box, input[type="text"]:disabled.borders-box {
+    border-color: #bebeca !important;
+    color: #bebeca !important;
+    background-color: #fff;
+  }
+
+  .f-16{
+    font-size: 16px;
+  }
+
+  .border-back{
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-color: #ebeff2;
+  }

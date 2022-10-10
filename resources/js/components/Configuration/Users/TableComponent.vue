@@ -20,20 +20,23 @@
             ></div>
         </div>
     </div>
+    <DeleteUserComponent></DeleteUserComponent>
 </template>
 
 <script>
-    import { mapMutations, mapActions } from "vuex";
+    import { mapMutations, mapActions, mapState } from "vuex";
 
 
     import SearchComponent from "../../Partials/SearchComponent.vue";
     import AddButtonComponent from "../../Partials/AddButtonComponent.vue";
+    import DeleteUserComponent from "./DeleteUserComponent.vue";
 
     export default {
         name: "TableComponent",
         components: {
             SearchComponent,
             AddButtonComponent,
+            DeleteUserComponent,
         },
         data() {
             return {
@@ -41,8 +44,8 @@
             };
         },
         methods: {
-            ...mapActions(["getInfoUser"]),
-            ...mapMutations(["changeShowView"]),
+            ...mapActions(["getInfoUser", "deleteUser"]),
+            ...mapMutations(["changeShowView", "clearError"]),
             listUsers() {
                 let me = this;
     
@@ -173,9 +176,9 @@
                             sortable: !1,
                             textAlign: "center",
                             template: function (row, data, index) {
-                                var html ='<div><button type="button" class="btn p-0 mx-2 " data-id="' + row.id + '"><img class="edit-hover" src="/media/custom-imgs/icono_tabla_ver.svg" height="30px" width="auto"></button>';
+                                var html ='<div><button type="button" class="btn p-0 mx-2 btn-show " data-id="' + row.id + '"><img class="edit-hover" src="/media/custom-imgs/icono_tabla_ver.svg" height="30px" width="auto"></button>';
                                 html += '<button type="button" class="btn p-0 mx-2 btn-edit" data-id="' + row.id + '"><img class="edit-hover" src="/media/custom-imgs/icono_tabla_editar.svg" height="30px" width="auto"></button>';
-                                html += '<button type="button" class="btn p-0 mx-2 " data-id="' + row.id + '"><img class="edit-hover" src="/media/custom-imgs/icono_tabla_eliminar.svg" height="30px" width="auto"></button></div>';
+                                html += '<button type="button" class="btn p-0 mx-2 btn-delete" data-id="' + row.id + '"><img class="edit-hover" src="/media/custom-imgs/icono_tabla_eliminar.svg" height="30px" width="auto"></button></div>';
                                 return html;
                             },
                         },
@@ -187,10 +190,41 @@
                     me.getInfoUser(id);
                     me.changeShowView(2);
                 });
+
+                $("#list_users").on("click", ".btn-delete", function () {
+                    var id = $(this).data("id");
+                    me.getInfoUser(id);
+                    $("#modal_delete_user").modal("show");                    
+                });
+
+                $("#list_users").on("click", ".btn-show", function () {
+                    var id = $(this).data("id");
+                    me.getInfoUser(id);
+                    me.changeShowView(3);           
+                });
             },
+        },
+        computed: {
+                ...mapState(["errors", "config"]),
         },
         mounted() {
             this.listUsers();
         },
+        watch: {
+            '$store.state.errors.code': function() {
+                if(this.errors.code != ''){
+                    if(this.errors.code == 1000){
+                        $("#list_users").KTDatatable("reload");
+                        $("#modal_delete_user").modal("hide");
+                        swal("", "Usuario eliminado correctamente", "success");
+                    }else if(this.errors.code == 1001){
+                        swal("", "El usuario no existe", "warning");
+                    }else{
+                        swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
+                    }
+                    this.clearError();
+                }
+            },
+        }
     };
     </script>

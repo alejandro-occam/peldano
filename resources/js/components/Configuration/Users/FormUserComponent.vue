@@ -42,7 +42,7 @@
             <div class="d-flex input-group my-5" >
                 <span class="my-auto w-25">Contraseña</span>
                 <div class="w-50">
-                    <input v-model="password" type="password" class="form-control borders-box" placeholder="" />
+                    <input v-model="password" type="password" class="form-control borders-box" placeholder="" :disabled="disabled_password == 1"/>
                     <small class="text-danger" v-if="password_error">La contaseña no es válida</small>
                 </div>
             </div>
@@ -70,6 +70,12 @@
                 <div class="w-50">
                     <input v-model="mobile" type="text" class="form-control borders-box" placeholder="" />
                     <small class="text-danger" v-if="mobile_error">El móvil no es válido</small>
+                </div>
+            </div>
+            <div class="d-flex input-group my-5" v-if="this.discharge_date != ''">
+                <span class="my-auto w-25">Fecha de alta</span>
+                <div class="w-50">
+                    <input v-model="discharge_date" type="text" class="form-control borders-box" placeholder="" :disabled="disabled_password == 1"/>
                 </div>
             </div>
             <div class="d-flex input-group my-5" >
@@ -125,10 +131,21 @@
                     </div>
                 </div>
             </div>
-            <div class="d-flex input-group mt-10" >
+            <div class="d-flex input-group mt-10" v-if="is_update == 0">
                 <span class="my-auto w-25"></span>
                 <div class="w-50">
-                    <button type="button" class="bg-azul btn font-weight-bolder py-4 px-6 w-100 color-white" @click="this.validateForm()">Añadir</button>
+                    <button type="button" class="bg-azul btn font-weight-bolder py-4 px-6 w-100 color-white" @click="this.validateForm(1)">Añadir</button>
+                </div>
+            </div>
+            <div class="d-flex input-group mt-10" v-else>
+                <span class="my-auto w-25"></span>
+                <div class="w-50">
+                    <div class="my-2">
+                        <button type="button" class="bg-azul btn font-weight-bolder py-4 px-6 w-100 color-white" @click="this.validateForm(2)">Guardar cambios</button>
+                    </div>
+                    <div class="my-3">
+                        <button type="button" class="borders-box btn font-weight-bolder py-4 px-6 w-100 color-blue" @click="this.changeShowView(1)">Cancelar</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -145,6 +162,7 @@
         components: {
             AddButtonComponent
         },
+        props: ["id_user"],
         data() {
             return {
                 publicPath: window.location.origin,
@@ -158,6 +176,7 @@
                 user_error: false,
                 password: '',
                 password_error: false,
+                disabled_password: 0,
                 select_position: '',
                 select_position_error: false,
                 extension: '',
@@ -168,19 +187,22 @@
                 select_rol_error: false,
                 commission: '',
                 commission_error: false,
+                discharge_date: '',
                 status: 0,
-                valid: true
+                valid: true,
+                discharge_date: '',
+                is_update: 0,
             };
         },
         methods: {
-            ...mapMutations(["changeShowView"]),
-            ...mapActions(["getInfoFormAddUser", "addUser"]),
+            ...mapMutations(["changeShowView", "clearError"]),
+            ...mapActions(["getInfoFormAddUser", "addUser", "updateUser"]),
             //Cambiar el estado de activo
             changeStatus(status){
                 this.status = status;
             },
             //Validar datos
-            validateForm(){
+            validateForm(type){
                 this.valid = true;
                 this.name_error = false;
                 this.surname_error = false;
@@ -209,9 +231,11 @@
                     this.user_error = true;
                     this.valid = false;
                 }
-                if(this.password == "" || this.password == null){
-                    this.password_error = true;
-                    this.valid = false;
+                if(type == 1){
+                    if(this.password == "" || this.password == null){
+                        this.password_error = true;
+                        this.valid = false;
+                    }
                 }
                 if(this.select_position == "" || this.select_position == null || this.select_position == 0){
                     this.select_position_error = true;
@@ -234,22 +258,50 @@
                     this.valid = false;
                 }
 
+                if(type == 2){
+                    if(this.config.users.user_obj.id == "" || this.config.users.user_obj.id == null || this.config.users.user_obj.id == 0){
+                        this.valid = false;
+                    }
+                }
+
                 if(this.valid){
-                    var params ={
-                        'name': this.name,
-                        'surname': this.surname,
-                        'user': this.user,
-                        'email': this.email,
-                        'password': this.password,
-                        'id_position': this.select_position,
-                        'extension': this.extension,
-                        'mobile': this.mobile,
-                        'id_rol': this.select_rol,
-                        'commission': this.commission,
-                        'status': this.status
+                    if(type == 1){
+                        var params ={
+                            'name': this.name,
+                            'surname': this.surname,
+                            'user': this.user,
+                            'email': this.email,
+                            'password': this.password,
+                            'id_position': this.select_position,
+                            'extension': this.extension,
+                            'mobile': this.mobile,
+                            'id_rol': this.select_rol,
+                            'commission': this.commission,
+                            'status': this.status
+                        }
+
+                        this.addUser(params);
                     }
 
-                    this.addUser(params);
+                    if(type == 2){
+                        var params ={
+                            'id_user': this.config.users.user_obj.id,
+                            'name': this.name,
+                            'surname': this.surname,
+                            'user': this.user,
+                            'email': this.email,
+                            'id_position': this.select_position,
+                            'extension': this.extension,
+                            'mobile': this.mobile,
+                            'id_rol': this.select_rol,
+                            'commission': this.commission,
+                            'status': this.status
+                        }
+
+                        this.updateUser(params);
+                    }
+                }else{
+                    swal("", "Rellena todos los datos", "warning");
                 }
             },
             //Validador de correo
@@ -262,22 +314,30 @@
         },
         computed: {
             ...mapState(["config", "errors"]),
-    }   ,
+        },
         mounted() {
             this.getInfoFormAddUser();
         },
         watch: {
             '$store.state.errors.code': function() {
-                if(this.errors.code == 1000){
-                    swal("", "Usuario creado correctamente", "success");
-                }else if(this.errors.code == 1001 || this.errors.code == 1002){
-                    swal("", "Rellena todos los datos", "warning");
-                }else if(this.errors.code == 1003){
-                    swal("", "El correo ya está registrado", "warning");
-                }else if(this.errors.code == 1004){
-                    swal("", "El usurio ya está registrado", "warning");
-                }else{
-                    swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
+                if(this.errors.code != ''){
+                    if(this.errors.code == 1000){
+                        if(this.type == 1){
+                            swal("", "Usuario creado correctamente", "success");
+                        }else{
+                            swal("", "Usuario modificado correctamente", "success");
+                        }
+                        this.changeShowView(1);
+                    }else if(this.errors.code == 1001 || this.errors.code == 1002){
+                        swal("", "Rellena todos los datos", "warning");
+                    }else if(this.errors.code == 1003){
+                        swal("", "El correo ya está registrado", "warning");
+                    }else if(this.errors.code == 1004 || this.errors.code == 1005){
+                        swal("", "El usuario ya está registrado", "warning");
+                    }else{
+                        swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
+                    }
+                    this.clearError();
                 }
             },
             '$store.state.config.users.user_obj': function() {
@@ -286,13 +346,16 @@
                 this.surname = user.surname;
                 this.user = user.user;
                 this.email = user.email;
-                this.id_position = user.id_position;
+                this.password = 'password';
+                this.disabled_password = 1; 
+                this.select_position = user.id_position;
                 this.extension = user.extension;
-                this.mobile = user.nammobilee;
-                this.id_rol = user.id_rol;
+                this.mobile = user.mobile;
+                this.select_rol = user.id_rol;
                 this.commission = user.commission;
-                this.status = user.status;
-
+                this.status = user.active;
+                this.discharge_date = user.discharge_date;
+                this.is_update = 1;
             },
         }
     };

@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Sanctum\HasApiTokens;
+use App\Scopes\SoftDeleteUserScope;
 
 class User extends Authenticatable
 {
@@ -18,6 +19,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'id',
         'email',
         'password',
         'name',
@@ -28,6 +30,7 @@ class User extends Authenticatable
         'mobile',
         'commission',
         'active',
+        'soft_delete'
     ];
 
     /**
@@ -62,5 +65,10 @@ class User extends Authenticatable
     public function getFirstLetterName($id){
         $user = User::find($id);
         return substr($user->name,0,1);
+    }
+
+    protected static function boot(){
+        parent::boot();
+        static::addGlobalScope(new SoftDeleteUserScope);
     }
 }
