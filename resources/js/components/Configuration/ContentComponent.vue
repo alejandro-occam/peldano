@@ -16,7 +16,7 @@
                         <div id="tag_step2" data-wizard-type="step" data-wizard-state="pending" class="wizard-step mx-3 cursor-pointer custom-wizard" @click="selectTab($event)" >
                             <div class="d-flex align-items-center justify-content-center my-15" >
                                 <img class="mr-2" width="35" height="30" src="/media/custom-imgs/icono_tab_desactivo_calendarios.svg" />
-                                <div id="div_text_profile" class="text-gray ml-2" >
+                                <div id="div_text_calendar" class="text-gray ml-2" >
                                     <h3 class="mb-0">Calendarios</h3>
                                 </div>
                             </div>
@@ -42,6 +42,13 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="step" id="step_calendars" data-wizard-type="step-content" data-wizard-state="pending" >
+                            <div class="card card-custom shadow-none border-0">
+                                <div class="card-body body-tab-step">
+                                    <CalendarComponent></CalendarComponent>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -53,12 +60,13 @@
 //Users
 
 import UsersComponent from "./Users/ContentComponent.vue";
-
+import CalendarComponent from "./Calendar/ContentComponent.vue";
 
 export default {
     name: "ContentComponent",
     components: {
-        UsersComponent
+        UsersComponent,
+        CalendarComponent
     },
     data() {
         return {
@@ -80,7 +88,7 @@ export default {
         navegationTabs(id_tab) {
             if (id_tab == "tag_step1") {
                 $("#step_users").attr("data-wizard-state", "current");
-                $("#step_profile").attr("data-wizard-state", "pending");
+                $("#step_calendars").attr("data-wizard-state", "pending");
                 $("#step_banks").attr("data-wizard-state", "pending");
                 $("#step_commissions").attr("data-wizard-state", "pending");
                 $("#step_ars_quote").attr("data-wizard-state", "pending");
@@ -141,7 +149,7 @@ export default {
                 this.$refs.table_users.listUsers();
             } else if (id_tab == "tag_step2") {
                 $("#step_users").attr("data-wizard-state", "pending");
-                $("#step_profile").attr("data-wizard-state", "current");
+                $("#step_calendars").attr("data-wizard-state", "current");
                 $("#step_banks").attr("data-wizard-state", "pending");
                 $("#step_commissions").attr("data-wizard-state", "pending");
                 $("#step_ars_quote").attr("data-wizard-state", "pending");
@@ -200,7 +208,7 @@ export default {
                     .classList.remove("text-lightgreen");
             } else if (id_tab == "tag_step3") {
                 $("#step_users").attr("data-wizard-state", "pending");
-                $("#step_profile").attr("data-wizard-state", "pending");
+                $("#step_calendars").attr("data-wizard-state", "pending");
                 $("#step_banks").attr("data-wizard-state", "current");
                 $("#step_commissions").attr("data-wizard-state", "pending");
                 $("#step_ars_quote").attr("data-wizard-state", "pending");
@@ -264,7 +272,7 @@ export default {
 
             } else if (id_tab == "tag_step4") {
                 $("#step_users").attr("data-wizard-state", "pending");
-                $("#step_profile").attr("data-wizard-state", "pending");
+                $("#step_calendars").attr("data-wizard-state", "pending");
                 $("#step_banks").attr("data-wizard-state", "pending");
                 $("#step_commissions").attr("data-wizard-state", "current");
                 $("#step_ars_quote").attr("data-wizard-state", "pending");
@@ -337,7 +345,7 @@ export default {
                     .classList.remove("text-lightgreen");
             } else if (id_tab == "tag_step5") {
                 $("#step_users").attr("data-wizard-state", "pending");
-                $("#step_profile").attr("data-wizard-state", "pending");
+                $("#step_calendars").attr("data-wizard-state", "pending");
                 $("#step_banks").attr("data-wizard-state", "pending");
                 $("#step_commissions").attr("data-wizard-state", "pending");
                 $("#step_ars_quote").attr("data-wizard-state", "current");

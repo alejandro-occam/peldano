@@ -8,6 +8,8 @@
                     :text="'Volver'"
                     :id="'btn_add_user'"
                     :src="'/media/custom-imgs/flecha_btn_volver.svg'"
+                    :width="16"
+                    :height="16"
                 />
         </div>
         <div class="row mt-5">

@@ -10,6 +10,8 @@
                 :text="'Añadir usuario'"
                 :id="'btn_add_user'"
                 :src="'/media/custom-imgs/icono_btn_annadir_usuario.svg'"
+                :width="16"
+                :height="16"
             />
         </div>
         <div class="col-12">

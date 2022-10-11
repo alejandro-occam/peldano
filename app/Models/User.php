@@ -59,7 +59,7 @@ class User extends Authenticatable
 
     public function getNameUser($id){
         $user = User::find($id);
-        return $user->name;
+        return $user->name.' '.$user->surname;
     }
 
     public function getFirstLetterName($id){

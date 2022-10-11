@@ -1,6 +1,6 @@
 <template>
     <button type="button" class="d-flex align-items-center justify-content-center btn btn-gray px-0" :class="columns" :id="id">
-        <img class="mr-2" width="16" height="16" :src="src" />
+        <img class="mr-2" :width="width" :height="height" :src="src" />
         {{ text }}
     </button>
 </template>
@@ -8,7 +8,7 @@
 <script>
 export default {
     name: "SeachComponent",
-    props: ["columns", "text", "id", "src"],
+    props: ["columns", "text", "id", "src", "width", "height"],
     data() {
         return {
             publicPath: window.location.origin,

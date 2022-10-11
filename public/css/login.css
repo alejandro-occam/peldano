@@ -202,6 +202,11 @@ a.enlaces:hover {
     border-color: #95a1ff !important;
 }
 
+.btn-blue{
+    background-color: #2e49ff !important;
+    color: #fff !important;
+}
+
 @media (min-width: 992px) {
     .font-size-h1-lg-custom {
         font-size: 2.5rem!important;

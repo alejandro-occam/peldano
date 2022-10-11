@@ -9,6 +9,9 @@ const state = {
                 surname: '',
                 email: ''
             }
+        },
+        calendars:{
+            show_view_state: 1,
         }
     },
     errors: {

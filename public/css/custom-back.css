@@ -566,3 +566,17 @@ input[type="password"]:disabled.borders-box, input[type="text"]:disabled.borders
 a.text-hover-primary:hover, .text-hover-primary:hover{
     color: #2e49ff !important;
 }
+
+.w-15{
+    width: 15%;
+}
+
+.select-filter{
+    background-color: #f7fbff;
+    color: #b5b6b7 !important;
+    border-width: 0px;
+}
+
+.bg-blue-light-white{
+    background-color: #F6FBFF;
+}

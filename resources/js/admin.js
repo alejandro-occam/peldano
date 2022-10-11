@@ -28,6 +28,11 @@ import store from "./store/index";
 // Axios
 import http from "./axios";
 
+// PrimeVue
+import PrimeVue from "primevue/config";
+import "primeicons/primeicons.css";
+import "primevue/resources/primevue.min.css";
+import "primevue/resources/themes/saga-blue/theme.css";
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -45,6 +50,63 @@ import http from "./axios";
 const app = createApp({
 });
 app.use(router);
+app.use(PrimeVue, {
+  ripple: true,
+  locale: {
+      dayNames: [
+          "Domingo",
+          "Lunes",
+          "Martes",
+          "Miércoles",
+          "Jueves",
+          "Viernes",
+          "Sábado",
+      ],
+      dayNamesShort: [
+          "Dom",
+          "Lun",
+          "Mar",
+          "Mie",
+          "Jue",
+          "Vie",
+          "Sab",
+      ],
+      dayNamesMin: ["Do", "Lu", "Ma", "Mi", "Ju", "Vi", "Sa"],
+      monthNames: [
+          "Enero",
+          "Febrero",
+          "Marzo",
+          "Abril",
+          "Mayo",
+          "Junio",
+          "Julio",
+          "Agosto",
+          "Septiembre",
+          "Octubre",
+          "Noviembre",
+          "Diciembre",
+      ],
+      monthNamesShort: [
+          "Ene",
+          "Feb",
+          "Mar",
+          "Abr",
+          "May",
+          "Jun",
+          "Jul",
+          "Ago",
+          "Sep",
+          "Oct",
+          "Nov",
+          "Dic",
+      ],
+      today: "Hoy",
+      firstDayOfWeek: 1,
+      accept: "Aceptar",
+      reject: "Rechazar",
+      clear: "Limpiar",
+  },
+});
 app.mount('#adminapp');
 app.config.globalProperties.$store = store;
 
