@@ -6,7 +6,7 @@
             <form @submit.prevent="">
                 <div class="modal-header">
                     <h2 class="mx-auto color-blue" id="title_modal">Eliminar usuario</h2>
-                    <button type="button" class="close position-absolute" style="right: 22px;" data-dismiss="modal" >
+                    <button type="button" class="close position-absolute" style="right: 22px;" data-dismiss="modal" @click="this.closeModal()">
                         &times;
                     </button>
                 </div>
@@ -25,7 +25,7 @@
                     </div>
                 </div>
                 <div class="modal-footer justify-content-between">
-                    <button type="button" class="btn btn-close ml-auto px-10 color-blue font-weight-bold" data-dismiss="modal" >
+                    <button type="button" class="btn btn-close ml-auto px-10 color-blue font-weight-bold" data-dismiss="modal" @click="this.closeModal()">
                         Cancelar
                     </button>
                     <button type="submit" class="btn bg-azul color-white px-10 font-weight-bold" @click="this.deleteUser(config.users.user_obj.id)">
@@ -54,6 +54,9 @@ export default {
     },
     methods: {
         ...mapActions(["deleteUser"]),
+        closeModal(){
+            $("#modal_delete_user").modal("hide");
+        }
     },
     mounted() {}
 };

@@ -20,7 +20,6 @@
             ></div>
         </div>
     </div>
-    <DeleteUserComponent></DeleteUserComponent>
 </template>
 
 <script>
@@ -29,14 +28,12 @@
 
     import SearchComponent from "../../Partials/SearchComponent.vue";
     import AddButtonComponent from "../../Partials/AddButtonComponent.vue";
-    import DeleteUserComponent from "./DeleteUserComponent.vue";
 
     export default {
         name: "TableComponent",
         components: {
             SearchComponent,
             AddButtonComponent,
-            DeleteUserComponent,
         },
         data() {
             return {

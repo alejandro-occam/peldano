@@ -33,8 +33,8 @@
                     </div>
                 </div>
 
-                <div class="card card-custom card-shadowless rounded-top-0 div-content-tabs" >
-                    <div class="card-body">
+                <div class="card card-custom card-shadowless rounded-top-0 div-content-tabs bg-transparent" >
+                    <div class="card-body pl-0 pt-0">
                         <div class="step" id="step_users" data-wizard-type="step-content" data-wizard-state="current" >
                             <div class="card card-custom shadow-none border-0">
                                 <div class="card-body body-tab-step">

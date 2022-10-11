@@ -18,7 +18,7 @@
                 <div class="ml-15">
                     <h2>{{ this.config.users.user_obj.name }} {{ this.config.users.user_obj.surname }}</h2>
                 </div>
-                <div class="ml-15 col-12 ml-11 d-flex mt-5 border-back pb-7 pl-0">
+                <div class="ml-15 col-12 ml-11 d-flex mt-5 border-bottom pb-7 pl-0">
                     <div class="d-grid col-2 px-0">
                         <span class="color-dark-gray font-weight-bolder f-16">IDENTIFICADOR</span>
                         <span class="f-16">{{ config.users.user_obj.id }}</span>
@@ -70,6 +70,12 @@
                         <span v-if="config.users.user_obj.status == 0" class="f-16">No</span>
                         <span v-else class="f-16">Sí</span>
                     </div>
+                </div>
+            </div>
+            <div class="col-12 border-top">
+                <div class="pl-0 col-2">
+                    <button type="button" class="bg-azul btn font-weight-bolder mt-15 py-4 my-2 w-100 color-white" @click="this.showForm()">Modificar</button>
+                    <button type="button" class="bg-light-red color-red btn font-weight-bolder py-4 my-2 w-100 " @click="this.deleteUser()">Eliminar</button>
                 </div>
             </div>
         </div>
@@ -124,13 +130,20 @@
             //Cambiar el estado de activo
             changeStatus(status){
                 this.status = status;
-            },            
+            },          
+            showForm(){
+                this.getInfoUser(this.config.users.user_obj.id);
+                this.changeShowView(2);
+            },
+            deleteUser(){
+                $("#modal_delete_user").modal("show"); 
+            }
         },
         computed: {
             ...mapState(["config"]),
         },
         mounted() {
-            this.getInfoUser(this.config.users.user_obj.id);
+            //this.getInfoUser(this.config.users.user_obj.id);
         },
         watch: {
             '$store.state.config.users.user_obj': function() {

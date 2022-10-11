@@ -68,8 +68,8 @@
 					<div class="container-fluid d-flex flex-column flex-md-row align-items-center justify-content-between">
 						<!--begin::Copyright-->
 						<div class="text-dark order-2 order-md-1">
-							<span class="font-weight-bold mr-2">{{ Date('Y') }}©</span>
-							<a href="script;" target="_blank" class="text-hover-primary color-blue">{{ env('APP_NAME') }}</a>
+							<span class="font-weight-bold mr-2 color-dark-gray">{{ Date('Y') }}©</span>
+							<a href="script;" target="_blank" class="text-hover-primary color-gray">{{ env('APP_NAME') }}</a>
 						</div>
 						<!--end::Copyright-->
 					</div>

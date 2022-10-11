@@ -28,14 +28,14 @@
             <div class="d-flex input-group my-5" >
                 <span class="my-auto w-25">Email</span>
                 <div class="w-50">
-                    <input v-model="email" type="text" class="form-control borders-box" placeholder="" />
+                    <input v-model="email" type="text" class="form-control borders-box" placeholder="" :disabled="disabled_password == 1"/>
                     <small class="text-danger" v-if="email_error">El correo no es válido</small>
                 </div>
             </div>
             <div class="d-flex input-group my-5" >
                 <span class="my-auto w-25">Usuario</span>
                 <div class="w-50">
-                    <input v-model="user" type="text" class="form-control borders-box" placeholder="" />
+                    <input v-model="user" type="text" class="form-control borders-box" placeholder="" :disabled="disabled_password == 1"/>
                     <small class="text-danger" v-if="user_error">El usuario no es válido</small>
                 </div>
             </div>

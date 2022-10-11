@@ -144,6 +144,8 @@ class ConfigurationController extends Controller
 
     //Consultar información de un usuario
     function getInfoUser($id){
+        error_log($id);
+
         $user = User::select('users.*', 'positions.name as name_position')->leftJoin('positions', 'positions.id', 'users.id_position')->where('users.id',$id)->first();
         $user['discharge_date'] = $this->customDateBis($user->created_at);
 
