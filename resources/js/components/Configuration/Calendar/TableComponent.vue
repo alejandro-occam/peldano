@@ -2,11 +2,11 @@
     <div class="row">
         <div class="col-12 d-flex flex-wrap justify-content-between">
             <div class="d-flex align-items-center justify-content-center w-15">
-                <select class="form-control w-100 bg-gray text-dark select-custom select-filter" :name="'select_calendar_filter'" :id="'select_calendar_filter'" v-model="select_calendar_filter" data-style="select-lightgreen" >
+                <select class="form-control w-100 bg-gray text-dark select-custom select-filter" :name="'select_calendar_filter'" :id="'select_calendar_filter'" v-model="select_calendar_filter" data-style="select-lightgreen" @change="reloadList">
                     <option value="" selected>
                         Elige un calendario
                     </option>
-                    <option :value="role.id" v-for="role in config.users.array_roles" :key="role.id" v-text="role.name" ></option>
+                    <option :value="calendar.id" v-for="calendar in config.calendars.array_calendars"  :key="calendar.id" v-text="calendar.name" ></option>
                 </select>
             </div>
             <AddButtonComponent
@@ -28,7 +28,7 @@
                 :height="25"
             />
         </div>
-        <div class="col-12">
+        <div class="col-12  mt-7">
             <div
                 class="datatable datatable-bordered datatable-head-custom"
                 id="list_calendars"
@@ -83,7 +83,10 @@ import { throwStatement } from "@babel/types";
                                         'meta[name="csrf-token"]'
                                     ).attr("content"),
                                 },
-                                method: 'POST'
+                                method: 'POST',
+                                params: {
+                                    select_calendar_filter: this.select_calendar_filter
+                                }
                             },
                         },
                         pageSize: 10,
@@ -269,6 +272,9 @@ import { throwStatement } from "@babel/types";
                     });                
                 });
             },
+            reloadList(){
+                this.listCalendars();
+            }
         },
         computed: {
                 ...mapState(["errors", "config"]),

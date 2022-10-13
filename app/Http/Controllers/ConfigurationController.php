@@ -56,12 +56,24 @@ class ConfigurationController extends Controller
             $search = $query['search_users'];
         }
 
-        $array_users = User::select('users.*', 'positions.name as position_nane', 'roles.name as role_name')->leftJoin('positions', 'positions.id', 'users.id_position')->leftJoin('roles_users', 'roles_users.id_user', 'users.id_position')->leftJoin('roles', 'roles.id', 'roles_users.id_role')->get();
+        $array_users = User::select('users.*', 'positions.name as position_nane', 'roles.name as role_name')
+                        ->leftJoin('positions', 'positions.id', 'users.id_position')
+                        ->leftJoin('roles_users', 'roles_users.id_user', 'users.id_position')
+                        ->leftJoin('roles', 'roles.id', 'roles_users.id_role')
+                        ->where('users.name', 'like', '%'.$search.'%')
+                        ->orWhere('users.surname', 'like', '%'.$search.'%')
+                        ->orWhere('users.email', 'like', '%'.$search.'%')
+                        ->orWhere('users.user', 'like', '%'.$search.'%')
+                        ->get();
         foreach($array_users as $user){
             $user['custom_date'] = $this->customDate($user->created_at);
 
         }
-        $total_users = User::count();
+        $total_users = User::where('users.name', 'like', '%'.$search.'%')
+        ->orWhere('users.surname', 'like', '%'.$search.'%')
+        ->orWhere('users.email', 'like', '%'.$search.'%')
+        ->orWhere('users.user', 'like', '%'.$search.'%')
+        ->count();
 
         //Devolución de la llamada con la paginación
         $meta['page'] = $pagination['page'];
@@ -318,11 +330,15 @@ class ConfigurationController extends Controller
             }
         }
 
-        $array_calendars = CalendarMagazine::select('calendars_magazines.*', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->get();
-        foreach($array_calendars as $calendar){
-            
+        $select_calendar_filter = $request->get('select_calendar_filter');
+
+        if(empty($select_calendar_filter)){
+            $array_calendars = CalendarMagazine::select('calendars_magazines.*', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->get();
+            $total_calendars = CalendarMagazine::count();
+        }else{
+            $array_calendars = CalendarMagazine::select('calendars_magazines.*', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->where('calendars_magazines.id_calendar', $select_calendar_filter)->get();
+            $total_calendars = CalendarMagazine::where('id_calendar', $select_calendar_filter)->count();
         }
-        $total_calendars = CalendarMagazine::count();
 
         //Devolución de la llamada con la paginación
         $meta['page'] = $pagination['page'];

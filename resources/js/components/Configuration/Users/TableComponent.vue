@@ -3,6 +3,7 @@
         <div class="col-12 d-flex flex-wrap justify-content-between">
             <SearchComponent
                 :columns="'col-2'"
+                :model="'users'"
             />
             <AddButtonComponent
                 @click.native="openModalAddUser()"
@@ -14,7 +15,7 @@
                 :height="16"
             />
         </div>
-        <div class="col-12">
+        <div class="col-12 mt-7">
             <div
                 class="datatable datatable-bordered datatable-head-custom"
                 id="list_users"

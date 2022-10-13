@@ -163,7 +163,7 @@
             ...mapState(["config", "errors"]),
         },
         methods: {
-            ...mapActions(["getInfoFormAddCalendar", "addCalendar", "updateCalendar"]),
+            ...mapActions(["addCalendar", "updateCalendar"]),
             closeModal(){
                 $("#modal_form_number_calendar").modal("hide");
             },
@@ -270,7 +270,6 @@
             }
         },
         mounted() {
-            this.getInfoFormAddCalendar();
         },
         watch: {
             '$store.state.config.calendars.calendar_obj': function() {

@@ -23012,10 +23012,13 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     };
   },
   computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapState)(["config"])),
-  methods: {
+  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapActions)(["getInfoFormAddCalendar", "addCalendar", "updateCalendar"])), {}, {
     listCalendars: function listCalendars() {
       this.$refs.table.listCalendars();
     }
+  }),
+  mounted: function mounted() {
+    this.getInfoFormAddCalendar();
   }
 });
 
@@ -23072,7 +23075,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
     };
   },
   computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapState)(["config", "errors"])),
-  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapActions)(["getInfoFormAddCalendar", "addCalendar", "updateCalendar"])), {}, {
+  methods: _objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapActions)(["addCalendar", "updateCalendar"])), {}, {
     closeModal: function closeModal() {
       $("#modal_form_number_calendar").modal("hide");
     },
@@ -23183,9 +23186,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       this.front_page_date = '';
     }
   }),
-  mounted: function mounted() {
-    this.getInfoFormAddCalendar();
-  },
+  mounted: function mounted() {},
   watch: {
     '$store.state.config.calendars.calendar_obj': function $storeStateConfigCalendarsCalendar_obj() {
       var calendar = this.config.calendars.calendar_obj;
@@ -23266,7 +23267,10 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
               headers: {
                 "X-CSRF-TOKEN": $('meta[name="csrf-token"]').attr("content")
               },
-              method: 'POST'
+              method: 'POST',
+              params: {
+                select_calendar_filter: this.select_calendar_filter
+              }
             }
           },
           pageSize: 10,
@@ -23407,6 +23411,9 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
           }
         });
       });
+    },
+    reloadList: function reloadList() {
+      this.listCalendars();
     }
   }),
   computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_3__.mapState)(["errors", "config"])),
@@ -24656,7 +24663,7 @@ var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 var _hoisted_5 = ["value", "textContent"];
 
 var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-  "class": "col-12"
+  "class": "col-12 mt-7"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   "class": "datatable datatable-bordered datatable-head-custom",
   id: "list_calendars",
@@ -24677,21 +24684,24 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
       return $data.select_calendar_filter = $event;
     }),
-    "data-style": "select-lightgreen"
-  }, [_hoisted_4, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(_ctx.config.users.array_roles, function (role) {
+    "data-style": "select-lightgreen",
+    onChange: _cache[1] || (_cache[1] = function () {
+      return $options.reloadList && $options.reloadList.apply($options, arguments);
+    })
+  }, [_hoisted_4, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(_ctx.config.calendars.array_calendars, function (calendar) {
     return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("option", {
-      value: role.id,
-      key: role.id,
-      textContent: (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(role.name)
+      value: calendar.id,
+      key: calendar.id,
+      textContent: (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(calendar.name)
     }, null, 8
     /* PROPS */
     , _hoisted_5);
   }), 128
   /* KEYED_FRAGMENT */
-  ))], 512
-  /* NEED_PATCH */
+  ))], 544
+  /* HYDRATE_EVENTS, NEED_PATCH */
   ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.select_calendar_filter]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_AddButtonComponent, {
-    onClick: _cache[1] || (_cache[1] = function ($event) {
+    onClick: _cache[2] || (_cache[2] = function ($event) {
       return _ctx.changeShowView(2);
     }),
     columns: 'col-1 ml-auto mr-7',
@@ -24703,7 +24713,7 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, null, 8
   /* PROPS */
   , ["src"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_AddButtonComponent, {
-    onClick: _cache[2] || (_cache[2] = function ($event) {
+    onClick: _cache[3] || (_cache[3] = function ($event) {
       return $options.openFormModal();
     }),
     columns: 'col-1',
@@ -25858,7 +25868,7 @@ var _hoisted_2 = {
 };
 
 var _hoisted_3 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
-  "class": "col-12"
+  "class": "col-12 mt-7"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", {
   "class": "datatable datatable-bordered datatable-head-custom",
   id: "list_users",
@@ -25875,7 +25885,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_AddButtonComponent = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("AddButtonComponent");
 
   return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_SearchComponent, {
-    columns: 'col-2'
+    columns: 'col-2',
+    model: 'users'
   }), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_AddButtonComponent, {
     onClick: _cache[0] || (_cache[0] = function ($event) {
       return $options.openModalAddUser();

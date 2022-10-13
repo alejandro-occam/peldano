@@ -5,7 +5,7 @@
 
 <script>
 
-import { mapState } from "vuex";
+import { mapState , mapActions} from "vuex";
 
 import TableComponent from "./TableComponent.vue";
 import FormNumberComponent from "./FormNumberComponent.vue";
@@ -25,9 +25,13 @@ export default {
         ...mapState(["config"]),
     },
     methods: {
+        ...mapActions(["getInfoFormAddCalendar", "addCalendar", "updateCalendar"]),
         listCalendars(){
             this.$refs.table.listCalendars();
         }
+    },
+    mounted() {
+        this.getInfoFormAddCalendar();
     }
 };
 </script>
