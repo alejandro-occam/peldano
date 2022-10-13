@@ -5,7 +5,7 @@
                 :columns="'col-2'"
             />
             <AddButtonComponent
-                @click.native="changeShowView(2)"
+                @click.native="openModalAddUser()"
                 :columns="'col-1'"
                 :text="'Añadir usuario'"
                 :id="'btn_add_user'"
@@ -44,7 +44,7 @@
         },
         methods: {
             ...mapActions(["getInfoUser", "deleteUser"]),
-            ...mapMutations(["changeShowView", "clearError"]),
+            ...mapMutations(["changeShowView", "controlFormUsers"]),
             listUsers() {
                 let me = this;
     
@@ -186,6 +186,7 @@
     
                 $("#list_users").on("click", ".btn-edit", function () {
                     var id = $(this).data("id");
+                    me.controlFormUsers(1);
                     me.getInfoUser(id);
                     me.changeShowView(2);
                 });
@@ -202,6 +203,10 @@
                     me.changeShowView(3);           
                 });
             },
+            openModalAddUser(){
+                this.controlFormUsers(0);
+                this.changeShowView(2);
+            }
         },
         computed: {
                 ...mapState(["errors", "config"]),
@@ -209,21 +214,5 @@
         mounted() {
             this.listUsers();
         },
-        watch: {
-            '$store.state.errors.code': function() {
-                if(this.errors.code != ''){
-                    if(this.errors.code == 1000){
-                        $("#list_users").KTDatatable("reload");
-                        $("#modal_delete_user").modal("hide");
-                        swal("", "Usuario eliminado correctamente", "success");
-                    }else if(this.errors.code == 1001){
-                        swal("", "El usuario no existe", "warning");
-                    }else{
-                        swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
-                    }
-                    this.clearError();
-                }
-            },
-        }
     };
     </script>

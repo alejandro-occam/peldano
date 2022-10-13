@@ -449,7 +449,7 @@ input[type="radio"]:checked:after {
     background-color: #2e49ff !important;
 }
 
-.borders-box{
+.borders-box, .borders-box>.p-inputtext{
     border-color: #95a1ff !important;
 }
 
@@ -579,4 +579,20 @@ a.text-hover-primary:hover, .text-hover-primary:hover{
 
 .bg-blue-light-white{
     background-color: #F6FBFF;
+}
+
+.p-datepicker.p-component{
+    z-index: 9999 !important;
+}
+
+.borders-box>.p-inputtext{
+    background: url(/media/custom-imgs/icono_input_calendario.svg) no-repeat center right;
+    background-size: 15px 15px;
+    background-origin: content-box;
+    background-color: #fff;
+    padding-top: 8.45px;
+    padding-bottom: 8.45px;
+    padding-left: 13px;
+    padding-right: 13px;
+    border-radius: 0.42rem;
 }

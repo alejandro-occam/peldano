@@ -38,14 +38,14 @@
                         <div class="step" id="step_users" data-wizard-type="step-content" data-wizard-state="current" >
                             <div class="card card-custom shadow-none border-0">
                                 <div class="card-body body-tab-step">
-                                    <UsersComponent></UsersComponent>
+                                    <UsersComponent ref="table_users"></UsersComponent>
                                 </div>
                             </div>
                         </div>
                         <div class="step" id="step_calendars" data-wizard-type="step-content" data-wizard-state="pending" >
                             <div class="card card-custom shadow-none border-0">
                                 <div class="card-body body-tab-step">
-                                    <CalendarComponent></CalendarComponent>
+                                    <CalendarComponent ref="table_calendars"></CalendarComponent>
                                 </div>
                             </div>
                         </div>
@@ -62,6 +62,8 @@
 import UsersComponent from "./Users/ContentComponent.vue";
 import CalendarComponent from "./Calendar/ContentComponent.vue";
 
+import { mapMutations, mapState } from "vuex";
+
 export default {
     name: "ContentComponent",
     components: {
@@ -73,7 +75,11 @@ export default {
             publicPath: window.location.origin,
         };
     },
+    computed: {
+            ...mapState(["errors"]),
+    },
     methods: {
+        ...mapMutations(["clearError", "changeShowView"]),
         selectTab(event) {
             $("#tag_step1").attr("data-wizard-state", "pending");
             $("#tag_step2").attr("data-wizard-state", "pending");
@@ -115,38 +121,8 @@ export default {
                         "/media/custom-imgs/icono_tab_desactivo_articulos.svg"
                     );
 
-                document
-                    .getElementById("div_text_users")
-                    .classList.add("text-lightgreen");
-                document
-                    .getElementById("div_text_users")
-                    .classList.remove("text-gray");
-                document
-                    .getElementById("div_text_profile")
-                    .classList.add("text-gray");
-                document
-                    .getElementById("div_text_profile")
-                    .classList.remove("text-lightgreen");
-                document
-                    .getElementById("div_text_banks")
-                    .classList.add("text-gray");
-                document
-                    .getElementById("div_text_banks")
-                    .classList.remove("text-lightgreen");
-                document
-                    .getElementById("div_text_commissions")
-                    .classList.add("text-gray");
-                document
-                    .getElementById("div_text_commissions")
-                    .classList.remove("text-lightgreen");
-                document
-                    .getElementById("div_text_ars_quote")
-                    .classList.add("text-gray");
-                document
-                    .getElementById("div_text_ars_quote")
-                    .classList.remove("text-lightgreen");
-
                 this.$refs.table_users.listUsers();
+
             } else if (id_tab == "tag_step2") {
                 $("#step_users").attr("data-wizard-state", "pending");
                 $("#step_calendars").attr("data-wizard-state", "current");
@@ -176,36 +152,8 @@ export default {
                         "/media/custom-imgs/icono_tab_desactivo_articulos.svg"
                     );
 
-                document
-                    .getElementById("div_text_users")
-                    .classList.add("text-gray");
-                document
-                    .getElementById("div_text_users")
-                    .classList.remove("text-lightgreen");
-                document
-                    .getElementById("div_text_profile")
-                    .classList.add("text-lightgreen");
-                document
-                    .getElementById("div_text_profile")
-                    .classList.remove("text-gray");
-                document
-                    .getElementById("div_text_banks")
-                    .classList.add("text-gray");
-                document
-                    .getElementById("div_text_banks")
-                    .classList.remove("text-lightgreen");
-                document
-                    .getElementById("div_text_commissions")
-                    .classList.add("text-gray");
-                document
-                    .getElementById("div_text_commissions")
-                    .classList.remove("text-lightgreen");
-                document
-                    .getElementById("div_text_ars_quote")
-                    .classList.add("text-gray");
-                document
-                    .getElementById("div_text_ars_quote")
-                    .classList.remove("text-lightgreen");
+                this.$refs.table_calendars.listCalendars();
+
             } else if (id_tab == "tag_step3") {
                 $("#step_users").attr("data-wizard-state", "pending");
                 $("#step_calendars").attr("data-wizard-state", "pending");
@@ -234,189 +182,7 @@ export default {
                         "src",
                         "/media/custom-imgs/icono_tab_activo_articulos.svg"
                     );
-
-                document
-                    .getElementById("div_text_users")
-                    .classList.add("text-gray");
-                document
-                    .getElementById("div_text_users")
-                    .classList.remove("text-lightgreen");
-                document
-                    .getElementById("div_text_profile")
-                    .classList.add("text-gray");
-                document
-                    .getElementById("div_text_profile")
-                    .classList.remove("text-lightgreen");
-                document
-                    .getElementById("div_text_banks")
-                    .classList.add("text-lightgreen");
-                document
-                    .getElementById("div_text_banks")
-                    .classList.remove("text-gray");
-                document
-                    .getElementById("div_text_commissions")
-                    .classList.add("text-gray");
-                document
-                    .getElementById("div_text_commissions")
-                    .classList.remove("text-lightgreen");
-                document
-                    .getElementById("div_text_ars_quote")
-                    .classList.add("text-gray");
-                document
-                    .getElementById("div_text_ars_quote")
-                    .classList.remove("text-lightgreen");
-
-                this.getCurrencies();
-                this.$refs.table_banks.listBanks();
-                this.$refs.modal_add_bank.getCurrencies();
-
-            } else if (id_tab == "tag_step4") {
-                $("#step_users").attr("data-wizard-state", "pending");
-                $("#step_calendars").attr("data-wizard-state", "pending");
-                $("#step_banks").attr("data-wizard-state", "pending");
-                $("#step_commissions").attr("data-wizard-state", "current");
-                $("#step_ars_quote").attr("data-wizard-state", "pending");
-
-                $("#tag_step1")
-                    .children()
-                    .children()
-                    .attr(
-                        "src",
-                        "/assets/media/custom_img/users_menu_deactivated.svg"
-                    );
-                $("#tag_step2")
-                    .children()
-                    .children()
-                    .attr(
-                        "src",
-                        "/assets/media/custom_img/profile_tab_deactivated.svg"
-                    );
-                $("#tag_step3")
-                    .children()
-                    .children()
-                    .attr(
-                        "src",
-                        "/assets/media/custom_img/bank_tab_deactivated.svg"
-                    );
-                $("#tag_step4")
-                    .children()
-                    .children()
-                    .attr(
-                        "src",
-                        "/assets/media/custom_img/commissions_tab_active.svg"
-                    );
-                $("#tag_step5")
-                    .children()
-                    .children()
-                    .attr(
-                        "src",
-                        "/assets/media/custom_img/quote_tab_deactivated.svg"
-                    );
-
-                document
-                    .getElementById("div_text_users")
-                    .classList.add("text-gray");
-                document
-                    .getElementById("div_text_users")
-                    .classList.remove("text-lightgreen");
-                document
-                    .getElementById("div_text_profile")
-                    .classList.add("text-gray");
-                document
-                    .getElementById("div_text_profile")
-                    .classList.remove("text-lightgreen");
-                document
-                    .getElementById("div_text_banks")
-                    .classList.add("text-gray");
-                document
-                    .getElementById("div_text_banks")
-                    .classList.remove("text-lightgreen");
-                document
-                    .getElementById("div_text_commissions")
-                    .classList.add("text-lightgreen");
-                document
-                    .getElementById("div_text_commissions")
-                    .classList.remove("text-gray");
-                document
-                    .getElementById("div_text_ars_quote")
-                    .classList.add("text-gray");
-                document
-                    .getElementById("div_text_ars_quote")
-                    .classList.remove("text-lightgreen");
-            } else if (id_tab == "tag_step5") {
-                $("#step_users").attr("data-wizard-state", "pending");
-                $("#step_calendars").attr("data-wizard-state", "pending");
-                $("#step_banks").attr("data-wizard-state", "pending");
-                $("#step_commissions").attr("data-wizard-state", "pending");
-                $("#step_ars_quote").attr("data-wizard-state", "current");
-
-                $("#tag_step1")
-                    .children()
-                    .children()
-                    .attr(
-                        "src",
-                        "/assets/media/custom_img/users_menu_deactivated.svg"
-                    );
-                $("#tag_step2")
-                    .children()
-                    .children()
-                    .attr(
-                        "src",
-                        "/assets/media/custom_img/profile_tab_deactivated.svg"
-                    );
-                $("#tag_step3")
-                    .children()
-                    .children()
-                    .attr(
-                        "src",
-                        "/assets/media/custom_img/bank_tab_deactivated.svg"
-                    );
-                $("#tag_step4")
-                    .children()
-                    .children()
-                    .attr(
-                        "src",
-                        "/assets/media/custom_img/commissions_tab_deactivated.svg"
-                    );
-                $("#tag_step5")
-                    .children()
-                    .children()
-                    .attr(
-                        "src",
-                        "/assets/media/custom_img/quote_tab_active.svg"
-                    );
-
-                document
-                    .getElementById("div_text_users")
-                    .classList.add("text-gray");
-                document
-                    .getElementById("div_text_users")
-                    .classList.remove("text-lightgreen");
-                document
-                    .getElementById("div_text_profile")
-                    .classList.add("text-gray");
-                document
-                    .getElementById("div_text_profile")
-                    .classList.remove("text-lightgreen");
-                document
-                    .getElementById("div_text_banks")
-                    .classList.add("text-gray");
-                document
-                    .getElementById("div_text_banks")
-                    .classList.remove("text-lightgreen");
-                document
-                    .getElementById("div_text_commissions")
-                    .classList.add("text-gray");
-                document
-                    .getElementById("div_text_commissions")
-                    .classList.remove("text-lightgreen");
-                document
-                    .getElementById("div_text_ars_quote")
-                    .classList.add("text-lightgreen");
-                document
-                    .getElementById("div_text_ars_quote")
-                    .classList.remove("text-gray");
-            }
+            } 
         },
         showBankModal() {
             $("body").addClass("modal-show");
@@ -427,6 +193,98 @@ export default {
     },
     mounted() {
         $("#select_currency").val(0);
-    }
+    },
+    watch: {
+            '$store.state.errors.code': function() {
+                if(this.errors.type_error == 'delete_user'){
+                    if(this.errors.code != ''){
+                        if(this.errors.code == 1000){
+                            $("#list_users").KTDatatable("reload");
+                            $("#modal_delete_user").modal("hide");
+                            swal("", "Usuario eliminado correctamente", "success");
+                        }else if(this.errors.code == 1001){
+                            swal("", "El usuario no existe", "warning");
+                        }else{
+                            swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
+                        }
+                        this.clearError();
+                    }
+                }else if(this.errors.type_error == 'add_user'){
+                    if(this.errors.code != ''){
+                        if(this.errors.code == 1000){
+                            swal("", "Usuario creado correctamente", "success");
+                            this.changeShowView(1);
+                        }else if(this.errors.code == 1001 || this.errors.code == 1002){
+                            swal("", "Rellena todos los datos", "warning");
+                        }else if(this.errors.code == 1003){
+                            swal("", "El correo ya está registrado", "warning");
+                        }else if(this.errors.code == 1004 || this.errors.code == 1005){
+                            swal("", "El usuario ya está registrado", "warning");
+                        }else{
+                            swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
+                        }
+                        this.clearError();
+                    }   
+                }else if(this.errors.type_error == 'update_user'){
+                    if(this.errors.code != ''){
+                        if(this.errors.code == 1000){
+                            swal("", "Usuario modificado correctamente", "success");
+                            this.changeShowView(1);
+                        }else if(this.errors.code == 1001 || this.errors.code == 1002){
+                            swal("", "Rellena todos los datos", "warning");
+                        }else if(this.errors.code == 1003){
+                            swal("", "El correo ya está registrado", "warning");
+                        }else if(this.errors.code == 1004 || this.errors.code == 1005){
+                            swal("", "El usuario ya está registrado", "warning");
+                        }else{
+                            swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
+                        }
+                        this.clearError();
+                    }   
+                }else if(this.errors.type_error == 'delete_calendar'){
+                    if(this.errors.code != ''){
+                        if(this.errors.code == 1000){
+                            $("#list_calendars").KTDatatable("reload");
+                            $("#modal_form_number_calendar").modal("hide");
+                            swal("", "Calendario creado correctamente", "success");
+                        }else if(this.errors.code == 1001 || this.errors.code == 1002){
+                            swal("", "Rellena todos los datos", "warning");
+                        }else{
+                            swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
+                        }
+                        this.clearError();
+                    }
+
+                }else if(this.errors.type_error == 'add_calendar'){
+                    if(this.errors.code != ''){
+                        if(this.errors.code == 1000){
+                            $("#list_calendars").KTDatatable("reload");
+                            swal("", "Calendario creado correctamente", "success");
+                            $("#modal_form_number_calendar").modal("hide");
+                        }else if(this.errors.code == 1001 || this.errors.code == 1002){
+                            swal("", "Rellena todos los datos", "warning");
+                        }else{
+                            swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
+                        }
+                        this.clearError();
+                    }
+                
+                }else if(this.errors.type_error == 'update_calendar'){
+                    if(this.errors.code != ''){
+                        if(this.errors.code == 1000){
+                            $("#list_calendars").KTDatatable("reload");
+                            swal("", "Calendario modificado correctamente", "success");
+                            $("#modal_form_number_calendar").modal("hide");
+                        }else if(this.errors.code == 1001 || this.errors.code == 1002){
+                            swal("", "Rellena todos los datos", "warning");
+                        }else{
+                            swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
+                        }
+                        this.clearError();
+                    }
+                }
+            }
+        }
+    
 };
 </script>

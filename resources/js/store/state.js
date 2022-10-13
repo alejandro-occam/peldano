@@ -8,14 +8,18 @@ const state = {
                 name: '',
                 surname: '',
                 email: ''
-            }
+            },
+            is_update: 0
         },
         calendars:{
             show_view_state: 1,
+            calendar_obj: null,
+            is_update: 0
         }
     },
     errors: {
-        code: 0
+        code: 0,
+        type_error: ''
     }
 };
 

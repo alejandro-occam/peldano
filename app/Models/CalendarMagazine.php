@@ -9,7 +9,7 @@ class CalendarMagazine extends Model
 {
     use HasFactory;
 
-    public $table = 'calendar_magazine';
+    public $table = 'calendars_magazines';
 
     public $fillable = [
         'number',

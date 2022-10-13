@@ -33,6 +33,11 @@ import PrimeVue from "primevue/config";
 import "primeicons/primeicons.css";
 import "primevue/resources/primevue.min.css";
 import "primevue/resources/themes/saga-blue/theme.css";
+
+import ToastService from "primevue/toastservice";
+import ConfirmationService from "primevue/confirmationservice";
+import Tooltip from "primevue/tooltip";
+import Ripple from "primevue/ripple";
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -107,6 +112,10 @@ app.use(PrimeVue, {
       clear: "Limpiar",
   },
 });
+app.use(ToastService)
+app.use(ConfirmationService)
+app.directive("tooltip", Tooltip)
+app.directive("ripple", Ripple)
 app.mount('#adminapp');
 app.config.globalProperties.$store = store;
 

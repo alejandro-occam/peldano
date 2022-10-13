@@ -1,5 +1,5 @@
 <template>
-    <TableComponent v-if="config.calendars.show_view_state == 1"></TableComponent>
+    <TableComponent ref="table" v-if="config.calendars.show_view_state == 1"></TableComponent>
     <FormNumberComponent></FormNumberComponent>
 </template>
 
@@ -24,8 +24,10 @@ export default {
     computed: {
         ...mapState(["config"]),
     },
-    watch: {
-        
+    methods: {
+        listCalendars(){
+            this.$refs.table.listCalendars();
+        }
     }
 };
 </script>

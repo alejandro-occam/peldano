@@ -26,6 +26,7 @@ Auth::routes();
 
 Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     //CONFIGURATION
+    //USUARIOS
     //List users
     Route::post('/list_users', [App\Http\Controllers\ConfigurationController::class, 'listUsers'])->name('list_user');
     //Add user 
@@ -38,6 +39,20 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::post('/update_user', [App\Http\Controllers\ConfigurationController::class, 'updateUser'])->name('update_user');
     //Eliminar usuario
     Route::get('/delete_user/{id}', [App\Http\Controllers\ConfigurationController::class, 'deleteUser'])->name('delete_user');
+
+    //CALENDARIOS
+    //Listar calendarios
+    Route::post('/list_calendars', [App\Http\Controllers\ConfigurationController::class, 'listCalendars'])->name('list_calendars');
+    //Información necesaria para el formulario de calendarios
+    Route::get('/get_info_form_add_calendar', [App\Http\Controllers\ConfigurationController::class, 'getInfoFormCalendars'])->name('get_info_form_add_calendar');
+    //Añadir calendario 
+    Route::post('/add_calendar', [App\Http\Controllers\ConfigurationController::class, 'addCalendar'])->name('add_calendar');
+    //Eliminar calendario
+    Route::get('/delete_calendar/{id}', [App\Http\Controllers\ConfigurationController::class, 'deleteCalendar'])->name('delete_calendar');
+    //Consultar información de un calendario
+    Route::get('/get_info_calendar/{id}', [App\Http\Controllers\ConfigurationController::class, 'getInfoCalendar'])->name('get_info_calendar');
+    //Actualizar calendario
+    Route::post('/update_calendar', [App\Http\Controllers\ConfigurationController::class, 'updateCalendar'])->name('update_calendar');
     
 
     Route::get('/{vue_capture?}', function () {

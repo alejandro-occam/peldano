@@ -7,11 +7,15 @@ use App\Models\User;
 use App\Models\RoleUser;
 use App\Models\Role;
 use App\Models\Position;
+use App\Models\Calendar;
+use App\Models\CalendarMagazine;
 use Illuminate\Support\Facades\Hash;
+use DateTime;
+use DateTimeZone;
 
 class ConfigurationController extends Controller
 {
-    //
+    //USUARIOS
     //Consultar información necesaria para el registro de usuarios
     function getInfoFormAddUser(){
         //Consultamos los cargos
@@ -57,7 +61,7 @@ class ConfigurationController extends Controller
             $user['custom_date'] = $this->customDate($user->created_at);
 
         }
-        $total_users = count($array_users);
+        $total_users = User::count();
 
         //Devolución de la llamada con la paginación
         $meta['page'] = $pagination['page'];
@@ -144,8 +148,6 @@ class ConfigurationController extends Controller
 
     //Consultar información de un usuario
     function getInfoUser($id){
-        error_log($id);
-
         $user = User::select('users.*', 'positions.name as name_position')->leftJoin('positions', 'positions.id', 'users.id_position')->where('users.id',$id)->first();
         $user['discharge_date'] = $this->customDateBis($user->created_at);
 
@@ -242,6 +244,209 @@ class ConfigurationController extends Controller
         return response()->json($response);
     }
 
+    //END USUARIOS
+
+    //CALENDARIOS
+     //Consultar información necesaria para el registro de calendarios
+    function getInfoFormCalendars(){
+        $array_calendars = Calendar::get();
+        $response['array_calendars'] = $array_calendars;
+        $response['code'] = 1000;
+        return response()->json($response);
+    }
+
+    //Añadir usuario
+    function addCalendar(Request $request){
+        date_default_timezone_set('Europe/Madrid');
+        if (!$request->has('id_calendar') || !$request->has('number')  || !$request->has('title') || !$request->has('topics_date') || !$request->has('drafting_date') || !$request->has('commercial_date') || !$request->has('output_date')
+            || !$request->has('billing_date') || !$request->has('front_page_date')) {
+            $response['code'] = 1001;
+            $response['msg'] = "Missing or empty parameters";
+            return response()->json($response);
+        }
+
+        $id_calendar = $request->get('id_calendar');
+        $number = $request->get('number');
+        $title = $request->get('title');
+        $topics_date = $request->get('topics_date');
+        $drafting_date = $request->get('drafting_date');
+        $commercial_date = $request->get('commercial_date');
+        $output_date = $request->get('output_date');
+        $billing_date = $request->get('billing_date');
+        $front_page_date = $request->get('front_page_date');
+
+        if (!isset($id_calendar) || empty($id_calendar) || !isset($number) || empty($number) || !isset($title) || empty($title) || !isset($topics_date) || empty($topics_date) || !isset($drafting_date) || empty($drafting_date) || !isset($commercial_date) || empty($commercial_date)
+            || !isset($output_date) || empty($output_date) || !isset($billing_date) || empty($billing_date) || !isset($front_page_date) || empty($front_page_date)) {
+            $response['code'] = 1002;
+            $response['msg'] = "Missing or empty parameters";
+            return response()->json($response);
+        }
+        
+        CalendarMagazine::create([
+            'number' => $number,
+            'title' => $title,
+            'topics' => date('d-m-Y',strtotime($topics_date)),
+            'drafting' => date('d-m-Y',strtotime($drafting_date)),
+            'commercial' => date('d-m-Y',strtotime($commercial_date)),
+            'output' => date('d-m-Y',strtotime($output_date)),
+            'billing' => date('d-m-Y',strtotime($billing_date)),
+            'front_page' => date('d-m-Y',strtotime($front_page_date)),
+            'id_calendar' => $id_calendar,
+        ]);
+
+        $response['code'] = 1000;
+        return response()->json($response);
+    }
+
+    //Listado de calendarios
+    function listCalendars(Request $request){
+        //Elementos para la paginación 
+        $pagination = $request->get('pagination');
+        $query = $request->get('query');
+        $start = 0;
+        $skip = $pagination['perpage'];
+        if ($pagination['page'] != 1) {
+            $start = ($pagination['page'] - 1) * $pagination['perpage'];
+            //Consultamos si hay tantos registros como para empezar en el numero de $start
+            $num_calendars = CalendarMagazine::count();
+            if ($start >= $num_calendars) {
+                $skip = $skip - 1;
+                $start = $start - 10;
+                if ($start < 0) {
+                    $start = 0;
+                }
+            }
+        }
+
+        $array_calendars = CalendarMagazine::select('calendars_magazines.*', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->get();
+        foreach($array_calendars as $calendar){
+            
+        }
+        $total_calendars = CalendarMagazine::count();
+
+        //Devolución de la llamada con la paginación
+        $meta['page'] = $pagination['page'];
+
+        if ($total_calendars < 1) {
+            $meta['page'] = 1;
+        }
+
+        $meta['pages'] = 1;
+        if (isset($pagination['pages'])) {
+            $meta['pages'] = $pagination['pages'];
+        }
+        $meta['perpage'] = $pagination['perpage'];
+        $meta['total'] = $total_calendars;
+        $meta['sort'] = 'asc';
+        $meta['field'] = 'id';
+        $response['meta'] = $meta;
+        $response['data'] = $array_calendars;
+        return response()->json($response);
+    }
+
+    //Eliminar usuario
+    function deleteCalendar($id){
+        //Consultamos si existe el usuario
+        $calendar = CalendarMagazine::find($id);
+        if(!$calendar){
+            $response['code'] = 1001;
+            return response()->json($response);
+        }
+
+        //Eliminamos el calendario
+        $calendar->delete();
+
+        $response['code'] = 1000;
+        return response()->json($response);
+    }
+
+    //Consultar información del calendario
+    function getInfoCalendar($id){
+        $calendar = CalendarMagazine::find($id);
+
+        $response['calendar'] = $calendar;
+        $response['code'] = 1000;
+        return response()->json($response);
+    }
+
+    //Actualizar calendario
+    function updateCalendar(Request $request){
+        date_default_timezone_set('Europe/Madrid');
+        if (!$request->has('id') || !$request->has('id_calendar') || !$request->has('number')  || !$request->has('title') || !$request->has('topics_date') || !$request->has('drafting_date') || !$request->has('commercial_date') || !$request->has('output_date')
+            || !$request->has('billing_date') || !$request->has('front_page_date')) {
+            $response['code'] = 1001;
+            $response['msg'] = "Missing or empty parameters";
+            return response()->json($response);
+        }
+
+        $id = $request->get('id');
+        $id_calendar = $request->get('id_calendar');
+        $number = $request->get('number');
+        $title = $request->get('title');
+        $topics = $request->get('topics_date');
+        $drafting = $request->get('drafting_date');
+        $commercial = $request->get('commercial_date');
+        $output = $request->get('output_date');
+        $billing = $request->get('billing_date');
+        $front_page = $request->get('front_page_date');
+
+        $madrid = new DateTimeZone('Europe/Madrid');
+
+        if (!isset($id) || empty($id) || !isset($id_calendar) || empty($id_calendar) || !isset($number) || empty($number) || !isset($title) || empty($title) || !isset($topics) || empty($topics) || !isset($drafting) || empty($drafting) || !isset($commercial) || empty($commercial)
+            || !isset($output) || empty($output) || !isset($billing) || empty($billing) || !isset($front_page) || empty($front_page)) {
+            $response['code'] = 1002;
+            $response['msg'] = "Missing or empty parameters";
+            return response()->json($response);
+        }
+
+        //Consultamos si existe el calendario
+        $calendar = CalendarMagazine::find($id);
+        if(!$calendar){
+            $response['code'] = 1003;
+            return response()->json($response);
+        }
+
+        if(str_contains($topics, 'T') && str_contains($topics, 'Z')){            
+            $topics = date('d-m-Y',strtotime($topics));
+        }
+
+        if(str_contains($drafting, 'T') && str_contains($drafting, 'Z')){
+            $drafting = date('d-m-Y',strtotime($drafting));
+        }
+
+        if(str_contains($commercial, 'T') && str_contains($commercial, 'Z')){
+            $commercial = date('d-m-Y',strtotime($commercial));
+        }
+
+        if(str_contains($output, 'T') && str_contains($output, 'Z')){
+            $output = date('d-m-Y',strtotime($output));
+        }
+
+        
+        if(str_contains($billing, 'T') && str_contains($billing, 'Z')){
+            $billing = date('d-m-Y',strtotime($billing));
+        }
+
+        if(str_contains($front_page, 'T') && str_contains($front_page, 'Z')){
+            $front_page = date('d-m-Y',strtotime($front_page));
+        }
+        
+        $calendar->number = $number;
+        $calendar->title = $title;
+        $calendar->topics = $topics;
+        $calendar->drafting = $drafting;
+        $calendar->commercial = $commercial;
+        $calendar->output = $output;
+        $calendar->billing = $billing;
+        $calendar->front_page = $front_page;
+        $calendar->id_calendar = $id_calendar;
+        $calendar->save();
+
+        $response['code'] = 1000;
+        return response()->json($response);
+    }
+    //END CALENDARIOS
+
     //UTILS
     //Cambiar de formato la fecha
     public function customDate($date){
@@ -252,6 +457,12 @@ class ConfigurationController extends Controller
 
     public function customDateBis($date){
         $aux1 = explode(" ", $date);
+        $aux2 = explode('-', $aux1[0]);
+        return $order_date = $aux2[2] . '-' . $aux2[1] . '-' . $aux2[0];
+    }
+
+    public function customDateTris($date){
+        $aux1 = explode("T", $date);
         $aux2 = explode('-', $aux1[0]);
         return $order_date = $aux2[2] . '-' . $aux2[1] . '-' . $aux2[0];
     }

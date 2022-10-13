@@ -1,7 +1,8 @@
 <template>
     <div>
         <div class="d-flex">
-            <h2 class="color-blue mr-auto" id="title_modal">Añadir usuario</h2>
+            <h2 class="color-blue mr-auto" id="title_modal" v-if="config.users.is_update == 0">Añadir usuario</h2>
+            <h2 class="color-blue mr-auto" id="title_modal" v-else>Modificar usuario</h2>
             <AddButtonComponent
                     @click.native="changeShowView(1)"
                     :columns="'col-1'"
@@ -30,21 +31,21 @@
             <div class="d-flex input-group my-5" >
                 <span class="my-auto w-25">Email</span>
                 <div class="w-50">
-                    <input v-model="email" type="text" class="form-control borders-box" placeholder="" :disabled="disabled_password == 1"/>
+                    <input v-model="email" type="text" class="form-control borders-box" placeholder="" :disabled="disabled_password == 1" autocomplete="off"/>
                     <small class="text-danger" v-if="email_error">El correo no es válido</small>
                 </div>
             </div>
             <div class="d-flex input-group my-5" >
                 <span class="my-auto w-25">Usuario</span>
                 <div class="w-50">
-                    <input v-model="user" type="text" class="form-control borders-box" placeholder="" :disabled="disabled_password == 1"/>
+                    <input v-model="user" type="text" class="form-control borders-box" placeholder="" :disabled="disabled_password == 1" autocomplete="off"/>
                     <small class="text-danger" v-if="user_error">El usuario no es válido</small>
                 </div>
             </div>
             <div class="d-flex input-group my-5" >
                 <span class="my-auto w-25">Contraseña</span>
                 <div class="w-50">
-                    <input v-model="password" type="password" class="form-control borders-box" placeholder="" :disabled="disabled_password == 1"/>
+                    <input v-model="password" type="password" class="form-control borders-box" placeholder="" :disabled="disabled_password == 1" autocomplete="off"/>
                     <small class="text-danger" v-if="password_error">La contaseña no es válida</small>
                 </div>
             </div>
@@ -133,7 +134,7 @@
                     </div>
                 </div>
             </div>
-            <div class="d-flex input-group mt-10" v-if="is_update == 0">
+            <div class="d-flex input-group mt-10" v-if="config.users.is_update == 0">
                 <span class="my-auto w-25"></span>
                 <div class="w-50">
                     <button type="button" class="bg-azul btn font-weight-bolder py-4 px-6 w-100 color-white" @click="this.validateForm(1)">Añadir</button>
@@ -321,27 +322,6 @@
             this.getInfoFormAddUser();
         },
         watch: {
-            '$store.state.errors.code': function() {
-                if(this.errors.code != ''){
-                    if(this.errors.code == 1000){
-                        if(this.type == 1){
-                            swal("", "Usuario creado correctamente", "success");
-                        }else{
-                            swal("", "Usuario modificado correctamente", "success");
-                        }
-                        this.changeShowView(1);
-                    }else if(this.errors.code == 1001 || this.errors.code == 1002){
-                        swal("", "Rellena todos los datos", "warning");
-                    }else if(this.errors.code == 1003){
-                        swal("", "El correo ya está registrado", "warning");
-                    }else if(this.errors.code == 1004 || this.errors.code == 1005){
-                        swal("", "El usuario ya está registrado", "warning");
-                    }else{
-                        swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
-                    }
-                    this.clearError();
-                }
-            },
             '$store.state.config.users.user_obj': function() {
                 let user = this.config.users.user_obj;
                 this.name = user.name;

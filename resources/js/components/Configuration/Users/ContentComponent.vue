@@ -1,5 +1,5 @@
 <template>
-    <TableComponent v-if="config.users.show_view_state == 1"></TableComponent>
+    <TableComponent ref="table" v-if="config.users.show_view_state == 1"></TableComponent>
     <FormUserComponent v-else-if="config.users.show_view_state == 2"></FormUserComponent>
     <ShowUserComponent v-else></ShowUserComponent>
     <DeleteUserComponent></DeleteUserComponent>
@@ -30,8 +30,10 @@ export default {
     computed: {
         ...mapState(["config"]),
     },
-    watch: {
-        
+    methods: {
+        listUsers(){
+            this.$refs.table.listUsers();
+        }
     }
 };
 </script>

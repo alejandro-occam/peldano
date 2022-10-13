@@ -31,7 +31,7 @@
         <div class="col-12">
             <div
                 class="datatable datatable-bordered datatable-head-custom"
-                id="list_users"
+                id="list_calendars"
                 style="width: 100%"
             ></div>
         </div>
@@ -44,6 +44,7 @@
 
     import SearchComponent from "../../Partials/SearchComponent.vue";
     import AddButtonComponent from "../../Partials/AddButtonComponent.vue";
+import { throwStatement } from "@babel/types";
 
     export default {
         name: "TableComponent",
@@ -54,36 +55,226 @@
         data() {
             return {
                 publicPath: window.location.origin,
-                select_calendar_filter: ''
+                select_calendar_filter: '',
             };
         },
         methods: {
-            ...mapActions([""]),
-            ...mapMutations([""]),
+            ...mapActions(["deleteCalendar", "getInfoCalendar"]),
+            ...mapMutations(["controlFormCalendars"]),
             openFormModal(){
+                this.controlFormCalendars(0);
                 $('#modal_form_number_calendar').modal('show');
-            }
+            },
+            listCalendars() {
+                let me = this;
+    
+                $("#list_calendars").KTDatatable("destroy");
+                $("#list_calendars").KTDatatable("init");
+                $("#list_calendars").KTDatatable({
+                    data: {
+                        type: "remote",
+                        source: {
+                            read: {
+                                url:
+                                    this.publicPath +
+                                    "/admin/list_calendars",
+                                headers: {
+                                    "X-CSRF-TOKEN": $(
+                                        'meta[name="csrf-token"]'
+                                    ).attr("content"),
+                                },
+                                method: 'POST'
+                            },
+                        },
+                        pageSize: 10,
+                        serverPaging: !0,
+                        serverFiltering: !0,
+                        serverSorting: !0,
+                    },
+                    layout: {
+                        scroll: true,
+                        customScrollbar: true,
+                        scrollX: true,
+                        footer: !1,
+                        spinner: {
+                            color: "#FFF",
+                        },
+                    },
+                    sortable: !0,
+                    pagination: !0,
+                    search: {
+                        input: $("#search_users"),
+                        key: "search_users",
+                    },
+                    translate: {
+                        records: {
+                            processing: "Cargando...",
+                            noRecords: "Sin resultados",
+                        },
+                        toolbar: {
+                            pagination: {
+                                items: {
+                                    info: "Mostrando {{start}} - {{end}} de {{total}} resultados",
+                                },
+                            },
+                        },
+                    },
+                    rows: {
+                        autoHide: false,
+                    },
+                    columns: [
+                        {
+                            field: "#calendar",
+                            title: "Calendario",
+                            sortable: !1,
+                            textAlign: "center",
+                            template: function (row, data, index) {
+                                return (
+                                        '<span class="text-dark">' +
+                                        row.calendar_name +
+                                        "</span>"
+                                    );
+                            },
+                        },
+                        {
+                            field: "#number",
+                            title: "Num.",
+                            sortable: !1,
+                            textAlign: "center",
+                            width: 100,
+                            template: function (row, data, index) {
+                                return (
+                                        '<span class="text-dark">' +
+                                        row.number +
+                                        "</span>"
+                                    );
+                            },
+                        },
+                        {
+                            field: "#title",
+                            title: "Título",
+                            sortable: !1,
+                            textAlign: "center",
+                            template: function (row, data, index) {
+                                return (
+                                        '<span class="text-dark">' +
+                                        row.title +
+                                        "</span>"
+                                    );
+                            },
+                        },
+                        {
+                            field: "#drafting",
+                            title: "Redacción",
+                            sortable: !1,
+                            textAlign: "center",
+                            template: function (row, data, index) {
+                                return (
+                                        '<span class="text-gray font-weight-bold">' +
+                                        row.drafting +
+                                        "</span>"
+                                    );
+                            },
+                        },
+                        {
+                            field: "#commercial",
+                            title: "Publicidad",
+                            sortable: !1,
+                            textAlign: "center",
+                            template: function (row, data, index) {
+                                return (
+                                        '<span class="text-gray font-weight-bold">' +
+                                        row.commercial +
+                                        "</span>"
+                                    );
+                            },
+                        },
+                        {
+                            field: "#output",
+                            title: "Salida",
+                            sortable: !1,
+                            textAlign: "center",
+                            template: function (row, data, index) {
+                                return (
+                                        '<span class="text-gray font-weight-bold">' +
+                                        row.output +
+                                        "</span>"
+                                    );
+                            },
+                        },
+                        {
+                            field: "#billing",
+                            title: "Facturación",
+                            sortable: !1,
+                            textAlign: "center",
+                            template: function (row, data, index) {
+                                return (
+                                        '<span class="text-gray font-weight-bold">' +
+                                        row.billing +
+                                        "</span>"
+                                    );
+                            },
+                        },
+                        {
+                            field: "#front_page",
+                            title: "Portada",
+                            sortable: !1,
+                            textAlign: "center",
+                            template: function (row, data, index) {
+                                return (
+                                        '<span class="text-gray font-weight-bold">' +
+                                        row.front_page +
+                                        "</span>"
+                                    );
+                            },
+                        },
+                        {
+                            field: "#",
+                            title: "",
+                            sortable: !1,
+                            textAlign: "center",
+                            template: function (row, data, index) {
+                                var html ='<div>';
+                                html += '<button type="button" class="btn p-0 mx-2 btn-edit" data-id="' + row.id + '"><img class="edit-hover" src="/media/custom-imgs/icono_tabla_editar.svg" height="30px" width="auto"></button>';
+                                html += '<button type="button" class="btn p-0 mx-2 btn-delete" data-id="' + row.id + '"><img class="edit-hover" src="/media/custom-imgs/icono_tabla_eliminar.svg" height="30px" width="auto"></button></div>';
+                                return html;
+                            },
+                        },
+                    ],
+                });
+    
+                $("#list_calendars").on("click", ".btn-edit", function () {
+                    var id = $(this).data("id");
+                    me.controlFormCalendars(1);
+                    me.getInfoCalendar(id);
+                    $('#modal_form_number_calendar').modal('show');
+                });
+
+                $("#list_calendars").on("click", ".btn-delete", function () {
+                    var id = $(this).data("id");
+                    swal({
+                        title: '¿Está seguro de eliminar el calendario?',
+                        text: 'No podrás recuperar los datos eliminados',
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#2e49ff",
+                        confirmButtonText: 'Aceptar',
+                        cancelButtonText: 'Cancelar',
+                        closeOnCancel: true,
+                        closeOnConfirm: false
+                    }, function(isConfirm) {
+                        if (isConfirm) {
+                            me.deleteCalendar(id);
+                        }
+                    });                
+                });
+            },
         },
         computed: {
                 ...mapState(["errors", "config"]),
         },
         mounted() {
-        },
-        watch: {
-            '$store.state.errors.code': function() {
-                if(this.errors.code != ''){
-                    if(this.errors.code == 1000){
-                        $("#list_users").KTDatatable("reload");
-                        $("#modal_delete_user").modal("hide");
-                        swal("", "Usuario eliminado correctamente", "success");
-                    }else if(this.errors.code == 1001){
-                        swal("", "El usuario no existe", "warning");
-                    }else{
-                        swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
-                    }
-                    this.clearError();
-                }
-            },
+            this.listCalendars();
         }
     };
     </script>
