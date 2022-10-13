@@ -183,7 +183,9 @@ const actions = {
         try {
             const response = await http({
                 url: "/admin/list_calendars_to_export",
-                params: params,
+                params: {
+                    select_calendar_filter: params.select_calendar_filter
+                },
                 method: 'post'
             });
 

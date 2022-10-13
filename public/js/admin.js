@@ -23455,17 +23455,27 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   data: function data() {
     return {
-      publicPath: window.location.origin
+      publicPath: window.location.origin,
+      select_calendar_filter: ''
     };
   },
   methods: _objectSpread(_objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapMutations)(["changeShowViewCalendar"])), (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapActions)(["listCalendarsToExport", "downloadListCalendarsCsv"])), {}, {
-    test: function test() {
+    downloadFile: function downloadFile() {
       window.open("http://127.0.0.1:8000/admin/download_list_calendars_csv", "_self");
+    },
+    reloadList: function reloadList() {
+      var param = {
+        select_calendar_filter: this.select_calendar_filter
+      };
+      this.listCalendarsToExport(param);
     }
   }),
   computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapState)(["config"])),
   mounted: function mounted() {
-    this.listCalendarsToExport();
+    var param = {
+      select_calendar_filter: this.select_calendar_filter
+    };
+    this.listCalendarsToExport(param);
   }
 });
 
@@ -24800,23 +24810,35 @@ var _hoisted_2 = {
   "class": "col-12 d-flex flex-wrap justify-content-between"
 };
 var _hoisted_3 = {
+  "class": "d-flex align-items-center justify-content-center w-15"
+};
+
+var _hoisted_4 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("option", {
+  value: "",
+  selected: ""
+}, " Elige un calendario ", -1
+/* HOISTED */
+);
+
+var _hoisted_5 = ["value", "textContent"];
+var _hoisted_6 = {
   "class": "col-12 mt-7"
 };
-var _hoisted_4 = {
+var _hoisted_7 = {
   "class": "datatable datatable-bordered datatable-head-custom datatable-default datatable-primary datatable-scroll datatable-loaded",
   id: "list_calendars",
   style: {
     "width": "100%"
   }
 };
-var _hoisted_5 = {
+var _hoisted_8 = {
   "class": "datatable-table",
   style: {
     "display": "block"
   }
 };
 
-var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("thead", {
+var _hoisted_9 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("thead", {
   "class": "datatable-head"
 }, [/*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tr", {
   "class": "datatable-row",
@@ -24883,12 +24905,35 @@ var _hoisted_6 = /*#__PURE__*/(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementV
 /* HOISTED */
 );
 
-var _hoisted_7 = ["innerHTML"];
+var _hoisted_10 = ["innerHTML"];
 function render(_ctx, _cache, $props, $setup, $data, $options) {
   var _component_AddButtonComponent = (0,vue__WEBPACK_IMPORTED_MODULE_0__.resolveComponent)("AddButtonComponent");
 
-  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_AddButtonComponent, {
-    onClick: _cache[0] || (_cache[0] = function ($event) {
+  return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("div", _hoisted_1, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_2, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.withDirectives)((0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("select", {
+    "class": "form-control w-100 bg-gray text-dark select-custom select-filter",
+    name: 'select_calendar_filter',
+    id: 'select_calendar_filter_excel',
+    "onUpdate:modelValue": _cache[0] || (_cache[0] = function ($event) {
+      return $data.select_calendar_filter = $event;
+    }),
+    "data-style": "select-lightgreen",
+    onChange: _cache[1] || (_cache[1] = function () {
+      return $options.reloadList && $options.reloadList.apply($options, arguments);
+    })
+  }, [_hoisted_4, ((0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(true), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)(vue__WEBPACK_IMPORTED_MODULE_0__.Fragment, null, (0,vue__WEBPACK_IMPORTED_MODULE_0__.renderList)(_ctx.config.calendars.array_calendars, function (calendar) {
+    return (0,vue__WEBPACK_IMPORTED_MODULE_0__.openBlock)(), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementBlock)("option", {
+      value: calendar.id,
+      key: calendar.id,
+      textContent: (0,vue__WEBPACK_IMPORTED_MODULE_0__.toDisplayString)(calendar.name)
+    }, null, 8
+    /* PROPS */
+    , _hoisted_5);
+  }), 128
+  /* KEYED_FRAGMENT */
+  ))], 544
+  /* HYDRATE_EVENTS, NEED_PATCH */
+  ), [[vue__WEBPACK_IMPORTED_MODULE_0__.vModelSelect, $data.select_calendar_filter]])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_AddButtonComponent, {
+    onClick: _cache[2] || (_cache[2] = function ($event) {
       return _ctx.changeShowViewCalendar(1);
     }),
     columns: 'col-1 ml-auto',
@@ -24900,8 +24945,8 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
   }, null, 8
   /* PROPS */
   , ["src"]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createVNode)(_component_AddButtonComponent, {
-    onClick: _cache[1] || (_cache[1] = function ($event) {
-      return $options.test();
+    onClick: _cache[3] || (_cache[3] = function ($event) {
+      return $options.downloadFile();
     }),
     columns: 'col-1 mx-7',
     text: 'Exportar',
@@ -24920,12 +24965,12 @@ function render(_ctx, _cache, $props, $setup, $data, $options) {
     height: 25
   }, null, 8
   /* PROPS */
-  , ["src"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_3, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_4, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_5, [_hoisted_6, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", {
+  , ["src"])]), (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_6, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("div", _hoisted_7, [(0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("table", _hoisted_8, [_hoisted_9, (0,vue__WEBPACK_IMPORTED_MODULE_0__.createElementVNode)("tbody", {
     "class": "datatable-body ps",
     innerHTML: _ctx.config.calendars.html_calendar
   }, null, 8
   /* PROPS */
-  , _hoisted_7)])])])]);
+  , _hoisted_10)])])])]);
 }
 
 /***/ }),
@@ -26742,7 +26787,9 @@ var actions = {
               _context11.next = 4;
               return (0,_axios__WEBPACK_IMPORTED_MODULE_0__["default"])({
                 url: "/admin/list_calendars_to_export",
-                params: params,
+                params: {
+                  select_calendar_filter: params.select_calendar_filter
+                },
                 method: 'post'
               });
 

@@ -467,8 +467,15 @@ class ConfigurationController extends Controller
     }
 
     //Listar tabla de calendarios para exportar
-    function listCalendarsToExport(){
-        $array_calendars = CalendarMagazine::select('calendars_magazines.*', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->get();
+    function listCalendarsToExport(Request $request){
+        $select_calendar_filter = $request->get('select_calendar_filter');
+
+        if(empty($select_calendar_filter)){
+            $array_calendars = CalendarMagazine::select('calendars_magazines.*', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->get();
+        }else{
+            $array_calendars = CalendarMagazine::select('calendars_magazines.*', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->where('id_calendar', $select_calendar_filter)->get();
+        }
+        
 
         $html = '';
         foreach($array_calendars as $calendar){
