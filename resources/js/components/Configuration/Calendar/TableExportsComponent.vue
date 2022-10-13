@@ -94,7 +94,7 @@
             ...mapMutations(["changeShowViewCalendar"]),
             ...mapActions(["listCalendarsToExport", "downloadListCalendarsCsv"]),
             downloadFile(){
-                window.open("http://127.0.0.1:8000/admin/download_list_calendars_csv","_self")
+                window.open("http://127.0.0.1:8000/admin/download_list_calendars_csv?select_calendar_filter=" + this.select_calendar_filter,"_self")
             },
             reloadList(){
                 var param = {

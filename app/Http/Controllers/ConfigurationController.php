@@ -476,7 +476,6 @@ class ConfigurationController extends Controller
             $array_calendars = CalendarMagazine::select('calendars_magazines.*', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->where('id_calendar', $select_calendar_filter)->get();
         }
         
-
         $html = '';
         foreach($array_calendars as $calendar){
             $html .= '<tr data-row="0" class="datatable-row" style="left: 0px;">

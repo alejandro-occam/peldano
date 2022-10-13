@@ -23461,7 +23461,7 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
   },
   methods: _objectSpread(_objectSpread(_objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapMutations)(["changeShowViewCalendar"])), (0,vuex__WEBPACK_IMPORTED_MODULE_1__.mapActions)(["listCalendarsToExport", "downloadListCalendarsCsv"])), {}, {
     downloadFile: function downloadFile() {
-      window.open("http://127.0.0.1:8000/admin/download_list_calendars_csv", "_self");
+      window.open("http://127.0.0.1:8000/admin/download_list_calendars_csv?select_calendar_filter=" + this.select_calendar_filter, "_self");
     },
     reloadList: function reloadList() {
       var param = {
