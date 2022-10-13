@@ -12,6 +12,8 @@ use App\Models\CalendarMagazine;
 use Illuminate\Support\Facades\Hash;
 use DateTime;
 use DateTimeZone;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
 class ConfigurationController extends Controller
 {
@@ -64,6 +66,8 @@ class ConfigurationController extends Controller
                         ->orWhere('users.surname', 'like', '%'.$search.'%')
                         ->orWhere('users.email', 'like', '%'.$search.'%')
                         ->orWhere('users.user', 'like', '%'.$search.'%')
+                        ->skip($start)
+                        ->take($skip)
                         ->get();
         foreach($array_users as $user){
             $user['custom_date'] = $this->customDate($user->created_at);
@@ -333,10 +337,10 @@ class ConfigurationController extends Controller
         $select_calendar_filter = $request->get('select_calendar_filter');
 
         if(empty($select_calendar_filter)){
-            $array_calendars = CalendarMagazine::select('calendars_magazines.*', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->get();
+            $array_calendars = CalendarMagazine::select('calendars_magazines.*', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->skip($start)->take($skip)->get();
             $total_calendars = CalendarMagazine::count();
         }else{
-            $array_calendars = CalendarMagazine::select('calendars_magazines.*', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->where('calendars_magazines.id_calendar', $select_calendar_filter)->get();
+            $array_calendars = CalendarMagazine::select('calendars_magazines.*', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->where('calendars_magazines.id_calendar', $select_calendar_filter)->skip($start)->take($skip)->get();
             $total_calendars = CalendarMagazine::where('id_calendar', $select_calendar_filter)->count();
         }
 
@@ -460,6 +464,102 @@ class ConfigurationController extends Controller
 
         $response['code'] = 1000;
         return response()->json($response);
+    }
+
+    //Listar tabla de calendarios para exportar
+    function listCalendarsToExport(){
+        $array_calendars = CalendarMagazine::select('calendars_magazines.*', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->get();
+
+        $html = '';
+        foreach($array_calendars as $calendar){
+            $html .= '<tr data-row="0" class="datatable-row" style="left: 0px;">
+                        <td class="datatable-cell-center datatable-cell" data-field="#calendar" aria-label="null">
+                            <span style="width: 175px;">
+                                <span class="text-dark">'.$calendar['calendar_name'].'</span>
+                            </span>
+                        </td>
+                        <td class="datatable-cell-center datatable-cell" data-field="#number" aria-label="null">
+                            <span style="width: 100px;">
+                                <span class="text-dark">'.$calendar->number.'</span>
+                            </span>
+                        </td>
+                        <td class="datatable-cell-center datatable-cell" data-field="#title" aria-label="null">
+                            <span style="width: 175px;">
+                                <span class="text-dark">'.$calendar->title.'</span>
+                            </span>
+                        </td>
+                        <td class="datatable-cell-center datatable-cell" data-field="#drafting" aria-label="null">
+                            <span style="width: 175px;">
+                                <span class="text-gray font-weight-bold">'.$calendar->drafting.'</span>
+                            </span>
+                        </td>
+                        <td class="datatable-cell-center datatable-cell" data-field="#commercial" aria-label="null">
+                            <span style="width: 175px;">
+                                <span class="text-gray font-weight-bold">'.$calendar->commercial.'</span>
+                            </span>
+                        </td>
+                        <td class="datatable-cell-center datatable-cell" data-field="#output" aria-label="null">
+                            <span style="width: 175px;">
+                                <span class="text-gray font-weight-bold">'.$calendar->output.'</span>
+                            </span>
+                        </td>
+                        <td class="datatable-cell-center datatable-cell" data-field="#billing" aria-label="null">
+                            <span style="width: 175px;">
+                                <span class="text-gray font-weight-bold">'.$calendar->billing.'</span>
+                            </span>
+                        </td>
+                        <td class="datatable-cell-center datatable-cell" data-field="#front_page" aria-label="null">
+                            <span style="width: 175px;">
+                                <span class="text-gray font-weight-bold">'.$calendar->front_page.'</span>
+                            </span>
+                        </td>
+                    </tr>';
+        }
+
+        $response['code'] = 1000;
+        $response['array_calendars'] = $html;
+        return response()->json($response);
+    }
+
+    //Descargar tabla calendarios csv
+    function downloadListCalendarsCsv(){    
+        //Creamos las columnas del fichero
+        $array_custom_calendars = array (
+            array('Calendario', 'Num.', 'Título', 'Redacción', 'Publicidad', 'Salida', 'Facturación', 'Portada')
+        );
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        //Creamos las cabeceras
+        $sheet->setCellValue('A1', 'Calendario');
+        $sheet->setCellValue('B1', 'Num.');
+        $sheet->setCellValue('C1', 'Título');
+        $sheet->setCellValue('D1', 'Redacción');
+        $sheet->setCellValue('E1', 'Publicidad');
+        $sheet->setCellValue('F1', 'Salida');
+        $sheet->setCellValue('G1', 'Facturación');
+        $sheet->setCellValue('H1', 'Portada');
+
+        //Consultamos los usuarios
+        $array_calendars = CalendarMagazine::select('calendars_magazines.number', 'calendars_magazines.title', 'calendars_magazines.drafting', 'calendars_magazines.commercial', 'calendars_magazines.output', 'calendars_magazines.billing',
+                                                    'calendars_magazines.front_page', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->get();
+
+        foreach($array_calendars as $key => $calendar){
+            $sheet->setCellValue('A'.($key+2), $calendar->calendar_name);
+            $sheet->setCellValue('B'.($key+2), $calendar->number);
+            $sheet->setCellValue('C'.($key+2), $calendar->title);
+            $sheet->setCellValue('D'.($key+2), $calendar->drafting);
+            $sheet->setCellValue('E'.($key+2), $calendar->commercial);
+            $sheet->setCellValue('F'.($key+2), $calendar->output);
+            $sheet->setCellValue('G'.($key+2), $calendar->billing);
+            $sheet->setCellValue('H'.($key+2), $calendar->front_page);
+        }
+
+        $writer = new Xlsx($spreadsheet);
+        $writer = new Xlsx($spreadsheet);
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="'.'calendarios.xlsx');
+        $writer->save('php://output');
     }
     //END CALENDARIOS
 

@@ -1,19 +1,22 @@
 <template>
     <TableComponent ref="table" v-if="config.calendars.show_view_state == 1"></TableComponent>
+    <TableExportsComponent v-else></TableExportsComponent>
     <FormNumberComponent></FormNumberComponent>
 </template>
 
 <script>
 
-import { mapState , mapActions} from "vuex";
+import { mapState , mapActions, mapMutations} from "vuex";
 
 import TableComponent from "./TableComponent.vue";
+import TableExportsComponent from "./TableExportsComponent.vue"
 import FormNumberComponent from "./FormNumberComponent.vue";
 
 export default {
     name: "ContentComponent",
     components: {
         TableComponent,
+        TableExportsComponent,
         FormNumberComponent
     },
     data() {
@@ -26,6 +29,7 @@ export default {
     },
     methods: {
         ...mapActions(["getInfoFormAddCalendar", "addCalendar", "updateCalendar"]),
+        ...mapMutations(["changeShowViewCalendar"]),
         listCalendars(){
             this.$refs.table.listCalendars();
         }

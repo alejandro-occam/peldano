@@ -14,7 +14,8 @@ const state = {
         calendars:{
             show_view_state: 1,
             calendar_obj: null,
-            is_update: 0
+            is_update: 0,
+            html_calendar: null
         }
     },
     errors: {

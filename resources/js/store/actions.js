@@ -177,7 +177,41 @@ const actions = {
             return error;
         }
     },
+
+    //Listar calendarios para aexportar 
+    async listCalendarsToExport({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/list_calendars_to_export",
+                params: params,
+                method: 'post'
+            });
+
+            state.config.calendars.html_calendar = response.data.array_calendars;
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
     
+    //Descargar csv del calendarios
+    async downloadListCalendarsCsv({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/download_list_calendars_csv",
+                params: params,
+                method: 'get'
+            });
+
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
 }
 
 export default actions;

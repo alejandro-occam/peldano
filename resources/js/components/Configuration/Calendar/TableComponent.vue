@@ -10,7 +10,7 @@
                 </select>
             </div>
             <AddButtonComponent
-                @click.native="changeShowView(2)"
+                @click.native="changeShowViewCalendar(2)"
                 :columns="'col-1 ml-auto mr-7'"
                 :text="'Exportar'"
                 :id="'btn_export'"
@@ -44,7 +44,7 @@
 
     import SearchComponent from "../../Partials/SearchComponent.vue";
     import AddButtonComponent from "../../Partials/AddButtonComponent.vue";
-import { throwStatement } from "@babel/types";
+    import { throwStatement } from "@babel/types";
 
     export default {
         name: "TableComponent",
@@ -60,7 +60,7 @@ import { throwStatement } from "@babel/types";
         },
         methods: {
             ...mapActions(["deleteCalendar", "getInfoCalendar"]),
-            ...mapMutations(["controlFormCalendars"]),
+            ...mapMutations(["controlFormCalendars", "changeShowViewCalendar"]),
             openFormModal(){
                 this.controlFormCalendars(0);
                 $('#modal_form_number_calendar').modal('show');

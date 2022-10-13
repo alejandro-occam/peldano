@@ -4,6 +4,10 @@ const mutations = {
         state.config.users.show_view_state = n;
     },
 
+    changeShowViewCalendar(state, n) {
+        state.config.calendars.show_view_state = n;
+    },
+
     //Limpiar error usuario
     clearError(state) {
         state.errors.code = 0;
