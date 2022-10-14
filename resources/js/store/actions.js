@@ -311,6 +311,25 @@ const actions = {
             return error;
         }
     },
+
+    //Añadir artículo
+    async addArticle({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/add_article",
+                params: params,
+                method: 'post'
+            });
+
+            state.errors.type_error = 'add_article';
+            state.errors.code = response.data.code;
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
     
 }
 

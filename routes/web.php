@@ -67,6 +67,9 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('/get_brands/{id}', [App\Http\Controllers\ConfigurationController::class, 'getBrands'])->name('get_brands');
     //Listar para el select de productos 
     Route::get('/get_products/{id}', [App\Http\Controllers\ConfigurationController::class, 'getProducts'])->name('get_products');
+    //Añadir un artículo
+    Route::post('/add_article', [App\Http\Controllers\ConfigurationController::class, 'addArticle'])->name('add_article');
+    
 
     Route::get('/{vue_capture?}', function () {
         return view('layouts.back.admin');

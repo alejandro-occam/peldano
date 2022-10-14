@@ -15,7 +15,7 @@ class Article extends Model
         'id',
         'name',
         'english_name',
-        'id_article'
+        'id_product'
     ];
 
     /**
@@ -27,7 +27,7 @@ class Article extends Model
         'id' => 'integer',
         'name' => 'string',
         'english_name' => 'string',
-        'id_article' => 'integer'
+        'id_product' => 'integer'
     ];
 
     /**
@@ -39,6 +39,6 @@ class Article extends Model
         'id',
         'name',
         'english_name',
-        'id_article'
+        'id_product'
     ];
 }

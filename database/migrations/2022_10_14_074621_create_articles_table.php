@@ -17,8 +17,8 @@ class CreateArticlesTable extends Migration
             $table->id();
             $table->string('name');
             $table->string('english_name');
-            $table->biginteger('id_article')->unsigned();
-            $table->foreign('id_article')->references('id')->on('articles')->onUpdate('cascade')->onDelete('cascade');
+            $table->biginteger('id_product')->unsigned();
+            $table->foreign('id_product')->references('id')->on('products')->onUpdate('cascade')->onDelete('cascade');
             $table->timestamps();
         });
     }

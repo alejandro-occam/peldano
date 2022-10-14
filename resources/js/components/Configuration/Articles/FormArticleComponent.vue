@@ -97,7 +97,7 @@
                                 <span class="my-auto w-25">Precio sin IVA</span>
                             </div>
                             <div class="">
-                                <input v-model="price" type="number" class="form-control borders-box text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
+                                <input v-model="price" type="text" class="form-control borders-box text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
                                 <small class="text-danger " v-if="price_error">El precio no es válido</small>
                             </div>
                         </div>
@@ -154,76 +154,65 @@
             ...mapState(["config", "errors"]),
         },
         methods: {
-            ...mapActions(["getAreas", "getSectors", "getBrands", "getProducts"]),
+            ...mapActions(["getAreas", "getSectors", "getBrands", "getProducts", "addArticle"]),
             closeModal(){
-                $("#modal_form_number_calendar").modal("hide");
+                $("#modal_form_article").modal("hide");
+                this.getAreas({type: 2});
+                this.clearForm();
             },
             //Validar datos
             validateForm(type){
                 this.valid = true;
-                this.select_calendar_error = false;
-                this.number_error = false;
-                this.title_error = false;
-                this.topics_date_error = false;
-                this.drafting_date_error = false;
-                this.commercial_date_error = false;
-                this.output_date_error = false;
-                this.billing_date_error = false;
-                this.front_page_date_error = false;
+                this.select_area_error = false;
+                this.select_sector_error = false;
+                this.select_brand_error = false;
+                this.select_product_error = false;
+                this.name_error = false;
+                this.name_eng_error = false;
+                this.price_error = false;
 
-                if(this.select_calendar == "" || this.select_calendar == null || this.select_calendar == 0){
-                    this.select_calendar_error = true;
-                    this.valid = false;
-                }
-                if(this.number == "" || this.number == null){
-                    this.number_error = true;
-                    this.valid = false;
-                }
-                if(this.title == "" || this.title == null){
-                    this.title_error = true;
-                    this.valid = false;
-                }
-                if(this.topics_date == "" || this.topics_date == null){
-                    this.topics_date_error = true;
-                    this.valid = false;
-                }
-                if(this.drafting_date == "" || this.drafting_date == null){
-                    this.drafting_date_error = true;
-                    this.valid = false;
-                }
-                if(this.commercial_date == "" || this.commercial_date == null){
-                    this.commercial_date_error = true;
-                    this.valid = false;
-                }
-                if(this.output_date == "" || this.output_date == null){
-                    this.output_date_error = true;
-                    this.valid = false;
-                }
-                if(this.billing_date == "" || this.billing_date == null){
-                    this.billing_date_error = true;
-                    this.valid = false;
-                }
-                if(this.front_page_date == "" || this.front_page_date == null){
-                    this.front_page_date_error = true;
+                if(this.select_area == "" || this.select_area == null || this.select_area == 0){
+                    this.select_area_error = true;
                     this.valid = false;
                 }
 
-                console.log(this.topics_date);
+                if(this.select_sector == "" || this.select_sector == null || this.select_sector == 0){
+                    this.select_sector_error = true;
+                    this.valid = false;
+                }
 
+                if(this.select_brand == "" || this.select_brand == null || this.select_brand == 0){
+                    this.select_brand_error = true;
+                    this.valid = false;
+                }
+
+                if(this.select_product == "" || this.select_product == null || this.select_product == 0){
+                    this.select_product_error = true;
+                    this.valid = false;
+                }
+
+                if(this.name == "" || this.name == null){
+                    this.name_error = true;
+                    this.valid = false;
+                }
+                if(this.name_eng == "" || this.name_eng == null){
+                    this.name_eng_error = true;
+                    this.valid = false;
+                }
+                if(this.price == "" || this.price == null || this.price == 0){
+                    this.price_error = true;
+                    this.valid = false;
+                }
+                
                 if(this.valid){
                     if(type == 1){
                         var params ={
-                            'id_calendar': this.select_calendar,
-                            'number': this.number,
-                            'title': this.title,
-                            'topics_date': this.topics_date,
-                            'drafting_date': this.drafting_date,
-                            'commercial_date': this.commercial_date,
-                            'output_date': this.output_date,
-                            'billing_date': this.billing_date,
-                            'front_page_date': this.front_page_date
+                            'id_product': this.select_product,
+                            'name': this.name,
+                            'name_eng': this.name_eng,
+                            'price': this.price
                         }
-                        this.addCalendar(params);
+                        this.addArticle(params);
                     }
 
                     if(type == 2){
@@ -249,15 +238,13 @@
                 }
             },
             clearForm(){
-                this.select_calendar = '';
-                this.title = '';
-                this.number = '';
-                this.topics_date = '';
-                this.drafting_date = '';
-                this.commercial_date = '';
-                this.output_date = '';
-                this.billing_date = '';
-                this.front_page_date = '';
+                this.select_area = '';
+                this.select_sector = '';
+                this.select_brand = '';
+                this.select_product = '';
+                this.name = '';
+                this.name_eng = '';
+                this.price = '';
             },
             getSectorsSelect(){
                 this.select_sector = '';

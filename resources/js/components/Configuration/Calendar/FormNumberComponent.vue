@@ -165,6 +165,7 @@
         methods: {
             ...mapActions(["addCalendar", "updateCalendar"]),
             closeModal(){
+                this.clearForm();
                 $("#modal_form_number_calendar").modal("hide");
             },
             //Validar datos
@@ -216,8 +217,6 @@
                     this.front_page_date_error = true;
                     this.valid = false;
                 }
-
-                console.log(this.topics_date);
 
                 if(this.valid){
                     if(type == 1){

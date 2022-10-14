@@ -18,6 +18,7 @@ use App\Models\Area;
 use App\Models\Sector;
 use App\Models\Brand;
 use App\Models\Product;
+use App\Models\Article;
 
 class ConfigurationController extends Controller
 {
@@ -611,6 +612,43 @@ class ConfigurationController extends Controller
         $array_products = Product::where('id_brand', $id)->get();
         $response['array_products'] = $array_products;
         return response()->json($response);
+    }
+
+    //Añadir artículo
+    function addArticle(Request $request){
+        if (!$request->has('id_product') || !$request->has('name') || !$request->has('name_eng') || !$request->has('price')) {
+        $response['code'] = 1001;
+        $response['msg'] = "Missing or empty parameters";
+        return response()->json($response);
+    }
+
+    $id_product = $request->get('id_product');
+    $name = $request->get('name');
+    $name_eng = $request->get('name_eng');
+    $price = $request->get('price');
+
+    if (!isset($id_product) || empty($id_product) || !isset($name) || empty($name) || !isset($name_eng) || empty($name_eng) || !isset($price) || empty($price)) {
+        $response['code'] = 1002;
+        $response['msg'] = "Missing or empty parameters";
+        return response()->json($response);
+    }
+
+    //Consultamos si existe el producto
+    $product = Product::find($id_product);
+    if(!$product){
+        $response['code'] = 1003;
+        return response()->json($response);
+    }
+    
+    Article::create([
+        'name' => $name,
+        'english_name' => $name_eng,
+        'price' => $price,
+        'id_product' => $id_product,
+    ]);
+
+    $response['code'] = 1000;
+    return response()->json($response);
     }
     //END ARTICULOS
 
