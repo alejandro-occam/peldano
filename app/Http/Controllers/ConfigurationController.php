@@ -263,7 +263,7 @@ class ConfigurationController extends Controller
     //END USUARIOS
 
     //CALENDARIOS
-     //Consultar información necesaria para el registro de calendarios
+    //Consultar información necesaria para el registro de calendarios
     function getInfoFormCalendars(){
         $array_calendars = Calendar::get();
         $response['array_calendars'] = $array_calendars;
@@ -473,7 +473,7 @@ class ConfigurationController extends Controller
         if(empty($select_calendar_filter)){
             $array_calendars = CalendarMagazine::select('calendars_magazines.*', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->get();
         }else{
-            $array_calendars = CalendarMagazine::select('calendars_magazines.*', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->where('id_calendar', $select_calendar_filter)->get();
+            $array_calendars = CalendarMagazine::select('calendars_magazines.*', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->where('calendars_magazines.id_calendar', $select_calendar_filter)->get();
         }
         
         $html = '';
@@ -528,7 +528,7 @@ class ConfigurationController extends Controller
     }
 
     //Descargar tabla calendarios csv
-    function downloadListCalendarsCsv(){    
+    function downloadListCalendarsCsv($select_calendar_filter){    
         //Creamos las columnas del fichero
         $array_custom_calendars = array (
             array('Calendario', 'Num.', 'Título', 'Redacción', 'Publicidad', 'Salida', 'Facturación', 'Portada')
@@ -547,8 +547,14 @@ class ConfigurationController extends Controller
         $sheet->setCellValue('H1', 'Portada');
 
         //Consultamos los usuarios
-        $array_calendars = CalendarMagazine::select('calendars_magazines.number', 'calendars_magazines.title', 'calendars_magazines.drafting', 'calendars_magazines.commercial', 'calendars_magazines.output', 'calendars_magazines.billing',
+        if(empty($select_calendar_filter)){
+            $array_calendars = CalendarMagazine::select('calendars_magazines.number', 'calendars_magazines.title', 'calendars_magazines.drafting', 'calendars_magazines.commercial', 'calendars_magazines.output', 'calendars_magazines.billing',
                                                     'calendars_magazines.front_page', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->get();
+        }else{
+            $array_calendars = CalendarMagazine::select('calendars_magazines.number', 'calendars_magazines.title', 'calendars_magazines.drafting', 'calendars_magazines.commercial', 'calendars_magazines.output', 'calendars_magazines.billing',
+                                                    'calendars_magazines.front_page', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->where('calendars_magazines.id_calendar', $select_calendar_filter)->get();
+        }
+        
 
         foreach($array_calendars as $key => $calendar){
             $sheet->setCellValue('A'.($key+2), $calendar->calendar_name);

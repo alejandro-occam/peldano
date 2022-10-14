@@ -1,7 +1,7 @@
 <template>
     <button type="button" class="d-flex align-items-center justify-content-center btn btn-gray px-0" :class="columns" :id="id">
         <img class="mr-2" :width="width" :height="height" :src="src" />
-        {{ text }}
+        <span>{{ text }}</span>
     </button>
 </template>
 

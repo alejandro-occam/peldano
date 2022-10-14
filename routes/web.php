@@ -56,7 +56,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     //Listar calendarios para exportar
     Route::post('/list_calendars_to_export', [App\Http\Controllers\ConfigurationController::class, 'listCalendarsToExport'])->name('list_calendars_to_export');
     //Descargar CSV de calendarios
-    Route::get('/download_list_calendars_csv', [App\Http\Controllers\ConfigurationController::class, 'downloadListCalendarsCsv'])->name('download_list_calendars_csv');
+    Route::get('/download_list_calendars_csv/{filter?}', [App\Http\Controllers\ConfigurationController::class, 'downloadListCalendarsCsv'])->name('download_list_calendars_csv');
 
     Route::get('/{vue_capture?}', function () {
         return view('layouts.back.admin');

@@ -7,7 +7,7 @@
             />
             <AddButtonComponent
                 @click.native="openModalAddUser()"
-                :columns="'col-1'"
+                :columns="'px-4'"
                 :text="'Añadir usuario'"
                 :id="'btn_add_user'"
                 :src="'/media/custom-imgs/icono_btn_annadir_usuario.svg'"

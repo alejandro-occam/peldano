@@ -11,7 +11,7 @@
             </div>
             <AddButtonComponent
                 @click.native="changeShowViewCalendar(2)"
-                :columns="'col-1 ml-auto mr-7'"
+                :columns="'px-4 ml-auto mr-7'"
                 :text="'Exportar'"
                 :id="'btn_export'"
                 :src="'/media/custom-imgs/icono_btn_exportar.svg'"
@@ -20,7 +20,7 @@
             />
             <AddButtonComponent
                 @click.native="openFormModal()"
-                :columns="'col-1'"
+                :columns="'px-4'"
                 :text="'Añadir número'"
                 :id="'btn_add_number'"
                 :src="'/media/custom-imgs/icono_btn_annadir_numero.svg'"

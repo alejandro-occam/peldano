@@ -3,7 +3,7 @@
         <div class="col-12 d-flex flex-wrap justify-content-between">
             <div class="d-flex align-items-center justify-content-center w-15">
                 <select class="form-control w-100 bg-gray text-dark select-custom select-filter" :name="'select_calendar_filter'" :id="'select_calendar_filter_excel'" v-model="select_calendar_filter" data-style="select-lightgreen" @change="reloadList">
-                    <option value="" selected>
+                    <option value="0" selected>
                         Elige un calendario
                     </option>
                     <option :value="calendar.id" v-for="calendar in config.calendars.array_calendars"  :key="calendar.id" v-text="calendar.name" ></option>
@@ -11,7 +11,7 @@
             </div>
             <AddButtonComponent
                     @click.native="changeShowViewCalendar(1)"
-                    :columns="'col-1 ml-auto'"
+                    :columns="'px-4 ml-auto'"
                     :text="'Volver'"
                     :id="'btn_add_user'"
                     :src="'/media/custom-imgs/flecha_btn_volver.svg'"
@@ -20,7 +20,7 @@
                 />
             <AddButtonComponent
                 @click.native="downloadFile()"
-                :columns="'col-1 mx-7'"
+                :columns="'px-4 mx-7'"
                 :text="'Exportar'"
                 :id="'btn_export'"
                 :src="'/media/custom-imgs/icono_btn_exportar.svg'"
@@ -28,7 +28,7 @@
                 :height="16"
             />
             <AddButtonComponent
-                :columns="'col-1'"
+                :columns="'px-4'"
                 :text="'Imprimir'"
                 :id="'btn_add_number'"
                 :src="'/media/custom-imgs/icono_btn_annadir_numero.svg'"
@@ -87,14 +87,14 @@
         data() {
             return {
                 publicPath: window.location.origin,
-                select_calendar_filter: ''
+                select_calendar_filter: '0'
             };
         },
         methods: {
             ...mapMutations(["changeShowViewCalendar"]),
             ...mapActions(["listCalendarsToExport", "downloadListCalendarsCsv"]),
             downloadFile(){
-                window.open("http://127.0.0.1:8000/admin/download_list_calendars_csv?select_calendar_filter=" + this.select_calendar_filter,"_self")
+                window.open("http://127.0.0.1:8000/admin/download_list_calendars_csv/" + this.select_calendar_filter,"_self")
             },
             reloadList(){
                 var param = {
