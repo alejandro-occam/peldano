@@ -17,42 +17,42 @@
             <div class="d-flex input-group my-5" >
                 <span class="my-auto w-25">Nombre</span>
                 <div class="w-50">
-                    <input v-model="name" type="text" class="form-control borders-box" placeholder="" />
+                    <input v-model="name" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
                     <small class="text-danger " v-if="name_error">El nombre no es válido</small>
                 </div>
             </div>
             <div class="d-flex input-group my-5" >
                 <span class="my-auto w-25">Apellidos</span>
                 <div class="w-50">
-                    <input v-model="surname" type="text" class="form-control borders-box" placeholder="" />
+                    <input v-model="surname" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
                     <small class="text-danger" v-if="surname_error">Los apellidos no son válidos</small>
                 </div>
             </div>
             <div class="d-flex input-group my-5" >
                 <span class="my-auto w-25">Email</span>
                 <div class="w-50">
-                    <input v-model="email" type="text" class="form-control borders-box" placeholder="" :disabled="disabled_password == 1" autocomplete="off"/>
+                    <input v-model="email" type="text" class="form-control borders-box text-dark-gray" placeholder="" :disabled="disabled_password == 1" autocomplete="off"/>
                     <small class="text-danger" v-if="email_error">El correo no es válido</small>
                 </div>
             </div>
             <div class="d-flex input-group my-5" >
                 <span class="my-auto w-25">Usuario</span>
                 <div class="w-50">
-                    <input v-model="user" type="text" class="form-control borders-box" placeholder="" :disabled="disabled_password == 1" autocomplete="off"/>
+                    <input v-model="user" type="text" class="form-control borders-box text-dark-gray" placeholder="" :disabled="disabled_password == 1" autocomplete="off"/>
                     <small class="text-danger" v-if="user_error">El usuario no es válido</small>
                 </div>
             </div>
             <div class="d-flex input-group my-5" >
                 <span class="my-auto w-25">Contraseña</span>
                 <div class="w-50">
-                    <input v-model="password" type="password" class="form-control borders-box" placeholder="" :disabled="disabled_password == 1" autocomplete="off"/>
+                    <input v-model="password" type="password" class="form-control borders-box text-dark-gray" placeholder="" :disabled="disabled_password == 1" autocomplete="off"/>
                     <small class="text-danger" v-if="password_error">La contaseña no es válida</small>
                 </div>
             </div>
             <div class="d-flex input-group my-5" >
                 <span class="my-auto w-25">Cargo</span>
                 <div class="w-50">
-                    <select class="form-control w-100 bg-gray text-dark select-custom" :name="'select_position'" :id="'select_position'" v-model="select_position" data-style="select-lightgreen" >
+                    <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_position'" :id="'select_position'" v-model="select_position" data-style="select-lightgreen" >
                         <option value="" selected>
                             Seleccionar cargo
                         </option>
@@ -64,27 +64,27 @@
             <div class="d-flex input-group my-5" >
                 <span class="my-auto w-25">Extensión</span>
                 <div class="w-50">
-                    <input v-model="extension" type="text" class="form-control borders-box" placeholder="" />
+                    <input v-model="extension" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
                     <small class="text-danger" v-if="extension_error">La extensión no es válida</small>
                 </div>
             </div>
             <div class="d-flex input-group my-5" >
                 <span class="my-auto w-25">Móvil</span>
                 <div class="w-50">
-                    <input v-model="mobile" type="text" class="form-control borders-box" placeholder="" />
+                    <input v-model="mobile" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
                     <small class="text-danger" v-if="mobile_error">El móvil no es válido</small>
                 </div>
             </div>
             <div class="d-flex input-group my-5" v-if="this.discharge_date != ''">
                 <span class="my-auto w-25">Fecha de alta</span>
                 <div class="w-50">
-                    <input v-model="discharge_date" type="text" class="form-control borders-box" placeholder="" :disabled="disabled_password == 1"/>
+                    <input v-model="discharge_date" type="text" class="form-control borders-box text-dark-gray" placeholder="" :disabled="disabled_password == 1"/>
                 </div>
             </div>
             <div class="d-flex input-group my-5" >
                 <span class="my-auto w-25">Rol</span>
                 <div class="w-50">
-                    <select class="form-control w-100 bg-gray text-dark select-custom" :name="'select_rol'" :id="'select_rol'" v-model="select_rol" data-style="select-lightgreen" >
+                    <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_rol'" :id="'select_rol'" v-model="select_rol" data-style="select-lightgreen" >
                         <option value="" selected>
                             Seleccionar Rol
                         </option>
@@ -96,7 +96,7 @@
             <div class="d-flex input-group my-5" >
                 <span class="my-auto w-25">Comisión</span>
                 <div class="w-50">
-                    <input v-model="commission" type="text" class="form-control borders-box" placeholder="" />
+                    <input v-model="commission" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
                     <small class="text-danger" v-if="commission_error">La comisión no es válida</small>
                 </div>
             </div>

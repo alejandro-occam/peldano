@@ -1,5 +1,6 @@
 <template>
     <TableComponent ref="table"></TableComponent>
+    <FormArticleComponent></FormArticleComponent>
 </template>
 
 <script>
@@ -7,12 +8,13 @@
 import { mapState } from "vuex";
 
 import TableComponent from "./TableComponent.vue";
-
+import FormArticleComponent from "./FormArticleComponent.vue";
 
 export default {
     name: "ContentComponent",
     components: {
-        TableComponent
+        TableComponent,
+        FormArticleComponent
     },
     data() {
         return {

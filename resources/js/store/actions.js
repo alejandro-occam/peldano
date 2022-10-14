@@ -214,15 +214,52 @@ const actions = {
         }
     },
 
-    //Consultar sectores
-    async getSectors({ state }){
+    //Consultar areas
+    async getAreas({ state }){
         try {
             const response = await http({
-                url: "/admin/get_sectors",
+                url: "/admin/get_areas",
                 method: 'get'
             });
 
-            state.config.articles.array_sectors = response.data.array_sectors;
+            state.config.articles.form.array_areas = response.data.array_areas;
+            state.config.articles.form.array_sectors = null;
+            state.config.articles.form.array_brands = null;
+            state.config.articles.form.array_products = null;
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
+
+    //Consultar sectores
+    async getSectors({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/get_sectors/" + params.select_articles_areas,
+                method: 'get'
+            });
+
+            if(params.type == 1){
+                state.config.articles.filter.array_sectors = response.data.array_sectors;
+                state.config.articles.filter.array_brands = null;
+                state.config.articles.filter.array_products = null;  
+
+            }else {
+                if(params.select_articles_areas != 0 && params.select_articles_areas != ""){
+                    state.config.articles.form.array_sectors = response.data.array_sectors;
+                    state.config.articles.form.array_brands = null;
+                    state.config.articles.form.array_products = null;  
+    
+                }else{
+                    state.config.articles.form.array_sectors = null;
+                    state.config.articles.form.array_brands = null;
+                    state.config.articles.form.array_products = null;  
+                }
+            }
+            
 
         } catch (error) {
             console.error(error);
@@ -231,15 +268,21 @@ const actions = {
         }
     },
     
-    //Consultar marcsas
+    //Consultar marcas
     async getBrands({ state }, params){
         try {
             const response = await http({
-                url: "/admin/get_brands/" + params,
+                url: "/admin/get_brands/" + params.select_articles_sectors,
                 method: 'get'
             });
 
-            state.config.articles.array_brands = response.data.array_brands;
+            if(params.type == 1){
+                state.config.articles.filter.array_brands = response.data.array_brands;
+                state.config.articles.filter.array_products = null;
+            }else{
+                state.config.articles.form.array_brands = response.data.array_brands;
+                state.config.articles.form.array_products = null;
+            }
 
         } catch (error) {
             console.error(error);
@@ -247,6 +290,28 @@ const actions = {
             return error;
         }
     },
+
+    //Consultar productos
+    async getProducts({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/get_products/" + params.select_articles_brands,
+                method: 'get'
+            });
+
+            if(params.type == 1){
+                state.config.articles.filter.array_products = response.data.array_products;
+            }else{
+                state.config.articles.form.array_products = response.data.array_products;
+            }
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
+    
 }
 
 export default actions;

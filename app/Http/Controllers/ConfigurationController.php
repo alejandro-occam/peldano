@@ -14,8 +14,10 @@ use DateTime;
 use DateTimeZone;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use App\Models\Area;
 use App\Models\Sector;
 use App\Models\Brand;
+use App\Models\Product;
 
 class ConfigurationController extends Controller
 {
@@ -578,15 +580,36 @@ class ConfigurationController extends Controller
     //END CALENDARIOS
 
     //ARTICULOS
-    function getSectors(){
-        $array_sectors = Sector::get();
+    //Consultar areas
+    function getAreas(){
+        $array_areas = Area::get();
+        $response['array_areas'] = $array_areas;
+        return response()->json($response);
+    }
+
+    //Consultar sectores
+    function getSectors($id = 0){
+        if($id == 0){
+            $array_sectors = Sector::get();
+        }else{
+            $array_sectors = Sector::where('id_area', $id)->get();
+        }
+        
         $response['array_sectors'] = $array_sectors;
         return response()->json($response);
     }
 
+    //Consultar marcas
     function getBrands($id){
         $array_brands = Brand::where('id_sector', $id)->get();
         $response['array_brands'] = $array_brands;
+        return response()->json($response);
+    }
+
+    //Consultar productos
+    function getProducts($id){
+        $array_products = Product::where('id_brand', $id)->get();
+        $response['array_products'] = $array_products;
         return response()->json($response);
     }
     //END ARTICULOS

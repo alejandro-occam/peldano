@@ -14,7 +14,7 @@ class Product extends Model
     public $fillable = [
         'id',
         'name',
-        'id_product'
+        'id_brand'
     ];
 
     /**
@@ -25,7 +25,7 @@ class Product extends Model
     protected $casts = [
         'id' => 'integer',
         'name' => 'string',
-        'id_product' => 'integer',
+        'id_brand' => 'integer',
     ];
 
     /**
@@ -36,6 +36,6 @@ class Product extends Model
     public static $rules = [
         'id',
         'name',
-        'id_product'
+        'id_brand'
     ];
 }

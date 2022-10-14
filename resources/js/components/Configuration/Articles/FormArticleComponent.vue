@@ -1,12 +1,12 @@
 <template>
-    <div class="modal fade" id="modal_form_number_calendar" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal fade" id="modal_form_article" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <!-- Modal Header -->
             <div class="modal-content">
                 <form @submit.prevent="">
                     <div class="modal-header">
-                        <h2 class="mx-auto color-blue" id="title_modal" v-if="this.config.calendars.is_update==0">Añadir número</h2>
-                        <h2 class="mx-auto color-blue" id="title_modal" v-else >Modificar número</h2>
+                        <h2 class="mx-auto color-blue" id="title_modal" v-if="this.config.calendars.is_update==0">Añadir artículo</h2>
+                        <h2 class="mx-auto color-blue" id="title_modal" v-else >Modificar artículo</h2>
                         <button type="button" class="close position-absolute" style="right: 22px;" data-dismiss="modal" @click="this.closeModal()">
                             &times;
                         </button>
@@ -14,96 +14,91 @@
                     <div class="modal-body">
                         <div class="input-group mb-5 d-block" >
                             <div class="mb-1">
-                                <span class="my-auto w-25">Calendario</span>
+                                <span class="my-auto w-25">Área</span>
                             </div>
                             <div class="">
-                                <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_calendar'" :id="'select_calendar'" v-model="select_calendar" data-style="select-lightgreen" >
+                                <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_area'" :id="'select_area'" v-model="select_area" data-style="select-lightgreen" @change="getSectorsSelect">
                                     <option value="" selected>
-                                        Elige un calendario
+                                        Elige un área
                                     </option>
-                                    <option :value="calendar.id" v-for="calendar in config.calendars.array_calendars" :key="calendar.id" v-text="calendar.name" ></option>
+                                    <option :value="area.id" v-for="area in config.articles.form.array_areas" :key="area.id" v-text="area.name" ></option>
                                 </select>
-                                <small class="text-danger " v-if="select_calendar_error">El calendario no es válido</small>
+                                <small class="text-danger " v-if="select_area_error">El área no es válido</small>
                             </div>
                         </div>
 
                         <div class="input-group my-5 d-block" >
                             <div class="mb-1">
-                                <span class="my-auto w-25">Número</span>
+                                <span class="my-auto w-25">Sector</span>
                             </div>
                             <div class="">
-                                <input v-model="number" type="number" class="form-control borders-box text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
-                                <small class="text-danger" v-if="number_error">El número no es válido</small>
+                                <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_sector'" :id="'select_sector'" v-model="select_sector" data-style="select-lightgreen" @change="getBrandsSelect">
+                                    <option value="" selected>
+                                        Elige un sector
+                                    </option>
+                                    <option :value="sector.id" v-for="sector in config.articles.form.array_sectors" :key="sector.id" v-text="sector.name" ></option>
+                                </select>                                
+                                <small class="text-danger" v-if="select_sector_error">El sector no es válido</small>
                             </div>
                         </div>
 
                         <div class="input-group my-5 d-block" >
                             <div class="mb-1">
-                                <span class="my-auto w-25">Título</span>
+                                <span class="my-auto w-25">Marca</span>
                             </div>
                             <div class="">
-                                <input v-model="title" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
-                                <small class="text-danger " v-if="title_error">El título no es válido</small>
+                                <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_brand'" :id="'select_brand'" v-model="select_brand" data-style="select-lightgreen" @change="getProductsSelect">
+                                    <option value="" selected>
+                                        Elige una marca
+                                    </option>
+                                    <option :value="brand.id" v-for="brand in config.articles.form.array_brands" :key="brand.id" v-text="brand.name" ></option>
+                                </select>
+                                <small class="text-danger " v-if="select_brand_error">La marca no es válida</small>
                             </div>
                         </div>
 
                         <div class="input-group my-5 d-block" >
                             <div class="mb-1">
-                                <span class="my-auto w-25">Temas</span>
+                                <span class="my-auto w-25">Producto</span>
                             </div>
                             <div class="">
-                                <Calendar class="w-100 borders-box text-dark-gray" inputId="topics_date" v-model="topics_date" autocomplete="off" dateFormat="dd-mm-yy" utc="true" />
-                                <small class="text-danger " v-if="topics_date_error">La fecha del tema no es válida</small>
+                                <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_product'" :id="'select_product'" v-model="select_product" data-style="select-lightgreen" >
+                                    <option value="" selected>
+                                        Elige un producto
+                                    </option>
+                                    <option :value="product.id" v-for="product in config.articles.form.array_products" :key="product.id" v-text="product.name" ></option>
+                                </select>
+                                <small class="text-danger " v-if="select_product_error">El producto no es válido</small>
                             </div>
                         </div>
 
                         <div class="input-group my-5 d-block" >
                             <div class="mb-1">
-                                <span class="my-auto w-25">Redacción</span>
+                                <span class="my-auto w-25">Nombre</span>
                             </div>
                             <div class="">
-                                <Calendar class="w-100 borders-box text-dark-gray" inputId="drafting_date" v-model="drafting_date" autocomplete="off" dateFormat="dd-mm-yy"  />
-                                <small class="text-danger " v-if="drafting_date_error">La fecha de la redacción no es válida</small>
+                                <input v-model="name" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
+                                <small class="text-danger " v-if="name_error">El nombre no es válido</small>
                             </div>
                         </div>
 
                         <div class="input-group my-5 d-block" >
                             <div class="mb-1">
-                                <span class="my-auto w-25">Publicidad</span>
+                                <span class="my-auto w-25">Nombre en inglés</span>
                             </div>
                             <div class="">
-                                <Calendar class="w-100 borders-box text-dark-gray" inputId="commercial_date" v-model="commercial_date" autocomplete="off" dateFormat="dd-mm-yy"  />
-                                <small class="text-danger " v-if="commercial_date_error">La fecha de la publicidad no es válida</small>
+                                <input v-model="name_eng" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
+                                <small class="text-danger " v-if="name_eng_error">El nombre en inglés no es válido</small>
                             </div>
                         </div>
 
                         <div class="input-group my-5 d-block" >
                             <div class="mb-1">
-                                <span class="my-auto w-25">Salida</span>
+                                <span class="my-auto w-25">Precio sin IVA</span>
                             </div>
                             <div class="">
-                                <Calendar class="w-100 borders-box text-dark-gray" inputId="output_date" v-model="output_date" autocomplete="off" dateFormat="dd-mm-yy"  />
-                                <small class="text-danger " v-if="output_date_error">La fecha de la salida no es válida</small>
-                            </div>
-                        </div>
-
-                        <div class="input-group my-5 d-block" >
-                            <div class="mb-1">
-                                <span class="my-auto w-25">Facturación</span>
-                            </div>
-                            <div class="">
-                                <Calendar class="w-100 borders-box text-dark-gray" inputId="billing_date" v-model="billing_date" autocomplete="off" dateFormat="dd-mm-yy"  />
-                                <small class="text-danger " v-if="billing_date_error">La fecha de la facturación no es válida</small>
-                            </div>
-                        </div>
-
-                        <div class="input-group my-5 d-block" >
-                            <div class="mb-1">
-                                <span class="my-auto w-25">Portada</span>
-                            </div>
-                            <div class="">
-                                <Calendar class="w-100 borders-box text-dark-gray" inputId="front_page_date" v-model="front_page_date" autocomplete="off" dateFormat="dd-mm-yy"  />
-                                <small class="text-danger " v-if="front_page_date_error">La fecha de la portada no es válida</small>
+                                <input v-model="price" type="number" class="form-control borders-box text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
+                                <small class="text-danger " v-if="price_error">El precio no es válido</small>
                             </div>
                         </div>
                     </div>
@@ -138,24 +133,20 @@
         data() {
             return {
                 publicPath: window.location.origin,
-                select_calendar: '',
-                select_calendar_error: false,
-                number: '',
-                number_error: false,
-                title: '',
-                title_error: false,
-                topics_date: '',
-                topics_date_error: false,
-                drafting_date: '',
-                drafting_date_error: false,
-                commercial_date: '',
-                commercial_date_error: false,
-                output_date: '',
-                output_date_error: false,
-                billing_date: '',
-                billing_date_error: false,
-                front_page_date: '',
-                front_page_date_error: false,
+                select_area: '',
+                select_area_error: false,
+                select_sector: '',
+                select_sector_error: false,
+                select_brand: '',
+                select_brand_error: false,
+                select_product: '',
+                select_product_error: false,
+                name: '',
+                name_error: false,
+                name_eng: '',
+                name_eng_error: false,
+                price: '',
+                price_error: false,
                 is_update: 0,
             };
         },
@@ -163,7 +154,7 @@
             ...mapState(["config", "errors"]),
         },
         methods: {
-            ...mapActions(["addCalendar", "updateCalendar"]),
+            ...mapActions(["getAreas", "getSectors", "getBrands", "getProducts"]),
             closeModal(){
                 $("#modal_form_number_calendar").modal("hide");
             },
@@ -267,9 +258,40 @@
                 this.output_date = '';
                 this.billing_date = '';
                 this.front_page_date = '';
+            },
+            getSectorsSelect(){
+                this.select_sector = '';
+                this.select_brand = '';
+                this.select_product = '';
+                var params = {
+                    type: 2,
+                    select_articles_areas: this.select_area
+                }
+                this.getSectors(params);
+            },
+            getBrandsSelect(){
+                this.select_brand = '';
+                this.select_product = '';
+                var params = {
+                    type: 2,
+                    select_articles_sectors: this.select_sector
+                }
+                this.getBrands(params);
+            },
+            getProductsSelect(){
+                this.select__product = '';
+                var params = {
+                    type: 2,
+                    select_articles_brands: this.select_brand
+                }
+                this.getProducts(params);
             }
         },
         mounted() {
+            var params = {
+                type: 2
+            }
+            this.getAreas(params);
         },
         watch: {
             '$store.state.config.calendars.calendar_obj': function() {

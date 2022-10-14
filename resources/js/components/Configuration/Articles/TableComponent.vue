@@ -30,19 +30,19 @@
                 <option value="" selected>
                     Filtro por sector
                 </option>
-                <option :value="sector.id" v-for="sector in config.articles.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
+                <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
             </select>
-            <select class="form-control bg-gray text-dark select-custom select-filter col-2 mx-2" :name="'select_articles_filter_brands'" :id="'select_articles_filter_brands'" v-model="select_articles_filter_brands" data-style="select-lightgreen" @change="reloadList">
+            <select class="form-control bg-gray text-dark select-custom select-filter col-2 mx-2" :name="'select_articles_filter_brands'" :id="'select_articles_filter_brands'" v-model="select_articles_filter_brands" data-style="select-lightgreen" @change="getProductsSelect">
                 <option value="" selected>
                     Filtro por marca
                 </option>
-                <option :value="brand.id" v-for="brand in config.articles.array_brands"  :key="brand.id" v-text="brand.name" ></option>
+                <option :value="brand.id" v-for="brand in config.articles.filter.array_brands"  :key="brand.id" v-text="brand.name" ></option>
             </select>
-            <select class="form-control bg-gray text-dark select-custom select-filter col-2 mx-2" :name="'select_calendar_filter'" :id="'select_calendar_filter'" v-model="select_calendar_filter" data-style="select-lightgreen" @change="reloadList">
+            <select class="form-control bg-gray text-dark select-custom select-filter col-2 mx-2" :name="'select_articles_filter_products'" :id="'select_articles_filter_products'" v-model="select_articles_filter_products" data-style="select-lightgreen" @change="reloadList">
                 <option value="" selected>
                     Filtro por producto
                 </option>
-                <option :value="calendar.id" v-for="calendar in config.calendars.array_calendars"  :key="calendar.id" v-text="calendar.name" ></option>
+                <option :value="product.id" v-for="product in config.articles.filter.array_products"  :key="product.id" v-text="product.name" ></option>
             </select>
             <button v-if="this.status == 0" class="purple-border btn mr-4 font-weight-bold d-flex py-2 ml-2" @click="this.changeStatus(1)">
                 <div class="purple-circle mr-auto my-auto">
@@ -84,15 +84,15 @@
                 publicPath: window.location.origin,
                 select_articles_filter_sectors: '',
                 select_articles_filter_brands: '',
+                select_articles_filter_products: '',
                 status: 0,
             };
         },
         methods: {
-            ...mapActions(["getSectors", "getBrands"]),
-            ...mapMutations(["controlFormCalendars", "changeShowViewCalendar"]),
+            ...mapActions(["getSectors", "getBrands", "getProducts"]),
+            ...mapMutations([]),
             openFormModal(){
-                this.controlFormCalendars(0);
-                $('#modal_form_number_calendar').modal('show');
+                $('#modal_form_article').modal('show');
             },
             listArticles() {
                 let me = this;
@@ -280,7 +280,22 @@
             },
             getBrandsSelect(){
                 //this.reloadList();
-                this.getBrands(this.select_articles_filter_sectors);
+                this.select_articles_filter_brands = '';
+                this.select_articles_filter_products = '';
+                var params = {
+                    type: 1,
+                    select_articles_sectors: this.select_articles_filter_sectors
+                }
+                this.getBrands(params);
+            },
+            getProductsSelect(){
+                //this.reloadList();
+                this.select_articles_filter_products = '';
+                var params = {
+                    type: 1,
+                    select_articles_brands: this.select_articles_filter_brands
+                }
+                this.getProducts(params);
             },
             changeStatus(status){
                 this.status = status;
@@ -290,7 +305,11 @@
                 ...mapState(["errors", "config"]),
         },
         mounted() {
-            this.getSectors();
+            var params = {
+                type: 1,
+                select_articles_areas: 0
+            }
+            this.getSectors(params);
             this.listArticles();
         }
     };

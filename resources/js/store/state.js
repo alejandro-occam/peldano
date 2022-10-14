@@ -18,8 +18,17 @@ const state = {
             html_calendar: null
         },
         articles: {
-            array_sectors: null,
-            array_brands: null
+            filter: {
+                array_sectors: null,
+                array_brands: null,
+                array_products: null
+            },
+            form: {
+                array_areas: null,
+                array_sectors: null,
+                array_brands: null,
+                array_products: null
+            }
         }
     },
     errors: {

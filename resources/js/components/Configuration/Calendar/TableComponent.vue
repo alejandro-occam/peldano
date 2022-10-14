@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-12 d-flex flex-wrap justify-content-between">
             <div class="d-flex align-items-center justify-content-center w-15">
-                <select class="form-control w-100 bg-gray text-dark select-custom select-filter" :name="'select_calendar_filter'" :id="'select_calendar_filter'" v-model="select_calendar_filter" data-style="select-lightgreen" @change="reloadList">
+                <select class="form-control w-100 bg-gray text-gray select-custom select-filter" :name="'select_calendar_filter'" :id="'select_calendar_filter'" v-model="select_calendar_filter" data-style="select-lightgreen" @change="reloadList">
                     <option value="" selected>
                         Elige un calendario
                     </option>
