@@ -59,6 +59,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('/download_list_calendars_csv/{filter?}', [App\Http\Controllers\ConfigurationController::class, 'downloadListCalendarsCsv'])->name('download_list_calendars_csv');
 
     //ARTICULOS
+    //Listar artículos
+    Route::post('/list_articles', [App\Http\Controllers\ConfigurationController::class, 'listArticles'])->name('list_articles');
     //Listar para el select de areas
     Route::get('/get_areas', [App\Http\Controllers\ConfigurationController::class, 'getAreas'])->name('get_areas');
     //Listar para el select de sectores
@@ -69,6 +71,10 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('/get_products/{id}', [App\Http\Controllers\ConfigurationController::class, 'getProducts'])->name('get_products');
     //Añadir un artículo
     Route::post('/add_article', [App\Http\Controllers\ConfigurationController::class, 'addArticle'])->name('add_article');
+    //Consultar información de un artículo
+    Route::get('/get_info_article/{id}', [App\Http\Controllers\ConfigurationController::class, 'getInfoArticle'])->name('get_info_article');
+    //Eliminar artículo
+    Route::get('/delete_article/{id}', [App\Http\Controllers\ConfigurationController::class, 'deleteArticle'])->name('delete_article');
     
 
     Route::get('/{vue_capture?}', function () {

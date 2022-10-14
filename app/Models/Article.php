@@ -15,6 +15,7 @@ class Article extends Model
         'id',
         'name',
         'english_name',
+        'pvp',
         'id_product'
     ];
 
@@ -27,6 +28,7 @@ class Article extends Model
         'id' => 'integer',
         'name' => 'string',
         'english_name' => 'string',
+        'pvp' => 'double',
         'id_product' => 'integer'
     ];
 
@@ -39,6 +41,7 @@ class Article extends Model
         'id',
         'name',
         'english_name',
+        'pvp',
         'id_product'
     ];
 }

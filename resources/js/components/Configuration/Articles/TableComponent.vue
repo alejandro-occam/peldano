@@ -89,7 +89,7 @@
             };
         },
         methods: {
-            ...mapActions(["getSectors", "getBrands", "getProducts"]),
+            ...mapActions(["getSectors", "getBrands", "getProducts", "getInfoArticle"]),
             ...mapMutations(["controlFormArticles"]),
             openFormModal(){
                 this.controlFormArticles(0)
@@ -107,7 +107,7 @@
                             read: {
                                 url:
                                     this.publicPath +
-                                    "/admin/list_calendars",
+                                    "/admin/list_articles",
                                 headers: {
                                     "X-CSRF-TOKEN": $(
                                         'meta[name="csrf-token"]'
@@ -184,27 +184,27 @@
                             },
                         },
                         {
-                            field: "#title",
+                            field: "#name",
                             title: "Nombre",
                             sortable: !1,
                             textAlign: "center",
                             template: function (row, data, index) {
                                 return (
                                         '<span class="text-dark">' +
-                                        row.title +
+                                        row.name +
                                         "</span>"
                                     );
                             },
                         },
                         {
-                            field: "#drafting",
+                            field: "#english_name",
                             title: "Nombre Eng",
                             sortable: !1,
                             textAlign: "center",
                             template: function (row, data, index) {
                                 return (
                                         '<span class="text-gray font-weight-bold">' +
-                                        row.drafting +
+                                        row.english_name +
                                         "</span>"
                                     );
                             },
@@ -216,21 +216,19 @@
                             textAlign: "center",
                             template: function (row, data, index) {
                                 return (
-                                        '<span class="text-gray font-weight-bold">' +
-                                        row.commercial +
-                                        "</span>"
+                                        '<span class="switch"> <label><input type="checkbox" checked="checked" name="select"/><span></span></label></span>'
                                     );
                             },
                         },
                         {
-                            field: "#output",
+                            field: "#pvp",
                             title: "PVP",
                             sortable: !1,
                             textAlign: "center",
                             template: function (row, data, index) {
                                 return (
                                         '<span class="text-gray font-weight-bold">' +
-                                        row.output +
+                                        row.pvp +
                                         "</span>"
                                     );
                             },
@@ -259,21 +257,8 @@
 
                 $("#list_articles").on("click", ".btn-delete", function () {
                     var id = $(this).data("id");
-                    swal({
-                        title: '¿Está seguro de eliminar el calendario?',
-                        text: 'No podrás recuperar los datos eliminados',
-                        type: "warning",
-                        showCancelButton: true,
-                        confirmButtonColor: "#2e49ff",
-                        confirmButtonText: 'Aceptar',
-                        cancelButtonText: 'Cancelar',
-                        closeOnCancel: true,
-                        closeOnConfirm: false
-                    }, function(isConfirm) {
-                        if (isConfirm) {
-                            me.deleteCalendar(id);
-                        }
-                    });                
+                    me.getInfoArticle(id);
+                    $("#modal_delete_article").modal("show");           
                 });
             },
             reloadList(){
@@ -311,7 +296,7 @@
                 select_articles_areas: 0
             }
             this.getSectors(params);
-            this.listArticles();
+            //this.listArticles();
         }
     };
     </script>

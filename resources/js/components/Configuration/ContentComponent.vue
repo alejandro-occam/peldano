@@ -240,7 +240,7 @@ export default {
                         if(this.errors.code == 1000){
                             $("#list_calendars").KTDatatable("reload");
                             $("#modal_form_number_calendar").modal("hide");
-                            swal("", "Calendario creado correctamente", "success");
+                            swal("", "Calendario eliminado correctamente", "success");
                         }else if(this.errors.code == 1001 || this.errors.code == 1002){
                             swal("", "Rellena todos los datos", "warning");
                         }else{
@@ -291,6 +291,20 @@ export default {
                         }
                         this.clearError();
                     }
+                }else if(this.errors.type_error == 'delete_article'){
+                    if(this.errors.code != ''){
+                        if(this.errors.code == 1000){
+                            $("#list_articles").KTDatatable("reload");
+                            $("#modal_delete_article").modal("hide");
+                            swal("", "Articulo eliminado correctamente", "success");
+                        }else if(this.errors.code == 1001 || this.errors.code == 1002){
+                            swal("", "Rellena todos los datos", "warning");
+                        }else{
+                            swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
+                        }
+                        this.clearError();
+                    }
+
                 }
             }
         }

@@ -330,7 +330,39 @@ const actions = {
             return error;
         }
     },
+
+    //Consultar informacion de un artículo
+    async getInfoArticle({ state }, id){
+        try {
+            const response = await http({
+                url: "/admin/get_info_article/" + id,
+            });
+            
+            state.config.articles.article_obj = response.data.article;
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
     
+    //Eliminar un artículo
+    async deleteArticle({ state }, id){
+        try {
+            const response = await http({
+                url: "/admin/delete_article/" + id,
+            });
+            
+            state.errors.type_error = 'delete_article';
+            state.errors.code = response.data.code;
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
 }
 
 export default actions;

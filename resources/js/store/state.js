@@ -30,6 +30,9 @@ const state = {
                 array_products: null
             },
             is_update: 0,
+            article_obj: {
+                name: null
+            }
         }
     },
     errors: {

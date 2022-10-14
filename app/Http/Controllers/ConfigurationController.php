@@ -614,42 +614,120 @@ class ConfigurationController extends Controller
         return response()->json($response);
     }
 
+    //Listado de artículos
+    function listArticles(Request $request){
+        //Elementos para la paginación 
+        $pagination = $request->get('pagination');
+        $query = $request->get('query');
+        $start = 0;
+        $skip = $pagination['perpage'];
+        if ($pagination['page'] != 1) {
+            $start = ($pagination['page'] - 1) * $pagination['perpage'];
+            //Consultamos si hay tantos registros como para empezar en el numero de $start
+            $num_articles = Article::count();
+            if ($start >= $num_articles) {
+                $skip = $skip - 1;
+                $start = $start - 10;
+                if ($start < 0) {
+                    $start = 0;
+                }
+            }
+        }
+
+        //Barra de busqueda
+        $search = '';
+        if (isset($query['search_articles'])) {
+            $search = $query['search_articles'];
+        }
+
+        $array_articles = Article::skip($start)
+                            ->take($skip)
+                            ->get();
+
+        $total_articles = Article::count();
+
+        //Devolución de la llamada con la paginación
+        $meta['page'] = $pagination['page'];
+
+        if ($total_articles < 1) {
+            $meta['page'] = 1;
+        }
+
+        $meta['pages'] = 1;
+        if (isset($pagination['pages'])) {
+            $meta['pages'] = $pagination['pages'];
+        }
+        $meta['perpage'] = $pagination['perpage'];
+        $meta['total'] = $total_articles;
+        $meta['sort'] = 'asc';
+        $meta['field'] = 'id';
+        $response['meta'] = $meta;
+        $response['data'] = $array_articles;
+        return response()->json($response);
+    }
+
     //Añadir artículo
     function addArticle(Request $request){
         if (!$request->has('id_product') || !$request->has('name') || !$request->has('name_eng') || !$request->has('price')) {
-        $response['code'] = 1001;
-        $response['msg'] = "Missing or empty parameters";
+            $response['code'] = 1001;
+            $response['msg'] = "Missing or empty parameters";
+            return response()->json($response);
+        }
+
+        $id_product = $request->get('id_product');
+        $name = $request->get('name');
+        $name_eng = $request->get('name_eng');
+        $price = $request->get('price');
+
+        if (!isset($id_product) || empty($id_product) || !isset($name) || empty($name) || !isset($name_eng) || empty($name_eng) || !isset($price) || empty($price)) {
+            $response['code'] = 1002;
+            $response['msg'] = "Missing or empty parameters";
+            return response()->json($response);
+        }
+
+        //Consultamos si existe el producto
+        $product = Product::find($id_product);
+        if(!$product){
+            $response['code'] = 1003;
+            return response()->json($response);
+        }
+        
+        Article::create([
+            'name' => $name,
+            'english_name' => $name_eng,
+            'pvp' => $price,
+            'id_product' => $id_product,
+        ]);
+
+        $response['code'] = 1000;
         return response()->json($response);
     }
 
-    $id_product = $request->get('id_product');
-    $name = $request->get('name');
-    $name_eng = $request->get('name_eng');
-    $price = $request->get('price');
+    //Consultar información de un usuario
+    function getInfoArticle($id){
+        $article = Article::find($id);
 
-    if (!isset($id_product) || empty($id_product) || !isset($name) || empty($name) || !isset($name_eng) || empty($name_eng) || !isset($price) || empty($price)) {
-        $response['code'] = 1002;
-        $response['msg'] = "Missing or empty parameters";
+        $response['article'] = $article;
+        $response['code'] = 1000;
         return response()->json($response);
     }
 
-    //Consultamos si existe el producto
-    $product = Product::find($id_product);
-    if(!$product){
-        $response['code'] = 1003;
+    //Eliminar artículo
+    function deleteArticle($id){
+        //Consultamos si existe el usuario
+        $article = Article::find($id);
+        if(!$article){
+            $response['code'] = 1001;
+            return response()->json($response);
+        }
+
+        //Eliminamos el calendario
+        $article->delete();
+
+        $response['code'] = 1000;
         return response()->json($response);
     }
-    
-    Article::create([
-        'name' => $name,
-        'english_name' => $name_eng,
-        'price' => $price,
-        'id_product' => $id_product,
-    ]);
 
-    $response['code'] = 1000;
-    return response()->json($response);
-    }
     //END ARTICULOS
 
     //UTILS
