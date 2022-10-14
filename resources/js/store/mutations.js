@@ -22,6 +22,11 @@ const mutations = {
     controlFormCalendars(state, n) {
         state.config.calendars.is_update = n;
     },
+
+    //Control form articulos
+    controlFormArticles(state, n) {
+        state.config.articles.is_update = n;
+    },
 }
 
 export default mutations;

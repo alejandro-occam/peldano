@@ -294,8 +294,8 @@
                 this.front_page_date = calendar.front_page;
                 this.is_update = 1;
             },
-            '$store.state.config.calendars.is_update': function() {
-                if(this.config.calendars.is_update == 0){
+            '$store.state.config.articles.is_update': function() {
+                if(this.config.articles.is_update == 0){
                     this.clearForm();
                 }
             }

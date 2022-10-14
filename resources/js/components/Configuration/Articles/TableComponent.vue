@@ -90,8 +90,9 @@
         },
         methods: {
             ...mapActions(["getSectors", "getBrands", "getProducts"]),
-            ...mapMutations([]),
+            ...mapMutations(["controlFormArticles"]),
             openFormModal(){
+                this.controlFormArticles(0)
                 $('#modal_form_article').modal('show');
             },
             listArticles() {
@@ -251,7 +252,7 @@
     
                 $("#list_articles").on("click", ".btn-edit", function () {
                     var id = $(this).data("id");
-                    me.controlFormCalendars(1);
+                    me.controlFormArticles(1);
                     me.getInfoCalendar(id);
                     $('#modal_form_number_calendar').modal('show');
                 });

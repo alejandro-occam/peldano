@@ -28,7 +28,8 @@ const state = {
                 array_sectors: null,
                 array_brands: null,
                 array_products: null
-            }
+            },
+            is_update: 0,
         }
     },
     errors: {
