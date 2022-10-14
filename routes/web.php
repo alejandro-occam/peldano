@@ -58,6 +58,12 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     //Descargar CSV de calendarios
     Route::get('/download_list_calendars_csv/{filter?}', [App\Http\Controllers\ConfigurationController::class, 'downloadListCalendarsCsv'])->name('download_list_calendars_csv');
 
+    //ARTICULOS
+    //Listar para el select de sectores
+    Route::get('/get_sectors', [App\Http\Controllers\ConfigurationController::class, 'getSectors'])->name('get_sectors');
+    //Listar para el select de marcas
+    Route::get('/get_brands/{id}', [App\Http\Controllers\ConfigurationController::class, 'getBrands'])->name('get_brands');
+
     Route::get('/{vue_capture?}', function () {
         return view('layouts.back.admin');
     })->where('vue_capture', '[\/\w\.-]*');

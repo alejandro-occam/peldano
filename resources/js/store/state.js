@@ -16,6 +16,10 @@ const state = {
             calendar_obj: null,
             is_update: 0,
             html_calendar: null
+        },
+        articles: {
+            array_sectors: null,
+            array_brands: null
         }
     },
     errors: {

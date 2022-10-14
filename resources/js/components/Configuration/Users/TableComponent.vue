@@ -4,6 +4,7 @@
             <SearchComponent
                 :columns="'col-2'"
                 :model="'users'"
+                :placeholder="'Buscar...'"
             />
             <AddButtonComponent
                 @click.native="openModalAddUser()"

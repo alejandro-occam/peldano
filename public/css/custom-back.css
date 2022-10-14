@@ -76,24 +76,6 @@
     justify-content: flex-start;
 }
 
-.btn-yellow {
-    color: #004750 !important;
-    background-color: #f9b036 !important;
-    border-color: #f9b036 !important;
-}
-
-.btn-green-revese-yellow {
-    color: #f9b036 !important;
-    background-color: #004750 !important;
-    border-color: #004750 !important;
-}
-
-.btn-lightyellow {
-    color: #f9b036 !important;
-    background-color: #faefd9 !important;
-    border-color: #faefd9 !important;
-}
-
 .bg-gray,
 .bg-gray:focus {
     background-color: #f3f6f9;

@@ -7,7 +7,7 @@
                         <div id="tag_step1" data-wizard-type="step" data-wizard-state="current" class="wizard-step mr-3 cursor-pointer custom-wizard" @click="selectTab($event)">
                             <div class="d-flex align-items-center justify-content-center my-15" >
                                 <img class="mr-2" id="img_configuration" width="35" height="30" src="/media/custom-imgs/icono_tab_activo_usuarios.svg"  />
-                                <div id="div_text_users" class="text-lightgreen ml-2" >
+                                <div id="div_text_users" class="text-gray ml-2" >
                                     <h3 class="mb-0">Usuarios y roles</h3>
                                 </div>
                             </div>
@@ -49,6 +49,13 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="step" id="step_articles" data-wizard-type="step-content" data-wizard-state="pending" >
+                            <div class="card card-custom shadow-none border-0">
+                                <div class="card-body body-tab-step">
+                                    <ArticlesComponent ref="table_articles"></ArticlesComponent>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -61,6 +68,7 @@
 
 import UsersComponent from "./Users/ContentComponent.vue";
 import CalendarComponent from "./Calendar/ContentComponent.vue";
+import ArticlesComponent from "./Articles/ContentComponent.vue";
 
 import { mapMutations, mapState } from "vuex";
 
@@ -68,7 +76,8 @@ export default {
     name: "ContentComponent",
     components: {
         UsersComponent,
-        CalendarComponent
+        CalendarComponent,
+        ArticlesComponent
     },
     data() {
         return {
@@ -95,9 +104,7 @@ export default {
             if (id_tab == "tag_step1") {
                 $("#step_users").attr("data-wizard-state", "current");
                 $("#step_calendars").attr("data-wizard-state", "pending");
-                $("#step_banks").attr("data-wizard-state", "pending");
-                $("#step_commissions").attr("data-wizard-state", "pending");
-                $("#step_ars_quote").attr("data-wizard-state", "pending");
+                $("#step_articles").attr("data-wizard-state", "pending");;
 
                 $("#tag_step1")
                     .children()
@@ -126,10 +133,7 @@ export default {
             } else if (id_tab == "tag_step2") {
                 $("#step_users").attr("data-wizard-state", "pending");
                 $("#step_calendars").attr("data-wizard-state", "current");
-                $("#step_banks").attr("data-wizard-state", "pending");
-                $("#step_commissions").attr("data-wizard-state", "pending");
-                $("#step_ars_quote").attr("data-wizard-state", "pending");
-
+                $("#step_articles").attr("data-wizard-state", "pending");
                 $("#tag_step1")
                     .children()
                     .children()
@@ -157,9 +161,7 @@ export default {
             } else if (id_tab == "tag_step3") {
                 $("#step_users").attr("data-wizard-state", "pending");
                 $("#step_calendars").attr("data-wizard-state", "pending");
-                $("#step_banks").attr("data-wizard-state", "current");
-                $("#step_commissions").attr("data-wizard-state", "pending");
-                $("#step_ars_quote").attr("data-wizard-state", "pending");
+                $("#step_articles").attr("data-wizard-state", "current");
 
                 $("#tag_step1")
                     .children()
@@ -182,17 +184,9 @@ export default {
                         "src",
                         "/media/custom-imgs/icono_tab_activo_articulos.svg"
                     );
+                this.$refs.table_articles.listArticles();
             } 
         },
-        showBankModal() {
-            $("body").addClass("modal-show");
-            $("#modal_add_bank").css("display", "block");
-
-            $("#modal_add_bank").modal("show");
-        },
-    },
-    mounted() {
-        $("#select_currency").val(0);
     },
     watch: {
             '$store.state.errors.code': function() {

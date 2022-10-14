@@ -1,14 +1,6 @@
 <template>
     <div class="row">
         <div class="col-12 d-flex flex-wrap justify-content-between">
-            <div class="d-flex align-items-center justify-content-center w-15">
-                <select class="form-control w-100 bg-gray text-dark select-custom select-filter" :name="'select_calendar_filter'" :id="'select_calendar_filter'" v-model="select_calendar_filter" data-style="select-lightgreen" @change="reloadList">
-                    <option value="" selected>
-                        Elige un calendario
-                    </option>
-                    <option :value="calendar.id" v-for="calendar in config.calendars.array_calendars"  :key="calendar.id" v-text="calendar.name" ></option>
-                </select>
-            </div>
             <AddButtonComponent
                 @click.native="changeShowViewCalendar(2)"
                 :columns="'px-4 ml-auto mr-7'"
@@ -21,17 +13,54 @@
             <AddButtonComponent
                 @click.native="openFormModal()"
                 :columns="'px-4'"
-                :text="'Añadir número'"
-                :id="'btn_add_number'"
-                :src="'/media/custom-imgs/icono_btn_annadir_numero.svg'"
+                :text="'Añadir artículo'"
+                :id="'btn_add_article'"
+                :src="'/media/custom-imgs/icono_btn_annadir_articulo.svg'"
                 :width="25"
                 :height="25"
             />
         </div>
+        <div class="col-12 d-flex flex-wrap mt-6">
+            <SearchComponent
+                :columns="'col-2 mr-2'"
+                :model="'articles'"
+                :placeholder="'Buscar artículo'"
+            />
+            <select class="form-control bg-gray text-dark select-custom select-filter col-2 mx-2" :name="'select_articles_filter_sectors'" :id="'select_articles_filter_sectors'" v-model="select_articles_filter_sectors" data-style="select-lightgreen" @change="getBrandsSelect">
+                <option value="" selected>
+                    Filtro por sector
+                </option>
+                <option :value="sector.id" v-for="sector in config.articles.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
+            </select>
+            <select class="form-control bg-gray text-dark select-custom select-filter col-2 mx-2" :name="'select_articles_filter_brands'" :id="'select_articles_filter_brands'" v-model="select_articles_filter_brands" data-style="select-lightgreen" @change="reloadList">
+                <option value="" selected>
+                    Filtro por marca
+                </option>
+                <option :value="brand.id" v-for="brand in config.articles.array_brands"  :key="brand.id" v-text="brand.name" ></option>
+            </select>
+            <select class="form-control bg-gray text-dark select-custom select-filter col-2 mx-2" :name="'select_calendar_filter'" :id="'select_calendar_filter'" v-model="select_calendar_filter" data-style="select-lightgreen" @change="reloadList">
+                <option value="" selected>
+                    Filtro por producto
+                </option>
+                <option :value="calendar.id" v-for="calendar in config.calendars.array_calendars"  :key="calendar.id" v-text="calendar.name" ></option>
+            </select>
+            <button v-if="this.status == 0" class="purple-border btn mr-4 font-weight-bold d-flex py-2 ml-2" @click="this.changeStatus(1)">
+                <div class="purple-circle mr-auto my-auto">
+                    <div class="white-circle-purple"></div>
+                </div>
+                <span class="px-5 my-auto">Mostrar todo</span>
+            </button>
+            <button v-else class="bg-purple btn mr-4 font-weight-bold color-white d-flex py-2 ml-2" @click="this.changeStatus(0)">
+                <div class="white-circle mr-auto my-auto">
+                    <div class="purple-circle-white"></div>
+                </div>
+                <span class="px-5 my-auto">Mostrar todo</span>
+            </button>
+        </div>
         <div class="col-12  mt-7">
             <div
                 class="datatable datatable-bordered datatable-head-custom"
-                id="list_calendars"
+                id="list_articles"
                 style="width: 100%"
             ></div>
         </div>
@@ -41,33 +70,36 @@
 <script>
     import { mapMutations, mapActions, mapState } from "vuex";
 
+    import SearchComponent from "../../Partials/SearchComponent.vue";
     import AddButtonComponent from "../../Partials/AddButtonComponent.vue";
-    import { throwStatement } from "@babel/types";
 
     export default {
         name: "TableComponent",
         components: {
+            SearchComponent,
             AddButtonComponent,
         },
         data() {
             return {
                 publicPath: window.location.origin,
-                select_calendar_filter: '',
+                select_articles_filter_sectors: '',
+                select_articles_filter_brands: '',
+                status: 0,
             };
         },
         methods: {
-            ...mapActions(["deleteCalendar", "getInfoCalendar"]),
+            ...mapActions(["getSectors", "getBrands"]),
             ...mapMutations(["controlFormCalendars", "changeShowViewCalendar"]),
             openFormModal(){
                 this.controlFormCalendars(0);
                 $('#modal_form_number_calendar').modal('show');
             },
-            listCalendars() {
+            listArticles() {
                 let me = this;
     
-                $("#list_calendars").KTDatatable("destroy");
-                $("#list_calendars").KTDatatable("init");
-                $("#list_calendars").KTDatatable({
+                $("#list_articles").KTDatatable("destroy");
+                $("#list_articles").KTDatatable("init");
+                $("#list_articles").KTDatatable({
                     data: {
                         type: "remote",
                         source: {
@@ -103,8 +135,8 @@
                     sortable: !0,
                     pagination: !0,
                     search: {
-                        input: $("#search_users"),
-                        key: "search_users",
+                        input: $("#search_articles"),
+                        key: "search_articles",
                     },
                     translate: {
                         records: {
@@ -125,7 +157,7 @@
                     columns: [
                         {
                             field: "#calendar",
-                            title: "Calendario",
+                            title: "Referencia",
                             sortable: !1,
                             textAlign: "center",
                             template: function (row, data, index) {
@@ -138,7 +170,7 @@
                         },
                         {
                             field: "#number",
-                            title: "Num.",
+                            title: "Publicación",
                             sortable: !1,
                             textAlign: "center",
                             width: 100,
@@ -152,7 +184,7 @@
                         },
                         {
                             field: "#title",
-                            title: "Título",
+                            title: "Nombre",
                             sortable: !1,
                             textAlign: "center",
                             template: function (row, data, index) {
@@ -165,7 +197,7 @@
                         },
                         {
                             field: "#drafting",
-                            title: "Redacción",
+                            title: "Nombre Eng",
                             sortable: !1,
                             textAlign: "center",
                             template: function (row, data, index) {
@@ -178,7 +210,7 @@
                         },
                         {
                             field: "#commercial",
-                            title: "Publicidad",
+                            title: "Exento",
                             sortable: !1,
                             textAlign: "center",
                             template: function (row, data, index) {
@@ -191,39 +223,13 @@
                         },
                         {
                             field: "#output",
-                            title: "Salida",
+                            title: "PVP",
                             sortable: !1,
                             textAlign: "center",
                             template: function (row, data, index) {
                                 return (
                                         '<span class="text-gray font-weight-bold">' +
                                         row.output +
-                                        "</span>"
-                                    );
-                            },
-                        },
-                        {
-                            field: "#billing",
-                            title: "Facturación",
-                            sortable: !1,
-                            textAlign: "center",
-                            template: function (row, data, index) {
-                                return (
-                                        '<span class="text-gray font-weight-bold">' +
-                                        row.billing +
-                                        "</span>"
-                                    );
-                            },
-                        },
-                        {
-                            field: "#front_page",
-                            title: "Portada",
-                            sortable: !1,
-                            textAlign: "center",
-                            template: function (row, data, index) {
-                                return (
-                                        '<span class="text-gray font-weight-bold">' +
-                                        row.front_page +
                                         "</span>"
                                     );
                             },
@@ -243,14 +249,14 @@
                     ],
                 });
     
-                $("#list_calendars").on("click", ".btn-edit", function () {
+                $("#list_articles").on("click", ".btn-edit", function () {
                     var id = $(this).data("id");
                     me.controlFormCalendars(1);
                     me.getInfoCalendar(id);
                     $('#modal_form_number_calendar').modal('show');
                 });
 
-                $("#list_calendars").on("click", ".btn-delete", function () {
+                $("#list_articles").on("click", ".btn-delete", function () {
                     var id = $(this).data("id");
                     swal({
                         title: '¿Está seguro de eliminar el calendario?',
@@ -270,14 +276,22 @@
                 });
             },
             reloadList(){
-                this.listCalendars();
-            }
+                this.listArticles();
+            },
+            getBrandsSelect(){
+                //this.reloadList();
+                this.getBrands(this.select_articles_filter_sectors);
+            },
+            changeStatus(status){
+                this.status = status;
+            },
         },
         computed: {
                 ...mapState(["errors", "config"]),
         },
         mounted() {
-            this.listCalendars();
+            this.getSectors();
+            this.listArticles();
         }
     };
     </script>

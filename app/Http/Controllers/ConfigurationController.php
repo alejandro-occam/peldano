@@ -14,6 +14,8 @@ use DateTime;
 use DateTimeZone;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+use App\Models\Sector;
+use App\Models\Brand;
 
 class ConfigurationController extends Controller
 {
@@ -574,6 +576,20 @@ class ConfigurationController extends Controller
         $writer->save('php://output');
     }
     //END CALENDARIOS
+
+    //ARTICULOS
+    function getSectors(){
+        $array_sectors = Sector::get();
+        $response['array_sectors'] = $array_sectors;
+        return response()->json($response);
+    }
+
+    function getBrands($id){
+        $array_brands = Brand::where('id_sector', $id)->get();
+        $response['array_brands'] = $array_brands;
+        return response()->json($response);
+    }
+    //END ARTICULOS
 
     //UTILS
     //Cambiar de formato la fecha

@@ -207,6 +207,39 @@ const actions = {
                 method: 'get'
             });
 
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
+
+    //Consultar sectores
+    async getSectors({ state }){
+        try {
+            const response = await http({
+                url: "/admin/get_sectors",
+                method: 'get'
+            });
+
+            state.config.articles.array_sectors = response.data.array_sectors;
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
+    
+    //Consultar marcsas
+    async getBrands({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/get_brands/" + params,
+                method: 'get'
+            });
+
+            state.config.articles.array_brands = response.data.array_brands;
 
         } catch (error) {
             console.error(error);

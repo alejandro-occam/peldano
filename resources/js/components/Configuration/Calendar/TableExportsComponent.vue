@@ -1,14 +1,7 @@
 <template>
     <div class="row">
         <div class="col-12 d-flex flex-wrap justify-content-between">
-            <div class="d-flex align-items-center justify-content-center w-15">
-                <select class="form-control w-100 bg-gray text-dark select-custom select-filter" :name="'select_calendar_filter'" :id="'select_calendar_filter_excel'" v-model="select_calendar_filter" data-style="select-lightgreen" @change="reloadList">
-                    <option value="0" selected>
-                        Elige un calendario
-                    </option>
-                    <option :value="calendar.id" v-for="calendar in config.calendars.array_calendars"  :key="calendar.id" v-text="calendar.name" ></option>
-                </select>
-            </div>
+            <h3 class="color-blue">Exportar calendario</h3>
             <AddButtonComponent
                     @click.native="changeShowViewCalendar(1)"
                     :columns="'px-4 ml-auto'"
@@ -35,6 +28,16 @@
                 :width="25"
                 :height="25"
             />
+        </div>
+        <div class="col-12 d-flex flex-wrap justify-content-between mt-4">
+            <div class="d-flex align-items-center justify-content-center w-15">
+                <select class="form-control w-100 bg-gray text-dark select-custom select-filter" :name="'select_calendar_filter'" :id="'select_calendar_filter_excel'" v-model="select_calendar_filter" data-style="select-lightgreen" @change="reloadList">
+                    <option value="0" selected>
+                        Elige un calendario
+                    </option>
+                    <option :value="calendar.id" v-for="calendar in config.calendars.array_calendars"  :key="calendar.id" v-text="calendar.name" ></option>
+                </select>
+            </div>
         </div>
         <div class="col-12 mt-7">
             <div class="datatable datatable-bordered datatable-head-custom datatable-default datatable-primary datatable-scroll datatable-loaded" id="list_calendars" style="width: 100%;">
