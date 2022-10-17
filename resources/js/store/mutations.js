@@ -27,6 +27,10 @@ const mutations = {
     controlFormArticles(state, n) {
         state.config.articles.is_update = n;
     },
+
+    saveSearchArticles(state, n){
+        state.config.articles.search_articles = n;
+    }
 }
 
 export default mutations;

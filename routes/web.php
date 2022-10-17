@@ -75,6 +75,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('/get_info_article/{id}', [App\Http\Controllers\ConfigurationController::class, 'getInfoArticle'])->name('get_info_article');
     //Eliminar artículo
     Route::get('/delete_article/{id}', [App\Http\Controllers\ConfigurationController::class, 'deleteArticle'])->name('delete_article');
+    //Actualizar artículo
+    Route::post('/update_article', [App\Http\Controllers\ConfigurationController::class, 'updateArticle'])->name('update_article');
     
 
     Route::get('/{vue_capture?}', function () {

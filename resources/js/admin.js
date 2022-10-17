@@ -38,6 +38,10 @@ import ToastService from "primevue/toastservice";
 import ConfirmationService from "primevue/confirmationservice";
 import Tooltip from "primevue/tooltip";
 import Ripple from "primevue/ripple";
+
+// Import utils
+import { func } from "./utils";
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -118,6 +122,6 @@ app.directive("tooltip", Tooltip)
 app.directive("ripple", Ripple)
 app.mount('#adminapp');
 app.config.globalProperties.$store = store;
-
+app.config.globalProperties.$utils = func;
 
 

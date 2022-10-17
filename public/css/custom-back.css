@@ -497,8 +497,16 @@ input[type="password"]:disabled.borders-box, input[type="text"]:disabled.borders
     background-color: #fff;
 }
 
+.f-17{
+    font-size: 17px;
+}
+
 .f-16{
     font-size: 16px;
+}
+
+.f-15{
+    font-size: 15px;
 }
 
 .border-bottom{
@@ -581,4 +589,55 @@ a.text-hover-primary:hover, .text-hover-primary:hover{
     padding-left: 13px;
     padding-right: 13px;
     border-radius: 0.42rem;
+}
+
+.p-input-icon-left>i, .p-input-icon-right>img {
+    position: absolute;
+    top: 50%;
+    margin-top: -0.5rem;
+    right: 0.75rem;
+}
+
+.switch.switch-outline.switch-success input:checked~span:before{
+    border-color: #2e49ff !important;
+    background-color: #2e49ff !important;
+}
+
+.switch.switch-outline.switch-success input:empty~span:before{
+    background-color: #e7e7e7;
+}
+
+.switch.switch-outline.switch-success input:checked~span:after{
+    background-color: #fff !important;
+}
+
+.switch.switch-outline.switch-success input:empty~span:after{
+    background-color: #b5b5b5;
+}
+
+.switch.switch-icon input:checked~span:after{
+    content: "";
+}
+
+.switch.switch-icon input:checked~span:before{
+    content: "Sí" !important;
+    color: #fff !important;
+    padding-right: 25px !important;
+    padding-left: 0px !important;
+}
+
+.switch.switch-icon input:empty~span:before{
+    content: "No";
+    color: #b5b5b5;
+    padding-left: 25px;
+}
+
+.switch input:checked~span:after{
+    margin-left: 28px;
+}
+
+.switch input:empty~span:after{
+    height: 20px;
+    width: 20px;
+    top: 5px;
 }

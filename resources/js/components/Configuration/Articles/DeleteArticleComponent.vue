@@ -17,8 +17,9 @@
                         </div>
                         <div class="mt-10 d-grid">
                             <img class="mx-auto" width=100 src="/media/custom-imgs/icono_ficha_articulo.svg" />
-                            <span class="font-weight-bolder mt-4">{{ this.config.articles.article_obj.name }} </span>
-                            <span class="font-weight-bolder color-dark-gray"></span>
+                            <span class="font-weight-bolder mt-4 f-17">{{ this.config.articles.article_obj.publication }} </span>
+                            <span class="font-weight-bolder color-dark-gray f-15">{{ this.config.articles.article_obj.name }} </span>
+                            <span class="font-weight-bolder color-gray">reference</span>
                         </div>
                         <div class="mt-10 mb-5">
                             <span class="mx-auto font-size-h4 color-blue" >¿Confirmas su eliminación?</span >

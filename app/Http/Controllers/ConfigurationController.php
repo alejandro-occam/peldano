@@ -640,11 +640,62 @@ class ConfigurationController extends Controller
             $search = $query['search_articles'];
         }
 
-        $array_articles = Article::skip($start)
-                            ->take($skip)
-                            ->get();
+        error_log('search: '.$search);
 
-        $total_articles = Article::count();
+        $array_articles = Article::select('articles.*', 'products.name as product_name', 'brands.name as brand_name', 'sectors.name as sector_name', 'areas.name as area_name')
+                                    ->leftJoin('products', 'products.id', 'articles.id_product')
+                                    ->leftJoin('brands', 'brands.id', 'products.id_brand')
+                                    ->leftJoin('sectors', 'brands.id_sector', 'sectors.id')
+                                    ->leftJoin('areas', 'sectors.id_area', 'areas.id')
+                                    ->where('articles.name', 'like', '%'.$search.'%');
+
+        //Filtros del listado de artículos
+        //Sectores
+        $select_articles_filter_sectors = $request->get('select_articles_filter_sectors');
+        if (isset($select_articles_filter_sectors) && !empty($select_articles_filter_sectors)) {
+            $array_articles = $array_articles->where('sectors.id', $select_articles_filter_sectors);
+        }
+        //Marcas
+        $select_articles_filter_brands = $request->get('select_articles_filter_brands');
+        if (isset($select_articles_filter_brands) && !empty($select_articles_filter_brands)) {
+            $array_articles = $array_articles->where('brands.id', $select_articles_filter_brands);
+        }
+        //Productos
+        $select_articles_filter_products = $request->get('select_articles_filter_products');
+        if (isset($select_articles_filter_products) && !empty($select_articles_filter_products)) {
+            $array_articles = $array_articles->where('products.id', $select_articles_filter_products);
+        }
+
+        $array_articles = $array_articles->orWhere('articles.english_name', 'like', '%'.$search.'%');
+
+        $select_articles_filter_sectors = $request->get('select_articles_filter_sectors');
+        if (isset($select_articles_filter_sectors) && !empty($select_articles_filter_sectors)) {
+            $array_articles = $array_articles->where('sectors.id', $select_articles_filter_sectors);
+        }
+        //Marcas
+        $select_articles_filter_brands = $request->get('select_articles_filter_brands');
+        if (isset($select_articles_filter_brands) && !empty($select_articles_filter_brands)) {
+            $array_articles = $array_articles->where('brands.id', $select_articles_filter_brands);
+        }
+        //Productos
+        $select_articles_filter_products = $request->get('select_articles_filter_products');
+        if (isset($select_articles_filter_products) && !empty($select_articles_filter_products)) {
+            $array_articles = $array_articles->where('products.id', $select_articles_filter_products);
+        }
+
+        if($request->get('status') == 0){
+            $array_articles = $array_articles->skip($start)
+                            ->take($skip);
+        }
+
+        error_log($array_articles->toSql());
+        
+        $array_articles = $array_articles->get();
+        $total_articles = count($array_articles);
+
+        foreach($array_articles as $article){
+            $article['publication'] = strtoupper($article->sector_name[0]).strtoupper($article->sector_name[1]).strtoupper($article->sector_name[2]).'-'.$article->brand_name.'-'.strtoupper($article->product_name[0]).strtoupper($article->product_name[1]).strtoupper($article->product_name[2]);
+        }
 
         //Devolución de la llamada con la paginación
         $meta['page'] = $pagination['page'];
@@ -705,9 +756,27 @@ class ConfigurationController extends Controller
 
     //Consultar información de un usuario
     function getInfoArticle($id){
-        $article = Article::find($id);
+        $article = Article::select('articles.*', 'products.id as id_product', 'products.name as product_name', 'brands.id as id_brand', 'brands.name as brand_name', 'sectors.id as id_sector', 'sectors.name as sector_name', 'areas.id as id_area', 'areas.name as area_name')
+                            ->leftJoin('products', 'products.id', 'articles.id_product')
+                            ->leftJoin('brands', 'brands.id', 'products.id_brand')
+                            ->leftJoin('sectors', 'brands.id_sector', 'sectors.id')
+                            ->leftJoin('areas', 'sectors.id_area', 'areas.id')
+                            ->where('articles.id', $id)
+                            ->first();
+
+        $article['publication'] = strtoupper($article->sector_name[0]).strtoupper($article->sector_name[1]).strtoupper($article->sector_name[2]).'-'.$article->brand_name.'-'.strtoupper($article->product_name[0]).strtoupper($article->product_name[1]).strtoupper($article->product_name[2]);
+
+        //Consultamos los arrays de cada parametro según el artículo elegido
+        $array_areas = Area::get();
+        $array_sectors = Sector::where('id_area', $article->id_area)->get();
+        $array_brands = Brand::where('id_sector', $article->id_sector)->get();
+        $array_products = Product::where('id_brand', $article->id_brand)->get();
 
         $response['article'] = $article;
+        $response['array_areas'] = $array_areas;
+        $response['array_sectors'] = $array_sectors;
+        $response['array_brands'] = $array_brands;
+        $response['array_products'] = $array_products;
         $response['code'] = 1000;
         return response()->json($response);
     }
@@ -728,6 +797,49 @@ class ConfigurationController extends Controller
         return response()->json($response);
     }
 
+    //Actualizar artículo
+    function updateArticle(Request $request){
+        if (!$request->has('id_article') || !$request->has('id_product') || !$request->has('name') || !$request->has('name_eng') || !$request->has('price')) {
+            $response['code'] = 1001;
+            $response['msg'] = "Missing or empty parameters";
+            return response()->json($response);
+        }
+
+        $id = $request->get('id_article');
+        $id_product = $request->get('id_product');
+        $name = $request->get('name');
+        $name_eng = $request->get('name_eng');
+        $price = $request->get('price');
+
+        if (!isset($id) || empty($id) || !isset($id_product) || empty($id_product) || !isset($name) || empty($name) || !isset($name_eng) || empty($name_eng) || !isset($price) || empty($price)) {
+            $response['code'] = 1002;
+            $response['msg'] = "Missing or empty parameters";
+            return response()->json($response);
+        }
+
+        //Consultamos si existe el producto
+        $product = Product::find($id_product);
+        if(!$product){
+            $response['code'] = 1003;
+            return response()->json($response);
+        }
+        
+        //Consultamos si existe el artículo
+        $article = Article::find($id);
+        if(!$article){
+            $response['code'] = 1004;
+            return response()->json($response);
+        }
+
+        $article->name = $name;
+        $article->english_name = $name_eng;
+        $article->pvp = $price;
+        $article->id_product = $id_product;
+        $article->save();
+
+        $response['code'] = 1000;
+        return response()->json($response);
+    }
     //END ARTICULOS
 
     //UTILS

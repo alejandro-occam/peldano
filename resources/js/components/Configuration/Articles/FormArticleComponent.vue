@@ -5,7 +5,7 @@
             <div class="modal-content">
                 <form @submit.prevent="">
                     <div class="modal-header">
-                        <h2 class="mx-auto color-blue" id="title_modal" v-if="this.config.calendars.is_update==0">Añadir artículo</h2>
+                        <h2 class="mx-auto color-blue" id="title_modal" v-if="this.config.articles.is_update==0">Añadir artículo</h2>
                         <h2 class="mx-auto color-blue" id="title_modal" v-else >Modificar artículo</h2>
                         <button type="button" class="close position-absolute" style="right: 22px;" data-dismiss="modal" @click="this.closeModal()">
                             &times;
@@ -97,7 +97,10 @@
                                 <span class="my-auto w-25">Precio sin IVA</span>
                             </div>
                             <div class="">
-                                <input v-model="price" type="text" class="form-control borders-box text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
+                                <span class="p-input-icon-right w-100">
+                                    <input v-model="price" type="text" class="form-control borders-box text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
+                                    <img width="13" class="pi" src="/media/custom-imgs/icono_euro_input.svg"/>
+                                </span>
                                 <small class="text-danger " v-if="price_error">El precio no es válido</small>
                             </div>
                         </div>
@@ -106,7 +109,7 @@
                         <button type="button" class="btn btn-close ml-auto px-10 color-blue font-weight-bold bg-blue-light-white" data-dismiss="modal" @click="this.closeModal()">
                             Cancelar
                         </button>
-                        <button type="submit" class="btn bg-azul color-white px-10 font-weight-bold" v-if="this.config.calendars.is_update == 0" @click="this.validateForm(1)">
+                        <button type="submit" class="btn bg-azul color-white px-10 font-weight-bold" v-if="this.config.articles.is_update == 0" @click="this.validateForm(1)">
                             Añadir
                         </button>
                         <button type="submit" class="btn bg-azul color-white px-10 font-weight-bold" v-else @click="this.validateForm(2)">
@@ -154,7 +157,7 @@
             ...mapState(["config", "errors"]),
         },
         methods: {
-            ...mapActions(["getAreas", "getSectors", "getBrands", "getProducts", "addArticle"]),
+            ...mapActions(["getAreas", "getSectors", "getBrands", "getProducts", "addArticle", "updateArticle"]),
             closeModal(){
                 $("#modal_form_article").modal("hide");
                 this.getAreas({type: 2});
@@ -216,20 +219,14 @@
                     }
 
                     if(type == 2){
-                        var params = {
-                            'id': this.config.calendars.calendar_obj.id,
-                            'id_calendar': this.select_calendar,
-                            'number': this.number,
-                            'title': this.title,
-                            'topics_date': this.topics_date,
-                            'drafting_date': this.drafting_date,
-                            'commercial_date': this.commercial_date,
-                            'output_date': this.output_date,
-                            'billing_date': this.billing_date,
-                            'front_page_date': this.front_page_date
+                        var params ={
+                            'id_article': this.config.articles.article_obj.id,
+                            'id_product': this.select_product,
+                            'name': this.name,
+                            'name_eng': this.name_eng,
+                            'price': this.price
                         }
-
-                        this.updateCalendar(params);
+                        this.updateArticle(params);
                     }
                     
 
@@ -279,23 +276,26 @@
                 type: 2
             }
             this.getAreas(params);
+            $('#modal_form_article').on('hidden.bs.modal', async function (e) {
+                this.getAreas({type: 2});
+                this.clearForm();
+            });
         },
         watch: {
-            '$store.state.config.calendars.calendar_obj': function() {
-                let calendar = this.config.calendars.calendar_obj;
-                this.select_calendar = calendar.id_calendar;
-                this.title = calendar.title;
-                this.number = calendar.number;
-                this.topics_date = calendar.topics;
-                this.drafting_date = calendar.drafting;
-                this.commercial_date = calendar.commercial;
-                this.output_date = calendar.output;
-                this.billing_date = calendar.billing;
-                this.front_page_date = calendar.front_page;
+            '$store.state.config.articles.article_obj': function() {
+                let article = this.config.articles.article_obj;
+                this.select_area = article.id_area;
+                this.select_sector = article.id_sector;
+                this.select_brand = article.id_brand;
+                this.select_product = article.id_product;
+                this.name = article.name;
+                this.name_eng = article.english_name;
+                this.price = article.pvp;
                 this.is_update = 1;
             },
             '$store.state.config.articles.is_update': function() {
                 if(this.config.articles.is_update == 0){
+                    this.getAreas({type: 2});
                     this.clearForm();
                 }
             }

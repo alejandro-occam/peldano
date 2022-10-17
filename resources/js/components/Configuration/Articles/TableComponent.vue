@@ -25,6 +25,7 @@
                 :columns="'col-2 mr-2'"
                 :model="'articles'"
                 :placeholder="'Buscar artículo'"
+                :model2="'search_articles'"
             />
             <select class="form-control bg-gray text-dark select-custom select-filter col-2 mx-2" :name="'select_articles_filter_sectors'" :id="'select_articles_filter_sectors'" v-model="select_articles_filter_sectors" data-style="select-lightgreen" @change="getBrandsSelect">
                 <option value="" selected>
@@ -86,6 +87,8 @@
                 select_articles_filter_brands: '',
                 select_articles_filter_products: '',
                 status: 0,
+                search_articles: '',
+                datatable: null
             };
         },
         methods: {
@@ -95,12 +98,18 @@
                 this.controlFormArticles(0)
                 $('#modal_form_article').modal('show');
             },
-            listArticles() {
+            listArticles(type) {
                 let me = this;
-    
                 $("#list_articles").KTDatatable("destroy");
                 $("#list_articles").KTDatatable("init");
-                $("#list_articles").KTDatatable({
+                if(type == 1 || type == undefined){
+                    if(me.datatable != null){
+                        me.datatable.setDataSourceParam('select_articles_filter_sectors', me.select_articles_filter_sectors);
+                        me.datatable.setDataSourceParam('select_articles_filter_brands', me.select_articles_filter_brands);
+                        me.datatable.setDataSourceParam('select_articles_filter_products', me.select_articles_filter_products);
+                    }
+                }
+                this.datatable = $("#list_articles").KTDatatable({
                     data: {
                         type: "remote",
                         source: {
@@ -115,7 +124,10 @@
                                 },
                                 method: 'POST',
                                 params: {
-                                    select_calendar_filter: this.select_calendar_filter
+                                    select_articles_filter_sectors: '',
+                                    select_articles_filter_brands: '',
+                                    select_articles_filter_products: '',
+                                    status: 0
                                 }
                             },
                         },
@@ -136,7 +148,7 @@
                     sortable: !0,
                     pagination: !0,
                     search: {
-                        input: $("#search_articles"),
+                        input: $('#search_articles'),
                         key: "search_articles",
                     },
                     translate: {
@@ -170,15 +182,15 @@
                             },
                         },
                         {
-                            field: "#number",
+                            field: "#publication",
                             title: "Publicación",
                             sortable: !1,
                             textAlign: "center",
-                            width: 100,
+                            width: 200,
                             template: function (row, data, index) {
                                 return (
                                         '<span class="text-dark">' +
-                                        row.number +
+                                        row.publication +
                                         "</span>"
                                     );
                             },
@@ -216,7 +228,7 @@
                             textAlign: "center",
                             template: function (row, data, index) {
                                 return (
-                                        '<span class="switch"> <label><input type="checkbox" checked="checked" name="select"/><span></span></label></span>'
+                                        '<span class="switch switch-outline switch-icon switch-success"><label class="mx-auto"><input type="checkbox" checked="checked" name="select"/><span></span></label></span>'
                                     );
                             },
                         },
@@ -228,7 +240,7 @@
                             template: function (row, data, index) {
                                 return (
                                         '<span class="text-gray font-weight-bold">' +
-                                        row.pvp +
+                                            me.$utils.numberWithDotAndComma(me.$utils.roundAndFix(row.pvp)) +
                                         "</span>"
                                     );
                             },
@@ -251,8 +263,8 @@
                 $("#list_articles").on("click", ".btn-edit", function () {
                     var id = $(this).data("id");
                     me.controlFormArticles(1);
-                    me.getInfoCalendar(id);
-                    $('#modal_form_number_calendar').modal('show');
+                    me.getInfoArticle(id);
+                    $('#modal_form_article').modal('show');
                 });
 
                 $("#list_articles").on("click", ".btn-delete", function () {
@@ -260,12 +272,21 @@
                     me.getInfoArticle(id);
                     $("#modal_delete_article").modal("show");           
                 });
+
+                this.datatable.setDataSourceParam('select_articles_filter_sectors', this.select_articles_filter_sectors);
+                this.datatable.setDataSourceParam('select_articles_filter_brands', this.select_articles_filter_brands);
+                this.datatable.setDataSourceParam('select_articles_filter_products', this.select_articles_filter_products);
+                this.datatable.setDataSourceParam('status', this.status);
+                $('#list_articles').KTDatatable('load');
             },
             reloadList(){
-                this.listArticles();
+                this.datatable.setDataSourceParam('select_articles_filter_sectors', this.select_articles_filter_sectors);
+                this.datatable.setDataSourceParam('select_articles_filter_brands', this.select_articles_filter_brands);
+                this.datatable.setDataSourceParam('select_articles_filter_products', this.select_articles_filter_products);
+                this.datatable.setDataSourceParam('status', this.status);
+                $('#list_articles').KTDatatable('load');
             },
             getBrandsSelect(){
-                //this.reloadList();
                 this.select_articles_filter_brands = '';
                 this.select_articles_filter_products = '';
                 var params = {
@@ -273,18 +294,24 @@
                     select_articles_sectors: this.select_articles_filter_sectors
                 }
                 this.getBrands(params);
+                this.reloadList();
             },
             getProductsSelect(){
-                //this.reloadList();
                 this.select_articles_filter_products = '';
                 var params = {
                     type: 1,
                     select_articles_brands: this.select_articles_filter_brands
                 }
                 this.getProducts(params);
+                this.reloadList();
             },
             changeStatus(status){
                 this.status = status;
+                this.datatable.setDataSourceParam('select_articles_filter_sectors', this.select_articles_filter_sectors);
+                this.datatable.setDataSourceParam('select_articles_filter_brands', this.select_articles_filter_brands);
+                this.datatable.setDataSourceParam('select_articles_filter_products', this.select_articles_filter_products);
+                this.datatable.setDataSourceParam('status', this.status);
+                $('#list_articles').KTDatatable('load');
             },
         },
         computed: {
@@ -296,7 +323,12 @@
                 select_articles_areas: 0
             }
             this.getSectors(params);
-            //this.listArticles();
+        },
+        watch: {
+            '$store.state.config.articles.search_articles': function() {
+                $('#search_articles').val(this.config.articles.search_articles);
+                this.reloadList();
+            }
         }
     };
     </script>

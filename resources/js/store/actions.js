@@ -339,6 +339,10 @@ const actions = {
             });
             
             state.config.articles.article_obj = response.data.article;
+            state.config.articles.form.array_areas = response.data.array_areas;
+            state.config.articles.form.array_sectors = response.data.array_sectors;
+            state.config.articles.form.array_brands = response.data.array_brands;
+            state.config.articles.form.array_products = response.data.array_products;
 
         } catch (error) {
             console.error(error);
@@ -363,6 +367,26 @@ const actions = {
             return error;
         }
     },
+
+    //Actualizar articulo 
+    async updateArticle({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/update_article",
+                params: params,
+                method: 'post'
+            });
+
+            state.errors.type_error = 'update_article';
+            state.errors.code = response.data.code;
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
+    
 }
 
 export default actions;

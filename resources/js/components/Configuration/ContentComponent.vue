@@ -184,7 +184,7 @@ export default {
                         "src",
                         "/media/custom-imgs/icono_tab_activo_articulos.svg"
                     );
-                this.$refs.table_articles.listArticles();
+                this.$refs.table_articles.listArticles(1);
             } 
         },
     },
@@ -305,6 +305,19 @@ export default {
                         this.clearError();
                     }
 
+                }else if(this.errors.type_error == 'update_article'){
+                    if(this.errors.code != ''){
+                        if(this.errors.code == 1000){
+                            $("#list_articles").KTDatatable("reload");
+                            swal("", "Artículo modificado correctamente", "success");
+                            $("#modal_form_article").modal("hide");
+                        }else if(this.errors.code == 1001 || this.errors.code == 1002){
+                            swal("", "Rellena todos los datos", "warning");
+                        }else{
+                            swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
+                        }
+                        this.clearError();
+                    }
                 }
             }
         }

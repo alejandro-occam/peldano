@@ -32,7 +32,8 @@ const state = {
             is_update: 0,
             article_obj: {
                 name: null
-            }
+            },
+            search_articles: ''
         }
     },
     errors: {

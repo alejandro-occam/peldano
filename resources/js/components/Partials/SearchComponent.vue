@@ -11,19 +11,41 @@
             class="form-control bg-blue-light-white color-green border-0 h-100 search-input pl-1"
             :placeholder="placeholder"
             aria-describedby="search-addon"
+            v-model="search_articles"
         />
     </div>
 </template>
 
 <script>
+
+import { mapMutations } from "vuex";
+
 export default {
     name: "SeachComponent",
-    props: ["columns", "model", "placeholder"],
+    props: ["columns", "model", "placeholder", "model2"],
     data() {
         return {
             publicPath: window.location.origin,
             error: null,
+            search_articles: ''
         };
     },
+    methods: {
+        ...mapMutations(["saveSearchArticles"]),
+    },
+    mounted(){
+        /*let me = this;
+        $("#search_articles").on("input", function() {
+            console.log('hola2');
+            me.saveSearchArticles(me.search_articles);
+        });*/
+    },
+    watch: {
+        search_articles: {
+            handler: async function(val) {
+                this.saveSearchArticles(val);
+            }
+        },
+    }
 };
 </script>
