@@ -16,7 +16,8 @@ class Article extends Model
         'name',
         'english_name',
         'pvp',
-        'id_product'
+        'id_product',
+        'is_exempt'
     ];
 
     /**
@@ -29,7 +30,8 @@ class Article extends Model
         'name' => 'string',
         'english_name' => 'string',
         'pvp' => 'double',
-        'id_product' => 'integer'
+        'id_product' => 'integer',
+        'is_exempt' => 'boolean'
     ];
 
     /**
@@ -42,6 +44,7 @@ class Article extends Model
         'name',
         'english_name',
         'pvp',
-        'id_product'
+        'id_product',
+        'is_exempt'
     ];
 }

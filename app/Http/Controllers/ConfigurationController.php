@@ -840,6 +840,27 @@ class ConfigurationController extends Controller
         $response['code'] = 1000;
         return response()->json($response);
     }
+
+    //Actualizar exento de IVA de un artículo
+    function changeExempt(Request $request){
+        $id = $request->get('id');
+        //Consultamos si existe el artículo
+        $article = Article::find($id);
+        if(!$article){
+            $response['code'] = 1001;
+            return response()->json($response);
+        }
+        
+        $is_exempt = 0;
+        if($article->is_exempt == 0){
+            $is_exempt = 1;
+        }
+        $article->is_exempt = $is_exempt;
+        $article->save();
+
+        $response['code'] = 1000;
+        return response()->json($response);
+    }
     //END ARTICULOS
 
     //UTILS

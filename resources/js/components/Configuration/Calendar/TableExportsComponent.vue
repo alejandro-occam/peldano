@@ -1,6 +1,6 @@
 <template>
-    <div class="row">
-        <div class="col-12 d-flex flex-wrap justify-content-between">
+    <div class="row" id="div_print">
+        <div class="col-12 d-flex flex-wrap justify-content-between" >
             <h3 class="color-blue">Exportar calendario</h3>
             <AddButtonComponent
                     @click.native="changeShowViewCalendar(1)"
@@ -21,6 +21,7 @@
                 :height="16"
             />
             <AddButtonComponent
+                @click.native="printPage()"
                 :columns="'px-4'"
                 :text="'Imprimir'"
                 :id="'btn_add_number'"
@@ -104,6 +105,64 @@
                     select_calendar_filter: this.select_calendar_filter
                 }
                 this.listCalendarsToExport(param);
+            },
+            printPage(){
+                /*$("#list_calendars").print.printThis({
+                    importCSS: true,
+                    loadCSS: "/public/css/custom-back.css",
+                    printContainer: true,
+                    formValues: true 
+                });*/
+                // Get HTML to print from element
+                const prtHtml = document.getElementById('div_print').innerHTML;
+
+                // Get all stylesheets HTML
+                let stylesHtml = '';
+                /*for (const node of [...document.querySelectorAll('link[rel="stylesheet"], style')]) {
+                    stylesHtml += node.outerHTML;
+                }*/ 
+
+                // Open the print window
+                const WinPrint = window.open('', '', 'left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0');
+
+                $.ajax({
+                    url: "/css/custom-back.css",
+                    dataType: "text",
+                    success: function(cssText) {
+                        stylesHtml += cssText;
+                        // cssText will be a string containing the text of the file
+                    }
+                });
+
+                $.ajax({
+                    url: "/css/style.bundle.css?v=7.2.8",
+                    dataType: "text",
+                    success: function(cssText) {
+                        stylesHtml += cssText;
+                        WinPrint.document.write(`<!DOCTYPE html>
+                            <html>
+                            <head>
+                                ${stylesHtml}
+                            </head>
+                            <body>
+                                ${prtHtml}
+                            </body>
+                            </html>`);
+
+                        //WinPrint.document.close()
+                        setTimeout(() => {
+                            WinPrint.document.close();
+                            WinPrint.focus();
+                            WinPrint.print();
+                            WinPrint.close();
+                            }, 5000);
+                                // cssText will be a string containing the text of the file
+                            }
+                });
+
+                //WinPrint.focus();
+                //WinPrint.print();
+               
             }
         },
         computed: {

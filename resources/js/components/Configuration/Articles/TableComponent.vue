@@ -227,9 +227,16 @@
                             sortable: !1,
                             textAlign: "center",
                             template: function (row, data, index) {
-                                return (
-                                        '<span class="switch switch-outline switch-icon switch-success"><label class="mx-auto"><input type="checkbox" checked="checked" name="select"/><span></span></label></span>'
+                                if(row.is_exempt){
+                                    return (
+                                        '<span class="switch switch-outline switch-icon switch-success"><label class="mx-auto"><input data-id="'+row.id+'" class="switch-exempt" input type="checkbox" checked="checked" name="select"/><span></span></label></span>'
                                     );
+                                }else{
+                                    return (
+                                        '<span class="switch switch-outline switch-icon switch-success"><label class="mx-auto"><input data-id="'+row.id+'" class="switch-exempt" type="checkbox" name="select"/><span></span></label></span>'
+                                    );
+                                }
+                               
                             },
                         },
                         {
@@ -273,6 +280,12 @@
                     $("#modal_delete_article").modal("show");           
                 });
 
+                $("#list_articles").on("click", ".switch-exempt", function () {
+                    var id = $(this).data("id");
+                    me.changeExempt(id);
+                });
+               
+
                 this.datatable.setDataSourceParam('select_articles_filter_sectors', this.select_articles_filter_sectors);
                 this.datatable.setDataSourceParam('select_articles_filter_brands', this.select_articles_filter_brands);
                 this.datatable.setDataSourceParam('select_articles_filter_products', this.select_articles_filter_products);
@@ -313,6 +326,22 @@
                 this.datatable.setDataSourceParam('status', this.status);
                 $('#list_articles').KTDatatable('load');
             },
+            //Actualizar exento de IVA de un artículo
+            changeExempt(id){
+                let params = {
+                    id: id,
+                };
+
+                axios
+                    .post("/admin/change_exempt", params)
+                    .then((response) => {
+                        $('#list_articles').KTDatatable('load');
+                    })
+                    .catch(function (error) {
+                        console.error(error.response);
+                        swal("", "Parece que ha habido un error, inténtalo de nuevo más tarde", "error");
+                    });
+            }
         },
         computed: {
                 ...mapState(["errors", "config"]),
