@@ -79,6 +79,10 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::post('/update_article', [App\Http\Controllers\ConfigurationController::class, 'updateArticle'])->name('update_article');
     //Actualizar exento de IVA de un artículo
     Route::post('/change_exempt', [App\Http\Controllers\ConfigurationController::class, 'changeExempt'])->name('change_exempt');
+    //Listar calendarios para exportar
+    Route::post('/list_articles_to_export', [App\Http\Controllers\ConfigurationController::class, 'listArticlesToExport'])->name('list_articles_to_export');
+    //Descargar CSV de artículos
+    Route::get('/download_list_articles_csv/{filter?}', [App\Http\Controllers\ConfigurationController::class, 'downloadListArticlesCsv'])->name('download_list_articles_csv');
     
 
     Route::get('/{vue_capture?}', function () {

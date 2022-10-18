@@ -1,5 +1,6 @@
 <template>
-    <TableComponent ref="table"></TableComponent>
+    <TableComponent ref="table" v-if="config.articles.show_view_state == 1"></TableComponent>
+    <TableExportsComponent v-else></TableExportsComponent>
     <FormArticleComponent></FormArticleComponent>
     <DeleteArticleComponent></DeleteArticleComponent>
 </template>
@@ -11,13 +12,16 @@ import { mapState } from "vuex";
 import TableComponent from "./TableComponent.vue";
 import FormArticleComponent from "./FormArticleComponent.vue";
 import DeleteArticleComponent from "./DeleteArticleComponent.vue";
+import TableExportsComponent from "./TableExportsComponent.vue"
+
 
 export default {
     name: "ContentComponent",
     components: {
         TableComponent,
         FormArticleComponent,
-        DeleteArticleComponent
+        DeleteArticleComponent,
+        TableExportsComponent
     },
     data() {
         return {

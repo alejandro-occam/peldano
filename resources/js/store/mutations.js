@@ -30,7 +30,11 @@ const mutations = {
 
     saveSearchArticles(state, n){
         state.config.articles.search_articles = n;
-    }
+    },
+
+    changeShowViewArticles(state, n) {
+        state.config.articles.show_view_state = n;
+    },
 }
 
 export default mutations;

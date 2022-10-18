@@ -18,6 +18,7 @@ const state = {
             html_calendar: null
         },
         articles: {
+            show_view_state: 1,
             filter: {
                 array_sectors: null,
                 array_brands: null,

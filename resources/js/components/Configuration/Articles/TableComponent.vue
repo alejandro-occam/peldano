@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-12 d-flex flex-wrap justify-content-between">
             <AddButtonComponent
-                @click.native="changeShowViewCalendar(2)"
+                @click.native="changeShowViewArticles(2)"
                 :columns="'px-4 ml-auto mr-7'"
                 :text="'Exportar'"
                 :id="'btn_export'"
@@ -93,7 +93,7 @@
         },
         methods: {
             ...mapActions(["getSectors", "getBrands", "getProducts", "getInfoArticle"]),
-            ...mapMutations(["controlFormArticles"]),
+            ...mapMutations(["controlFormArticles", "changeShowViewArticles"]),
             openFormModal(){
                 this.controlFormArticles(0)
                 $('#modal_form_article').modal('show');
@@ -352,6 +352,7 @@
                 select_articles_areas: 0
             }
             this.getSectors(params);
+            this.listArticles(1);
         },
         watch: {
             '$store.state.config.articles.search_articles': function() {

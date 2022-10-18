@@ -4,7 +4,7 @@
             <div class="col-12 d-flex flex-wrap justify-content-between" >
                 <h3 class="color-blue">Exportar calendario</h3>
                 <AddButtonComponent
-                        @click.native="changeShowViewCalendar(1)"
+                        @click.native="changeShowViewArticles(1)"
                         :columns="'px-4 ml-auto'"
                         :text="'Volver'"
                         :id="'btn_add_user'"
@@ -25,21 +25,38 @@
                     @click.native="printPage()"
                     :columns="'px-4'"
                     :text="'Imprimir'"
-                    :id="'btn_print_calendars_page'"
+                    :id="'btn_print_articles_page'"
                     :src="'/media/custom-imgs/icono_btn_annadir_numero.svg'"
                     :width="25"
                     :height="25"
                 />
             </div>
-            <div class="col-12 d-flex flex-wrap justify-content-between mt-4">
-                <div class="d-flex align-items-center justify-content-center w-15">
-                    <select class="form-control w-100 bg-gray text-gray select-custom select-filter" :name="'select_calendar_filter'" :id="'select_calendar_filter_excel'" v-model="select_calendar_filter" data-style="select-lightgreen" @change="reloadList">
-                        <option value="0" selected>
-                            Elige un calendario
-                        </option>
-                        <option :value="calendar.id" v-for="calendar in config.calendars.array_calendars"  :key="calendar.id" v-text="calendar.name" ></option>
-                    </select>
-                </div>
+            <div class="col-12 d-flex flex-wrap mt-6">
+                <SearchComponent
+                    :columns="'col-2 mr-2'"
+                    :model="'articles'"
+                    :placeholder="'Buscar artículo'"
+                    :model2="'search_articles'"
+                    @CustomEventInputChanged="reloadListSearch"
+                />
+                <select class="form-control bg-gray text-dark select-custom select-filter col-2 mx-2" :name="'select_articles_filter_sectors'" :id="'select_articles_filter_sectors'" v-model="select_articles_filter_sectors" data-style="select-lightgreen" @change="getBrandsSelect">
+                    <option value="0" selected>
+                        Filtro por sector
+                    </option>
+                    <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
+                </select>
+                <select class="form-control bg-gray text-dark select-custom select-filter col-2 mx-2" :name="'select_articles_filter_brands'" :id="'select_articles_filter_brands'" v-model="select_articles_filter_brands" data-style="select-lightgreen" @change="getProductsSelect">
+                    <option value="0" selected>
+                        Filtro por marca
+                    </option>
+                    <option :value="brand.id" v-for="brand in config.articles.filter.array_brands"  :key="brand.id" v-text="brand.name" ></option>
+                </select>
+                <select class="form-control bg-gray text-dark select-custom select-filter col-2 mx-2" :name="'select_articles_filter_products'" :id="'select_articles_filter_products'" v-model="select_articles_filter_products" data-style="select-lightgreen" @change="reloadList">
+                    <option value="0" selected>
+                        Filtro por producto
+                    </option>
+                    <option :value="product.id" v-for="product in config.articles.filter.array_products"  :key="product.id" v-text="product.name" ></option>
+                </select>
             </div>
             <div class="col-12 mt-7" id="div_print2">
                 <div class="datatable datatable-bordered datatable-head-custom datatable-default datatable-primary datatable-scroll datatable-loaded" id="list_calendars" style="width: 100%;">
@@ -47,32 +64,26 @@
                         <thead class="datatable-head">
                             <tr class="datatable-row" style="left: 0px;">
                                 <th data-field="#calendar" style="width: 85px;" class="datatable-cell-center datatable-cell">
-                                    <span >Calendario</span>
+                                    <span >Referencia</span>
                                 </th>
                                 <th data-field="#number" style="width: 85px;" class="datatable-cell-center datatable-cell">
-                                    <span >Num.</span>
+                                    <span >Publicación</span>
                                 </th>
                                 <th data-field="#title" style="width: 85px;" class="datatable-cell-center datatable-cell">
-                                    <span >Título</span>
+                                    <span >Nombre</span>
                                 </th>
                                 <th data-field="#drafting" style="width: 85px;" class="datatable-cell-center datatable-cell">
-                                    <span>Redacción</span>
+                                    <span>Nombre eng</span>
                                 </th>
                                 <th data-field="#commercial" style="width: 85px;" class="datatable-cell-center datatable-cell">
-                                    <span >Publicidad</span>
+                                    <span >Exento</span>
                                 </th>
                                 <th data-field="#output" style="width: 85px;" class="datatable-cell-center datatable-cell">
-                                    <span >Salida</span>
-                                </th>
-                                <th data-field="#billing" style="width: 85px;" class="datatable-cell-center datatable-cell">
-                                    <span >Facturación</span>
-                                </th>
-                                <th data-field="#front_page" style="width: 85px;" class="datatable-cell-center datatable-cell">
-                                    <span>Portada</span>
+                                    <span >PVP</span>
                                 </th>
                             </tr>
                         </thead>
-                        <tbody class="datatable-body ps" v-html="config.calendars.html_calendar">
+                        <tbody class="datatable-body ps" v-html="config.articles.html_articles">
                         </tbody>
                     </table>
                 </div>
@@ -84,29 +95,38 @@
 <script>
      import { mapMutations, mapActions, mapState } from "vuex";
      import AddButtonComponent from "../../Partials/AddButtonComponent.vue";
+     import SearchComponent from "./SearchComponent.vue";
+
 
      export default {
         name: "TableExportsComponent",
         components: {
-            AddButtonComponent
+            AddButtonComponent,
+            SearchComponent
         },
         data() {
             return {
                 publicPath: window.location.origin,
-                select_calendar_filter: '0'
+                select_articles_filter_sectors: '0',
+                select_articles_filter_brands: '0',
+                select_articles_filter_products: '0',
+                search_articles:''
             };
         },
         methods: {
-            ...mapMutations(["changeShowViewCalendar"]),
-            ...mapActions(["listCalendarsToExport", "downloadListCalendarsCsv"]),
+            ...mapMutations(["changeShowViewArticles"]),
+            ...mapActions(["listArticlesToExport", "getProducts", "getBrands"]),
             downloadFile(){
-                window.open(this.publicPath + "/admin/download_list_calendars_csv/" + this.select_calendar_filter,"_self")
+                window.open(this.publicPath + "/admin/download_list_articles_csv/" + this.select_calendar_filter,"_self")
             },
             reloadList(){
-                var param = {
-                    select_calendar_filter: this.select_calendar_filter
+                var params = {
+                    select_articles_filter_sectors: this.select_articles_filter_sectors,
+                    select_articles_filter_brands: this.select_articles_filter_brands,
+                    select_articles_filter_products: this.select_articles_filter_products,
+                    search_articles: this.search_articles
                 }
-                this.listCalendarsToExport(param);
+                this.listArticlesToExport(params);
             },
             printPage(){
                 /*$("#list_calendars").print.printThis({
@@ -149,16 +169,48 @@
                 //WinPrint.focus();
                 //WinPrint.print();
                
+            },
+            getBrandsSelect(){
+                this.select_articles_filter_brands = '0';
+                this.select_articles_filter_products = '0';
+                var params = {
+                    type: 1,
+                    select_articles_sectors: this.select_articles_filter_sectors,
+                }
+                this.getBrands(params);
+                this.reloadList();
+            },
+            getProductsSelect(){
+                this.select_articles_filter_products = '0';
+                var params = {
+                    type: 1,
+                    select_articles_brands: this.select_articles_filter_brands
+                }
+                this.getProducts(params);
+                this.reloadList();
+            },
+            reloadListSearch ( data ) {
+                console.log(data);
+                this.search_articles = data;
+                this.reloadList();
             }
         },
         computed: {
             ...mapState(["config"])
         },
         mounted() {
-            var param = {
-                    select_calendar_filter: this.select_calendar_filter
-                }
-            this.listCalendarsToExport(param);
+            var params = {
+                select_articles_filter_sectors: this.select_articles_filter_sectors,
+                select_articles_filter_brands: this.select_articles_filter_brands,
+                select_articles_filter_products: this.select_articles_filter_products
+            }
+            this.listArticlesToExport(params);
+        },
+        watch: {
+            '$store.state.config.articles.search_articles': async function() {
+                $('#search_articles').val(this.config.articles.search_articles);
+                this.reloadList();
+            }
         }
     };
 </script>

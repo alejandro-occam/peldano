@@ -178,7 +178,7 @@ const actions = {
         }
     },
 
-    //Listar calendarios para aexportar 
+    //Listar calendarios para exportar 
     async listCalendarsToExport({ state }, params){
         try {
             const response = await http({
@@ -379,6 +379,29 @@ const actions = {
 
             state.errors.type_error = 'update_article';
             state.errors.code = response.data.code;
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
+
+    //Listar artículos para exportar 
+    async listArticlesToExport({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/list_articles_to_export",
+                params: {
+                    select_articles_filter_sectors: params.select_articles_filter_sectors,
+                    select_articles_filter_brands: params.select_articles_filter_brands,
+                    select_articles_filter_products: params.select_articles_filter_products,
+                    search_articles: params.search_articles
+                },
+                method: 'post'
+            });
+
+            state.config.articles.html_articles = response.data.array_articles;
 
         } catch (error) {
             console.error(error);

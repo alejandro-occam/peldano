@@ -484,43 +484,43 @@ class ConfigurationController extends Controller
         $html = '';
         foreach($array_calendars as $calendar){
             $html .= '<tr data-row="0" class="datatable-row" style="left: 0px;">
-                        <td class="datatable-cell-center datatable-cell" data-field="#calendar" aria-label="null">
-                            <span style="width: 175px;">
+                        <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#calendar" aria-label="null">
+                            <span class="mx-auto">
                                 <span class="text-dark">'.$calendar['calendar_name'].'</span>
                             </span>
                         </td>
-                        <td class="datatable-cell-center datatable-cell" data-field="#number" aria-label="null">
-                            <span style="width: 100px;">
+                        <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#number" aria-label="null">
+                            <span class="mx-auto">
                                 <span class="text-dark">'.$calendar->number.'</span>
                             </span>
                         </td>
-                        <td class="datatable-cell-center datatable-cell" data-field="#title" aria-label="null">
-                            <span style="width: 175px;">
+                        <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#title" aria-label="null">
+                            <span class="mx-auto">
                                 <span class="text-dark">'.$calendar->title.'</span>
                             </span>
                         </td>
-                        <td class="datatable-cell-center datatable-cell" data-field="#drafting" aria-label="null">
-                            <span style="width: 175px;">
+                        <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#drafting" aria-label="null">
+                            <span class="mx-auto">
                                 <span class="text-gray font-weight-bold">'.$calendar->drafting.'</span>
                             </span>
                         </td>
-                        <td class="datatable-cell-center datatable-cell" data-field="#commercial" aria-label="null">
-                            <span style="width: 175px;">
+                        <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#commercial" aria-label="null">
+                            <span class="mx-auto">
                                 <span class="text-gray font-weight-bold">'.$calendar->commercial.'</span>
                             </span>
                         </td>
-                        <td class="datatable-cell-center datatable-cell" data-field="#output" aria-label="null">
-                            <span style="width: 175px;">
+                        <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#output" aria-label="null">
+                            <span class="mx-auto">
                                 <span class="text-gray font-weight-bold">'.$calendar->output.'</span>
                             </span>
                         </td>
-                        <td class="datatable-cell-center datatable-cell" data-field="#billing" aria-label="null">
-                            <span style="width: 175px;">
+                        <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#billing" aria-label="null">
+                            <span class="mx-auto">
                                 <span class="text-gray font-weight-bold">'.$calendar->billing.'</span>
                             </span>
                         </td>
-                        <td class="datatable-cell-center datatable-cell" data-field="#front_page" aria-label="null">
-                            <span style="width: 175px;">
+                        <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#front_page" aria-label="null">
+                            <span class="mx-auto">
                                 <span class="text-gray font-weight-bold">'.$calendar->front_page.'</span>
                             </span>
                         </td>
@@ -640,8 +640,6 @@ class ConfigurationController extends Controller
             $search = $query['search_articles'];
         }
 
-        error_log('search: '.$search);
-
         $array_articles = Article::select('articles.*', 'products.name as product_name', 'brands.name as brand_name', 'sectors.name as sector_name', 'areas.name as area_name')
                                     ->leftJoin('products', 'products.id', 'articles.id_product')
                                     ->leftJoin('brands', 'brands.id', 'products.id_brand')
@@ -687,8 +685,6 @@ class ConfigurationController extends Controller
             $array_articles = $array_articles->skip($start)
                             ->take($skip);
         }
-
-        error_log($array_articles->toSql());
         
         $array_articles = $array_articles->get();
         $total_articles = count($array_articles);
@@ -860,6 +856,146 @@ class ConfigurationController extends Controller
 
         $response['code'] = 1000;
         return response()->json($response);
+    }
+
+    //Listar tabla de calendarios para exportar
+    function listArticlesToExport(Request $request){
+        $select_articles_filter_sectors = $request->get('select_articles_filter_sectors');
+        $select_articles_filter_brands = $request->get('select_articles_filter_brands');
+        $select_articles_filter_products = $request->get('select_articles_filter_products');
+        $search_articles = $request->get('search_articles');
+
+        //Barra de busqueda
+        $search = '';
+        if (isset($search_articles)) {
+            $search = $search_articles;
+        }
+
+        $array_articles = Article::select('articles.*', 'products.name as product_name', 'brands.name as brand_name', 'sectors.name as sector_name', 'areas.name as area_name')
+            ->leftJoin('products', 'products.id', 'articles.id_product')
+            ->leftJoin('brands', 'brands.id', 'products.id_brand')
+            ->leftJoin('sectors', 'brands.id_sector', 'sectors.id')
+            ->leftJoin('areas', 'sectors.id_area', 'areas.id')
+            ->where('articles.name', 'like', '%'.$search.'%');
+
+        if(isset($select_articles_filter_sectors) && !empty($select_articles_filter_sectors)){
+            $array_articles = $array_articles->where('sectors.id', $select_articles_filter_sectors);
+        }
+
+        if(isset($select_articles_filter_brands) && !empty($select_articles_filter_brands)){
+            $array_articles = $array_articles->where('brands.id', $select_articles_filter_brands);
+        }
+
+        if(isset($select_articles_filter_products) && !empty($select_articles_filter_products)){
+            $array_articles = $array_articles->where('products.id', $select_articles_filter_products);
+        }
+
+        $array_articles = $array_articles->orWhere('articles.english_name', 'like', '%'.$search.'%');
+
+        if(isset($select_articles_filter_sectors) && !empty($select_articles_filter_sectors)){
+            $array_articles = $array_articles->where('sectors.id', $select_articles_filter_sectors);
+        }
+
+        if(isset($select_articles_filter_brands) && !empty($select_articles_filter_brands)){
+            $array_articles = $array_articles->where('brands.id', $select_articles_filter_brands);
+        }
+
+        if(isset($select_articles_filter_products) && !empty($select_articles_filter_products)){
+            $array_articles = $array_articles->where('products.id', $select_articles_filter_products);
+        }
+
+        $array_articles = $array_articles->get();
+        
+        $html = '';
+        foreach($array_articles as $article){
+            $article['publication'] = strtoupper($article->sector_name[0]).strtoupper($article->sector_name[1]).strtoupper($article->sector_name[2]).'-'.$article->brand_name.'-'.strtoupper($article->product_name[0]).strtoupper($article->product_name[1]).strtoupper($article->product_name[2]);
+            $is_exempt_str = 'No';
+            if($article->is_exempt){
+                $is_exempt_str = 'Sí';
+            }
+            $html .= '<tr data-row="0" class="datatable-row" style="left: 0px;">
+                        <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#calendar" aria-label="null">
+                            <span class="mx-auto">
+                                <span class="text-dark">23424</span>
+                            </span>
+                        </td>
+                        <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#number" aria-label="null">
+                            <span class="mx-auto">
+                                <span class="text-dark">'.$article['publication'].'</span>
+                            </span>
+                        </td>
+                        <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#title" aria-label="null">
+                            <span class="mx-auto">
+                                <span class="text-dark">'.$article->name.'</span>
+                            </span>
+                        </td>
+                        <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#drafting" aria-label="null">
+                            <span class="mx-auto">
+                                <span class="text-gray font-weight-bold">'.$article->english_name.'</span>
+                            </span>
+                        </td>
+                        <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#commercial" aria-label="null">
+                            <span class="mx-auto">
+                                <span class="text-gray font-weight-bold">'.$is_exempt_str.'</span>
+                            </span>
+                        </td>
+                        <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#output" aria-label="null">
+                            <span class="mx-auto">
+                                <span class="text-gray font-weight-bold">'.number_format($article->pvp, 2, ',', '.').'</span>
+                            </span>
+                        </td>
+                    </tr>';
+        }
+
+        $response['code'] = 1000;
+        $response['array_articles'] = $html;
+        return response()->json($response);
+    }
+
+    //Descargar tabla calendarios csv
+    function downloadListArticlesCsv($select_calendar_filter){    
+        //Creamos las columnas del fichero
+        $array_custom_calendars = array (
+            array('Referencia', 'Publicación', 'Nombre', 'Nombre Eng', 'Exento', 'PVP')
+        );
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        //Creamos las cabeceras
+        $sheet->setCellValue('A1', 'Refencia');
+        $sheet->setCellValue('B1', 'Publicación');
+        $sheet->setCellValue('C1', 'Nombre');
+        $sheet->setCellValue('D1', 'Nombre Eng');
+        $sheet->setCellValue('E1', 'Exento');
+        $sheet->setCellValue('F1', 'PVP');
+
+        //Consultamos los artículos
+        $array_articles = Article::select('articles.*', 'products.name as product_name', 'brands.name as brand_name', 'sectors.name as sector_name', 'areas.name as area_name')
+            ->leftJoin('products', 'products.id', 'articles.id_product')
+            ->leftJoin('brands', 'brands.id', 'products.id_brand')
+            ->leftJoin('sectors', 'brands.id_sector', 'sectors.id')
+            ->leftJoin('areas', 'sectors.id_area', 'areas.id')
+            ->get();
+
+        foreach($array_articles as $key => $article){
+            $article['publication'] = strtoupper($article->sector_name[0]).strtoupper($article->sector_name[1]).strtoupper($article->sector_name[2]).'-'.$article->brand_name.'-'.strtoupper($article->product_name[0]).strtoupper($article->product_name[1]).strtoupper($article->product_name[2]);
+            $is_exempt_str = 'No';
+            if($article->is_exempt){
+                $is_exempt_str = 'Sí';
+            }
+            $sheet->setCellValue('A'.($key+2), '23424');
+            $sheet->setCellValue('B'.($key+2), $article['publication']);
+            $sheet->setCellValue('C'.($key+2), $article->name);
+            $sheet->setCellValue('D'.($key+2), $article->english_name);
+            $sheet->setCellValue('E'.($key+2), $is_exempt_str);
+            $sheet->setCellValue('F'.($key+2), $article->pvp);
+        }
+
+        $writer = new Xlsx($spreadsheet);
+        $writer = new Xlsx($spreadsheet);
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="'.'articulos.xlsx');
+        $writer->save('php://output');
     }
     //END ARTICULOS
 
