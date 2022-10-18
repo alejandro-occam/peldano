@@ -587,10 +587,29 @@ a.text-hover-primary:hover, .text-hover-primary:hover{
     width: 15%;
 }
 
-.select-filter{
-    background-color: #f7fbff;
+.select-filter, .select-filter>span>span>span{
+    background-color: #f7fbff !important;
     color: #b5b6b7 !important;
-    border-width: 0px;
+    border-width: 0px !important;
+}
+
+.select-filter>span>span>span{
+    border-radius: 5.46px !important;
+    border-width: 1px !important;
+    border-color: #f7fbff !important;
+}
+
+.select-filter>span>span>span>span.select2-selection__arrow{
+    background: url(/media/custom-imgs/flecha_input_select.svg) no-repeat center right;
+    background-size: 15px 10px;
+    background-origin: content-box;
+    appearance: none;
+    user-select: none;
+    width: 20px !important;
+}
+
+.select2-container--default .select2-selection--single .select2-selection__arrow:after, .select2-container--default .select2-selection--multiple .select2-selection__arrow:after{
+    color: transparent !important;
 }
 
 .bg-blue-light-white{
@@ -671,4 +690,12 @@ a.text-hover-primary:hover, .text-hover-primary:hover{
 
 #kt_body{
     background-color: #f7fbff !important;
+}
+
+.bg-span-gray{
+    background-color: #afafaf;
+}
+
+.br-5{
+    border-radius: 5px;
 }

@@ -430,6 +430,23 @@ const actions = {
             return error;
         }
     },
+
+    //Listar empresas para el select 
+    async getCompanies({ state }){
+        try {
+            const response = await http({
+                url: "/admin/get_companies",
+                method: 'get'
+            });
+
+            state.proposals.array_companies = response.data.array_companies;
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
     
 }
 

@@ -39,6 +39,7 @@ const state = {
     },
     proposals: {
         array_users: null,
+        array_companies: null,
         status_view: 1
     },
     errors: {

@@ -14,20 +14,27 @@
         <div class="col-12 pl-0 mt-15">
             <h3 class="color-blue">Datos del cliente</h3>
             <div class="my-5 col-12 row">
-                <div class="input-group px-0 d-flex">
+                <div class="input-group px-0 d-flex" v-if="this.select_company == '' && this.select_company_other_values == ''">
                     <div class="w-25">
                         <span class="w-25">Empresa o nombre y apellidos</span>
-                        <div class="mt-2">
-                            <input v-model="name" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
-                            <small class="text-danger " v-if="name_error">El nombre no es válido</small>
+                        <div class="mt-2 select-filter">
+                            <select class="form-control select2 select-filter" id="select_company" v-model="select_company">
+                                <option :data-name="company.name" :value="company.id" v-for="company in proposals.array_companies" :key="company.id" v-text="company.name" ></option>
+                            </select>
                         </div>
                     </div>
                     <div class="w-25 ml-10">
                         <span class="w-25">Otros (localidad, e-mail, cif/nif, tlf, cp)</span>
-                        <div class="mt-2">
-                            <input v-model="name" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
-                            <small class="text-danger " v-if="name_error">El nombre no es válido</small>
+                        <div class="mt-2 select-filter">
+                            <select class="form-control select2 select-filter" id="select_company_other_values" v-model="select_company_other_values">
+                                <option :data-name="company.name" :value="company.id" v-for="company in proposals.array_companies" :key="company.id" v-text="company.email + ' - ' + company.nif" ></option>
+                            </select>
                         </div>
+                    </div>
+                </div>
+                <div class="input-group px-0 d-flex mt-5" v-else>
+                    <div class="bg-span-gray py-2 w-25 br-5">
+                        <span class="font-weight-bolder color-white ml-5 f-15">{{ this.name_company }}</span>
                     </div>
                 </div>
             </div>
@@ -44,7 +51,7 @@
 
 <script>
 
-import { mapMutations, mapState } from "vuex";
+import { mapMutations, mapState, mapActions } from "vuex";
 
 import AddButtonComponent from "../Partials/AddButtonComponent.vue";
 import FormAddArticleComponent from "./FormAddArticleComponent.vue";
@@ -58,6 +65,9 @@ export default {
     data() {
         return {
             publicPath: window.location.origin,
+            select_company: '',
+            select_company_other_values: '',
+            name_company: ''
         };
     },
     computed: {
@@ -65,9 +75,36 @@ export default {
     },
     methods: {
         ...mapMutations(["clearError", "changeViewStatusProposals"]),
+        ...mapActions(["getCompanies"]),
         openFormArticle(){
             $('#modal_form_article_proposals').modal('show');
+        },
+        getNameCompany(id){
+            let me = this;
+            me.proposals.array_companies.forEach(function callback(value, index, array) {
+                if(value.id == id){
+                    me.name_company = value.name;
+                }
+            });
         }
+    },
+    mounted() {
+        let me = this;
+        $('#select_company').select2({
+            placeholder: "Selecciona una empresa"
+        });
+        $('#select_company_other_values').select2({
+            placeholder: "Selecciona una empresa"
+        });
+        this.getCompanies();
+        $('#select_company').on("change",function(){
+            me.select_company = $('#select_company').val();
+            me.getNameCompany(me.select_company);
+        });
+        $('#select_company_other_values').on("change",function(){
+            me.select_company_other_values = $('#select_company_other_values').val();
+            me.getNameCompany(me.select_company_other_values);
+        });
     },
     watch: {
             '$store.state.errors.code': function() {

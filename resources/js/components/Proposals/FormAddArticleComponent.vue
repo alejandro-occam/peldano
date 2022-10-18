@@ -159,7 +159,7 @@
         methods: {
             ...mapActions(["getAreas", "getSectors", "getBrands", "getProducts", "addArticle", "updateArticle"]),
             closeModal(){
-                $("#modal_form_article").modal("hide");
+                $("#modal_form_article_proposals").modal("hide");
                 this.getAreas({type: 2});
                 this.clearForm();
             },
@@ -276,7 +276,7 @@
                 type: 2
             }
             this.getAreas(params);
-            $('#modal_form_article').on('hidden.bs.modal', async function (e) {
+            $('#modal_form_article_proposals').on('hidden.bs.modal', async function (e) {
                 this.getAreas({type: 2});
                 this.clearForm();
             });
