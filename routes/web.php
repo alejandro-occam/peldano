@@ -25,6 +25,14 @@ Route::post('/new_password', [App\Http\Controllers\Auth\ResetPasswordController:
 Auth::routes();
 
 Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
+
+    //PROPOSALS
+    //Listar para el select de consultores
+    Route::get('/get_users', [App\Http\Controllers\ProposalsController::class, 'getUsers'])->name('get_users');
+    
+    //END PROPOSALS
+
+
     //CONFIGURATION
     //USUARIOS
     //List users
@@ -83,7 +91,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::post('/list_articles_to_export', [App\Http\Controllers\ConfigurationController::class, 'listArticlesToExport'])->name('list_articles_to_export');
     //Descargar CSV de artículos
     Route::get('/download_list_articles_csv/{filter?}', [App\Http\Controllers\ConfigurationController::class, 'downloadListArticlesCsv'])->name('download_list_articles_csv');
-    
+    //END CONFIGURATION
 
     Route::get('/{vue_capture?}', function () {
         return view('layouts.back.admin');

@@ -14,8 +14,12 @@
     color: #2e49ff!important;
 }
 
-.menu-link.router-link-active>div>span.menu-text>img, .menu-link:hover>div>span.menu-text>img  {
+.menu-link.router-link-active>div>span.menu-text>img.config, .menu-link:hover>div>span.menu-text>img.config  {
     content: url("/media/custom-imgs/icono_config_activo.svg");
+}
+
+.menu-link.router-link-active>div>span.menu-text>img.proposal, .menu-link:hover>div>span.menu-text>img.proposal  {
+    content: url("/media/custom-imgs/icono_propuestas_activo.svg");
 }
 
 .select-custom {
@@ -81,6 +85,25 @@
     background-color: #f3f6f9;
 }
 
+.input-custom-calendar>input{
+    background-color: #f7fbff;
+    color: #b5b6b7 !important;
+    border-width: 0px;
+    padding-left: 13px;
+    padding-right: 13px;
+    padding-top: 8.45px;
+    padding-bottom: 8.45px;
+    border-radius: 5.46px;
+    height: calc(1.5em + 1.3rem + 2px);
+    background: url(/media/custom-imgs/icono_input_calendario.svg) no-repeat center right;
+    background-size: 15px 15px;
+    background-origin: content-box;
+}
+
+.input-custom-calendar{
+    border-radius: 5.46px;
+}
+
 .search-input:focus {
     background-color: #f3f6f9;
 }
@@ -103,7 +126,6 @@
 }
 
 .menu-link.router-link-active > div {
-    background-color: #f3f6f9;
     border-radius: 5px;
 }
 
@@ -640,4 +662,13 @@ a.text-hover-primary:hover, .text-hover-primary:hover{
     height: 20px;
     width: 20px;
     top: 5px;
+}
+
+.subheader-separator.subheader-separator-ver{
+    width: 1px;
+    height: 28px;
+}
+
+#kt_body{
+    background-color: #f7fbff !important;
 }

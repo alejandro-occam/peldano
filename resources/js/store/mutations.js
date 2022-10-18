@@ -35,6 +35,10 @@ const mutations = {
     changeShowViewArticles(state, n) {
         state.config.articles.show_view_state = n;
     },
+
+    changeViewStatusProposals(state, n){
+        state.proposals.status_view = n;
+    }
 }
 
 export default mutations;

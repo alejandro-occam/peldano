@@ -237,8 +237,12 @@ const actions = {
     //Consultar sectores
     async getSectors({ state }, params){
         try {
+            var select_articles_areas = 0;
+            if(params.select_articles_areas != null && params.search_articles != undefined){
+                select_articles_areas = params.select_articles_areas;
+            }
             const response = await http({
-                url: "/admin/get_sectors/" + params.select_articles_areas,
+                url: "/admin/get_sectors/" + select_articles_areas,
                 method: 'get'
             });
 
@@ -402,6 +406,23 @@ const actions = {
             });
 
             state.config.articles.html_articles = response.data.array_articles;
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
+
+    //Listar usuarios para el select 
+    async getUsers({ state }){
+        try {
+            const response = await http({
+                url: "/admin/get_users",
+                method: 'get'
+            });
+
+            state.proposals.array_users = response.data.array_users;
 
         } catch (error) {
             console.error(error);

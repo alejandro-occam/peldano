@@ -37,6 +37,10 @@ const state = {
             search_articles: ''
         }
     },
+    proposals: {
+        array_users: null,
+        status_view: 1
+    },
     errors: {
         code: 0,
         type_error: ''

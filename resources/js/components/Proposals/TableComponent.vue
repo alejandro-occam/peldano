@@ -1,0 +1,312 @@
+<template>
+    <div class="row">
+        <div class="col-12 d-flex flex-wrap justify-content-between">
+            <AddButtonComponent
+                :columns="'px-4 ml-auto mr-7'"
+                :text="'Exportar'"
+                :id="'btn_export'"
+                :src="'/media/custom-imgs/icono_btn_exportar.svg'"
+                :width="16"
+                :height="16"
+            />
+            <AddButtonComponent
+                :columns="'px-4'"
+                :text="'Añadir propuesta'"
+                :src="'/media/custom-imgs/icono_btn_annadir_propuesta.svg'"
+                :width="25"
+                :height="25"
+                @click.native="changeViewStatusProposals(2)"
+            />
+        </div>
+        <div class="col-12 d-flex flex-wrap mt-6">
+            <div class="mx-2 col-2">
+                <span class="text-dark font-weight-bold mb-2">Num. propuesta</span>
+                <input type="text" class="form-control bg-gray mt-3 select-filter text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
+            </div>
+            <div class="mx-2 col-2">
+                <span class="text-dark font-weight-bold mb-2">Consultor</span>
+                <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_consultant'" :id="'select_consultant'" v-model="select_consultant" data-style="select-lightgreen">
+                    <option value="" selected>
+                        Selecciona un consultor
+                    </option>
+                    <option :value="user.id" v-for="user in proposals.array_users"  :key="user.id" v-text="user.name + ' ' + user.surname" ></option>
+                </select>
+            </div>
+           
+            <div class="mx-2 col-2">
+                <span class="text-dark font-weight-bold mb-2">Fecha desde</span>
+                <Calendar class="w-100 select-filter input-custom-calendar mt-3" inputId="date_from" v-model="date_from" autocomplete="off" dateFormat="dd-mm-yy"  />
+            </div>
+
+            <div class="mx-2 col-2">
+                <span class="text-dark font-weight-bold mb-2">Fecha hasta</span>
+                <Calendar class="w-100 select-filter input-custom-calendar mt-3" inputId="date_to" v-model="date_to" autocomplete="off" dateFormat="dd-mm-yy"  />
+            </div>
+
+            <div class="mx-2 col-2 d-flex">
+                <select class="form-control bg-gray text-dark select-custom select-filter mt-auto" :name="'select_from_consultant'" :id="'select_from_consultant'" v-model="select_from_consultant" data-style="select-lightgreen" @change="getProductsSelect">
+                    <option value="1" selected>Del consultor</option>
+                    <option value="2">De la cartera asignada al consultor</option>
+                    <option value="3">Responsable de publicaciones</option>
+                </select>
+            </div>
+
+            <div class="mx-2 col-2 mt-5">
+                <span class="text-dark font-weight-bold mb-2">Sector</span>
+                <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" v-model="select_sector" data-style="select-lightgreen" @change="getProductsSelect">
+                    <option value="" selected>
+                        Filtro por sector
+                    </option>
+                    <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
+                </select>
+            </div>
+
+            <div class="mx-2 col-2 d-flex">
+                <select class="form-control bg-gray text-dark select-custom select-filter mt-auto" :name="'select_status_order'" :id="'select_status_order'" v-model="select_status_order" data-style="select-lightgreen" @change="getProductsSelect">
+                    <option value="1" selected>No han pasado la orden</option>
+                    <option value="2">Han pasado a orden</option>
+                    <option value="3">Todas</option>
+                </select>
+            </div>
+            <div class="mx-2 col-12 d-flex mt-10">
+                <button type="submit" class="btn bg-azul color-white px-35 font-weight-bolder">Aplicar filtro</button>
+            </div>
+        </div>
+        <div class="col-12 mt-15">
+            <div class="datatable datatable-bordered datatable-head-custom" id="list_proposals" style="width: 100%" ></div>
+        </div>
+    </div>
+</template>
+
+<script>
+    import { mapMutations, mapActions, mapState } from "vuex";
+
+    import AddButtonComponent from "../Partials/AddButtonComponent.vue";
+    import Calendar from 'primevue/calendar';
+
+    export default {
+        name: "TableComponent",
+        components: {
+            AddButtonComponent,
+            Calendar
+        },
+        data() {
+            return {
+                publicPath: window.location.origin,
+                select_consultant: '',
+                date_from: '',
+                date_to: '',
+                select_from_consultant: '1',
+                select_sector: '',
+                select_status_order: '1'
+            };
+        },
+        methods: {
+            ...mapActions(["getUsers", "getSectors"]),
+            ...mapMutations(['changeViewStatusProposals']),
+            //Consultar fecha actual
+            getNow() {
+                const today = new Date();
+                const date = today.getDate() + '-' + (today.getMonth()+1)+ '-' + today.getFullYear();
+                this.date_from = date;
+                this.date_to = date;
+            },
+            listProposals() {
+                let me = this;
+                $("#list_proposals").KTDatatable("destroy");
+                $("#list_proposals").KTDatatable("init");
+                $("#list_proposals").KTDatatable({
+                    data: {
+                        type: "remote",
+                        source: {
+                            read: {
+                                url:
+                                    this.publicPath +
+                                    "/admin/list_articles",
+                                headers: {
+                                    "X-CSRF-TOKEN": $(
+                                        'meta[name="csrf-token"]'
+                                    ).attr("content"),
+                                },
+                                method: 'POST',
+                            },
+                        },
+                        pageSize: 10,
+                        serverPaging: !0,
+                        serverFiltering: !0,
+                        serverSorting: !0,
+                    },
+                    layout: {
+                        scroll: true,
+                        customScrollbar: true,
+                        scrollX: true,
+                        footer: !1,
+                        spinner: {
+                            color: "#FFF",
+                        },
+                    },
+                    sortable: !0,
+                    pagination: !0,
+                    search: {
+                        input: $('#search_articles'),
+                        key: "search_articles",
+                    },
+                    translate: {
+                        records: {
+                            processing: "Cargando...",
+                            noRecords: "Sin resultados",
+                        },
+                        toolbar: {
+                            pagination: {
+                                items: {
+                                    info: "Mostrando {{start}} - {{end}} de {{total}} resultados",
+                                },
+                            },
+                        },
+                    },
+                    rows: {
+                        autoHide: false,
+                    },
+                    columns: [
+                        {
+                            field: "#consultant",
+                            title: "Consultor",
+                            sortable: !1,
+                            textAlign: "center",
+                            template: function (row, data, index) {
+                                return (
+                                    '<span class="text-dark">' +
+                                    row.calendar_name +
+                                    "</span>"
+                                );
+                            },
+                        },
+                        {
+                            field: "#proposal",
+                            title: "Propuesta",
+                            sortable: !1,
+                            textAlign: "center",
+                            template: function (row, data, index) {
+                            return (
+                                    '<span class="text-dark">' +
+                                    row.publication +
+                                    "</span>"
+                                );
+                            },
+                        },
+                        {
+                            field: "#status",
+                            title: "Estado",
+                            sortable: !1,
+                            textAlign: "center",
+                            template: function (row, data, index) {
+                                return (
+                                    '<span class="text-dark">' +
+                                    row.name +
+                                    "</span>"
+                                );
+                            },
+                        },
+                        {
+                            field: "#code",
+                            title: "Código",
+                            sortable: !1,
+                            textAlign: "center",
+                            template: function (row, data, index) {
+                                return (
+                                    '<span class="text-gray font-weight-bold">' +
+                                    row.english_name +
+                                    "</span>"
+                                );
+                            },
+                        },
+                        {
+                            field: "#name_client",
+                            title: "Nombre del cliente",
+                            sortable: !1,
+                            textAlign: "center",
+                            template: function (row, data, index) {
+                                return (
+                                    '<span class="text-gray font-weight-bold">' +
+                                    row.english_name +
+                                    "</span>"
+                                );
+                            },
+                        },
+                        {
+                            field: "#date",
+                            title: "Fecha",
+                            sortable: !1,
+                            textAlign: "center",
+                            template: function (row, data, index) {
+                                return (
+                                    '<span class="text-gray font-weight-bold">' +
+                                    row.english_name +
+                                    "</span>"
+                                );
+                            },
+                        },
+                        {
+                            field: "#total",
+                            title: "Total",
+                            sortable: !1,
+                            textAlign: "center",
+                            template: function (row, data, index) {
+                                return (
+                                    '<span class="text-gray font-weight-bold">' +
+                                    row.english_name +
+                                    "</span>"
+                                );
+                            },
+                        },
+                        {
+                            field: "#sector",
+                            title: "Sector",
+                            sortable: !1,
+                            textAlign: "center",
+                            template: function (row, data, index) {
+                                return (
+                                    '<span class="text-gray font-weight-bold">' +
+                                    row.english_name +
+                                    "</span>"
+                                );
+                            },
+                        },
+                        {
+                            field: "#",
+                            title: "",
+                            sortable: !1,
+                            textAlign: "center",
+                            template: function (row, data, index) {
+                                var html ='<div>';
+                                html += '<button type="button" class="btn p-0 mx-2 btn-show" data-id="' + row.id + '"><img class="edit-hover" src="/media/custom-imgs/icono_tabla_ver.svg" height="30px" width="auto"></button>';
+                                return html;
+                            },
+                        },
+                    ],
+                });
+
+                $("#list_articles").on("click", ".btn-show", function () {
+                    var id = $(this).data("id");
+                    me.getInfoArticle(id);
+                    $("#modal_delete_article").modal("show");           
+                });
+            },
+        },
+        computed: {
+            ...mapState(["errors", "proposals", "config"]),
+        },
+        mounted() {
+            this.getUsers();
+            var params = {
+                type: 1
+            }
+            this.getSectors(params);
+            this.getNow();
+            this.listProposals();
+        },
+        watch: {
+            
+        }
+    };
+</script>
