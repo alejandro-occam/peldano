@@ -5,8 +5,7 @@
             <div class="modal-content">
                 <form @submit.prevent="">
                     <div class="modal-header">
-                        <h2 class="mx-auto color-blue" id="title_modal" v-if="this.config.articles.is_update==0">Añadir artículo</h2>
-                        <h2 class="mx-auto color-blue" id="title_modal" v-else >Modificar artículo</h2>
+                        <h2 class="mx-auto color-blue" id="title_modal">Añadir artículo</h2>
                         <button type="button" class="close position-absolute" style="right: 22px;" data-dismiss="modal" @click="this.closeModal()">
                             &times;
                         </button>
@@ -62,7 +61,7 @@
                                 <span class="my-auto w-25">Producto</span>
                             </div>
                             <div class="">
-                                <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_product'" :id="'select_product'" v-model="select_product" data-style="select-lightgreen" >
+                                <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_product'" :id="'select_product'" v-model="select_product" data-style="select-lightgreen" @change="getArticlesSelect">
                                     <option value="" selected>
                                         Elige un producto
                                     </option>
@@ -74,34 +73,40 @@
 
                         <div class="input-group my-5 d-block" >
                             <div class="mb-1">
-                                <span class="my-auto w-25">Nombre</span>
+                                <span class="my-auto w-25">Artículos</span>
                             </div>
                             <div class="">
-                                <input v-model="name" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
-                                <small class="text-danger " v-if="name_error">El nombre no es válido</small>
+                                <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_article'" :id="'select_article'" v-model="select_article" data-style="select-lightgreen" @change="selectedArticle()">
+                                    <option value="" selected>
+                                        Elige un artículo
+                                    </option>
+                                    <option :value="article.id" v-for="article in config.articles.form.array_articles" :key="article.id" v-text="article.name" ></option>
+                                </select>
+                                <small class="text-danger " v-if="select_product_error">El artículo no es válido</small>
                             </div>
                         </div>
 
-                        <div class="input-group my-5 d-block" >
+                        <div class="input-group my-3 d-block" >
                             <div class="mb-1">
-                                <span class="my-auto w-25">Nombre en inglés</span>
-                            </div>
-                            <div class="">
-                                <input v-model="name_eng" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
-                                <small class="text-danger " v-if="name_eng_error">El nombre en inglés no es válido</small>
-                            </div>
-                        </div>
-
-                        <div class="input-group my-5 d-block" >
-                            <div class="mb-1">
-                                <span class="my-auto w-25">Precio sin IVA</span>
+                                <span class="my-auto w-25">Cantidad de artículos</span>
                             </div>
                             <div class="">
                                 <span class="p-input-icon-right w-100">
-                                    <input v-model="price" type="text" class="form-control borders-box text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
-                                    <img width="13" class="pi" src="/media/custom-imgs/icono_euro_input.svg"/>
+                                    <input v-model="amount" type="text" class="form-control borders-box text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 0" />
                                 </span>
-                                <small class="text-danger " v-if="price_error">El precio no es válido</small>
+                                <small class="text-danger " v-if="amount_error">La cantidad de artículos no es válida</small>
+                            </div>
+                        </div>
+
+                        <div class="input-group my-3 d-block">
+                            <div class="mb-1">
+                                <div class="d-flex px-0 col-12 row">
+                                    <div v-for="index in Number(this.amount)" class="mt-2 col-4">
+                                        <span class="my-auto w-25">Fecha {{ index }}</span>
+                                        <Calendar class="w-100 borders-box text-dark-gray mt-1"  autocomplete="off" v-model="this.date[index - 1]" dateFormat="dd-mm-yy"  />
+                                    </div>
+                                </div>
+                                <small class="text-danger " v-if="date_error">Debes rellenar las fechas</small>
                             </div>
                         </div>
                     </div>
@@ -109,11 +114,8 @@
                         <button type="button" class="btn btn-close ml-auto px-10 color-blue font-weight-bold bg-blue-light-white" data-dismiss="modal" @click="this.closeModal()">
                             Cancelar
                         </button>
-                        <button type="submit" class="btn bg-azul color-white px-10 font-weight-bold" v-if="this.config.articles.is_update == 0" @click="this.validateForm(1)">
+                        <button type="submit" class="btn bg-azul color-white px-10 font-weight-bold" @click="this.validateForm()">
                             Añadir
-                        </button>
-                        <button type="submit" class="btn bg-azul color-white px-10 font-weight-bold" v-else @click="this.validateForm(2)">
-                            Actualizar
                         </button>
                     </div>
                 </form>
@@ -126,7 +128,7 @@
 
     import Calendar from 'primevue/calendar';
 
-    import { mapState, mapActions } from "vuex";
+    import { mapState, mapActions, mapMutations } from "vuex";
 
     export default {
         name: "FormAddArticleComponent",
@@ -139,40 +141,42 @@
                 select_area: '',
                 select_area_error: false,
                 select_sector: '',
+                sector_obj: '',
                 select_sector_error: false,
                 select_brand: '',
                 select_brand_error: false,
                 select_product: '',
                 select_product_error: false,
-                name: '',
-                name_error: false,
-                name_eng: '',
-                name_eng_error: false,
-                price: '',
-                price_error: false,
-                is_update: 0,
+                select_article: '',
+                select_article_error: false,
+                amount: '',
+                amount_error: false,
+                date: [],
+                date_error: false,
+                minDate: new Date(2022, 10, 19),
             };
         },
         computed: {
             ...mapState(["config", "errors"]),
         },
         methods: {
-            ...mapActions(["getAreas", "getSectors", "getBrands", "getProducts", "addArticle", "updateArticle"]),
+            ...mapActions(["getAreas", "getSectors", "getBrands", "getProducts", "getArticles", "addArticle", "updateArticle"]),
+            ...mapMutations(["saveProposalObject"]),
             closeModal(){
                 $("#modal_form_article_proposals").modal("hide");
                 this.getAreas({type: 2});
                 this.clearForm();
             },
             //Validar datos
-            validateForm(type){
+            validateForm(){
                 this.valid = true;
                 this.select_area_error = false;
                 this.select_sector_error = false;
                 this.select_brand_error = false;
                 this.select_product_error = false;
-                this.name_error = false;
-                this.name_eng_error = false;
-                this.price_error = false;
+                this.select_article_error = false;
+                this.amount_error = false;
+                this.date_error = false;
 
                 if(this.select_area == "" || this.select_area == null || this.select_area == 0){
                     this.select_area_error = true;
@@ -194,41 +198,31 @@
                     this.valid = false;
                 }
 
-                if(this.name == "" || this.name == null){
-                    this.name_error = true;
+                if(this.select_article == "" || this.select_article == null || this.select_article == 0){
+                    this.select_article_error = true;
                     this.valid = false;
                 }
-                if(this.name_eng == "" || this.name_eng == null){
-                    this.name_eng_error = true;
+
+                if(this.amount == "" || this.amount == null || this.amount == 0){
+                    this.amount_error = true;
                     this.valid = false;
                 }
-                if(this.price == "" || this.price == null || this.price == 0){
-                    this.price_error = true;
-                    this.valid = false;
+
+                
+                if(this.date.length > 0){
+                    for(var i=0; i<this.date.length; i++){
+                        if(this.date[i] == '' || this.date[i] == null){
+                            this.date_error = true;
+                            this.valid = false;
+                        }
+                    }
                 }
                 
-                if(this.valid){
-                    if(type == 1){
-                        var params ={
-                            'id_product': this.select_product,
-                            'name': this.name,
-                            'name_eng': this.name_eng,
-                            'price': this.price
-                        }
-                        this.addArticle(params);
-                    }
-
-                    if(type == 2){
-                        var params ={
-                            'id_article': this.config.articles.article_obj.id,
-                            'id_product': this.select_product,
-                            'name': this.name,
-                            'name_eng': this.name_eng,
-                            'price': this.price
-                        }
-                        this.updateArticle(params);
-                    }
-                    
+                if(this.valid){ 
+                    this.saveProposal();
+                    this.getAreas({type: 2});
+                    this.clearForm();
+                    $('#modal_form_article_proposals').modal('hide');
 
                 }else{
                     swal("", "Rellena todos los datos", "warning");
@@ -239,14 +233,14 @@
                 this.select_sector = '';
                 this.select_brand = '';
                 this.select_product = '';
-                this.name = '';
-                this.name_eng = '';
-                this.price = '';
+                this.select_article = '';
+                this.amount = '';
             },
             getSectorsSelect(){
                 this.select_sector = '';
                 this.select_brand = '';
                 this.select_product = '';
+                this.select_article = '';
                 var params = {
                     type: 2,
                     select_articles_areas: this.select_area
@@ -254,21 +248,60 @@
                 this.getSectors(params);
             },
             getBrandsSelect(){
-                this.select_brand = '';
-                this.select_product = '';
+                let me = this;
+                //Guardamos el objeto del sector elegido
+                me.config.articles.form.array_sectors.forEach(function callback(value, index, array) {
+                    if(value.id == me.select_sector){
+                        me.sector_obj = value;
+                    }
+                });
+                me.select_brand = '';
+                me.select_product = '';
+                me.select_article = '';
                 var params = {
                     type: 2,
-                    select_articles_sectors: this.select_sector
+                    select_articles_sectors: me.select_sector
                 }
-                this.getBrands(params);
+                me.getBrands(params);
             },
             getProductsSelect(){
                 this.select__product = '';
+                this.select_article = '';
                 var params = {
                     type: 2,
                     select_articles_brands: this.select_brand
                 }
                 this.getProducts(params);
+            },
+            getArticlesSelect(){
+                this.select_article = '';
+                var params = {
+                    type: 2,
+                    select_articles_products: this.select_product
+                }
+                this.getArticles(params);
+            },
+            //Seleccionamos un artículo
+            selectedArticle() {
+                let me = this;
+                //Guardamos el objeto del artículo elegido
+                me.config.articles.form.array_articles.forEach(function callback(value, index, array) {
+                    if(value.id == me.select_article){
+                        me.article_obj = value;
+                    }
+                });
+            },
+            saveProposal() {
+                var params = {
+                    select_area: this.select_area,
+                    sector_obj: this.sector_obj,
+                    select_brand: this.select_brand,
+                    select_product: this.select_product,
+                    article_obj: this.article_obj,
+                    amount: this.amount,
+                    dates: this.date
+                }
+                this.saveProposalObject(params);
             }
         },
         mounted() {
@@ -280,7 +313,18 @@
                 this.getAreas({type: 2});
                 this.clearForm();
             });
+
         },
+        watch: {
+            amount: {
+                handler: async function(val) {
+                    this.date = [];
+                    for(var i=0; i<val; i++){
+                        this.date[i] = this.$utils.getNow();
+                    }
+                }
+            }
+        }
     };
-    </script>
+</script>
     

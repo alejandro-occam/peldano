@@ -38,6 +38,17 @@ const mutations = {
 
     changeViewStatusProposals(state, n){
         state.proposals.status_view = n;
+    },
+
+    //Guardar el objeto propuesta
+    saveProposalObject(state, params){
+        state.proposals.proposal_obj.article.area = params.select_area;
+        state.proposals.proposal_obj.article.sector_obj = params.sector_obj;
+        state.proposals.proposal_obj.article.brand = params.select_brand;
+        state.proposals.proposal_obj.article.product = params.select_product;
+        state.proposals.proposal_obj.article.article_obj = params.article_obj;
+        state.proposals.proposal_obj.article.amount = params.amount;
+        state.proposals.proposal_obj.article.dates = params.dates;
     }
 }
 

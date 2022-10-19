@@ -9,4 +9,11 @@ export const func = {
         number = number.toString().replace(".", ",");
         return number.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ".");
     },
+
+    //Consultar la fecha actual
+    getNow() {
+        const today = new Date();
+        const date = today.getDate() + '-' + (today.getMonth()+1)+ '-' + today.getFullYear();
+        return date;
+    },
 };

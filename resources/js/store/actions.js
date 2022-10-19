@@ -238,7 +238,7 @@ const actions = {
     async getSectors({ state }, params){
         try {
             var select_articles_areas = 0;
-            if(params.select_articles_areas != null && params.search_articles != undefined){
+            if(params.select_articles_areas != null || params.search_articles != undefined){
                 select_articles_areas = params.select_articles_areas;
             }
             const response = await http({
@@ -308,6 +308,23 @@ const actions = {
             }else{
                 state.config.articles.form.array_products = response.data.array_products;
             }
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
+
+    //Consultar artículos
+    async getArticles({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/get_articles/" + params.select_articles_products,
+                method: 'get'
+            });
+
+            state.config.articles.form.array_articles = response.data.array_articles;
 
         } catch (error) {
             console.error(error);
@@ -440,6 +457,7 @@ const actions = {
             });
 
             state.proposals.array_companies = response.data.array_companies;
+            state.proposals.user_obj = response.data.user;
 
         } catch (error) {
             console.error(error);

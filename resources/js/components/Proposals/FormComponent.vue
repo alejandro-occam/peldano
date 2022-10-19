@@ -34,15 +34,140 @@
                 </div>
                 <div class="input-group px-0 d-flex mt-5" v-else>
                     <div class="bg-span-gray py-2 w-25 br-5">
-                        <span class="font-weight-bolder color-white ml-5 f-15">{{ this.name_company }}</span>
+                        <span class="font-weight-bolder color-white ml-5 f-15 text-dark">{{ this.name_company }}</span>
                     </div>
                 </div>
             </div>
-            <div class="mt-15">
+            <div class="mt-15"  v-if="this.select_company != '' || this.select_company_other_values != ''">
                 <button type="button" class="btn bg-azul color-white px-5 font-weight-bolder" @click="this.openFormArticle()">
                     <img class="mr-2" width="24" height="24" src="/media/custom-imgs/icono_btn_annadir_articulo_blanco.svg" />
                     Añadir artículo
                 </button>
+            </div>
+            <div class="mb-5 mt-15 col-12 row" v-if="proposals.proposal_obj.article.article_obj != null">
+                <div>
+                    <img class="mr-2" width="150" height="150" src="/media/custom-imgs/icono_ficha_ordenes.svg" />
+                </div>
+                <div>
+                    <div class="ml-10">
+                        <div><h2 class="text-dark">Propuesta 56528</h2></div>
+                        <div class="f-20">
+                            <span class="text-dark font-weight-bold">Cliente: <span class="color-dark-gray font-weight-bold">{{ name_company }}</span></span>
+                        </div>
+                        <div class="mt-8">
+                            <div class="d-flex">
+                                <div class="d-block mr-20">
+                                    <div class="f-16 color-dark-gray font-weight-bolder">
+                                        <span>FECHA</span>
+                                    </div>
+                                    <div class="f-15 text-dark">
+                                        <span>{{ this.$utils.getNow() }}</span>
+                                    </div>
+                                </div>
+                                <div class="d-block mx-20">
+                                    <div class="f-16 color-dark-gray font-weight-bolder">
+                                        <span>CONSULTOR</span>
+                                    </div>
+                                    <div class="f-15 text-dark">
+                                        <span>{{ this.$utils.getNow() }}</span>
+                                    </div>
+                                </div>
+                                <div class="d-block mx-20">
+                                    <div class="f-16 color-dark-gray font-weight-bolder">
+                                        <span>SECTOR</span>
+                                    </div>
+                                    <div class="f-15 text-dark">
+                                        <span v-if="proposals.proposal_obj.article.sector_obj != null">{{ proposals.proposal_obj.article.sector_obj.name }}</span>
+                                    </div>
+                                </div>
+                                <div class="d-block ml-20">
+                                    <div class="f-16 color-dark-gray font-weight-bolder">
+                                        <span>ANUNCIANTE</span>
+                                    </div>
+                                    <div class="f-15 text-dark">
+                                        <!--<span v-if="proposals.user_obj.name != null">{{ proposals.user_obj.name + ' ' + proposal.user_obj.surname }}</span>-->
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="float:left;">
+                                <div class="d-flex border-blue-article mt-8">
+                                    <div class="d-block mr-5 px-10 py-8">
+                                        <div class="f-16 color-dark-gray text-align-center">
+                                            <span>OFERTA</span>
+                                        </div>
+                                        <span class="p-input-icon-right w-100">
+                                            <input v-model="offer" type="text" class="form-control discount bg-blue-light-white font-weight-bolder f-15 color-dark-gray not-border mt-3" style="width:150px;" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" v-on:change="changeValueBox(1)"/>
+                                        </span>
+                                    </div>
+                                    <div class="subheader-separator subheader-separator-ver my-auto py-14 bg-gray-light"></div>
+                                    <div class="d-block mx-5 px-10 py-8">
+                                        <div class="f-16 color-dark-gray text-align-center">
+                                            <span>DESCUENTO</span>
+                                        </div>
+                                        <span class="p-input-icon-right w-100">
+                                            <input v-model="discount" type="text" class="form-control discount bg-blue-light-white font-weight-bolder f-15 color-dark-gray not-border mt-3" style="width:150px;" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0"  v-on:change="changeValueBox(2)"/>
+                                            <img width="13" class="pi my-auto" src="/media/custom-imgs/icono_porcentaje_input.svg"/>
+                                        </span>
+                                    </div>
+                                    <div class="subheader-separator subheader-separator-ver my-auto py-14 bg-gray-light"></div>
+                                    <div class="d-block ml-5 px-10 py-8">
+                                        <div class="f-16 color-dark-gray text-align-center">
+                                            <span>TARIFA</span>
+                                        </div>
+                                        <div class="f-15 color-dark-gray font-weight-bolder px-8 py-2 mt-3">
+                                            <span v-if="this.proposals.proposal_obj.article.article_obj != null && this.proposals.proposal_obj.article.dates != null">{{ this.$utils.roundAndFix(this.proposals.proposal_obj.article.article_obj.pvp * this.proposals.proposal_obj.article.dates.length) }}€</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="col-12 mt-15">
+                <table width="100%"  cellpadding="2" cellspacing="1">
+                    <thead class="custom-columns-datatable">
+						<tr>
+                            <th tabindex="0" class="pb-3" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span class="ml-5">SERVICIOS</span></th>
+                            <th tabindex="0" class="pb-3" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span class="ml-5">PVP</span></th>
+                            <th tabindex="0" class="pb-3" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span class="ml-5">N</span></th>
+                            <th tabindex="0" class="pb-3" v-for="index in Number(this.discount.length)" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span class="ml-5">1</span></th>
+                            <th tabindex="0" class="pb-3" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span class="ml-5">TOTAL</span></th>
+                        </tr>
+					</thead>
+                    <tbody>
+                        <tr class="row-product">
+                            <td class="py-2" :colspan="this.discount.length + 4">
+                                <span class="ml-5">Web campingprofesional.com (W)</span>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td valign="middle" class="td-border-right"><span class="ml-5">BANNER 200 X 200</span></td>
+                            <td valign="middle" class="td-border-right"><span class="ml-5">210,00€</span></td>
+                            <td valign="middle" class="td-border-right"><span class="ml-5">6</span></td>
+                            <td valign="middle" class="td-border-right"><span class="ml-5">1.260,00€</span></td>
+                        </tr>
+                        <tr class="row-product">
+                            <td class="py-2" :colspan="this.discount.length + 4">
+                                <span class="ml-5">Newsletter CPROF (N)</span>
+                            </td>
+                        </tr>
+                        <tr >
+                            <td valign="middle" title="10206004">BANNER 150 X 150</td>
+                            <td valign="middle" >110,00€</td>
+                            <td valign="middle" >1</td>
+                            <td ><img onclick="javascript:ModificarAnunciantePropuesta('modificar_anunciante','modificar_anunciante_fondo', 56809,15723,307139);" class="boton" title="Modificar anunciante Alfred Smart Systems" alt="Modificar anunciante"><input title="Alfred Smart Systems" size="5" class="numeric" type="text name=" id="insercion_307139" value="110.00"><img onclick="javascript:cargarOpciones(56809,'cesta','cargar_propuesta','insercion',307139,document.getElementById('insercion_307139').value);" class="boton"></td>
+                            <td >110,00€</td>
+                        </tr>
+                        <tr class="destacado"  color="#FFFFFF">
+                            <td>TOTAL</td>
+                            <td >1.370,00€</td>
+                            <td >7</td>
+                            <td >1.370,00€</td>
+                            <td >1.370,00€</td>
+                        </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -55,23 +180,30 @@ import { mapMutations, mapState, mapActions } from "vuex";
 
 import AddButtonComponent from "../Partials/AddButtonComponent.vue";
 import FormAddArticleComponent from "./FormAddArticleComponent.vue";
+import DataTable from 'primevue/datatable';
+import Column from 'primevue/column';
 
 export default {
     name: "FormComponent",
     components: {
         AddButtonComponent,
-        FormAddArticleComponent
+        FormAddArticleComponent,
+        DataTable,
+        Column
     },
     data() {
         return {
             publicPath: window.location.origin,
             select_company: '',
             select_company_other_values: '',
-            name_company: ''
+            name_company: '',
+            offer: '',
+            discount: '0.00',
+            fullname: ''
         };
     },
     computed: {
-            ...mapState(["errors", 'proposals']),
+            ...mapState(["errors", "proposals", "datatable_defaults"]),
     },
     methods: {
         ...mapMutations(["clearError", "changeViewStatusProposals"]),
@@ -86,6 +218,18 @@ export default {
                     me.name_company = value.name;
                 }
             });
+        },
+        changeValueBox(type){
+            if(type == 1){
+                var difference = (this.proposals.proposal_obj.article.article_obj.pvp * this.proposals.proposal_obj.article.dates.length) - this.offer;
+                this.discount = this.$utils.roundAndFix(difference / (this.proposals.proposal_obj.article.article_obj.pvp * this.proposals.proposal_obj.article.dates.length) * 100);
+
+            }else{
+                if(this.discount != 0){
+                    var difference = ((100 - this.discount) / 100) * this.proposals.proposal_obj.article.article_obj.pvp * this.proposals.proposal_obj.article.dates.length;
+                    this.offer = this.$utils.roundAndFix(difference);
+                }
+            }
         }
     },
     mounted() {
@@ -122,7 +266,12 @@ export default {
                         this.clearError();
                     }
                 }
-            }
+            },
+            '$store.state.proposals.proposal_obj.article.article_obj': function() {
+                if(this.proposals.proposal_obj.article.article_obj != null && this.proposals.proposal_obj.article.dates != null){
+                    this.offer = this.$utils.roundAndFix(this.proposals.proposal_obj.article.article_obj.pvp * this.proposals.proposal_obj.article.dates.length);
+                }
+            },
         }
     
 };

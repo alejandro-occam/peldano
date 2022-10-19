@@ -615,6 +615,14 @@ class ConfigurationController extends Controller
         return response()->json($response);
     }
 
+    //Consultar artículos
+    function getArticles($id){
+        $array_articles = Article::where('id_product', $id)->get();
+        $response['array_articles'] = $array_articles;
+        return response()->json($response);
+    }
+
+
     //Listado de artículos
     function listArticles(Request $request){
         //Elementos para la paginación 

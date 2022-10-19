@@ -79,6 +79,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('/get_brands/{id}', [App\Http\Controllers\ConfigurationController::class, 'getBrands'])->name('get_brands');
     //Listar para el select de productos 
     Route::get('/get_products/{id}', [App\Http\Controllers\ConfigurationController::class, 'getProducts'])->name('get_products');
+    //Listar para el select de artículos 
+    Route::get('/get_articles/{id}', [App\Http\Controllers\ConfigurationController::class, 'getArticles'])->name('get_articles');
     //Añadir un artículo
     Route::post('/add_article', [App\Http\Controllers\ConfigurationController::class, 'addArticle'])->name('add_article');
     //Consultar información de un artículo
