@@ -141,7 +141,7 @@
                             WinPrint.focus();
                             WinPrint.print();
                             WinPrint.close();
-                            }, 5500);
+                            }, 500);
                                 // cssText will be a string containing the text of the file
                             
                         

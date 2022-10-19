@@ -917,7 +917,7 @@ class ConfigurationController extends Controller
             $html .= '<tr data-row="0" class="datatable-row" style="left: 0px;">
                         <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#calendar" aria-label="null">
                             <span class="mx-auto">
-                                <span class="text-dark">23424</span>
+                                <span class="text-dark">'.$article->id.'</span>
                             </span>
                         </td>
                         <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#number" aria-label="null">
@@ -984,7 +984,7 @@ class ConfigurationController extends Controller
             if($article->is_exempt){
                 $is_exempt_str = 'Sí';
             }
-            $sheet->setCellValue('A'.($key+2), '23424');
+            $sheet->setCellValue('A'.($key+2), $article->id);
             $sheet->setCellValue('B'.($key+2), $article['publication']);
             $sheet->setCellValue('C'.($key+2), $article->name);
             $sheet->setCellValue('D'.($key+2), $article->english_name);

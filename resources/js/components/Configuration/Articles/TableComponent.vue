@@ -176,7 +176,7 @@
                             template: function (row, data, index) {
                                 return (
                                         '<span class="text-dark">' +
-                                        row.calendar_name +
+                                        row.id +
                                         "</span>"
                                     );
                             },
