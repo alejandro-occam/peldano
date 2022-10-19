@@ -145,7 +145,13 @@
                             <td valign="middle" class="td-border-right"><span class="ml-5">BANNER 200 X 200</span></td>
                             <td valign="middle" class="td-border-right"><span class="ml-5">210,00€</span></td>
                             <td valign="middle" class="td-border-right"><span class="ml-5">6</span></td>
-                            <td valign="middle" class="td-border-right"><span class="ml-5">1.260,00€</span></td>
+                            <td valign="middle" class="td-border-right">
+                                <div class="d-grid">
+                                    <span class="ml-5 bg-blue-light-white px-5 py-2 text-align-center my-2">1.260,00€</span>
+                                    <span class="ml-5 bg-blue-light-white px-5 py-2 text-align-center my-2">1.260,00€</span>
+                                    <span class="ml-5 bg-blue-light-white px-5 py-2 text-align-center my-2">1.260,00€</span>
+                                </div>
+                            </td>
                         </tr>
                         <tr class="row-product">
                             <td class="py-2" :colspan="this.discount.length + 4">
