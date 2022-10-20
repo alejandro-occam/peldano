@@ -59,7 +59,7 @@ const mutations = {
             state.proposals.proposal_obj.products.map(function(articles_obj, key) {
                 if(articles_obj.product_obj.id == params.product_obj.id){
                     if(articles_obj.articles.length > 0){
-                        if(articles_obj.articles[0].article_obj != null){
+                        /*if(articles_obj.articles[0].article_obj != null){
                             if(articles_obj.articles[0].article_obj.id == params.article_obj.id){
                                 
                                 articles_obj.articles.push(article);
@@ -68,9 +68,20 @@ const mutations = {
                         }else{
                             articles_obj.articles.shift();
                             articles_obj.articles.push(article);
-                        }
+                        }*/
+                        articles_obj.articles.map(function(article, key) {
+                            if(article.article_obj.id == params.article_obj.id){
+                                article.dates.map(function(dates, key) {
+                                    article.array_dates.push(dates);
+                                });
+                            }
+                        });
                     }else{
                         articles_obj.articles.push(article);
+                        article.dates.map(function(dates, key) {
+                            articles_obj.articles.array_dates.push(dates);
+                        });
+                        
                     }
                 }else{
                     var product = {
