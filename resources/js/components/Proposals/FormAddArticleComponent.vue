@@ -155,12 +155,11 @@
                 amount_error: false,
                 date: [],
                 date_error: false,
-                minDate: new Date(2022, 10, 19),
                 show_amount_dates: false
             };
         },
         computed: {
-            ...mapState(["config", "errors"]),
+            ...mapState(["config", "errors", "proposals"]),
         },
         methods: {
             ...mapActions(["getAreas", "getSectors", "getBrands", "getProducts", "getArticles", "addArticle", "updateArticle"]),
@@ -214,6 +213,9 @@
                 
                 if(this.date.length > 0){
                     for(var i=0; i<this.date.length; i++){
+                        //Formateamos la fecha dada por el calendario
+                        var date_ms = Date.parse(this.date[i]);
+                        this.date[i] = this.$utils.customFormDate(date_ms);
                         if(this.date[i] == '' || this.date[i] == null){
                             this.date_error = true;
                             this.valid = false;
@@ -352,7 +354,7 @@
                 handler: async function(val) {
                     this.date = [];
                     for(var i=0; i<val; i++){
-                        this.date[i] = this.$utils.getNow();
+                        this.date[i] = new Date();//this.$utils.getNow();
                     }
                 }
             }

@@ -16,4 +16,14 @@ export const func = {
         const date = today.getDate() + '-' + (today.getMonth()+1)+ '-' + today.getFullYear();
         return date;
     },
+
+    //Formate Date Calendar
+    customFormDate(date) {
+        var new_date = new Date(date);
+        var new_date2 = new_date.toLocaleString('en-GB')
+        var new_date3 = new_date2.split(', ');
+        var new_date4 = new_date3[0].split('/');
+        var finish_date = new_date4[0] + '-' + new_date4[1] + '-' + new_date4[2];
+        return finish_date;
+    }
 };

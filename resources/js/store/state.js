@@ -42,24 +42,15 @@ const state = {
         array_users: null,
         array_companies: null,
         status_view: 1,
-        /*proposal_obj: {
-            article: {
-                area: null,
-                sector_obj: null,
-                brand: null,
-                product: null,
-                article_obj: null,
-                amount: null,
-                dates: null,
-            }
-        },*/
         proposal_obj: {
             products:[
                 {
                     product_obj: null,
                     articles: []
                 }
-            ]
+            ],
+            is_change: false,
+            array_dates: []
         },
         user_obj: {
             name: null,

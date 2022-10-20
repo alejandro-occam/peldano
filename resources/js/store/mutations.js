@@ -51,6 +51,7 @@ const mutations = {
             dates: params.dates,
         };
 
+        var array_dates = [];
         if(state.proposals.proposal_obj.products.length > 0){
             if(state.proposals.proposal_obj.products[0].product_obj == null){
                 state.proposals.proposal_obj.products[0].product_obj = params.product_obj
@@ -61,7 +62,6 @@ const mutations = {
                         if(articles_obj.articles[0].article_obj != null){
                             if(articles_obj.articles[0].article_obj.id == params.article_obj.id){
                                 articles_obj.articles.push(article);
-        
                             }
                         }else{
                             articles_obj.articles.shift();
@@ -77,9 +77,37 @@ const mutations = {
                     }
                     state.proposals.proposal_obj.products.push(product);
                 }
+
+                //Guardamos ya formateado las fechas para las columnas de la tabla
+                articles_obj.articles.map(function(article, key) {
+                    article.dates.map(function(date, key) {
+                        var new_date_1 = changeFormatDate(date);
+                        if(!array_dates.includes(new_date_1)){
+                            array_dates.push(new_date_1);
+                        }
+                    });
+                });
             });
         }
-    }
+
+        state.proposals.proposal_obj.array_dates = array_dates;
+        state.proposals.proposal_obj.is_change = true;
+    },
+
+    changeValueIsChangeArticle(state){
+        state.proposals.proposal_obj.is_change = false;
+    },
+}
+
+//UTILS
+function changeFormatDate(date){
+    var date_aux = date.split('-');
+    var new_date = date_aux[1] + '-' + date_aux[0] + '-' +  date_aux[2];
+    var mydate = new Date(new_date);
+    var month = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN",
+    "JUL", "AGO", "SEP", "OCT", "NOV", "DEC"][mydate.getMonth()];
+    var str = month + mydate.getYear().toString().substr(-2);
+    return str;
 }
 
 export default mutations;

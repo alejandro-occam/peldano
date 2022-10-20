@@ -44,7 +44,7 @@
                     Añadir artículo
                 </button>
             </div>
-            <!--<div class="mb-5 mt-15 col-12 row" v-if="proposals.proposal_obj.article.article_obj != null">
+            <div class="mb-5 mt-15 col-12 row" v-if="proposals.proposal_obj.products[0].product_obj != null">
                 <div>
                     <img class="mr-2" width="150" height="150" src="/media/custom-imgs/icono_ficha_ordenes.svg" />
                 </div>
@@ -69,7 +69,7 @@
                                         <span>CONSULTOR</span>
                                     </div>
                                     <div class="f-15 text-dark">
-                                        <span>{{ this.$utils.getNow() }}</span>
+                                        <span v-if="proposals.user_obj != null">{{ proposals.user_obj.name + ' ' + proposals.user_obj.surname }}</span>
                                     </div>
                                 </div>
                                 <div class="d-block mx-20">
@@ -77,7 +77,7 @@
                                         <span>SECTOR</span>
                                     </div>
                                     <div class="f-15 text-dark">
-                                        <span v-if="proposals.proposal_obj.article.sector_obj != null">{{ proposals.proposal_obj.article.sector_obj.name }}</span>
+                                        <span v-if="proposals.proposal_obj.products[0].articles[0].sector_obj != null">{{ proposals.proposal_obj.products[0].articles[0].sector_obj.name }}</span>
                                     </div>
                                 </div>
                                 <div class="d-block ml-20">
@@ -85,6 +85,7 @@
                                         <span>ANUNCIANTE</span>
                                     </div>
                                     <div class="f-15 text-dark">
+                                        {{ name_company }}
                                     </div>
                                 </div>
                             </div>
@@ -114,7 +115,7 @@
                                             <span>TARIFA</span>
                                         </div>
                                         <div class="f-15 color-dark-gray font-weight-bolder px-8 py-2 mt-3">
-                                            <span v-if="this.proposals.proposal_obj.article.article_obj != null && this.proposals.proposal_obj.article.dates != null">{{ this.$utils.roundAndFix(this.proposals.proposal_obj.article.article_obj.pvp * this.proposals.proposal_obj.article.dates.length) }}€</span>
+                                            <span >{{ this.total }}€</span>
                                         </div>
                                     </div>
                                 </div>
@@ -122,15 +123,15 @@
                         </div>
                     </div>
                 </div>
-            </div>-->
-            <!--<div class="col-12 mt-15" v-if="proposals.proposal_obj.article.area != null">
-                <table width="100%"  cellpadding="2" cellspacing="1">
+            </div>
+            <div class="col-12 mt-15" v-if="proposals.proposal_obj.products[0].product_obj != null">
+                <table width="100%" cellpadding="2" cellspacing="1">
                     <thead class="custom-columns-datatable">
 						<tr>
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span>SERVICIOS</span></th>
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>PVP</span></th>
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>N</span></th>
-                            <th tabindex="0" class="pb-3 text-align-center" v-for="index in Number(this.discount.length)" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>JUL21</span></th>
+                            <th tabindex="0" class="pb-3 text-align-center" v-for="index in Number(proposals.proposal_obj.array_dates.length)" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>{{ proposals.proposal_obj.array_dates[index - 1] }}</span></th>
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span>TOTAL</span></th>
                         </tr>
 					</thead>
@@ -183,7 +184,7 @@
                         </tr>
                     </tbody>
                 </table>
-            </div>-->
+            </div>
         </div>
     </div>
     <FormAddArticleComponent></FormAddArticleComponent>
@@ -212,7 +213,8 @@ export default {
             select_company: '',
             select_company_other_values: '',
             name_company: '',
-            offer: '',
+            offer: 0,
+            total: 0,
             discount: '0.00',
             fullname: ''
         };
@@ -221,7 +223,7 @@ export default {
             ...mapState(["errors", "proposals"]),
     },
     methods: {
-        ...mapMutations(["clearError", "changeViewStatusProposals"]),
+        ...mapMutations(["clearError", "changeViewStatusProposals", "changeValueIsChangeArticle"]),
         ...mapActions(["getCompanies"]),
         openFormArticle(){
             $('#modal_form_article_proposals').modal('show');
@@ -245,7 +247,7 @@ export default {
                     this.offer = this.$utils.roundAndFix(difference);
                 }
             }
-        }
+        },
     },
     mounted() {
         let me = this;
@@ -265,6 +267,11 @@ export default {
             me.getNameCompany(me.select_company_other_values);
         });
     },
+    created() {
+        this.$watch(() =>'$store.state.proposals', (value) => {
+            console.log('hola');
+        })
+    },
     watch: {
             '$store.state.errors.code': function() {
                 if(this.errors.type_error == 'delete_user'){
@@ -282,11 +289,24 @@ export default {
                     }
                 }
             },
-            '$store.state.proposals.proposal_obj.article.article_obj': function() {
-                if(this.proposals.proposal_obj.article.article_obj != null && this.proposals.proposal_obj.article.dates != null){
-                    this.offer = this.$utils.roundAndFix(this.proposals.proposal_obj.article.article_obj.pvp * this.proposals.proposal_obj.article.dates.length);
+            '$store.state.proposals.proposal_obj.is_change': function() {
+                let me = this;
+                if(me.proposals.proposal_obj.is_change){
+                    me.changeValueIsChangeArticle();
+                    var total = 0;
+                    me.proposals.proposal_obj.products.forEach(function callback(product, index, array) {
+                        product.articles.forEach(function callback(article, index, array) {
+                            total += Number(me.$utils.roundAndFix(article.article_obj.pvp * article.dates.length));
+                        });
+                    });
+                    me.offer = total;
+                    me.total = me.$utils.roundAndFix(total);
                 }
             },
+            /*'$store.state.proposals.proposal_obj.products[0].product_obj': function() {
+                console.log('hola');
+            },*/
+            
         }
     
 };
