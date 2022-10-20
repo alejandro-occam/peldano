@@ -751,3 +751,7 @@ a.text-hover-primary:hover, .text-hover-primary:hover{
     padding-top: 10px;
     padding-bottom: 10px;
 }
+
+.d-contents{
+    display: contents;
+}

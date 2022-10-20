@@ -61,7 +61,9 @@ const mutations = {
                     if(articles_obj.articles.length > 0){
                         if(articles_obj.articles[0].article_obj != null){
                             if(articles_obj.articles[0].article_obj.id == params.article_obj.id){
+                                
                                 articles_obj.articles.push(article);
+                            
                             }
                         }else{
                             articles_obj.articles.shift();
@@ -90,8 +92,6 @@ const mutations = {
 
             //Ordenamos las fechas
             array_dates_aux = array_dates_aux.sort(function(a,b){
-                // Turn your strings into dates, and then subtract them
-                // to get a value that is either negative, positive, or zero.
                 var b_aux = Date.parse(new Date(changeFormatDate2(b)));
                 var a_aux = Date.parse(new Date(changeFormatDate2(a)));
                 return a_aux - b_aux;

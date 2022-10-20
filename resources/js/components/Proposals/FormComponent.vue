@@ -38,7 +38,7 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-15"  v-if="this.select_company != '' || this.select_company_other_values != ''">
+            <div class="mt-15" v-if="this.select_company != '' || this.select_company_other_values != ''">
                 <button type="button" class="btn bg-azul color-white px-5 font-weight-bolder" @click="this.openFormArticle()">
                     <img class="mr-2" width="24" height="24" src="/media/custom-imgs/icono_btn_annadir_articulo_blanco.svg" />
                     Añadir artículo
@@ -124,7 +124,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12 mt-15" v-if="proposals.proposal_obj.products[0].product_obj != null">
+            <div class="col-12 mt-15 pl-0" v-if="proposals.proposal_obj.products[0].product_obj != null">
                 <table width="100%" cellpadding="2" cellspacing="1">
                     <thead class="custom-columns-datatable">
 						<tr>
@@ -136,54 +136,40 @@
                         </tr>
 					</thead>
                     <tbody>
-                        <tr class="row-product">
-                            <td class="py-2" :colspan="this.discount.length + 4">
-                                <span class="ml-5">Web campingprofesional.com (W)</span>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td valign="middle" class="td-border-right"><span class="ml-5">BANNER 200 X 200</span></td>
-                            <td valign="middle" class="td-border-right text-align-center"><span class="">210,00€</span></td>
-                            <td valign="middle" class="td-border-right text-align-center"><span class="">6</span></td>
-                            <td valign="middle" v-for="index in Number(this.discount.length)" class="td-border-right">
-                                <div class="d-grid">
-                                    <span  class="mx-2 bg-blue-light-white py-3 text-align-center my-2 br-5">1.260,00€</span>
-                                </div>
-                            </td>
-                        </tr>
-                        <tr class="row-product">
-                            <td class="py-2" :colspan="this.discount.length + 4">
-                                <span class="ml-5">Newsletter CPROF (N)</span>
-                            </td>
-                        </tr>
-                        <tr >
-                            <td valign="middle" class="td-border-right"><span class="ml-5">BANNER 150 X 150</span></td>
-                            <td valign="middle" class="td-border-right text-align-center"><span class="">110,00€</span></td>
-                            <td valign="middle" class="td-border-right text-align-center"><span class="">1</span></td>
-                            <td valign="middle" v-for="index in Number(this.discount.length)" class="td-border-right">
-                                <div class="d-grid">
-                                    <span class="mx-2 bg-blue-light-white py-3 text-align-center my-2 br-5">1.260,00€</span>
-                                    <span class="mx-2 bg-blue-light-white py-3 text-align-center my-2 br-5">1.260,00€</span>
-                                    <span class="mx-2 bg-blue-light-white py-3 text-align-center my-2 br-5">1.260,00€</span>
-                                    <span class="mx-2 bg-blue-light-white py-3 text-align-center my-2 br-5">1.260,00€</span>
-                                    <span class="mx-2 bg-blue-light-white py-3 text-align-center my-2 br-5">1.260,00€</span>
-                                </div>
-                            </td>                            
-                            <td valign="middle" class="td-border-right">
-                                <div class="d-grid">
-                                    <span class="mx-2 bg-blue-light-white py-3 text-align-center my-2 br-5">1.260,00€</span>
-                                </div>
-                            </td>   
-                        </tr>
+                        <div class="d-contents" v-for="index in Number(proposals.proposal_obj.products.length)">
+                            <tr class="row-product">
+                                <td class="py-2" :colspan="proposals.proposal_obj.array_dates.length + 4">
+                                    <span class="ml-5">{{ proposals.proposal_obj.products[index - 1].product_obj.name }}</span>
+                                </td>
+                            </tr>
+                            <tr v-for="index_article in Number(proposals.proposal_obj.products[index - 1].articles.length)">
+                                <td valign="middle" class="td-border-right"><span class="ml-5">{{ proposals.proposal_obj.products[index - 1].articles[index_article - 1].article_obj.name }}</span></td>
+                                <td valign="middle" class="td-border-right text-align-center"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products[index - 1].articles[index_article - 1].article_obj.pvp)) }}€</span></td>
+                                <td valign="middle" class="td-border-right text-align-center"><span class="">{{ proposals.proposal_obj.products[index - 1].articles[index_article - 1].amount }}</span></td>
+                            </tr>
+                        </div>
                         <tr class="tr-total-datatable">
                             <td class="py-6"><span class="ml-5 font-weight-bolder">TOTAL</span></td>
                             <td class="text-align-center"><span class="font-weight-bolder">1.370,00€</span></td>
                             <td class="text-align-center"><span class="font-weight-bolder">7</span></td>
-                            <td class="text-align-center" v-for="index in Number(this.discount.length)"><span class="font-weight-bolder">1.370,00€</span></td>
+                            <td class="text-align-center" v-for="index in Number(proposals.proposal_obj.array_dates.length)"><span class="font-weight-bolder">1.370,00€</span></td>
                             <td class="text-align-center"><span class="font-weight-bolder">1.370,00€</span></td>
                         </tr>
+                        
                     </tbody>
                 </table>
+            </div>
+            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null">
+                <span class="text-dark font-weight-bold mb-2">Tipo de propuesta</span>
+                <select class="form-control bg-gray text-dark select-custom select-filter mt-3 col-2" :name="'select_type_proposal'" :id="'select_type_proposal'" v-model="select_type_proposal" data-style="select-lightgreen">
+                    <option value="1" selected>Normal</option>
+                    <option value="2">De la cartera asignada al consultor</option>
+                    <option value="3">Responsable de publicaciones</option>
+                </select>
+                <div class="mt-10">
+                    <button type="submit" class="btn bg-azul color-white px-5 font-weight-bolder mr-4">Crear factura simple</button>
+                    <button type="submit" class="btn bg-azul color-white px-5 font-weight-bolder ml-4">Aplicar filtro</button>
+                </div>
             </div>
         </div>
     </div>
@@ -216,7 +202,8 @@ export default {
             offer: 0,
             total: 0,
             discount: '0.00',
-            fullname: ''
+            fullname: '',
+            select_type_proposal: '1'
         };
     },
     computed: {
