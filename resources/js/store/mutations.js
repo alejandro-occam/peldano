@@ -42,13 +42,43 @@ const mutations = {
 
     //Guardar el objeto propuesta
     saveProposalObject(state, params){
-        state.proposals.proposal_obj.article.area = params.select_area;
-        state.proposals.proposal_obj.article.sector_obj = params.sector_obj;
-        state.proposals.proposal_obj.article.brand = params.select_brand;
-        state.proposals.proposal_obj.article.product = params.select_product;
-        state.proposals.proposal_obj.article.article_obj = params.article_obj;
-        state.proposals.proposal_obj.article.amount = params.amount;
-        state.proposals.proposal_obj.article.dates = params.dates;
+        var article = {
+            area: params.select_area,
+            sector_obj:params.sector_obj,
+            brand: params.select_brand,
+            article_obj: params.article_obj,
+            amount: params.amount,
+            dates: params.dates,
+        };
+
+        if(state.proposals.proposal_obj.products.length > 0){
+            if(state.proposals.proposal_obj.products[0].product_obj == null){
+                state.proposals.proposal_obj.products[0].product_obj = params.product_obj
+            }
+            state.proposals.proposal_obj.products.map(function(articles_obj, key) {
+                if(articles_obj.product_obj.id == params.product_obj.id){
+                    if(articles_obj.articles.length > 0){
+                        if(articles_obj.articles[0].article_obj != null){
+                            if(articles_obj.articles[0].article_obj.id == params.article_obj.id){
+                                articles_obj.articles.push(article);
+        
+                            }
+                        }else{
+                            articles_obj.articles.shift();
+                            articles_obj.articles.push(article);
+                        }
+                    }else{
+                        articles_obj.articles.push(article);
+                    }
+                }else{
+                    var product = {
+                        product_obj: params.product_obj,
+                        articles: [article]
+                    }
+                    state.proposals.proposal_obj.products.push(product);
+                }
+            });
+        }
     }
 }
 

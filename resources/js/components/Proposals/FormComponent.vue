@@ -44,7 +44,7 @@
                     Añadir artículo
                 </button>
             </div>
-            <div class="mb-5 mt-15 col-12 row" v-if="proposals.proposal_obj.article.article_obj != null">
+            <!--<div class="mb-5 mt-15 col-12 row" v-if="proposals.proposal_obj.article.article_obj != null">
                 <div>
                     <img class="mr-2" width="150" height="150" src="/media/custom-imgs/icono_ficha_ordenes.svg" />
                 </div>
@@ -85,7 +85,6 @@
                                         <span>ANUNCIANTE</span>
                                     </div>
                                     <div class="f-15 text-dark">
-                                        <!--<span v-if="proposals.user_obj.name != null">{{ proposals.user_obj.name + ' ' + proposal.user_obj.surname }}</span>-->
                                     </div>
                                 </div>
                             </div>
@@ -123,16 +122,16 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-12 mt-15">
+            </div>-->
+            <!--<div class="col-12 mt-15" v-if="proposals.proposal_obj.article.area != null">
                 <table width="100%"  cellpadding="2" cellspacing="1">
                     <thead class="custom-columns-datatable">
 						<tr>
-                            <th tabindex="0" class="pb-3" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span class="ml-5">SERVICIOS</span></th>
-                            <th tabindex="0" class="pb-3" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span class="ml-5">PVP</span></th>
-                            <th tabindex="0" class="pb-3" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span class="ml-5">N</span></th>
-                            <th tabindex="0" class="pb-3" v-for="index in Number(this.discount.length)" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span class="ml-5">1</span></th>
-                            <th tabindex="0" class="pb-3" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span class="ml-5">TOTAL</span></th>
+                            <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span>SERVICIOS</span></th>
+                            <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>PVP</span></th>
+                            <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>N</span></th>
+                            <th tabindex="0" class="pb-3 text-align-center" v-for="index in Number(this.discount.length)" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>JUL21</span></th>
+                            <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span>TOTAL</span></th>
                         </tr>
 					</thead>
                     <tbody>
@@ -143,13 +142,11 @@
                         </tr>
                         <tr>
                             <td valign="middle" class="td-border-right"><span class="ml-5">BANNER 200 X 200</span></td>
-                            <td valign="middle" class="td-border-right"><span class="ml-5">210,00€</span></td>
-                            <td valign="middle" class="td-border-right"><span class="ml-5">6</span></td>
-                            <td valign="middle" class="td-border-right">
+                            <td valign="middle" class="td-border-right text-align-center"><span class="">210,00€</span></td>
+                            <td valign="middle" class="td-border-right text-align-center"><span class="">6</span></td>
+                            <td valign="middle" v-for="index in Number(this.discount.length)" class="td-border-right">
                                 <div class="d-grid">
-                                    <span class="ml-5 bg-blue-light-white px-5 py-2 text-align-center my-2">1.260,00€</span>
-                                    <span class="ml-5 bg-blue-light-white px-5 py-2 text-align-center my-2">1.260,00€</span>
-                                    <span class="ml-5 bg-blue-light-white px-5 py-2 text-align-center my-2">1.260,00€</span>
+                                    <span  class="mx-2 bg-blue-light-white py-3 text-align-center my-2 br-5">1.260,00€</span>
                                 </div>
                             </td>
                         </tr>
@@ -159,22 +156,34 @@
                             </td>
                         </tr>
                         <tr >
-                            <td valign="middle" title="10206004">BANNER 150 X 150</td>
-                            <td valign="middle" >110,00€</td>
-                            <td valign="middle" >1</td>
-                            <td ><img onclick="javascript:ModificarAnunciantePropuesta('modificar_anunciante','modificar_anunciante_fondo', 56809,15723,307139);" class="boton" title="Modificar anunciante Alfred Smart Systems" alt="Modificar anunciante"><input title="Alfred Smart Systems" size="5" class="numeric" type="text name=" id="insercion_307139" value="110.00"><img onclick="javascript:cargarOpciones(56809,'cesta','cargar_propuesta','insercion',307139,document.getElementById('insercion_307139').value);" class="boton"></td>
-                            <td >110,00€</td>
+                            <td valign="middle" class="td-border-right"><span class="ml-5">BANNER 150 X 150</span></td>
+                            <td valign="middle" class="td-border-right text-align-center"><span class="">110,00€</span></td>
+                            <td valign="middle" class="td-border-right text-align-center"><span class="">1</span></td>
+                            <td valign="middle" v-for="index in Number(this.discount.length)" class="td-border-right">
+                                <div class="d-grid">
+                                    <span class="mx-2 bg-blue-light-white py-3 text-align-center my-2 br-5">1.260,00€</span>
+                                    <span class="mx-2 bg-blue-light-white py-3 text-align-center my-2 br-5">1.260,00€</span>
+                                    <span class="mx-2 bg-blue-light-white py-3 text-align-center my-2 br-5">1.260,00€</span>
+                                    <span class="mx-2 bg-blue-light-white py-3 text-align-center my-2 br-5">1.260,00€</span>
+                                    <span class="mx-2 bg-blue-light-white py-3 text-align-center my-2 br-5">1.260,00€</span>
+                                </div>
+                            </td>                            
+                            <td valign="middle" class="td-border-right">
+                                <div class="d-grid">
+                                    <span class="mx-2 bg-blue-light-white py-3 text-align-center my-2 br-5">1.260,00€</span>
+                                </div>
+                            </td>   
                         </tr>
-                        <tr class="destacado"  color="#FFFFFF">
-                            <td>TOTAL</td>
-                            <td >1.370,00€</td>
-                            <td >7</td>
-                            <td >1.370,00€</td>
-                            <td >1.370,00€</td>
+                        <tr class="tr-total-datatable">
+                            <td class="py-6"><span class="ml-5 font-weight-bolder">TOTAL</span></td>
+                            <td class="text-align-center"><span class="font-weight-bolder">1.370,00€</span></td>
+                            <td class="text-align-center"><span class="font-weight-bolder">7</span></td>
+                            <td class="text-align-center" v-for="index in Number(this.discount.length)"><span class="font-weight-bolder">1.370,00€</span></td>
+                            <td class="text-align-center"><span class="font-weight-bolder">1.370,00€</span></td>
                         </tr>
                     </tbody>
                 </table>
-            </div>
+            </div>-->
         </div>
     </div>
     <FormAddArticleComponent></FormAddArticleComponent>
@@ -209,7 +218,7 @@ export default {
         };
     },
     computed: {
-            ...mapState(["errors", "proposals", "datatable_defaults"]),
+            ...mapState(["errors", "proposals"]),
     },
     methods: {
         ...mapMutations(["clearError", "changeViewStatusProposals"]),

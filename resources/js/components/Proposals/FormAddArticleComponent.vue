@@ -86,7 +86,7 @@
                             </div>
                         </div>
 
-                        <div class="input-group my-3 d-block" >
+                        <div class="input-group my-3 d-block" v-if="show_amount_dates">
                             <div class="mb-1">
                                 <span class="my-auto w-25">Cantidad de artículos</span>
                             </div>
@@ -146,14 +146,17 @@
                 select_brand: '',
                 select_brand_error: false,
                 select_product: '',
+                product_obj: '',
                 select_product_error: false,
                 select_article: '',
+                article_obj: '',
                 select_article_error: false,
                 amount: '',
                 amount_error: false,
                 date: [],
                 date_error: false,
                 minDate: new Date(2022, 10, 19),
+                show_amount_dates: false
             };
         },
         computed: {
@@ -235,12 +238,16 @@
                 this.select_product = '';
                 this.select_article = '';
                 this.amount = '';
+                this.show_amount_dates = false;
             },
             getSectorsSelect(){
                 this.select_sector = '';
                 this.select_brand = '';
                 this.select_product = '';
                 this.select_article = '';
+                this.amount = '';
+                this.date = [];
+                this.show_amount_dates = false;
                 var params = {
                     type: 2,
                     select_articles_areas: this.select_area
@@ -258,6 +265,9 @@
                 me.select_brand = '';
                 me.select_product = '';
                 me.select_article = '';
+                me.amount = '';
+                me.date = [];
+                me.show_amount_dates = false;
                 var params = {
                     type: 2,
                     select_articles_sectors: me.select_sector
@@ -267,6 +277,9 @@
             getProductsSelect(){
                 this.select__product = '';
                 this.select_article = '';
+                this.amount = '';
+                this.date = [];
+                this.show_amount_dates = false;
                 var params = {
                     type: 2,
                     select_articles_brands: this.select_brand
@@ -274,29 +287,48 @@
                 this.getProducts(params);
             },
             getArticlesSelect(){
-                this.select_article = '';
+                let me = this;
+                //Guardamos el objeto del producto elegido
+                me.config.articles.form.array_products.forEach(function callback(value, index, array) {
+                    if(value.id == me.select_product){
+                        me.product_obj = value;
+                    }
+                });
+                me.select_article = '';
+                me.amount = '';
+                me.date = [];
+                me.show_amount_dates = false;
                 var params = {
                     type: 2,
-                    select_articles_products: this.select_product
+                    select_articles_products: me.select_product
                 }
-                this.getArticles(params);
+                me.getArticles(params);
             },
             //Seleccionamos un artículo
             selectedArticle() {
                 let me = this;
+                me.amount = '';
+                me.date = [];
                 //Guardamos el objeto del artículo elegido
                 me.config.articles.form.array_articles.forEach(function callback(value, index, array) {
                     if(value.id == me.select_article){
                         me.article_obj = value;
                     }
                 });
+
+                if(me.select_article != ''){
+                    me.show_amount_dates = true;
+                }else{
+                    me.show_amount_dates = false;
+                }
+                
             },
             saveProposal() {
                 var params = {
                     select_area: this.select_area,
                     sector_obj: this.sector_obj,
                     select_brand: this.select_brand,
-                    select_product: this.select_product,
+                    product_obj: this.product_obj,
                     article_obj: this.article_obj,
                     amount: this.amount,
                     dates: this.date
