@@ -51,7 +51,7 @@ const mutations = {
             dates: params.dates,
         };
 
-        var array_dates = [];
+        var array_dates = [], array_dates_aux = [];
         if(state.proposals.proposal_obj.products.length > 0){
             if(state.proposals.proposal_obj.products[0].product_obj == null){
                 state.proposals.proposal_obj.products[0].product_obj = params.product_obj
@@ -77,16 +77,32 @@ const mutations = {
                     }
                     state.proposals.proposal_obj.products.push(product);
                 }
+            });
 
+            state.proposals.proposal_obj.products.map(function(articles_obj, key) {
                 //Guardamos ya formateado las fechas para las columnas de la tabla
                 articles_obj.articles.map(function(article, key) {
                     article.dates.map(function(date, key) {
-                        var new_date_1 = changeFormatDate(date);
-                        if(!array_dates.includes(new_date_1)){
-                            array_dates.push(new_date_1);
-                        }
+                        array_dates_aux.push(date);
                     });
                 });
+            });
+
+            //Ordenamos las fechas
+            array_dates_aux = array_dates_aux.sort(function(a,b){
+                // Turn your strings into dates, and then subtract them
+                // to get a value that is either negative, positive, or zero.
+                var b_aux = Date.parse(new Date(changeFormatDate2(b)));
+                var a_aux = Date.parse(new Date(changeFormatDate2(a)));
+                return a_aux - b_aux;
+            });
+
+            //Modificamos el formato de las fechas
+            array_dates_aux.map(function(date, key) {
+                var new_date_1 = changeFormatDate(date);
+                if(!array_dates.includes(new_date_1)){
+                    array_dates.push(new_date_1);
+                }
             });
         }
 
@@ -108,6 +124,12 @@ function changeFormatDate(date){
     "JUL", "AGO", "SEP", "OCT", "NOV", "DEC"][mydate.getMonth()];
     var str = month + mydate.getYear().toString().substr(-2);
     return str;
+}
+
+function changeFormatDate2(date){
+    var date_aux = date.split('-');
+    var new_date = date_aux[2] + '-' + date_aux[1] + '-' + date_aux[0];
+    return new_date;
 }
 
 export default mutations;
