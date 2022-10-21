@@ -145,6 +145,7 @@ const mutations = {
                 }
             });
 
+            //Borramos el array de fechas anteriormente cargados
             state.proposals.proposal_obj.products.map(function(articles_obj, key) {
                 articles_obj.articles.map(function(article_finish, key) {
                     article_finish.dates_prices = [];
