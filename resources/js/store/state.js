@@ -46,7 +46,8 @@ const state = {
             products:[
                 {
                     product_obj: null,
-                    articles: []
+                    articles: [],
+                    articles_aux: []
                 }
             ],
             is_change: false,

@@ -49,6 +49,8 @@ const mutations = {
             article_obj: params.article_obj,
             amount: params.amount,
             dates: params.dates,
+            dates_prices_aux: [],
+            dates_prices: [],
         };
 
         var array_dates = [], array_dates_aux = [];
@@ -56,48 +58,75 @@ const mutations = {
             if(state.proposals.proposal_obj.products[0].product_obj == null){
                 state.proposals.proposal_obj.products[0].product_obj = params.product_obj
             }
+            var exist_product = false;
+            var exist_product_key = 0;
             state.proposals.proposal_obj.products.map(function(articles_obj, key) {
                 if(articles_obj.product_obj.id == params.product_obj.id){
-                    if(articles_obj.articles.length > 0){
-                        /*if(articles_obj.articles[0].article_obj != null){
-                            if(articles_obj.articles[0].article_obj.id == params.article_obj.id){
-                                
-                                articles_obj.articles.push(article);
-                            
-                            }
-                        }else{
-                            articles_obj.articles.shift();
-                            articles_obj.articles.push(article);
-                        }*/
-                        articles_obj.articles.map(function(article, key) {
-                            if(article.article_obj.id == params.article_obj.id){
-                                article.dates.map(function(dates, key) {
-                                    article.array_dates.push(dates);
-                                });
-                            }
-                        });
-                    }else{
-                        articles_obj.articles.push(article);
-                        article.dates.map(function(dates, key) {
-                            articles_obj.articles.array_dates.push(dates);
-                        });
-                        
-                    }
-                }else{
-                    var product = {
-                        product_obj: params.product_obj,
-                        articles: [article]
-                    }
-                    state.proposals.proposal_obj.products.push(product);
+                    exist_product = true;   
+                    exist_product_key = key;                 
                 }
             });
 
+            if(exist_product){
+                state.proposals.proposal_obj.products[exist_product_key].articles_aux.push(article);
+                
+            }else{
+                var product = {
+                    product_obj: params.product_obj,
+                    articles_aux: [article]
+                }
+                state.proposals.proposal_obj.products.push(product);
+            }
+
             state.proposals.proposal_obj.products.map(function(articles_obj, key) {
+                articles_obj.articles = [];
+                articles_obj.articles_aux.dates_prices_aux = [];
                 //Guardamos ya formateado las fechas para las columnas de la tabla
-                articles_obj.articles.map(function(article, key) {
+                articles_obj.articles_aux.map(function(article, key) {
+                    article.dates_prices_aux = [];
                     article.dates.map(function(date, key) {
                         array_dates_aux.push(date);
                     });
+                });
+            });
+
+            //Agrupamos los artículos
+            state.proposals.proposal_obj.products.map(function(articles_obj, key) {
+                articles_obj.articles = [];
+                var array_articles = [];
+                articles_obj.articles_aux.map(function(article, key) {
+                    if(key == 0){
+                        article.dates.map(function(date, key) {
+                            var date = {
+                                'date': date,
+                                'pvp': article.article_obj.pvp
+                            }
+                            article.dates_prices_aux.push(date);
+                        });
+                       
+                        array_articles.push(article);
+                    }else{
+                        var exist = false;
+                        array_articles.map(function(article_arr, key) {
+                            if(article_arr.article_obj.id == article.article_obj.id){
+                                exist = true;
+                                article.dates.map(function(date, key) {
+                                    var date = {
+                                        'date': date,
+                                        'pvp': article.article_obj.pvp
+                                    }
+                                    article_arr.dates_prices_aux.push(date);
+                                });
+                            }
+                            if(!exist){
+                                array_articles.push(article);
+                            }
+                        });
+                    }
+                });
+                
+                array_articles.map(function(article_obj, key) {
+                    articles_obj.articles.push(article_obj);
                 });
             });
 
@@ -114,6 +143,46 @@ const mutations = {
                 if(!array_dates.includes(new_date_1)){
                     array_dates.push(new_date_1);
                 }
+            });
+
+            state.proposals.proposal_obj.products.map(function(articles_obj, key) {
+                articles_obj.articles.map(function(article_finish, key) {
+                    article_finish.dates_prices = [];
+                });
+            });
+
+            array_dates.map(function(date, key) {
+                state.proposals.proposal_obj.products.map(function(articles_obj, key) {
+                    articles_obj.articles.map(function(article_finish, key) {
+                        articles_obj.articles_aux.map(function(article, key) {
+                            article.dates_prices_aux.map(function(date_aux, key) {
+                                if(changeFormatDate(date_aux.date) == date){
+                                    //Empezamos a trabajar aquí
+                                    if(article_finish.dates_prices.length == 0){
+                                        var date_obj = {
+                                            date: date,
+                                            arr_pvp: [date_aux.pvp]
+                                        }
+                                        article_finish.dates_prices.push(date_obj);
+
+                                    }else{
+                                        article_finish.dates_prices.map(function(d_p, key) {
+                                            if(d_p.date == date){
+                                                d_p.arr_pvp.push(date_aux.pvp);
+                                            }else{
+                                                var date_obj = {
+                                                    date: date,
+                                                    arr_pvp: [date_aux.pvp]
+                                                }
+                                                article_finish.dates_prices.push(date_obj);
+                                            }
+                                        });
+                                    }
+                                }
+                            });
+                        });
+                    });
+                });
             });
         }
 

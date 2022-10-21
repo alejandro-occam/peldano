@@ -146,6 +146,11 @@
                                 <td valign="middle" class="td-border-right"><span class="ml-5">{{ proposals.proposal_obj.products[index - 1].articles[index_article - 1].article_obj.name }}</span></td>
                                 <td valign="middle" class="td-border-right text-align-center"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products[index - 1].articles[index_article - 1].article_obj.pvp)) }}€</span></td>
                                 <td valign="middle" class="td-border-right text-align-center"><span class="">{{ proposals.proposal_obj.products[index - 1].articles[index_article - 1].amount }}</span></td>
+                                <td v-for="index_dates in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices.length)" valign="middle" class="td-border-right">
+                                    <div class="d-grid">
+                                        <span v-for="index_pvp in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp.length)" class="mx-2 bg-blue-light-white px-5 py-2 text-align-center my-2">{{ proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp[index_pvp - 1] }}€</span>
+                                    </div>
+                                </td>
                             </tr>
                         </div>
                         <tr class="tr-total-datatable">
