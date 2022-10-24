@@ -115,20 +115,20 @@ const mutations = {
                                         'date': date,
                                         'pvp': article.article_obj.pvp
                                     }
-                                    article_arr.dates_prices_aux.push(date);
-                                });
-                            }
-                            if(!exist){
-                                article.dates.map(function(date, key) {
-                                    var date = {
-                                        'date': date,
-                                        'pvp': article.article_obj.pvp
-                                    }
                                     article.dates_prices_aux.push(date);
                                 });
-                                array_articles.push(article);
                             }
                         });
+                        if(!exist){
+                            article.dates.map(function(date, key) {
+                                var date = {
+                                    'date': date,
+                                    'pvp': article.article_obj.pvp
+                                }
+                                article.dates_prices_aux.push(date);
+                            });
+                            array_articles.push(article);
+                        }
                     }
                 });
                 

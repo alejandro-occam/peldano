@@ -50,7 +50,7 @@
                 </div>
                 <div>
                     <div class="ml-10">
-                        <div><h2 class="text-dark">Propuesta 56528</h2></div>
+                        <!--<div><h2 class="text-dark">Propuesta 56528</h2></div>-->
                         <div class="f-20">
                             <span class="text-dark font-weight-bold">Cliente: <span class="color-dark-gray font-weight-bold">{{ name_company }}</span></span>
                         </div>
@@ -149,10 +149,13 @@
                                 <td v-for="index_arr_date in Number(proposals.proposal_obj.array_dates.length)" valign="middle" class="td-border-right">
                                     <template v-for="index_dates in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices.length)">
                                         <template v-if="proposals.proposal_obj.array_dates[index_arr_date - 1].date == proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].date">
-                                            <div class="d-grid">
-                                                <span v-for="index_pvp in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp.length)" class="mx-2 bg-blue-light-white px-5 py-2 text-align-center my-2">
+                                            <div class="d-grid px-5">
+                                                <!--<span v-for="index_pvp in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp.length)" class="mx-2 bg-blue-light-white px-5 py-2 text-align-center my-2">
                                                     {{ proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp[index_pvp - 1] }}€
-                                                </span>
+                                                </span>-->
+                                                <input v-model="this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].pvp[index_pvp - 1]" 
+                                                v-for="index_pvp in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp.length)" 
+                                                type="text" class="form-control discount bg-blue-light-white text-align-center not-border my-2" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0"/>
                                             </div>
                                         </template>
                                     </template>
@@ -215,7 +218,18 @@ export default {
             total: 0,
             discount: '0.00',
             fullname: '',
-            select_type_proposal: '1'
+            select_type_proposal: '1',
+            value_form1: [],/*[{
+                article: [{
+                    arr_date: [{
+                        dates:[{
+                            pvp: [{
+
+                            }]
+                        }]
+                    }]
+                }]
+            }]*/
         };
     },
     computed: {
@@ -247,6 +261,15 @@ export default {
                 }
             }
         },
+        test(index, index_article, index_arr_date, index_dates, index_pvp, e){
+            console.log('hola');
+            console.log(index);
+            console.log(index_article);
+            console.log(index_arr_date);
+            console.log(index_dates);
+            console.log(index_pvp);
+            console.log(e);
+        }
     },
     mounted() {
         let me = this;
@@ -265,11 +288,6 @@ export default {
             me.select_company_other_values = $('#select_company_other_values').val();
             me.getNameCompany(me.select_company_other_values);
         });
-    },
-    created() {
-        this.$watch(() =>'$store.state.proposals', (value) => {
-            console.log('hola');
-        })
     },
     watch: {
             '$store.state.errors.code': function() {
@@ -295,8 +313,50 @@ export default {
                     me.offer = me.$utils.roundAndFix(me.proposals.proposal_obj.products.total_global);
                     me.total = me.$utils.roundAndFix(me.proposals.proposal_obj.products.total_global);
                 }
-            },
-            
+
+                me.value_form1 = [];
+                //Prueba
+                me.proposals.proposal_obj.products.map(function(product, key_product) {
+                    product.articles.map(function(article, key_article) {
+                        me.proposals.proposal_obj.array_dates.map(function(date_obj, key_arr_dates) {
+                            article.dates_prices.map(function(date, key_dates) {
+                                if(date_obj.date == date.date){
+                                    date.arr_pvp.map(function(pvp, key_pvp) {
+                                        if(me.value_form1[key_product] == undefined){
+                                            me.value_form1.push({
+                                                article: [{
+                                                    dates:[{
+                                                            pvp: []
+                                                        }]
+                                                }]
+                                            });
+                                            me.value_form1[key_product].article[key_article].dates[key_dates].pvp.push(pvp);
+
+                                        }else if(me.value_form1[key_product].article[key_article] == undefined){
+                                            me.value_form1[key_product].article.push({
+                                                dates:[{
+                                                    pvp: []
+                                                }]
+                                            });
+                                            me.value_form1[key_product].article[key_article].dates[key_dates].pvp.push(pvp);
+
+                                        }else if(me.value_form1[key_product].article[key_article].dates[key_dates] == undefined){
+                                            me.value_form1[key_product].article[key_article].dates.push({
+                                                pvp: []
+                                            });
+                                            me.value_form1[key_product].article[key_article].dates[key_dates].pvp.push(pvp);
+
+                                        }else{
+                                            me.value_form1[key_product].article[key_article].dates[key_dates].pvp.push(pvp);
+
+                                        }
+                                    });
+                                }
+                            });
+                        });
+                    });
+                });
+            }
         }
     
 };
