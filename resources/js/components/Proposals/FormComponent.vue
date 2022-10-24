@@ -155,6 +155,7 @@
                                                 </span>-->
                                                 <input v-model="this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].pvp[index_pvp - 1]" 
                                                 v-for="index_pvp in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp.length)" 
+                                                @input="test($event)"
                                                 type="text" class="form-control discount bg-blue-light-white text-align-center not-border my-2" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0"/>
                                             </div>
                                         </template>
@@ -261,14 +262,19 @@ export default {
                 }
             }
         },
-        test(index, index_article, index_arr_date, index_dates, index_pvp, e){
-            console.log('hola');
-            console.log(index);
-            console.log(index_article);
-            console.log(index_arr_date);
-            console.log(index_dates);
-            console.log(index_pvp);
-            console.log(e);
+        test(e) {
+            let me = this;
+            var total = 0;
+            me.value_form1.map(function(product, key_product) {
+                product.article.map(function(article_obj, key_article) {
+                    article_obj.dates.map(function(date, key_dates) {
+                        date.pvp.map(function(pvp_obj, key_pvp) {
+                            total += Number(pvp_obj);
+                        });
+                    });
+                });
+            });
+            me.offer = this.$utils.roundAndFix(total);
         }
     },
     mounted() {
@@ -315,7 +321,8 @@ export default {
                 }
 
                 me.value_form1 = [];
-                //Prueba
+                
+                //Rellenar los modelos de los inputs de la tabla
                 me.proposals.proposal_obj.products.map(function(product, key_product) {
                     product.articles.map(function(article, key_article) {
                         me.proposals.proposal_obj.array_dates.map(function(date_obj, key_arr_dates) {
@@ -356,7 +363,19 @@ export default {
                         });
                     });
                 });
-            }
+
+                //Rellenamos el campo oferta
+                /*me.offer = 0;
+                me.value_form1.map(function(product, key_product) {
+                    product.article.map(function(article_obj, key_article) {
+                        article_obj.dates.map(function(date, key_dates) {
+                            date.pvp.map(function(pvp_obj, key_pvp) {
+                                me.offer += pvp_obj;
+                            });
+                        });
+                    });
+                });*/
+            },
         }
     
 };
