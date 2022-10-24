@@ -131,7 +131,7 @@
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span>SERVICIOS</span></th>
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>PVP</span></th>
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>N</span></th>
-                            <th tabindex="0" class="pb-3 text-align-center" v-for="index in Number(proposals.proposal_obj.array_dates.length)" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>{{ proposals.proposal_obj.array_dates[index - 1] }}</span></th>
+                            <th tabindex="0" class="pb-3 text-align-center" v-for="index in Number(proposals.proposal_obj.array_dates.length)" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>{{ proposals.proposal_obj.array_dates[index - 1].date }}</span></th>
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span>TOTAL</span></th>
                         </tr>
 					</thead>
@@ -146,36 +146,26 @@
                                 <td valign="middle" class="td-border-right"><span class="ml-5">{{ proposals.proposal_obj.products[index - 1].articles[index_article - 1].article_obj.name }}</span></td>
                                 <td valign="middle" class="td-border-right text-align-center"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products[index - 1].articles[index_article - 1].article_obj.pvp)) }}€</span></td>
                                 <td valign="middle" class="td-border-right text-align-center"><span class="">{{ proposals.proposal_obj.products[index - 1].articles[index_article - 1].amount }}</span></td>
-                                <!--<td v-for="index_dates in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices.length)" valign="middle" class="td-border-right">
-                                    <div class="d-grid">
-                                        <span v-for="index_pvp in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp.length)" class="mx-2 bg-blue-light-white px-5 py-2 text-align-center my-2">
-                                            <template v-if="proposals.proposal_obj.array_dates[index_dates - 1] == proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].date">
-                                                {{ proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp[index_pvp - 1] }}€
-                                            </template>
-                                        </span>
-                                    </div>
-                                </td>-->
                                 <td v-for="index_arr_date in Number(proposals.proposal_obj.array_dates.length)" valign="middle" class="td-border-right">
                                     <template v-for="index_dates in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices.length)">
-                                        <template v-if="proposals.proposal_obj.array_dates[index_arr_date - 1] == proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].date">
+                                        <template v-if="proposals.proposal_obj.array_dates[index_arr_date - 1].date == proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].date">
                                             <div class="d-grid">
                                                 <span v-for="index_pvp in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp.length)" class="mx-2 bg-blue-light-white px-5 py-2 text-align-center my-2">
                                                     {{ proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp[index_pvp - 1] }}€
                                                 </span>
                                             </div>
                                         </template>
-                                        
                                     </template>
-                                    
                                 </td>
+                                <td valign="middle" class="td-border-right text-align-center"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products[index - 1].articles[index_article - 1].total)) }}€</span></td>
                             </tr>
                         </div>
                         <tr class="tr-total-datatable">
                             <td class="py-6"><span class="ml-5 font-weight-bolder">TOTAL</span></td>
-                            <td class="text-align-center"><span class="font-weight-bolder">1.370,00€</span></td>
-                            <td class="text-align-center"><span class="font-weight-bolder">7</span></td>
-                            <td class="text-align-center" v-for="index in Number(proposals.proposal_obj.array_dates.length)"><span class="font-weight-bolder">1.370,00€</span></td>
-                            <td class="text-align-center"><span class="font-weight-bolder">1.370,00€</span></td>
+                            <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products.total_individual_pvp)) }}€</span></td>
+                            <td class="text-align-center"><span class="font-weight-bolder">{{ proposals.proposal_obj.products.total_amount_global }}</span></td>
+                            <td class="text-align-center" v-for="index in Number(proposals.proposal_obj.array_dates.length)"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.array_dates[index - 1].total)) }}€</span></td>
+                            <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products.total_global)) }}€</span></td>
                         </tr>
                         
                     </tbody>

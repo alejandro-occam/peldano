@@ -47,7 +47,10 @@ const state = {
                 {
                     product_obj: null,
                     articles: [],
-                    articles_aux: []
+                    articles_aux: [],
+                    total_global: 0,
+                    total_amount_global: 0,
+                    total_individual_pvp: 0,
                 }
             ],
             is_change: false,

@@ -53,7 +53,7 @@ const mutations = {
             dates_prices: [],
         };
 
-        var array_dates = [], array_dates_aux = [];
+        var array_dates = [], array_dates_aux = [], array_dates_prices = [];
         if(state.proposals.proposal_obj.products.length > 0){
             if(state.proposals.proposal_obj.products[0].product_obj == null){
                 state.proposals.proposal_obj.products[0].product_obj = params.product_obj
@@ -152,10 +152,12 @@ const mutations = {
                 });
             });
 
+            //Preparamos los precios y agrupamos por aarticulos y fechas
             array_dates.map(function(date, key) {
                 state.proposals.proposal_obj.products.map(function(articles_obj, key) {
                     articles_obj.articles.map(function(article_finish, key) {
                         articles_obj.articles_aux.map(function(article, key) {
+                            article.amount = 0;
                             article.dates_prices_aux.map(function(date_aux, key) {
                                 if(changeFormatDate(date_aux.date) == date){
                                     //Empezamos a trabajar aquí
@@ -185,9 +187,54 @@ const mutations = {
                     });
                 });
             });
+
+            //Consultamos la cantidad de articulos y su total
+            var total_global = 0;
+            var total_amount_global = 0;
+            var total_individual_pvp = 0;
+            state.proposals.proposal_obj.products.map(function(articles_obj, key) {
+                articles_obj.articles.map(function(article_finish, key) {
+                    total_individual_pvp += article_finish.article_obj.pvp;
+                    article_finish.amount = 0;
+                    article_finish.total = 0;
+                    article_finish.dates_prices.map(function(date, key) {
+                        article_finish.amount += date.arr_pvp.length;
+                        total_amount_global += date.arr_pvp.length;
+                        date.arr_pvp.map(function(pvp, key) {
+                            article_finish.total += pvp;
+                            total_global += pvp;
+                        });
+                    });
+                });
+            });
+            state.proposals.proposal_obj.products.total_global = total_global;
+            state.proposals.proposal_obj.products.total_amount_global = total_amount_global;
+            state.proposals.proposal_obj.products.total_individual_pvp = total_individual_pvp;
+
+
+            //Cargamos en el array de fechas para las columnas los totales de cada mes
+            array_dates.map(function(date, key) {
+                var total_date = 0;
+                state.proposals.proposal_obj.products.map(function(articles_obj, key) {
+                    articles_obj.articles.map(function(article_finish, key) {
+                        article_finish.dates_prices.map(function(date_aux, key) {
+                            if(date_aux.date == date){
+                                date_aux.arr_pvp.map(function(pvp, key) {
+                                    total_date += pvp;
+                                });
+                            }
+                        });
+                    });
+                });
+                var date_obj = {
+                    date: date,
+                    total: total_date
+                }
+                array_dates_prices.push(date_obj);
+            });
         }
 
-        state.proposals.proposal_obj.array_dates = array_dates;
+        state.proposals.proposal_obj.array_dates = array_dates_prices;
         state.proposals.proposal_obj.is_change = true;
     },
 
