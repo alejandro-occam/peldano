@@ -256,11 +256,13 @@ const actions = {
                     state.config.articles.form.array_sectors = response.data.array_sectors;
                     state.config.articles.form.array_brands = null;
                     state.config.articles.form.array_products = null;  
+                    state.config.articles.form.array_articles = null;  
     
                 }else{
                     state.config.articles.form.array_sectors = null;
                     state.config.articles.form.array_brands = null;
                     state.config.articles.form.array_products = null;  
+                    state.config.articles.form.array_articles = null;  
                 }
             }
             
@@ -286,6 +288,7 @@ const actions = {
             }else{
                 state.config.articles.form.array_brands = response.data.array_brands;
                 state.config.articles.form.array_products = null;
+                state.config.articles.form.array_articles = null;  
             }
 
         } catch (error) {
@@ -306,6 +309,7 @@ const actions = {
             if(params.type == 1){
                 state.config.articles.filter.array_products = response.data.array_products;
             }else{
+                state.config.articles.form.array_articles = null;  
                 state.config.articles.form.array_products = response.data.array_products;
             }
 
@@ -319,6 +323,9 @@ const actions = {
     //Consultar artículos
     async getArticles({ state }, params){
         try {
+            
+            state.config.articles.form.array_articles = null;  
+
             const response = await http({
                 url: "/admin/get_articles/" + params.select_articles_products,
                 method: 'get'

@@ -733,6 +733,15 @@ a.text-hover-primary:hover, .text-hover-primary:hover{
     border-color: #ebeff2;
 }
 
+.row-article{
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-color: #ebeff2;
+}
+
+
 .td-border-right{
     border-right-width: 1px;
     border-right-style: solid;

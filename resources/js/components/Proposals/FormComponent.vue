@@ -115,7 +115,7 @@
                                             <span>TARIFA</span>
                                         </div>
                                         <div class="f-15 color-dark-gray font-weight-bolder px-8 py-2 mt-3">
-                                            <span >{{ this.total }}€</span>
+                                            <span >{{ this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.proposal_obj.products.total_global)) }}€</span>
                                         </div>
                                     </div>
                                 </div>
@@ -142,7 +142,7 @@
                                     <span class="ml-5">{{ proposals.proposal_obj.products[index - 1].product_obj.name }}</span>
                                 </td>
                             </tr>
-                            <tr v-for="index_article in Number(proposals.proposal_obj.products[index - 1].articles.length)">
+                            <tr class="row-article" v-for="index_article in Number(proposals.proposal_obj.products[index - 1].articles.length)">
                                 <td valign="middle" class="td-border-right"><span class="ml-5">{{ proposals.proposal_obj.products[index - 1].articles[index_article - 1].article_obj.name }}</span></td>
                                 <td valign="middle" class="td-border-right text-align-center"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products[index - 1].articles[index_article - 1].article_obj.pvp)) }}€</span></td>
                                 <td valign="middle" class="td-border-right text-align-center"><span class="">{{ proposals.proposal_obj.products[index - 1].articles[index_article - 1].amount }}</span></td>
@@ -237,13 +237,13 @@ export default {
         },
         changeValueBox(type){
             if(type == 1){
-                var difference = (this.proposals.proposal_obj.article.article_obj.pvp * this.proposals.proposal_obj.article.dates.length) - this.offer;
-                this.discount = this.$utils.roundAndFix(difference / (this.proposals.proposal_obj.article.article_obj.pvp * this.proposals.proposal_obj.article.dates.length) * 100);
+                var difference = this.proposals.proposal_obj.products.total_global - this.offer;
+                this.discount = this.$utils.roundAndFix(difference / (this.proposals.proposal_obj.products.total_global) * 100);
 
             }else{
                 if(this.discount != 0){
-                    var difference = ((100 - this.discount) / 100) * this.proposals.proposal_obj.article.article_obj.pvp * this.proposals.proposal_obj.article.dates.length;
-                    this.offer = this.$utils.roundAndFix(difference);
+                    var difference = ((100 - this.discount) / 100) * this.proposals.proposal_obj.products.total_global;
+                    this.offer = parseFloat(this.$utils.roundAndFix(difference));
                 }
             }
         },
@@ -292,19 +292,10 @@ export default {
                 let me = this;
                 if(me.proposals.proposal_obj.is_change){
                     me.changeValueIsChangeArticle();
-                    var total = 0;
-                    me.proposals.proposal_obj.products.forEach(function callback(product, index, array) {
-                        product.articles.forEach(function callback(article, index, array) {
-                            total += Number(me.$utils.roundAndFix(article.article_obj.pvp * article.dates.length));
-                        });
-                    });
-                    me.offer = total;
-                    me.total = me.$utils.roundAndFix(total);
+                    me.offer = me.$utils.roundAndFix(me.proposals.proposal_obj.products.total_global);
+                    me.total = me.$utils.roundAndFix(me.proposals.proposal_obj.products.total_global);
                 }
             },
-            /*'$store.state.proposals.proposal_obj.products[0].product_obj': function() {
-                console.log('hola');
-            },*/
             
         }
     

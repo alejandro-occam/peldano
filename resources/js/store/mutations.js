@@ -119,6 +119,13 @@ const mutations = {
                                 });
                             }
                             if(!exist){
+                                article.dates.map(function(date, key) {
+                                    var date = {
+                                        'date': date,
+                                        'pvp': article.article_obj.pvp
+                                    }
+                                    article.dates_prices_aux.push(date);
+                                });
                                 array_articles.push(article);
                             }
                         });
@@ -157,32 +164,34 @@ const mutations = {
                 state.proposals.proposal_obj.products.map(function(articles_obj, key) {
                     articles_obj.articles.map(function(article_finish, key) {
                         articles_obj.articles_aux.map(function(article, key) {
-                            article.amount = 0;
-                            article.dates_prices_aux.map(function(date_aux, key) {
-                                if(changeFormatDate(date_aux.date) == date){
-                                    //Empezamos a trabajar aquí
-                                    if(article_finish.dates_prices.length == 0){
-                                        var date_obj = {
-                                            date: date,
-                                            arr_pvp: [date_aux.pvp]
-                                        }
-                                        article_finish.dates_prices.push(date_obj);
-
-                                    }else{
-                                        article_finish.dates_prices.map(function(d_p, key) {
-                                            if(d_p.date == date){
-                                                d_p.arr_pvp.push(date_aux.pvp);
-                                            }else{
-                                                var date_obj = {
-                                                    date: date,
-                                                    arr_pvp: [date_aux.pvp]
-                                                }
-                                                article_finish.dates_prices.push(date_obj);
+                            if(article_finish.article_obj.id == article.article_obj.id){
+                                article.amount = 0;
+                                article.dates_prices_aux.map(function(date_aux, key) {
+                                    if(changeFormatDate(date_aux.date) == date){
+                                        //Empezamos a trabajar aquí
+                                        if(article_finish.dates_prices.length == 0){
+                                            var date_obj = {
+                                                date: date,
+                                                arr_pvp: [date_aux.pvp]
                                             }
-                                        });
+                                            article_finish.dates_prices.push(date_obj);
+
+                                        }else{
+                                            article_finish.dates_prices.map(function(d_p, key) {
+                                                if(d_p.date == date){
+                                                    d_p.arr_pvp.push(date_aux.pvp);
+                                                }else{
+                                                    var date_obj = {
+                                                        date: date,
+                                                        arr_pvp: [date_aux.pvp]
+                                                    }
+                                                    article_finish.dates_prices.push(date_obj);
+                                                }
+                                            });
+                                        }
                                     }
-                                }
-                            });
+                                });
+                            }
                         });
                     });
                 });
