@@ -56,6 +56,10 @@ const state = {
             is_change: false,
             array_dates: []
         },
+        bill_obj: {
+            articles: [],
+            array_bills: []
+        },
         user_obj: {
             name: null,
             surname: null

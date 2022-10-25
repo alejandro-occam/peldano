@@ -250,6 +250,112 @@ const mutations = {
     changeValueIsChangeArticle(state){
         state.proposals.proposal_obj.is_change = false;
     },
+
+    //Generar propuesta
+    generateBill(state){
+        var array_articles = [];
+        state.proposals.proposal_obj.products.map(function(products, key) {
+            products.articles_aux.map(function(article_obj, key) {
+                article_obj.dates.map(function(date, key) {
+                    var article_obj_aux = {
+                        date: date,
+                        article: article_obj,
+                        id_product: products.product_obj.id
+                    }
+                    array_articles.push(article_obj_aux);
+                });
+            });
+        });
+
+        //Ordenamos los artículos por fecha
+        array_articles = array_articles.sort(function(a,b){
+            var b_aux = Date.parse(new Date(changeFormatDate2(b.date)));
+            var a_aux = Date.parse(new Date(changeFormatDate2(a.date)));
+            return a_aux - b_aux;
+        });
+
+        var date_aux = array_articles[0].date;
+        var amount = 0;
+        var array_finish_bill = [];
+        var last_key = 0;
+        var total_bill = 0;
+        state.proposals.bill_obj.articles = array_articles;
+
+        array_articles.map(function(article_obj, key) {
+            if(key == 0){
+                amount = article_obj.article.article_obj.pvp;
+                total_bill += article_obj.article.article_obj.pvp;
+                var bill_month = {
+                    date: date_aux,
+                    amount: amount,
+                    article: article_obj
+                }
+
+                array_finish_bill.push(bill_month);
+
+            }else{
+                if(date_aux == article_obj.date){
+                    var is_break = false;
+                    array_finish_bill.map(function(bill_obj, key) {
+                        if(!is_break){
+                            if(bill_obj.date == article_obj.date){
+                                if(bill_obj.article.id_product == article_obj.id_product){
+                                    amount += article_obj.article.article_obj.pvp;
+                                    total_bill += article_obj.article.article_obj.pvp;
+                                    array_finish_bill[last_key].amount = amount;
+                                    is_break = true;
+
+                                }else{
+                                    amount = 0;
+                                    date_aux =  article_obj.date;
+                                    amount += article_obj.article.article_obj.pvp;
+                                    total_bill += article_obj.article.article_obj.pvp;
+                                    var bill_month = {
+                                        date: date_aux,
+                                        amount: amount,
+                                        article: article_obj
+                                    }
+                                    array_finish_bill.push(bill_month);
+                                    last_key = (array_finish_bill.length - 1);
+                                    is_break = true;
+                                }
+
+                            }else{
+                                amount = 0;
+                                date_aux =  article_obj.date;
+                                amount += article_obj.article.article_obj.pvp;
+                                total_bill += article_obj.article.article_obj.pvp;
+                                var bill_month = {
+                                    date: date_aux,
+                                    amount: amount,
+                                    article: article_obj
+                                }
+                                array_finish_bill.push(bill_month);
+                                last_key = (array_finish_bill.length - 1);
+                                is_break = true;
+                            }
+                        }
+                    });
+
+                }else{
+                    amount = 0;
+                    date_aux =  article_obj.date;
+                    amount += article_obj.article.article_obj.pvp;
+                    total_bill += article_obj.article.article_obj.pvp;
+                    var bill_month = {
+                        date: date_aux,
+                        amount: amount,
+                        article: article_obj
+                    }
+                    array_finish_bill.push(bill_month);
+                    last_key = (array_finish_bill.length - 1);
+                }
+            }
+        });
+        state.proposals.bill_obj.array_bills = array_finish_bill;
+        state.proposals.bill_obj.total_bill = total_bill;
+        
+    }
 }
 
 //UTILS

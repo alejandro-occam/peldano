@@ -199,82 +199,93 @@
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span>ACCIÓN</span></th>
                         </tr>
 					</thead>
-                    <tbody>
-                        <tr class="row-product text-align-center">
-                            <td class="td-border-right" rowspan="6">1</td>
-                        </tr>
+                    <tbody>  
+                        <template v-for="(item, index) in Number(proposals.bill_obj.array_bills.length)" :key="index">
+                            <tr class="row-product text-align-center">
+                                <td class="td-border-right" rowspan="6">{{ index + 1 }}</td>
+                            </tr>
+                            <tr class="tr-total-datatable">
+                                <td class="py-1 pl-5 f-14" colspan="5">BIG DATA Data Email Marketing</td>
+                            </tr>
+                            <tr class="row-product">
+                                <td class="text-align-center td-border-right">{{ proposals.bill_obj.array_bills[index].date }}</td>
+                                <td class="text-align-center py-4 px-5 td-border-right">
+                                    <select class="form-control text-dark select-custom select-filter bg-white" :name="'select_type_proposal'" :id="'select_type_proposal'" v-model="select_type_proposal" data-style="select-lightgreen">
+                                        <option value="">Forma de pago</option>
+                                        <option value="1">Recibo bancario</option>
+                                        <option value="2">Talón nominativo</option>
+                                        <option value="3">Transferencia bancaria</option>
+                                        <option value="4">Letra aceptada</option>
+                                        <option value="5">Pagaré</option>
+                                        <option value="7">Metálico</option>
+                                        <option value="8">Especial camping</option>
+                                        <option value="9">Confirming</option>
+                                        <option value="18">Pago certificado</option>
+                                        <option value="10">Tarjeta</option>
+                                        <option value="15">Talón conformado</option>
+                                        <option value="12">Paypal</option>
+                                        <option value="6">* Intercambio de facturas</option>
+                                        <option value="20">Especial Gaceta</option>
+                                    </select>
+                                </td>
+                                <td class="text-align-center py-4 px-5 td-border-right">
+                                    <select class="form-control text-dark select-custom select-filter bg-white" :name="'select_type_proposal'" :id="'select_type_proposal'" v-model="select_type_proposal" data-style="select-lightgreen">
+                                        <option value="">Vencimiento</option>
+                                        <option value="23">15 días</option>
+                                        <option value="2">30 días</option>
+                                        <option value="11">30 y 60 días</option>
+                                        <option value="29">40 días</option>
+                                        <option value="17">45 días</option>
+                                        <option value="3">60 días</option>
+                                        <option value="4">90 días</option>
+                                        <option value="1">Al contado</option>
+                                        <option value="20">Al contado y 30 días</option>
+                                        <option value="19">Al contado y 60 días</option>
+                                        <option value="16">Al contado, 30 y 60 días</option>
+                                    </select>
+                                </td>
+                                <td class="text-align-center td-border-right">
+                                    {{ $utils.roundAndFix(proposals.bill_obj.array_bills[index].amount) }}
+                                </td>
+                                <td class="td-border-right text-align-center">
+                                    <button type="button" class="btn"><img  width="40" height="40" src="/media/custom-imgs/icono_tabla_aplicar_todos.svg" /></button>
+                                </td>
+                            </tr>   
+                            <tr class="row-article">
+                                <td class="p-5" colspan="5">
+                                    <div class="d-flex">
+                                        <span class="my-auto col-2">Observaciones</span>
+                                        <input type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" placeholder="Observaciones" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
+                                    </div>
+                                </td>
+                            </tr>      
+                            <tr class="row-article">
+                                <td class="p-5" colspan="5">
+                                    <div class="d-flex">
+                                        <span class="my-auto col-2">Núm. pedido</span>
+                                        <input type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" placeholder="Número de pedido" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
+                                    </div>
+                                </td>
+                            </tr>    
+                            <tr class="row-article">
+                                <td class="p-5" colspan="5">
+                                    <div class="d-flex">
+                                        <span class="my-auto col-2">Observaciones Internas</span>
+                                        <input type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" placeholder="Observaciones Internas" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
+                                    </div>
+                                </td>
+                            </tr>   
+                        </template>       
                         <tr class="tr-total-datatable">
-                            <td class="py-1 pl-5 f-14" colspan="5">BIG DATA Data Email Marketing</td>
-                        </tr>
-                        <tr class="row-product">
-                            <td class="text-align-center td-border-right">25-10-2022</td>
-                            <td class="text-align-center py-4 px-5 td-border-right">
-                                <select class="form-control text-dark select-custom select-filter bg-white" :name="'select_type_proposal'" :id="'select_type_proposal'" v-model="select_type_proposal" data-style="select-lightgreen">
-                                    <option value="">Forma de pago</option>
-                                    <option value="1">Recibo bancario</option>
-                                    <option value="2">Talón nominativo</option>
-                                    <option value="3">Transferencia bancaria</option>
-                                    <option value="4">Letra aceptada</option>
-                                    <option value="5">Pagaré</option>
-                                    <option value="7">Metálico</option>
-                                    <option value="8">Especial camping</option>
-                                    <option value="9">Confirming</option>
-                                    <option value="18">Pago certificado</option>
-                                    <option value="10">Tarjeta</option>
-                                    <option value="15">Talón conformado</option>
-                                    <option value="12">Paypal</option>
-                                    <option value="6">* Intercambio de facturas</option>
-                                    <option value="20">Especial Gaceta</option>
-                                </select>
-                            </td>
-                            <td class="text-align-center py-4 px-5 td-border-right">
-                                <select class="form-control text-dark select-custom select-filter bg-white" :name="'select_type_proposal'" :id="'select_type_proposal'" v-model="select_type_proposal" data-style="select-lightgreen">
-                                    <option value="">Vencimiento</option>
-                                    <option value="23">15 días</option>
-                                    <option value="2">30 días</option>
-                                    <option value="11">30 y 60 días</option>
-                                    <option value="29">40 días</option>
-                                    <option value="17">45 días</option>
-                                    <option value="3">60 días</option>
-                                    <option value="4">90 días</option>
-                                    <option value="1">Al contado</option>
-                                    <option value="20">Al contado y 30 días</option>
-                                    <option value="19">Al contado y 60 días</option>
-                                    <option value="16">Al contado, 30 y 60 días</option>
-                                </select>
-                            </td>
-                            <td class="text-align-center td-border-right">
-                                310.00    
-                            </td>
-                            <td class="td-border-right">
-                            </td>
-                        </tr>      
-                        <tr class="row-article">
-                            <td class="p-5" colspan="5">
-                                <div class="d-flex">
-                                    <span class="my-auto col-2">Observaciones</span>
-                                    <input type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" placeholder="Observaciones" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
-                                </div>
-                            </td>
-                        </tr>      
-                        <tr class="row-article">
-                            <td class="p-5" colspan="5">
-                                <div class="d-flex">
-                                    <span class="my-auto col-2">Núm. pedido</span>
-                                    <input type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" placeholder="Número de pedido" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
-                                </div>
-                            </td>
+                            <td colspan="4" class="py-6"><span class="ml-5 font-weight-bolder">TOTAL</span></td>
+                            <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.roundAndFix(proposals.bill_obj.total_bill) }}€</span></td>
+                            <td class="text-align-center bg-white"><span class="font-weight-bolder"><button type="button" class="btn"><img  width="40" height="40" src="/media/custom-imgs/icono_tabla_eliminar.svg" @click.native="this.is_show_buttons_bill=false"/></button></span></td>
                         </tr>    
-                        <tr class="row-article">
-                            <td class="p-5" colspan="5">
-                                <div class="d-flex">
-                                    <span class="my-auto col-2">Observaciones Internas</span>
-                                    <input type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" placeholder="Observaciones Internas" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
-                                </div>
-                            </td>
-                        </tr>                         
                     </tbody>
                 </table>
+                <div class="mt-10">
+                    <button type="submit" class="btn bg-azul color-white px-5 font-weight-bolder ml-4">Finalizar propuesta</button>
+                </div>
             </div>
         </div>
     </div>
@@ -317,7 +328,7 @@ export default {
             ...mapState(["errors", "proposals"]),
     },
     methods: {
-        ...mapMutations(["clearError", "changeViewStatusProposals", "changeValueIsChangeArticle"]),
+        ...mapMutations(["clearError", "changeViewStatusProposals", "changeValueIsChangeArticle", "generateBill"]),
         ...mapActions(["getCompanies"]),
         openFormArticle(){
             $('#modal_form_article_proposals').modal('show');
@@ -357,7 +368,7 @@ export default {
                                 value += 1;
                             }else{
                                 pvp_obj = new_value;
-                                me.value_form1[key_product].article[key_article].dates[key_dates].pvp[key_pvp] = new_value;
+                                me.value_form1[key_product].article[key_article].dates[key_dates].pvp[key_pvp] = me.$utils.roundAndFix(new_value);
                             }
                         });
                     });
@@ -383,7 +394,8 @@ export default {
         },
         createBills(){
             this.is_show_buttons_bill = true;
-        }
+            this.generateBill();
+        },
     },
     mounted() {
         let me = this;
