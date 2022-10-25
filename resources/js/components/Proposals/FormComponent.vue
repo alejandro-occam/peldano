@@ -484,7 +484,7 @@ export default {
                     });
                 });
             },
-            offer: {
+            /*offer: {
                 handler: async function(val) {
                     this.changeValueBox(1);
                 }
@@ -493,7 +493,7 @@ export default {
                 handler: async function(val) {
                     this.changeValueBox(2);
                 }
-            }
+            }*/
         }
     
 };
