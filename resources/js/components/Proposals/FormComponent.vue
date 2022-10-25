@@ -155,7 +155,7 @@
                                                 </span>-->
                                                 <input v-model="this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].pvp[index_pvp - 1]" 
                                                 v-for="index_pvp in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp.length)" 
-                                                @input="test($event)"
+                                                @input="changeValuesOffer($event)"
                                                 type="text" class="form-control discount bg-blue-light-white text-align-center not-border my-2" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0"/>
                                             </div>
                                         </template>
@@ -182,10 +182,99 @@
                     <option value="2">De la cartera asignada al consultor</option>
                     <option value="3">Responsable de publicaciones</option>
                 </select>
-                <div class="mt-10">
-                    <button type="submit" class="btn bg-azul color-white px-5 font-weight-bolder mr-4">Crear factura simple</button>
-                    <button type="submit" class="btn bg-azul color-white px-5 font-weight-bolder ml-4">Aplicar filtro</button>
+                <div class="mt-10" v-if="!is_show_buttons_bill">
+                    <button type="submit" class="btn bg-azul color-white px-5 font-weight-bolder mr-4" @click.native="createBills()">Crear factura simple</button>
+                    <button type="submit" class="btn bg-azul color-white px-5 font-weight-bolder ml-4">Crear factura personalizada</button>
                 </div>
+            </div>
+            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && is_show_buttons_bill">
+                <table width="100%" cellpadding="2" cellspacing="1">
+                    <thead class="custom-columns-datatable">
+						<tr>
+                            <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 50px;"><span>FACTURAS</span></th>
+                            <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>FECHA</span></th>
+                            <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>FORMA DE PAGO</span></th>
+                            <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>VENCIMIENTO</span></th>
+                            <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span>IMPORTE</span></th>
+                            <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span>ACCIÓN</span></th>
+                        </tr>
+					</thead>
+                    <tbody>
+                        <tr class="row-product text-align-center">
+                            <td class="td-border-right" rowspan="6">1</td>
+                        </tr>
+                        <tr class="tr-total-datatable">
+                            <td class="py-1 pl-5 f-14" colspan="5">BIG DATA Data Email Marketing</td>
+                        </tr>
+                        <tr class="row-product">
+                            <td class="text-align-center td-border-right">25-10-2022</td>
+                            <td class="text-align-center py-4 px-5 td-border-right">
+                                <select class="form-control text-dark select-custom select-filter bg-white" :name="'select_type_proposal'" :id="'select_type_proposal'" v-model="select_type_proposal" data-style="select-lightgreen">
+                                    <option value="">Forma de pago</option>
+                                    <option value="1">Recibo bancario</option>
+                                    <option value="2">Talón nominativo</option>
+                                    <option value="3">Transferencia bancaria</option>
+                                    <option value="4">Letra aceptada</option>
+                                    <option value="5">Pagaré</option>
+                                    <option value="7">Metálico</option>
+                                    <option value="8">Especial camping</option>
+                                    <option value="9">Confirming</option>
+                                    <option value="18">Pago certificado</option>
+                                    <option value="10">Tarjeta</option>
+                                    <option value="15">Talón conformado</option>
+                                    <option value="12">Paypal</option>
+                                    <option value="6">* Intercambio de facturas</option>
+                                    <option value="20">Especial Gaceta</option>
+                                </select>
+                            </td>
+                            <td class="text-align-center py-4 px-5 td-border-right">
+                                <select class="form-control text-dark select-custom select-filter bg-white" :name="'select_type_proposal'" :id="'select_type_proposal'" v-model="select_type_proposal" data-style="select-lightgreen">
+                                    <option value="">Vencimiento</option>
+                                    <option value="23">15 días</option>
+                                    <option value="2">30 días</option>
+                                    <option value="11">30 y 60 días</option>
+                                    <option value="29">40 días</option>
+                                    <option value="17">45 días</option>
+                                    <option value="3">60 días</option>
+                                    <option value="4">90 días</option>
+                                    <option value="1">Al contado</option>
+                                    <option value="20">Al contado y 30 días</option>
+                                    <option value="19">Al contado y 60 días</option>
+                                    <option value="16">Al contado, 30 y 60 días</option>
+                                </select>
+                            </td>
+                            <td class="text-align-center td-border-right">
+                                310.00    
+                            </td>
+                            <td class="td-border-right">
+                            </td>
+                        </tr>      
+                        <tr class="row-article">
+                            <td class="p-5" colspan="5">
+                                <div class="d-flex">
+                                    <span class="my-auto col-2">Observaciones</span>
+                                    <input type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" placeholder="Observaciones" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
+                                </div>
+                            </td>
+                        </tr>      
+                        <tr class="row-article">
+                            <td class="p-5" colspan="5">
+                                <div class="d-flex">
+                                    <span class="my-auto col-2">Núm. pedido</span>
+                                    <input type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" placeholder="Número de pedido" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
+                                </div>
+                            </td>
+                        </tr>    
+                        <tr class="row-article">
+                            <td class="p-5" colspan="5">
+                                <div class="d-flex">
+                                    <span class="my-auto col-2">Observaciones Internas</span>
+                                    <input type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" placeholder="Observaciones Internas" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
+                                </div>
+                            </td>
+                        </tr>                         
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>
@@ -220,17 +309,8 @@ export default {
             discount: '0.00',
             fullname: '',
             select_type_proposal: '1',
-            value_form1: [],/*[{
-                article: [{
-                    arr_date: [{
-                        dates:[{
-                            pvp: [{
-
-                            }]
-                        }]
-                    }]
-                }]
-            }]*/
+            value_form1: [],
+            is_show_buttons_bill: false
         };
     },
     computed: {
@@ -256,13 +336,38 @@ export default {
                 this.discount = this.$utils.roundAndFix(difference / (this.proposals.proposal_obj.products.total_global) * 100);
 
             }else{
-                if(this.discount != 0){
-                    var difference = ((100 - this.discount) / 100) * this.proposals.proposal_obj.products.total_global;
+                var difference = ((100 - this.discount) / 100) * this.proposals.proposal_obj.products.total_global;
                     this.offer = parseFloat(this.$utils.roundAndFix(difference));
-                }
+                    //Recorremos el array valur_form1 y miramos cuantos inputs hay. Una vez contado los inputs, repartimos el valor de la oferta entre estos a partes iguales
+                    var total_inputs = this.rewalkForm1(1, 0);
+
+                    var new_value = this.offer / total_inputs;
+                    //Modificamos los valores de los inputs
+                    this.rewalkForm1(2, new_value);
             }
         },
-        test(e) {
+        rewalkForm1(type, new_value){
+            let me = this;
+            var value = 0;
+            me.value_form1.map(function(product, key_product) {
+                product.article.map(function(article_obj, key_article) {
+                    article_obj.dates.map(function(date, key_dates) {
+                        date.pvp.map(function(pvp_obj, key_pvp) {
+                            if(type == 1){
+                                value += 1;
+                            }else{
+                                pvp_obj = new_value;
+                                me.value_form1[key_product].article[key_article].dates[key_dates].pvp[key_pvp] = new_value;
+                            }
+                        });
+                    });
+                });
+            });
+            if(type == 1){
+                return value;
+            }
+        },
+        changeValuesOffer(e) {
             let me = this;
             var total = 0;
             me.value_form1.map(function(product, key_product) {
@@ -275,6 +380,9 @@ export default {
                 });
             });
             me.offer = this.$utils.roundAndFix(total);
+        },
+        createBills(){
+            this.is_show_buttons_bill = true;
         }
     },
     mounted() {
@@ -363,19 +471,17 @@ export default {
                         });
                     });
                 });
-
-                //Rellenamos el campo oferta
-                /*me.offer = 0;
-                me.value_form1.map(function(product, key_product) {
-                    product.article.map(function(article_obj, key_article) {
-                        article_obj.dates.map(function(date, key_dates) {
-                            date.pvp.map(function(pvp_obj, key_pvp) {
-                                me.offer += pvp_obj;
-                            });
-                        });
-                    });
-                });*/
             },
+            offer: {
+                handler: async function(val) {
+                    this.changeValueBox(1);
+                }
+            },
+            discount: {
+                handler: async function(val) {
+                    this.changeValueBox(2);
+                }
+            }
         }
     
 };

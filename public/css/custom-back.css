@@ -532,6 +532,10 @@ input[type="password"]:disabled.borders-box, input[type="text"]:disabled.borders
     font-size: 15px;
 }
 
+.f-14{
+    font-size: 14px;
+}
+
 .border-bottom{
     border-bottom-width: 1px;
     border-bottom-style: solid;
@@ -763,4 +767,8 @@ a.text-hover-primary:hover, .text-hover-primary:hover{
 
 .d-contents{
     display: contents;
+}
+
+.bg-white{
+    background-color: #fff !important;
 }
