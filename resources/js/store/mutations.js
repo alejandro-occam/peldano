@@ -110,13 +110,26 @@ const mutations = {
                         array_articles.map(function(article_arr, key) {
                             if(article_arr.article_obj.id == article.article_obj.id){
                                 exist = true;
-                                article.dates.map(function(date, key) {
-                                    var date = {
-                                        'date': date,
-                                        'pvp': article.article_obj.pvp
-                                    }
-                                    article.dates_prices_aux.push(date);
+                                var exist2 = false;
+                                article_arr.dates.map(function(date2, key) {
+                                    article.dates.map(function(date, key) {
+                                        if(!exist2){
+                                            if(date2 == date){
+                                                date2.pvp.push(article.article_obj.pvp);
+                                                exist2 = true;
+                                            }
+                                        }
+                                    });
                                 });
+                                if(exist2){
+                                    article.dates.map(function(date, key) {
+                                        var date = {
+                                            'date': date,
+                                            'pvp': article.article_obj.pvp
+                                        }
+                                        article.dates_prices_aux.push(date);
+                                    });
+                                }
                             }
                         });
                         if(!exist){
@@ -172,18 +185,35 @@ const mutations = {
                                         if(article_finish.dates_prices.length == 0){
                                             var date_obj = {
                                                 date: date,
-                                                arr_pvp: [date_aux.pvp]
+                                                arr_pvp_date: [{
+                                                    date: date_aux.date,
+                                                    arr_pvp: [date_aux.pvp]
+                                                }]
                                             }
                                             article_finish.dates_prices.push(date_obj);
 
                                         }else{
                                             article_finish.dates_prices.map(function(d_p, key) {
                                                 if(d_p.date == date){
-                                                    d_p.arr_pvp.push(date_aux.pvp);
+                                                    d_p.arr_pvp_date.map(function(p_d, key) {
+                                                        if(p_d.date == date_aux.date){
+                                                            p_d.arr_pvp.push(date_aux.pvp);
+                                                        }else{
+                                                            var p_d_aux = {
+                                                                date: date_aux.date,
+                                                                arr_pvp: [date_aux.pvp]
+                                                            };
+                                                            d_p.arr_pvp_date.push(p_d_aux);
+                                                        }
+                                                        
+                                                    });
                                                 }else{
                                                     var date_obj = {
                                                         date: date,
-                                                        arr_pvp: [date_aux.pvp]
+                                                        arr_pvp_date: [{
+                                                            date: date_aux.date,
+                                                            arr_pvp: [date_aux.pvp]
+                                                        }]
                                                     }
                                                     article_finish.dates_prices.push(date_obj);
                                                 }
@@ -207,11 +237,13 @@ const mutations = {
                     article_finish.amount = 0;
                     article_finish.total = 0;
                     article_finish.dates_prices.map(function(date, key) {
-                        article_finish.amount += date.arr_pvp.length;
-                        total_amount_global += date.arr_pvp.length;
-                        date.arr_pvp.map(function(pvp, key) {
-                            article_finish.total += pvp;
-                            total_global += pvp;
+                        date.arr_pvp_date.map(function(pvp_date, key) {
+                            article_finish.amount += pvp_date.arr_pvp.length;
+                            total_amount_global += pvp_date.arr_pvp.length;
+                            pvp_date.arr_pvp.map(function(pvp, key) {
+                                article_finish.total += pvp;
+                                total_global += pvp;
+                            });
                         });
                     });
                 });
@@ -228,8 +260,10 @@ const mutations = {
                     articles_obj.articles.map(function(article_finish, key) {
                         article_finish.dates_prices.map(function(date_aux, key) {
                             if(date_aux.date == date){
-                                date_aux.arr_pvp.map(function(pvp, key) {
-                                    total_date += pvp;
+                                date_aux.arr_pvp_date.map(function(pvp_date, key) {
+                                    pvp_date.arr_pvp.map(function(pvp, key) {
+                                        total_date += pvp;
+                                    });
                                 });
                             }
                         });
@@ -252,9 +286,41 @@ const mutations = {
     },
 
     //Generar propuesta
-    generateBill(state){
+    generateBill(state, params){
+        //Modificamos el objeto con los nuevos datos dados
+        state.proposals.proposal_obj.products.map(function(products_obj, key_products_obj) {
+            products_obj.articles.map(function(article_obj, key_article_obj) {
+                params.map(function(products, key_products) {
+                    products.article.map(function(article, key) {
+                        article.dates.map(function(date, key) {
+                            if(article_obj.article_obj.id == date.article.id){
+                                article_obj.dates_prices.map(function(date_price_obj, key_date_price_obj) {
+                                    date_price_obj.arr_pvp_date.map(function(arr_pvp_date_obj, key_arr_pvp_date) {
+                                        date.date_pvp.map(function(date_pvp, key) {
+                                            if(arr_pvp_date_obj.date == date_pvp.date){
+                                                var out = false;
+                                                arr_pvp_date_obj.arr_pvp.map(function(arr_pvp_obj, key_arr_pvp) {
+                                                    date_pvp.pvp.map(function(pvp, key) {
+                                                        if(!out){
+                                                            state.proposals.proposal_obj.products[key_products_obj].articles[key_article_obj].dates_prices[key_date_price_obj].arr_pvp_date[key_arr_pvp_date].arr_pvp[key_arr_pvp] = pvp;
+                                                            //arr_pvp_obj = pvp;
+                                                            out = true;
+                                                        }
+                                                    });
+                                                });
+                                            }
+                                        });
+                                    });
+                                });
+                            }
+                        });
+                    });
+                });
+            });
+        });
+
         var array_articles = [];
-        state.proposals.proposal_obj.products.map(function(products, key) {
+        /*state.proposals.proposal_obj.products.map(function(products, key) {
             products.articles_aux.map(function(article_obj, key) {
                 article_obj.dates.map(function(date, key) {
                     var article_obj_aux = {
@@ -263,6 +329,24 @@ const mutations = {
                         id_product: products.product_obj.id
                     }
                     array_articles.push(article_obj_aux);
+                });
+            });
+        });*/
+
+        state.proposals.proposal_obj.products.map(function(products, key) {
+            products.articles.map(function(article_obj, key) {
+                article_obj.dates_prices.map(function(dates_prices_obj, key) {
+                    dates_prices_obj.arr_pvp_date.map(function(arr_pvp_date_obj, key) {
+                        arr_pvp_date_obj.arr_pvp.map(function(arr_pvp_obj, key) {
+                            var article_obj_aux = {
+                                date: arr_pvp_date_obj.date,
+                                article: article_obj,
+                                id_product: products.product_obj.id,
+                                amount: arr_pvp_obj
+                            }
+                            array_articles.push(article_obj_aux);
+                        });
+                    });
                 });
             });
         });
@@ -282,6 +366,78 @@ const mutations = {
         state.proposals.bill_obj.articles = array_articles;
 
         array_articles.map(function(article_obj, key) {
+            if(key == 0){
+                amount = Number(article_obj.amount);
+                total_bill += Number(article_obj.amount);
+                var bill_month = {
+                    date: date_aux,
+                    amount: amount,
+                    article: article_obj
+                }
+
+                array_finish_bill.push(bill_month);
+
+            }else{
+                if(date_aux == article_obj.date){
+                    var is_break = false;
+                    array_finish_bill.map(function(bill_obj, key) {
+                        if(!is_break){
+                            if(bill_obj.date == article_obj.date){
+                                if(bill_obj.article.id_product == article_obj.id_product){
+                                    amount += Number(article_obj.amount);
+                                    total_bill += Number(article_obj.amount);
+                                    array_finish_bill[last_key].amount = amount;
+                                    is_break = true;
+
+                                }else{
+                                    amount = 0;
+                                    date_aux =  article_obj.date;
+                                    amount += article_obj.amount;
+                                    total_bill += article_obj.article.article_obj.pvp;
+                                    var bill_month = {
+                                        date: date_aux,
+                                        amount: amount,
+                                        article: article_obj
+                                    }
+                                    array_finish_bill.push(bill_month);
+                                    last_key = (array_finish_bill.length - 1);
+                                    is_break = true;
+                                }
+
+                            }else{
+                                amount = 0;
+                                date_aux =  article_obj.date;
+                                amount += Number(article_obj.amount);
+                                total_bill += Number(article_obj.amount);
+                                var bill_month = {
+                                    date: date_aux,
+                                    amount: amount,
+                                    article: article_obj
+                                }
+                                array_finish_bill.push(bill_month);
+                                last_key = (array_finish_bill.length - 1);
+                                is_break = true;
+                            }
+                        }
+                    });
+
+                }else{
+                    amount = 0;
+                    date_aux =  article_obj.date;
+                    amount += article_obj.amount;
+                    total_bill += article_obj.article.article_obj.pvp;
+                    var bill_month = {
+                        date: date_aux,
+                        amount: amount,
+                        article: article_obj
+                    }
+                    array_finish_bill.push(bill_month);
+                    last_key = (array_finish_bill.length - 1);
+                }
+            }
+        });
+
+        /*array_articles.map(function(article_obj, key) {
             if(key == 0){
                 amount = article_obj.article.article_obj.pvp;
                 total_bill += article_obj.article.article_obj.pvp;
@@ -351,7 +507,7 @@ const mutations = {
                     last_key = (array_finish_bill.length - 1);
                 }
             }
-        });
+        });*/
         state.proposals.bill_obj.array_bills = array_finish_bill;
         state.proposals.bill_obj.total_bill = total_bill;
         

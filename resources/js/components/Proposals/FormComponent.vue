@@ -96,7 +96,7 @@
                                             <span>OFERTA</span>
                                         </div>
                                         <span class="p-input-icon-right w-100">
-                                            <input v-model="offer" type="text" class="form-control discount bg-blue-light-white font-weight-bolder f-15 color-dark-gray not-border mt-3" style="width:150px;" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" v-on:change="changeValueBox(1)"/>
+                                            <input v-model="offer" type="text" class="form-control discount bg-blue-light-white font-weight-bolder f-15 color-dark-gray not-border mt-3" style="width:150px;" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" v-on:change="changeValueBox(1, 0)"/>
                                         </span>
                                     </div>
                                     <div class="subheader-separator subheader-separator-ver my-auto py-14 bg-gray-light"></div>
@@ -105,7 +105,7 @@
                                             <span>DESCUENTO</span>
                                         </div>
                                         <span class="p-input-icon-right w-100">
-                                            <input v-model="discount" type="text" class="form-control discount bg-blue-light-white font-weight-bolder f-15 color-dark-gray not-border mt-3" style="width:150px;" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0"  v-on:change="changeValueBox(2)"/>
+                                            <input v-model="discount" type="text" class="form-control discount bg-blue-light-white font-weight-bolder f-15 color-dark-gray not-border mt-3" style="width:150px;" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0"  v-on:change="changeValueBox(2, 0)"/>
                                             <img width="13" class="pi my-auto" src="/media/custom-imgs/icono_porcentaje_input.svg"/>
                                         </span>
                                     </div>
@@ -150,13 +150,12 @@
                                     <template v-for="index_dates in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices.length)">
                                         <template v-if="proposals.proposal_obj.array_dates[index_arr_date - 1].date == proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].date">
                                             <div class="d-grid px-5">
-                                                <!--<span v-for="index_pvp in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp.length)" class="mx-2 bg-blue-light-white px-5 py-2 text-align-center my-2">
-                                                    {{ proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp[index_pvp - 1] }}€
-                                                </span>-->
-                                                <input v-model="this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].pvp[index_pvp - 1]" 
-                                                v-for="index_pvp in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp.length)" 
-                                                @input="changeValuesOffer($event)"
-                                                type="text" class="form-control discount bg-blue-light-white text-align-center not-border my-2" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0"/>
+                                                <template v-for="index_pvp_date in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date.length)">
+                                                    <input v-model="this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1]" 
+                                                    v-for="index_pvp in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)" 
+                                                    @input="changeValuesOffer($event)"
+                                                    type="text" class="form-control discount bg-blue-light-white text-align-center not-border my-2" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0"/>
+                                                </template>
                                             </div>
                                         </template>
                                     </template>
@@ -341,21 +340,26 @@ export default {
                 }
             });
         },
-        changeValueBox(type){
+        changeValueBox(type, status){
             if(type == 1){
                 var difference = this.proposals.proposal_obj.products.total_global - this.offer;
                 this.discount = this.$utils.roundAndFix(difference / (this.proposals.proposal_obj.products.total_global) * 100);
 
             }else{
                 var difference = ((100 - this.discount) / 100) * this.proposals.proposal_obj.products.total_global;
-                    this.offer = parseFloat(this.$utils.roundAndFix(difference));
-                    //Recorremos el array valur_form1 y miramos cuantos inputs hay. Una vez contado los inputs, repartimos el valor de la oferta entre estos a partes iguales
-                    var total_inputs = this.rewalkForm1(1, 0);
+                this.offer = parseFloat(this.$utils.roundAndFix(difference));
 
-                    var new_value = this.offer / total_inputs;
-                    //Modificamos los valores de los inputs
-                    this.rewalkForm1(2, new_value);
             }
+
+            if(status == 0){
+                //Recorremos el array valur_form1 y miramos cuantos inputs hay. Una vez contado los inputs, repartimos el valor de la oferta entre estos a partes iguales
+                var total_inputs = this.rewalkForm1(1, 0);
+
+                var new_value = this.offer / total_inputs;
+                //Modificamos los valores de los inputs
+                this.rewalkForm1(2, new_value);
+            }
+            
         },
         rewalkForm1(type, new_value){
             let me = this;
@@ -363,13 +367,15 @@ export default {
             me.value_form1.map(function(product, key_product) {
                 product.article.map(function(article_obj, key_article) {
                     article_obj.dates.map(function(date, key_dates) {
-                        date.pvp.map(function(pvp_obj, key_pvp) {
-                            if(type == 1){
-                                value += 1;
-                            }else{
-                                pvp_obj = new_value;
-                                me.value_form1[key_product].article[key_article].dates[key_dates].pvp[key_pvp] = me.$utils.roundAndFix(new_value);
-                            }
+                        date.date_pvp.map(function(date_pvp, key_date_pvp) {
+                            date_pvp.pvp.map(function(pvp_obj, key_pvp) {
+                                if(type == 1){
+                                    value += 1;
+                                }else{
+                                    pvp_obj = new_value;
+                                    me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = me.$utils.roundAndFix(new_value);
+                                }
+                            });
                         });
                     });
                 });
@@ -384,17 +390,88 @@ export default {
             me.value_form1.map(function(product, key_product) {
                 product.article.map(function(article_obj, key_article) {
                     article_obj.dates.map(function(date, key_dates) {
-                        date.pvp.map(function(pvp_obj, key_pvp) {
-                            total += Number(pvp_obj);
+                        date.date_pvp.map(function(date_pvp, key_date_pvp) {
+                            date_pvp.pvp.map(function(pvp_obj, key_pvp) {
+                                total += Number(pvp_obj);
+                            });
                         });
                     });
                 });
             });
             me.offer = this.$utils.roundAndFix(total);
+            this.changeValueBox(1);
         },
         createBills(){
             this.is_show_buttons_bill = true;
-            this.generateBill();
+            this.generateBill(this.value_form1);
+        },
+        loadFormObj(){
+            let me = this;
+            me.value_form1 = [];
+                
+            //Rellenar los modelos de los inputs de la tabla
+            me.proposals.proposal_obj.products.map(function(product, key_product) {
+                product.articles.map(function(article, key_article) {
+                    me.proposals.proposal_obj.array_dates.map(function(date_obj, key_arr_dates) {
+                        article.dates_prices.map(function(date, key_dates) {
+                            if(date_obj.date == date.date){
+                                date.arr_pvp_date.map(function(pvp_date, key_pvp_date) {
+                                    pvp_date.arr_pvp.map(function(pvp, key_pvp) {
+                                        if(me.value_form1[key_product] == undefined){
+                                            me.value_form1.push({
+                                                article: [{
+                                                    dates:[{
+                                                        article: article.article_obj,
+                                                        date_pvp: [{
+                                                            date: pvp_date.date,
+                                                            pvp: []
+                                                        }]
+                                                    }]
+                                                }]
+                                            });
+                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+
+                                        }else if(me.value_form1[key_product].article[key_article] == undefined){
+                                            me.value_form1[key_product].article.push({
+                                                dates:[{
+                                                    article: article.article_obj,
+                                                    date_pvp: [{
+                                                        date: pvp_date.date,
+                                                        pvp: []
+                                                    }]
+                                                }]
+                                            });
+                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+
+                                        }else if(me.value_form1[key_product].article[key_article].dates[key_dates] == undefined){
+                                            me.value_form1[key_product].article[key_article].dates.push({
+                                                article: article.article_obj,
+                                                date_pvp: [{
+                                                    date: pvp_date.date,
+                                                    pvp: []
+                                                }]
+                                            });
+                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+
+                                        }else if(me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date] == undefined){
+                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp.push({
+                                                date: pvp_date.date,
+                                                pvp: []
+                                            });
+
+                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+
+                                        }else{
+                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+
+                                        }
+                                    });
+                                });
+                            }
+                        });
+                    });
+                });
+            });
         },
     },
     mounted() {
@@ -440,60 +517,8 @@ export default {
                     me.total = me.$utils.roundAndFix(me.proposals.proposal_obj.products.total_global);
                 }
 
-                me.value_form1 = [];
-                
-                //Rellenar los modelos de los inputs de la tabla
-                me.proposals.proposal_obj.products.map(function(product, key_product) {
-                    product.articles.map(function(article, key_article) {
-                        me.proposals.proposal_obj.array_dates.map(function(date_obj, key_arr_dates) {
-                            article.dates_prices.map(function(date, key_dates) {
-                                if(date_obj.date == date.date){
-                                    date.arr_pvp.map(function(pvp, key_pvp) {
-                                        if(me.value_form1[key_product] == undefined){
-                                            me.value_form1.push({
-                                                article: [{
-                                                    dates:[{
-                                                            pvp: []
-                                                        }]
-                                                }]
-                                            });
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].pvp.push(pvp);
-
-                                        }else if(me.value_form1[key_product].article[key_article] == undefined){
-                                            me.value_form1[key_product].article.push({
-                                                dates:[{
-                                                    pvp: []
-                                                }]
-                                            });
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].pvp.push(pvp);
-
-                                        }else if(me.value_form1[key_product].article[key_article].dates[key_dates] == undefined){
-                                            me.value_form1[key_product].article[key_article].dates.push({
-                                                pvp: []
-                                            });
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].pvp.push(pvp);
-
-                                        }else{
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].pvp.push(pvp);
-
-                                        }
-                                    });
-                                }
-                            });
-                        });
-                    });
-                });
+                me.loadFormObj();
             },
-            /*offer: {
-                handler: async function(val) {
-                    this.changeValueBox(1);
-                }
-            },
-            discount: {
-                handler: async function(val) {
-                    this.changeValueBox(2);
-                }
-            }*/
         }
     
 };
