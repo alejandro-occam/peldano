@@ -418,44 +418,30 @@ const mutations = {
                                     total_bill += Number(article_obj.amount);
                                     array_finish_bill[last_key].amount = amount;
                                     is_break = true;
-
-                                }else{
-                                    amount = 0;
-                                    date_aux =  article_obj.date;
-                                    amount += article_obj.amount;
-                                    total_bill += article_obj.article.article_obj.pvp;
-                                    var bill_month = {
-                                        date: date_aux,
-                                        amount: amount,
-                                        article: article_obj
-                                    }
-                                    array_finish_bill.push(bill_month);
-                                    last_key = (array_finish_bill.length - 1);
-                                    is_break = true;
                                 }
-
-                            }else{
-                                amount = 0;
-                                date_aux =  article_obj.date;
-                                amount += Number(article_obj.amount);
-                                total_bill += Number(article_obj.amount);
-                                var bill_month = {
-                                    date: date_aux,
-                                    amount: amount,
-                                    article: article_obj
-                                }
-                                array_finish_bill.push(bill_month);
-                                last_key = (array_finish_bill.length - 1);
-                                is_break = true;
                             }
                         }
                     });
 
+                    if(!is_break){
+                        amount = 0;
+                        date_aux = article_obj.date;
+                        amount += Number(article_obj.amount);
+                        total_bill += Number(article_obj.article.article_obj.pvp);
+                        var bill_month = {
+                            date: date_aux,
+                            amount: amount,
+                            article: article_obj
+                        }
+                        array_finish_bill.push(bill_month);
+                        last_key = (array_finish_bill.length - 1);
+                    }
+
                 }else{
                     amount = 0;
                     date_aux =  article_obj.date;
-                    amount += article_obj.amount;
-                    total_bill += article_obj.article.article_obj.pvp;
+                    amount += Number(article_obj.amount);
+                    total_bill += Number(article_obj.article.article_obj.pvp);
                     var bill_month = {
                         date: date_aux,
                         amount: amount,
@@ -467,77 +453,6 @@ const mutations = {
             }
         });
 
-        /*array_articles.map(function(article_obj, key) {
-            if(key == 0){
-                amount = article_obj.article.article_obj.pvp;
-                total_bill += article_obj.article.article_obj.pvp;
-                var bill_month = {
-                    date: date_aux,
-                    amount: amount,
-                    article: article_obj
-                }
-
-                array_finish_bill.push(bill_month);
-
-            }else{
-                if(date_aux == article_obj.date){
-                    var is_break = false;
-                    array_finish_bill.map(function(bill_obj, key) {
-                        if(!is_break){
-                            if(bill_obj.date == article_obj.date){
-                                if(bill_obj.article.id_product == article_obj.id_product){
-                                    amount += article_obj.article.article_obj.pvp;
-                                    total_bill += article_obj.article.article_obj.pvp;
-                                    array_finish_bill[last_key].amount = amount;
-                                    is_break = true;
-
-                                }else{
-                                    amount = 0;
-                                    date_aux =  article_obj.date;
-                                    amount += article_obj.article.article_obj.pvp;
-                                    total_bill += article_obj.article.article_obj.pvp;
-                                    var bill_month = {
-                                        date: date_aux,
-                                        amount: amount,
-                                        article: article_obj
-                                    }
-                                    array_finish_bill.push(bill_month);
-                                    last_key = (array_finish_bill.length - 1);
-                                    is_break = true;
-                                }
-
-                            }else{
-                                amount = 0;
-                                date_aux =  article_obj.date;
-                                amount += article_obj.article.article_obj.pvp;
-                                total_bill += article_obj.article.article_obj.pvp;
-                                var bill_month = {
-                                    date: date_aux,
-                                    amount: amount,
-                                    article: article_obj
-                                }
-                                array_finish_bill.push(bill_month);
-                                last_key = (array_finish_bill.length - 1);
-                                is_break = true;
-                            }
-                        }
-                    });
-
-                }else{
-                    amount = 0;
-                    date_aux =  article_obj.date;
-                    amount += article_obj.article.article_obj.pvp;
-                    total_bill += article_obj.article.article_obj.pvp;
-                    var bill_month = {
-                        date: date_aux,
-                        amount: amount,
-                        article: article_obj
-                    }
-                    array_finish_bill.push(bill_month);
-                    last_key = (array_finish_bill.length - 1);
-                }
-            }
-        });*/
         state.proposals.bill_obj.array_bills = array_finish_bill;
         state.proposals.bill_obj.total_bill = total_bill;
         
