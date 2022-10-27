@@ -222,21 +222,23 @@ const mutations = {
                                             //Si las fechas de las columnas coinciden entramos
                                             if(d_p.date == date){
                                                 //Recorremos el objeto para ver si coinciden tambien las fecha normal
+                                                var exist_d_p = false;
                                                 d_p.arr_pvp_date.map(function(p_d, key) {
                                                     if(p_d.date == date_aux.date){
                                                         //Si coincide añadimos al array de la cantidad la cantidad
                                                         p_d.arr_pvp.push(date_aux.pvp);
-
-                                                    }else{
-                                                        //Si no coincide creamos un objeto para esta fecha normal
-                                                        var p_d_aux = {
-                                                            date: date_aux.date,
-                                                            arr_pvp: [date_aux.pvp]
-                                                        };
-                                                        d_p.arr_pvp_date.push(p_d_aux);
+                                                        exist_d_p = true;
                                                     }
                                                     exist_date_price = true;
                                                 });
+                                                if(!exist_d_p){
+                                                    //Si no coincide creamos un objeto para esta fecha normal
+                                                    var p_d_aux = {
+                                                        date: date_aux.date,
+                                                        arr_pvp: [date_aux.pvp]
+                                                    };
+                                                    d_p.arr_pvp_date.push(p_d_aux);
+                                                }
                                             }
                                         });
                                         if(!exist_date_price){
@@ -477,7 +479,12 @@ const mutations = {
                 var bill_month = {
                     date: date_aux,
                     amount: amount,
-                    article: article_obj
+                    article: article_obj,
+                    select_way_to_pay: '',
+                    select_expiration: '',
+                    observations: '',
+                    order_number: '',
+                    internal_observations: ''
                 }
 
                 array_finish_bill.push(bill_month);
@@ -506,7 +513,12 @@ const mutations = {
                         var bill_month = {
                             date: date_aux,
                             amount: amount,
-                            article: article_obj
+                            article: article_obj,
+                            select_way_to_pay: '',
+                            select_expiration: '',
+                            observations: '',
+                            order_number: '',
+                            internal_observations: ''
                         }
                         array_finish_bill.push(bill_month);
                         last_key = (array_finish_bill.length - 1);
@@ -520,7 +532,12 @@ const mutations = {
                     var bill_month = {
                         date: date_aux,
                         amount: amount,
-                        article: article_obj
+                        article: article_obj,
+                        select_way_to_pay: '',
+                        select_expiration: '',
+                        observations: '',
+                        order_number: '',
+                        internal_observations: ''
                     }
                     array_finish_bill.push(bill_month);
                     last_key = (array_finish_bill.length - 1);

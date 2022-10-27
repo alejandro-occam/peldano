@@ -209,8 +209,8 @@
                             <tr class="row-product">
                                 <td class="text-align-center td-border-right">{{ proposals.bill_obj.array_bills[index].date }}</td>
                                 <td class="text-align-center py-4 px-5 td-border-right">
-                                    <select class="form-control text-dark select-custom select-filter bg-white" :name="'select_type_proposal'" :id="'select_type_proposal'" v-model="select_type_proposal" data-style="select-lightgreen">
-                                        <option value="">Forma de pago</option>
+                                    <select class="form-control text-dark select-custom select-filter bg-white" :name="'select_way_to_pay'" :id="'select_way_to_pay'" v-model="proposals.bill_obj.array_bills[index].select_way_to_pay" data-style="select-lightgreen">
+                                        <option value="" selected>Forma de pago</option>
                                         <option value="1">Recibo bancario</option>
                                         <option value="2">Talón nominativo</option>
                                         <option value="3">Transferencia bancaria</option>
@@ -228,7 +228,7 @@
                                     </select>
                                 </td>
                                 <td class="text-align-center py-4 px-5 td-border-right">
-                                    <select class="form-control text-dark select-custom select-filter bg-white" :name="'select_type_proposal'" :id="'select_type_proposal'" v-model="select_type_proposal" data-style="select-lightgreen">
+                                    <select class="form-control text-dark select-custom select-filter bg-white" :name="'select_expiration'" :id="'select_expiration'" v-model="proposals.bill_obj.array_bills[index].select_expiration" data-style="select-lightgreen">
                                         <option value="">Vencimiento</option>
                                         <option value="23">15 días</option>
                                         <option value="2">30 días</option>
@@ -247,14 +247,14 @@
                                     {{ $utils.roundAndFix(proposals.bill_obj.array_bills[index].amount) }}
                                 </td>
                                 <td class="td-border-right text-align-center">
-                                    <button type="button" class="btn"><img  width="40" height="40" src="/media/custom-imgs/icono_tabla_aplicar_todos.svg" /></button>
+                                    <button type="button" class="btn"><img  width="40" height="40" src="/media/custom-imgs/icono_tabla_aplicar_todos.svg" @click.native="changeOptions(index)" /></button>
                                 </td>
                             </tr>   
                             <tr class="row-article">
                                 <td class="p-5" colspan="5">
                                     <div class="d-flex">
                                         <span class="my-auto col-2">Observaciones</span>
-                                        <input type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" placeholder="Observaciones" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
+                                        <input type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" v-model="proposals.bill_obj.array_bills[index].observations" placeholder="Observaciones" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
                                     </div>
                                 </td>
                             </tr>      
@@ -262,7 +262,7 @@
                                 <td class="p-5" colspan="5">
                                     <div class="d-flex">
                                         <span class="my-auto col-2">Núm. pedido</span>
-                                        <input type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" placeholder="Número de pedido" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
+                                        <input type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" v-model="proposals.bill_obj.array_bills[index].order_number" placeholder="Número de pedido" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
                                     </div>
                                 </td>
                             </tr>    
@@ -270,7 +270,7 @@
                                 <td class="p-5" colspan="5">
                                     <div class="d-flex">
                                         <span class="my-auto col-2">Observaciones Internas</span>
-                                        <input type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" placeholder="Observaciones Internas" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
+                                        <input type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" v-model="proposals.bill_obj.array_bills[index].internal_observations" placeholder="Observaciones Internas" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
                                     </div>
                                 </td>
                             </tr>   
@@ -319,8 +319,8 @@ export default {
             discount: '0.00',
             fullname: '',
             select_type_proposal: '1',
-            value_form1: [],
-            is_show_buttons_bill: false
+            value_form1: [], //Formulario presupuesto
+            is_show_buttons_bill: false,
         };
     },
     computed: {
@@ -474,6 +474,15 @@ export default {
                 });
             });
         },
+        changeOptions(index){
+            for(var i=index; i<this.proposals.bill_obj.array_bills.length; i++){
+                this.proposals.bill_obj.array_bills[i].select_expiration = this.proposals.bill_obj.array_bills[index].select_expiration;
+                this.proposals.bill_obj.array_bills[i].select_expiration = this.proposals.bill_obj.array_bills[index].select_expiration;
+                this.proposals.bill_obj.array_bills[i].observations = this.proposals.bill_obj.array_bills[index].observations;
+                this.proposals.bill_obj.array_bills[i].order_number = this.proposals.bill_obj.array_bills[index].order_number;
+                this.proposals.bill_obj.array_bills[i].internal_observations = this.proposals.bill_obj.array_bills[index].internal_observations;
+            }
+        }
     },
     mounted() {
         let me = this;
