@@ -12,8 +12,8 @@
                 />
         </div>
         <div class="col-12 pl-0 mt-15">
-            <h3 class="color-blue">Datos del cliente</h3>
-            <div class="my-5 col-12 row">
+            <h3 class="color-blue" v-if="!this.finish_proposal">Datos del cliente</h3>
+            <div class="my-5 col-12 row" v-if="!this.finish_proposal">
                 <div class="input-group px-0 d-flex" v-if="this.select_company == '' && this.select_company_other_values == ''">
                     <div class="w-25">
                         <span class="w-25">Empresa o nombre y apellidos</span>
@@ -38,7 +38,7 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-15" v-if="this.select_company != '' || this.select_company_other_values != ''">
+            <div class="mt-15" v-if="(this.select_company != '' || this.select_company_other_values != '') && !this.finish_proposal">
                 <button type="button" class="btn bg-azul color-white px-5 font-weight-bolder" @click="this.openFormArticle()">
                     <img class="mr-2" width="24" height="24" src="/media/custom-imgs/icono_btn_annadir_articulo_blanco.svg" />
                     Añadir artículo
@@ -95,19 +95,25 @@
                                         <div class="f-16 color-dark-gray text-align-center">
                                             <span>OFERTA</span>
                                         </div>
-                                        <span class="p-input-icon-right w-100">
+                                        <span class="p-input-icon-right w-100" v-if="!this.finish_proposal">
                                             <input v-model="offer" type="text" class="form-control discount bg-blue-light-white font-weight-bolder f-15 color-dark-gray not-border mt-3" style="width:150px;" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" v-on:change="changeValueBox(1, 0)"/>
                                         </span>
+                                        <div class="f-15 color-dark-gray font-weight-bolder px-8 py-2 mt-3" v-else>
+                                            <span >{{ this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.offer)) }}€</span>
+                                        </div>
                                     </div>
                                     <div class="subheader-separator subheader-separator-ver my-auto py-14 bg-gray-light"></div>
                                     <div class="d-block mx-5 px-10 py-8">
                                         <div class="f-16 color-dark-gray text-align-center">
                                             <span>DESCUENTO</span>
                                         </div>
-                                        <span class="p-input-icon-right w-100">
+                                        <span class="p-input-icon-right w-100" v-if="!this.finish_proposal">
                                             <input v-model="discount" type="text" class="form-control discount bg-blue-light-white font-weight-bolder f-15 color-dark-gray not-border mt-3" style="width:150px;" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0"  v-on:change="changeValueBox(2, 0)"/>
                                             <img width="13" class="pi my-auto" src="/media/custom-imgs/icono_porcentaje_input.svg"/>
                                         </span>
+                                        <div class="f-15 color-dark-gray font-weight-bolder px-8 py-2 mt-3" v-else>
+                                            <span >{{ this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.discount)) }}%</span>
+                                        </div>
                                     </div>
                                     <div class="subheader-separator subheader-separator-ver my-auto py-14 bg-gray-light"></div>
                                     <div class="d-block ml-5 px-10 py-8">
@@ -124,7 +130,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12 mt-15 pl-0" v-if="proposals.proposal_obj.products[0].product_obj != null">
+            <div class="col-12 mt-15 pl-0" v-if="proposals.proposal_obj.products[0].product_obj != null && !this.finish_proposal">
                 <table width="100%" cellpadding="2" cellspacing="1">
                     <thead class="custom-columns-datatable">
 						<tr>
@@ -174,19 +180,20 @@
                     </tbody>
                 </table>
             </div>
-            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null">
+            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && !this.finish_proposal">
                 <span class="text-dark font-weight-bold mb-2">Tipo de propuesta</span>
                 <select class="form-control bg-gray text-dark select-custom select-filter mt-3 col-2" :name="'select_type_proposal'" :id="'select_type_proposal'" v-model="select_type_proposal" data-style="select-lightgreen">
                     <option value="1" selected>Normal</option>
-                    <option value="2">De la cartera asignada al consultor</option>
-                    <option value="3">Responsable de publicaciones</option>
+                    <option value="2">Intercambio con facturas</option>
+                    <option value="3">Necesidades Peldaño</option>
+                    <option value="4">Autopromoción</option>
                 </select>
                 <div class="mt-10" v-if="!is_show_buttons_bill">
                     <button type="submit" class="btn bg-azul color-white px-5 font-weight-bolder mr-4" @click.native="createBills()">Crear factura simple</button>
                     <button type="submit" class="btn bg-azul color-white px-5 font-weight-bolder ml-4">Crear factura personalizada</button>
                 </div>
             </div>
-            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && is_show_buttons_bill">
+            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && is_show_buttons_bill && !this.finish_proposal">
                 <table width="100%" cellpadding="2" cellspacing="1">
                     <thead class="custom-columns-datatable">
 						<tr>
@@ -283,7 +290,121 @@
                     </tbody>
                 </table>
                 <div class="mt-10">
-                    <button type="submit" class="btn bg-azul color-white px-30 font-weight-bolder">Finalizar propuesta</button>
+                    <button @click.native="this.finishProposal()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Finalizar propuesta</button>
+                </div>
+            </div>
+            <div class="col-12 pl-0 mt-10">
+                <h3 class="color-blue">Configuración de la presentación de la propuesta</h3>
+                <div class="col-6 pl-0 mt-6">
+                    <div class="d-flex input-group my-15" >
+                        <span class="my-auto w-25">Nombre comercial</span>
+                        <div class="w-50">
+                            <input v-model="name" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
+                            <small class="text-danger " v-if="name_error">El nombre no es válido</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 pl-0 mt-6">
+                    <div class="d-flex input-group my-5" >
+                        <span class="my-auto w-25">Idioma</span>
+                        <div class="w-50">
+                            <input v-model="name" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
+                            <small class="text-danger " v-if="name_error">El nombre no es válido</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 pl-0 mt-6">
+                    <div class="d-flex input-group my-5" >
+                        <span class="my-auto w-25">Tipo de proyecto</span>
+                        <div class="w-50">
+                            <input v-model="name" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
+                            <small class="text-danger " v-if="name_error">El nombre no es válido</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 pl-0 mt-6">
+                    <div class="d-flex input-group my-5" >
+                        <span class="my-auto w-25">Nombre de proyecto</span>
+                        <div class="w-50">
+                            <input v-model="name" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
+                            <small class="text-danger " v-if="name_error">El nombre no es válido</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 pl-0 mt-6">
+                    <div class="d-flex input-group my-5" >
+                        <span class="my-auto w-25">Fecha de proyecto</span>
+                        <div class="w-50">
+                            <input v-model="name" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
+                            <small class="text-danger " v-if="name_error">El nombre no es válido</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 pl-0 mt-6">
+                    <div class="d-flex input-group my-5" >
+                        <span class="mb-auto w-25">Objetivos</span>
+                        <div class="w-50">
+                            <Textarea v-model="value2" :autoResize="true" class="borders-box text-dark-gray" rows="5" cols="56" />
+                            <small class="text-danger " v-if="name_error">El nombre no es válido</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 pl-0 mt-6">
+                    <div class="d-flex input-group my-5" >
+                        <span class="mb-auto w-25">Propuesta</span>
+                        <div class="w-50">
+                            <Textarea v-model="value2" :autoResize="true" class="borders-box text-dark-gray" rows="5" cols="56" />
+                            <small class="text-danger " v-if="name_error">El nombre no es válido</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 pl-0 mt-6">
+                    <div class="d-flex input-group my-5" >
+                        <span class="mb-auto w-25">Acciones</span>
+                        <div class="w-50">
+                            <Textarea v-model="value2" :autoResize="true" class="borders-box text-dark-gray" rows="5" cols="56" />
+                            <small class="text-danger " v-if="name_error">El nombre no es válido</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-6 pl-0 mt-6">
+                    <div class="d-flex input-group my-5" >
+                        <span class="mb-auto w-25">Observaciones</span>
+                        <div class="w-50">
+                            <Textarea v-model="value2" :autoResize="true" class="borders-box text-dark-gray" rows="5" cols="56" />
+                            <small class="text-danger " v-if="name_error">El nombre no es válido</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-12 pl-0 mt-6">
+                    <div class="d-flex input-group my-5" >
+                        <div class="d-flex" v-if="this.status == 1">
+                            <button class="purple-border btn mr-4 font-weight-bold d-flex py-4" @click="this.changeStatus(1)">
+                                <div class="purple-circle mr-auto">
+                                    <div class="white-circle-purple"></div>
+                                </div>
+                                <span class="px-10">Mostrar descuentos</span>
+                            </button>
+                            <button  class="bg-purple btn mr-4 font-weight-bold color-white d-flex py-4">
+                                <div class="white-circle mr-auto">
+                                    <div class="purple-circle-white"></div>
+                                </div>
+                                <span class="px-10">Mostrar inserciones como X</span>
+                            </button>
+                            <button  class="bg-purple btn mr-4 font-weight-bold color-white d-flex py-4">
+                                <div class="white-circle mr-auto">
+                                    <div class="purple-circle-white"></div>
+                                </div>
+                                <span class="px-10">Mostrar facturas</span>
+                            </button>
+                            <button  class="bg-purple btn mr-4 font-weight-bold color-white d-flex py-4">
+                                <div class="white-circle mr-auto">
+                                    <div class="purple-circle-white"></div>
+                                </div>
+                                <span class="px-10">Mostrar PVP</span>
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
@@ -299,6 +420,8 @@ import AddButtonComponent from "../Partials/AddButtonComponent.vue";
 import FormAddArticleComponent from "./FormAddArticleComponent.vue";
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
+import Textarea from 'primevue/textarea';
+
 
 export default {
     name: "FormComponent",
@@ -306,7 +429,8 @@ export default {
         AddButtonComponent,
         FormAddArticleComponent,
         DataTable,
-        Column
+        Column,
+        Textarea
     },
     data() {
         return {
@@ -321,6 +445,8 @@ export default {
             select_type_proposal: '1',
             value_form1: [], //Formulario presupuesto
             is_show_buttons_bill: false,
+            finish_proposal: false,
+            status: 1,
         };
     },
     computed: {
@@ -482,6 +608,9 @@ export default {
                 this.proposals.bill_obj.array_bills[i].order_number = this.proposals.bill_obj.array_bills[index].order_number;
                 this.proposals.bill_obj.array_bills[i].internal_observations = this.proposals.bill_obj.array_bills[index].internal_observations;
             }
+        },
+        finishProposal(){
+            this.finish_proposal = true;
         }
     },
     mounted() {
