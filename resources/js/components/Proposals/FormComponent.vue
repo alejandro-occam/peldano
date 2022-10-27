@@ -201,11 +201,11 @@
                     <tbody>  
                         <template v-for="(item, index) in Number(proposals.bill_obj.array_bills.length)" :key="index">
                             <tr class="row-product text-align-center">
-                                <td class="td-border-right" rowspan="6">{{ index + 1 }}</td>
+                                <td class="td-border-right" rowspan="5">{{ index + 1 }}</td>
                             </tr>
-                            <tr class="tr-total-datatable">
+                            <!--<tr class="tr-total-datatable">
                                 <td class="py-1 pl-5 f-14" colspan="5">BIG DATA Data Email Marketing</td>
-                            </tr>
+                            </tr>-->
                             <tr class="row-product">
                                 <td class="text-align-center td-border-right">{{ proposals.bill_obj.array_bills[index].date }}</td>
                                 <td class="text-align-center py-4 px-5 td-border-right">
@@ -277,13 +277,13 @@
                         </template>       
                         <tr class="tr-total-datatable">
                             <td colspan="4" class="py-6"><span class="ml-5 font-weight-bolder">TOTAL</span></td>
-                            <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.roundAndFix(proposals.bill_obj.total_bill) }}€</span></td>
+                            <td class="text-align-right"><span class="font-weight-bolder mr-7">{{ $utils.roundAndFix(proposals.bill_obj.total_bill) }}€</span></td>
                             <td class="text-align-center bg-white"><span class="font-weight-bolder"><button type="button" class="btn"><img  width="40" height="40" src="/media/custom-imgs/icono_tabla_eliminar.svg" @click.native="this.is_show_buttons_bill=false"/></button></span></td>
                         </tr>    
                     </tbody>
                 </table>
                 <div class="mt-10">
-                    <button type="submit" class="btn bg-azul color-white px-5 font-weight-bolder ml-4">Finalizar propuesta</button>
+                    <button type="submit" class="btn bg-azul color-white px-30 font-weight-bolder">Finalizar propuesta</button>
                 </div>
             </div>
         </div>
@@ -327,7 +327,7 @@ export default {
             ...mapState(["errors", "proposals"]),
     },
     methods: {
-        ...mapMutations(["clearError", "changeViewStatusProposals", "changeValueIsChangeArticle", "generateBill"]),
+        ...mapMutations(["clearError", "changeViewStatusProposals", "changeProposalObj", "changeValueIsChangeArticle", "generateBill"]),
         ...mapActions(["getCompanies"]),
         openFormArticle(){
             $('#modal_form_article_proposals').modal('show');
@@ -361,7 +361,7 @@ export default {
             }
             
         },
-        rewalkForm1(type, new_value){
+        rewalkForm1(type){
             let me = this;
             var value = 0;
             me.value_form1.map(function(product, key_product) {
@@ -372,8 +372,8 @@ export default {
                                 if(type == 1){
                                     value += 1;
                                 }else{
-                                    pvp_obj = new_value;
-                                    me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = me.$utils.roundAndFix(new_value);
+                                    pvp_obj = pvp_obj * (1 - (me.discount  /100));
+                                    me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = me.$utils.roundAndFix(pvp_obj);
                                 }
                             });
                         });
@@ -400,6 +400,7 @@ export default {
             });
             me.offer = this.$utils.roundAndFix(total);
             this.changeValueBox(1);
+            this.changeProposalObj(me.value_form1);
         },
         createBills(){
             this.is_show_buttons_bill = true;

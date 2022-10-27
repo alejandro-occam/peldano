@@ -45,6 +45,7 @@ const mutations = {
         //Creamos el objeto artículo que vamos a guardar
         var article = {
             article_obj: params.article_obj,
+            sector_obj:params.sector_obj,
             dates: params.dates,
             dates_prices_aux: [],
             dates_prices: [],
@@ -258,8 +259,6 @@ const mutations = {
             });
         });
 
-
-
         //Consultamos la cantidad de articulos y su total
         var total_global = 0;
         var total_amount_global = 0;
@@ -317,6 +316,92 @@ const mutations = {
         state.proposals.proposal_obj.is_change = false;
     },
 
+    //Modificar el objeto propuesta
+    changeProposalObj(state, params){
+        //Modificamos el objeto con los nuevos datos dados
+        state.proposals.proposal_obj.products.map(function(products_obj, key_products_obj) {
+            products_obj.articles.map(function(article_obj, key_article_obj) {
+                params.map(function(products, key_products) {
+                    products.article.map(function(article, key) {
+                        article.dates.map(function(date, key) {
+                            if(article_obj.article_obj.id == date.article.id){
+                                article_obj.dates_prices.map(function(date_price_obj, key_date_price_obj) {
+                                    date_price_obj.arr_pvp_date.map(function(arr_pvp_date_obj, key_arr_pvp_date) {
+                                        date.date_pvp.map(function(date_pvp, key) {
+                                            if(arr_pvp_date_obj.date == date_pvp.date){
+                                                var out = false;
+                                                if(!out){
+                                                    date_pvp.pvp.map(function(pvp, key_pvp) {
+                                                        state.proposals.proposal_obj.products[key_products_obj].articles[key_article_obj].dates_prices[key_date_price_obj].arr_pvp_date[key_arr_pvp_date].arr_pvp[key_pvp] = pvp;
+                                                        //arr_pvp_obj = pvp;
+                                                        out = true;
+                                                    });
+                                                }
+                                            }
+                                        });
+                                    });
+                                });
+                            }
+                        });
+                    });
+                });
+            });
+        });
+
+        //Consultamos la cantidad de articulos y su total
+        var total_global = 0;
+        var total_amount_global = 0;
+        var total_individual_pvp = 0;
+        state.proposals.proposal_obj.products.map(function(articles_obj, key) {
+            articles_obj.articles.map(function(article_finish, key) {
+                total_individual_pvp += Number(article_finish.article_obj.pvp);
+                article_finish.amount = 0;
+                article_finish.total = 0;
+                article_finish.dates_prices.map(function(date, key) {
+                    date.arr_pvp_date.map(function(pvp_date, key) {
+                        article_finish.amount += pvp_date.arr_pvp.length;
+                        total_amount_global += pvp_date.arr_pvp.length;
+                        pvp_date.arr_pvp.map(function(pvp, key) {
+                            article_finish.total += Number(pvp);
+                            total_global += Number(pvp);
+                        });
+                    });
+                });
+            });
+        });
+        state.proposals.proposal_obj.products.total_global = total_global;
+        state.proposals.proposal_obj.products.total_amount_global = total_amount_global;
+        state.proposals.proposal_obj.products.total_individual_pvp = total_individual_pvp;
+
+
+        //Cargamos en el array de fechas para las columnas los totales de cada mes
+        var array_dates_prices = [];
+        state.proposals.proposal_obj.array_dates.map(function(date, key) {
+            var total_date = 0;
+            state.proposals.proposal_obj.products.map(function(articles_obj, key) {
+                articles_obj.articles.map(function(article_finish, key) {
+                    article_finish.dates_prices.map(function(date_aux, key) {
+                        if(date_aux.date == date.date){
+                            date_aux.arr_pvp_date.map(function(pvp_date, key) {
+                                pvp_date.arr_pvp.map(function(pvp, key) {
+                                    total_date += Number(pvp);
+                                });
+                            });
+                        }
+                    });
+                });
+            });
+            var date_obj = {
+                date: date.date,
+                total: total_date
+            }
+            array_dates_prices.push(date_obj);
+        });
+
+        state.proposals.proposal_obj.array_dates = array_dates_prices;
+        state.proposals.proposal_obj.is_change = true;
+    },
+
     //Generar propuesta
     generateBill(state, params){
         //Modificamos el objeto con los nuevos datos dados
@@ -350,19 +435,8 @@ const mutations = {
         });
 
         var array_articles = [];
-        /*state.proposals.proposal_obj.products.map(function(products, key) {
-            products.articles_aux.map(function(article_obj, key) {
-                article_obj.dates.map(function(date, key) {
-                    var article_obj_aux = {
-                        date: date,
-                        article: article_obj,
-                        id_product: products.product_obj.id
-                    }
-                    array_articles.push(article_obj_aux);
-                });
-            });
-        });*/
-            
+          
+        //Guardamos con un nuevo formato para las facturas los articulos
         state.proposals.proposal_obj.products.map(function(products, key) {
             products.articles.map(function(article_obj, key) {
                 article_obj.dates_prices.map(function(dates_prices_obj, key) {
@@ -395,6 +469,7 @@ const mutations = {
         var total_bill = 0;
         state.proposals.bill_obj.articles = array_articles;
 
+        //Creamos el objeto factura
         array_articles.map(function(article_obj, key) {
             if(key == 0){
                 amount = Number(article_obj.amount);
@@ -455,7 +530,6 @@ const mutations = {
 
         state.proposals.bill_obj.array_bills = array_finish_bill;
         state.proposals.bill_obj.total_bill = total_bill;
-        
     }
 }
 
