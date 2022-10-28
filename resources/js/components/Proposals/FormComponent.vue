@@ -217,51 +217,26 @@
                                 <td class="text-align-center td-border-right">{{ proposals.bill_obj.array_bills[index].date }}</td>
                                 <td class="text-align-center py-4 px-5 td-border-right" width="20%">
                                     <select class="form-control text-dark select-custom select-filter bg-white" :name="'select_way_to_pay'" :id="'select_way_to_pay'" v-model="proposals.bill_obj.array_bills[index].select_way_to_pay" data-style="select-lightgreen">
-                                        <option value="" selected>Forma de pago</option>
-                                        <option value="1">Recibo bancario</option>
-                                        <option value="2">Talón nominativo</option>
-                                        <option value="3">Transferencia bancaria</option>
-                                        <option value="4">Letra aceptada</option>
-                                        <option value="5">Pagaré</option>
-                                        <option value="7">Metálico</option>
-                                        <option value="8">Especial camping</option>
-                                        <option value="9">Confirming</option>
-                                        <option value="18">Pago certificado</option>
-                                        <option value="10">Tarjeta</option>
-                                        <option value="15">Talón conformado</option>
-                                        <option value="12">Paypal</option>
-                                        <option value="6">* Intercambio de facturas</option>
-                                        <option value="20">Especial Gaceta</option>
+                                        <option v-for="(item, index) in Number(this.select_way_to_pay_options.length)" :key="index" :value="this.select_way_to_pay_options[index].value">{{ this.select_way_to_pay_options[index].text }}</option>
                                     </select>
                                 </td>
                                 <td class="text-align-center py-4 px-5 td-border-right">
                                     <select class="form-control text-dark select-custom select-filter bg-white" :name="'select_expiration'" :id="'select_expiration'" v-model="proposals.bill_obj.array_bills[index].select_expiration" data-style="select-lightgreen">
-                                        <option value="">Vencimiento</option>
-                                        <option value="23">15 días</option>
-                                        <option value="2">30 días</option>
-                                        <option value="11">30 y 60 días</option>
-                                        <option value="29">40 días</option>
-                                        <option value="17">45 días</option>
-                                        <option value="3">60 días</option>
-                                        <option value="4">90 días</option>
-                                        <option value="1">Al contado</option>
-                                        <option value="20">Al contado y 30 días</option>
-                                        <option value="19">Al contado y 60 días</option>
-                                        <option value="16">Al contado, 30 y 60 días</option>
+                                        <option v-for="(item, index) in Number(this.select_expiration_options.length)" :key="index" :value="this.select_expiration_options[index].value">{{ this.select_expiration_options[index].text }}</option>
                                     </select>
                                 </td>
                                 <td class="text-align-center td-border-right">
                                     {{ $utils.roundAndFix(proposals.bill_obj.array_bills[index].amount) }}
                                 </td>
                                 <td class="td-border-right text-align-center">
-                                    <button type="button" class="btn"><img  width="40" height="40" src="/media/custom-imgs/icono_tabla_aplicar_todos.svg" @click.native="changeOptions(index)" /></button>
+                                    <button type="button" class="btn"><img width="40" height="40" src="/media/custom-imgs/icono_tabla_aplicar_todos.svg" @click.native="changeOptions(index)" /></button>
                                 </td>
                             </tr>   
                             <tr class="row-article">
                                 <td class="p-5" colspan="5">
                                     <div class="d-flex">
                                         <span class="my-auto col-2">Observaciones</span>
-                                        <input type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" v-model="proposals.bill_obj.array_bills[index].observations" placeholder="Observaciones" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
+                                        <input type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" v-model="proposals.bill_obj.array_bills[index].observations" placeholder="Observaciones" />
                                     </div>
                                 </td>
                             </tr>      
@@ -269,7 +244,7 @@
                                 <td class="p-5" colspan="5">
                                     <div class="d-flex">
                                         <span class="my-auto col-2">Núm. pedido</span>
-                                        <input type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" v-model="proposals.bill_obj.array_bills[index].order_number" placeholder="Número de pedido" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
+                                        <input type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" v-model="proposals.bill_obj.array_bills[index].order_number" placeholder="Número de pedido" />
                                     </div>
                                 </td>
                             </tr>    
@@ -277,7 +252,7 @@
                                 <td class="p-5" colspan="5">
                                     <div class="d-flex">
                                         <span class="my-auto col-2">Observaciones Internas</span>
-                                        <input type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" v-model="proposals.bill_obj.array_bills[index].internal_observations" placeholder="Observaciones Internas" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
+                                        <input type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" v-model="proposals.bill_obj.array_bills[index].internal_observations" placeholder="Observaciones Internas" />
                                     </div>
                                 </td>
                             </tr>   
@@ -496,15 +471,15 @@
                         <table width="100%" cellpadding="2" cellspacing="1">
                             <tbody>
                                 <tr class="row-product-offer-proposal">
-                                    <td colspan="4" class="f-15 py-2"><span class="ml-5 gray-product-offer-proposal font-weight-bold"><b class="text-dark">Cliente:</b> ALFRED SMART SYSTEMS, S.L.</span></td>
+                                    <td colspan="4" class="f-15 py-2"><span class="ml-5 gray-product-offer-proposal font-weight-bold"><b class="text-dark">Cliente:</b>{{ this.name_company }}</span></td>
                                     <td colspan="2" class="py-2 td-border-left text-align-center"><span class="gray-product-offer-proposal font-weight-bolder">PROPUESTA Nº:</span><span class="text-dark"> 34233</span></td>
                                 </tr>
                                 <tr class="row-product-offer-proposal">
-                                    <td class="py-2"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">FECHA:</div><div class="ml-5 f-13 text-dark">28-10-2022</div></td>
-                                    <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">CONSULTOR:</div><div class="ml-5 f-13 text-dark">test occam</div></td>
-                                    <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">SECTOR:</div><div class="ml-5 f-13 text-dark">ARQUITECTURA</div></td>
-                                    <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">ANUNCIANTE:</div><div class="ml-5 f-13 text-dark">Alfred Smart Systems</div></td>
-                                    <td class="py-2 td-border-left bg-blue-light-white"><div class="f-13 ml-5 font-weight-bolder color-blue">OFERTA:</div><div class="ml-5 f-13 text-dark">1.500€</div></td>
+                                    <td class="py-2"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">FECHA:</div><div class="ml-5 f-13 text-dark">{{ this.$utils.getNow() }}</div></td>
+                                    <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">CONSULTOR:</div><div class="ml-5 f-13 text-dark">{{ proposals.user_obj.name + ' ' + proposals.user_obj.surname }}</div></td>
+                                    <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">SECTOR:</div><div class="ml-5 f-13 text-dark">{{ proposals.proposal_obj.products[0].articles[0].sector_obj.name }}</div></td>
+                                    <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">ANUNCIANTE:</div><div class="ml-5 f-13 text-dark">{{ this.name_company }}</div></td>
+                                    <td class="py-2 td-border-left bg-blue-light-white"><div class="f-13 ml-5 font-weight-bolder color-blue">OFERTA:</div><div class="ml-5 f-13 text-dark">{{ this.offer }}€</div></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -560,6 +535,61 @@
                     <div class="d-grid mb-4 mt-15">
                         <span class="f-14 color-blue font-weight-bold">PLAN DE PAGO</span>
                     </div>
+                    <table width="100%" cellpadding="2" cellspacing="1">
+                        <thead class="custom-columns-datatable">
+                            <tr>
+                                <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 50px;"><span>FACTURAS</span></th>
+                                <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>FECHA</span></th>
+                                <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>FORMA DE PAGO</span></th>
+                                <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>VENCIMIENTO</span></th>
+                                <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span>IMPORTE</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>  
+                            <template v-for="(item, index) in Number(proposals.bill_obj.array_bills.length)" :key="index">
+                                <tr class="row-product text-align-center bg-white">
+                                    <td class="td-border-right" :rowspan="countRows(proposals.bill_obj.array_bills[index])">{{ index + 1 }}</td>
+                                </tr>
+                                <tr class="row-product bg-white">
+                                    <td class="text-align-center td-border-right">{{ proposals.bill_obj.array_bills[index].date }}</td>
+                                    <td class="text-align-center py-4 px-5 td-border-right" width="20%">
+                                        {{ this.select_way_to_pay_options[proposals.bill_obj.array_bills[index].select_way_to_pay].text }}
+                                    </td>
+                                    <td class="text-align-center py-4 px-5 td-border-right">
+                                        {{ this.select_expiration_options[proposals.bill_obj.array_bills[index].select_expiration].text }}
+                                    </td>
+                                    <td class="text-align-center">
+                                        {{ $utils.roundAndFix(proposals.bill_obj.array_bills[index].amount) }}
+                                    </td>
+                                </tr>   
+                                <tr class="row-article" v-if="proposals.bill_obj.array_bills[index].observations != ''">
+                                    <td class="p-5" colspan="5">
+                                        <div class="d-flex">
+                                            <span class="my-auto col-2">Observaciones: {{ proposals.bill_obj.array_bills[index].observations }}</span>
+                                        </div>
+                                    </td>
+                                </tr>      
+                                <tr class="row-article" v-if="proposals.bill_obj.array_bills[index].order_number != ''">
+                                    <td class="p-5" colspan="5">
+                                        <div class="d-flex">
+                                            <span class="my-auto col-2">Núm. pedido: {{ proposals.bill_obj.array_bills[index].order_number }}</span>
+                                        </div>
+                                    </td>
+                                </tr>    
+                                <tr class="row-article" v-if="proposals.bill_obj.array_bills[index].internal_observations != ''">
+                                    <td class="p-5" colspan="5">
+                                        <div class="d-flex">
+                                            <span class="my-auto col-2">Observaciones Internas: {{ proposals.bill_obj.array_bills[index].internal_observations }}</span>
+                                        </div>
+                                    </td>
+                                </tr>   
+                            </template>       
+                            <tr class="tr-total-datatable">
+                                <td colspan="4" class="py-6"><span class="ml-5 font-weight-bolder">TOTAL</span></td>
+                                <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.roundAndFix(proposals.bill_obj.total_bill) }}€</span></td>
+                            </tr>    
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -599,7 +629,39 @@ export default {
             discount: '0.00',
             fullname: '',
             select_type_proposal: '1',
-            value_form1: [], //Formulario presupuesto
+            value_form1: [], //Formulario presupuesto,
+            select_way_to_pay_options: [
+                {value: '',text: 'Forma de pago'},
+                {value: '1',text: 'Recibo bancario'},
+                {value: '2',text: 'Talón nominativo'},
+                {value: '3',text: 'Transferencia bancaria'},
+                {value: '4',text: 'Letra aceptada'},
+                {value: '5',text: 'Pagaré'},
+                {value: '6',text: 'Metálico'},
+                {value: '7',text: 'Especial camping'},
+                {value: '8',text: 'Recibo bancario'},
+                {value: '9',text: 'Confirming'},
+                {value: '10',text: 'Pago certificado'},
+                {value: '11',text: 'Tarjeta'},
+                {value: '12',text: 'Talón conformado'},
+                {value: '13',text: 'Paypal'},
+                {value: '14',text: '* Intercambio de facturas'},
+                {value: '15',text: 'Especial Gaceta'}
+            ],
+            select_expiration_options: [
+                {value: '',text: 'Vencimiento'},
+                {value: '1',text: '15 días'},
+                {value: '2',text: '30 días'},
+                {value: '3',text: '30 y 60 días'},
+                {value: '4',text: '40 días'},
+                {value: '5',text: '45 días'},
+                {value: '6',text: '60 días'},
+                {value: '7',text: '90 días'},
+                {value: '8',text: 'Al contado'},
+                {value: '9',text: 'Al contado y 30 días'},
+                {value: '10',text: 'Al contado y 60 días'},
+                {value: '11',text: 'Al contado, 30 y 60 días'},
+            ],
             is_show_buttons_bill: false,
             finish_proposal: false,
             generate_proposal: false,
@@ -639,6 +701,7 @@ export default {
             });
         },
         changeValueBox(type, status){
+            this.is_show_buttons_bill = false;
             if(type == 1){
                 var difference = this.proposals.proposal_obj.products.total_global - this.offer;
                 this.discount = this.$utils.roundAndFix(difference / (this.proposals.proposal_obj.products.total_global) * 100);
@@ -699,6 +762,7 @@ export default {
             me.offer = this.$utils.roundAndFix(total);
             this.changeValueBox(1);
             this.changeProposalObj(me.value_form1);
+            me.is_show_buttons_bill = false;
         },
         createBills(){
             this.is_show_buttons_bill = true;
@@ -774,7 +838,7 @@ export default {
         },
         changeOptions(index){
             for(var i=index; i<this.proposals.bill_obj.array_bills.length; i++){
-                this.proposals.bill_obj.array_bills[i].select_expiration = this.proposals.bill_obj.array_bills[index].select_expiration;
+                this.proposals.bill_obj.array_bills[i].select_way_to_pay = this.proposals.bill_obj.array_bills[index].select_way_to_pay;
                 this.proposals.bill_obj.array_bills[i].select_expiration = this.proposals.bill_obj.array_bills[index].select_expiration;
                 this.proposals.bill_obj.array_bills[i].observations = this.proposals.bill_obj.array_bills[index].observations;
                 this.proposals.bill_obj.array_bills[i].order_number = this.proposals.bill_obj.array_bills[index].order_number;
@@ -811,6 +875,20 @@ export default {
         },
         generateProposal(){
             this.generate_proposal = true;
+        },
+        //Saber si estan rellenos observaciones, num pedido y observaciones internas
+        countRows(obj){
+            var rows = 2;
+            if(obj.observations != ''){
+                rows++;
+            }
+            if(obj.order_number != ''){
+                rows++;
+            }
+            if(obj.internal_observations != ''){
+                rows++;
+            }
+            return rows;
         }
     },
     mounted() {
@@ -850,6 +928,7 @@ export default {
             },
             '$store.state.proposals.proposal_obj.is_change': function() {
                 let me = this;
+                me.is_show_buttons_bill = false;
                 if(me.proposals.proposal_obj.is_change){
                     me.changeValueIsChangeArticle();
                     me.offer = me.$utils.roundAndFix(me.proposals.proposal_obj.products.total_global);
@@ -858,9 +937,6 @@ export default {
 
                 me.loadFormObj();
             },
-            '$store.state.proposals.bill_obj.array_bills': function() {
-                console.log('hola');
-            }
         }
     
 };
