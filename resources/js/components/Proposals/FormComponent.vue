@@ -38,13 +38,13 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-15" v-if="(this.select_company != '' || this.select_company_other_values != '') && !this.finish_proposal">
+            <div class="mt-15" v-if="(this.select_company != '' || this.select_company_other_values != '') && !this.finish_proposal && !this.generate_proposal">
                 <button type="button" class="btn bg-azul color-white px-5 font-weight-bolder" @click="this.openFormArticle()">
                     <img class="mr-2" width="24" height="24" src="/media/custom-imgs/icono_btn_annadir_articulo_blanco.svg" />
                     Añadir artículo
                 </button>
             </div>
-            <div class="mb-5 mt-15 col-12 row" v-if="proposals.proposal_obj.products[0].product_obj != null">
+            <div class="mb-5 mt-15 col-12 row" v-if="proposals.proposal_obj.products[0].product_obj != null && !this.generate_proposal">
                 <div>
                     <img class="mr-2" width="150" height="150" src="/media/custom-imgs/icono_ficha_ordenes.svg" />
                 </div>
@@ -130,7 +130,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12 mt-15 pl-0" v-if="proposals.proposal_obj.products[0].product_obj != null && !this.finish_proposal">
+            <div class="col-12 mt-15 pl-0" v-if="proposals.proposal_obj.products[0].product_obj != null && !this.finish_proposal && !this.generate_proposal">
                 <table width="100%" cellpadding="2" cellspacing="1">
                     <thead class="custom-columns-datatable">
 						<tr>
@@ -180,7 +180,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && !this.finish_proposal">
+            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && !this.finish_proposal && !this.generate_proposal">
                 <span class="text-dark font-weight-bold mb-2">Tipo de propuesta</span>
                 <select class="form-control bg-gray text-dark select-custom select-filter mt-3 col-2" :name="'select_type_proposal'" :id="'select_type_proposal'" v-model="select_type_proposal" data-style="select-lightgreen">
                     <option value="1" selected>Normal</option>
@@ -193,7 +193,7 @@
                     <button type="submit" class="btn bg-azul color-white px-5 font-weight-bolder ml-4">Crear factura personalizada</button>
                 </div>
             </div>
-            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && is_show_buttons_bill && !this.finish_proposal">
+            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && is_show_buttons_bill && !this.finish_proposal && !this.generate_proposal">
                 <table width="100%" cellpadding="2" cellspacing="1">
                     <thead class="custom-columns-datatable">
 						<tr>
@@ -215,7 +215,7 @@
                             </tr>-->
                             <tr class="row-product">
                                 <td class="text-align-center td-border-right">{{ proposals.bill_obj.array_bills[index].date }}</td>
-                                <td class="text-align-center py-4 px-5 td-border-right">
+                                <td class="text-align-center py-4 px-5 td-border-right" width="20%">
                                     <select class="form-control text-dark select-custom select-filter bg-white" :name="'select_way_to_pay'" :id="'select_way_to_pay'" v-model="proposals.bill_obj.array_bills[index].select_way_to_pay" data-style="select-lightgreen">
                                         <option value="" selected>Forma de pago</option>
                                         <option value="1">Recibo bancario</option>
@@ -293,50 +293,54 @@
                     <button @click.native="this.finishProposal()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Finalizar propuesta</button>
                 </div>
             </div>
-            <div class="col-12 pl-0 mt-10">
+            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && is_show_buttons_bill && this.finish_proposal && !this.generate_proposal">
                 <h3 class="color-blue">Configuración de la presentación de la propuesta</h3>
                 <div class="col-6 pl-0 mt-6">
-                    <div class="d-flex input-group my-15" >
+                    <div class="d-flex input-group mb-5 mt-10" >
                         <span class="my-auto w-25">Nombre comercial</span>
-                        <div class="w-50">
-                            <input v-model="name" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
-                            <small class="text-danger " v-if="name_error">El nombre no es válido</small>
+                        <div class="w-62">
+                            <input v-model="proposal_submission_settings.commercial_name" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
                         </div>
                     </div>
                 </div>
                 <div class="col-6 pl-0 mt-6">
                     <div class="d-flex input-group my-5" >
                         <span class="my-auto w-25">Idioma</span>
-                        <div class="w-50">
-                            <input v-model="name" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
-                            <small class="text-danger " v-if="name_error">El nombre no es válido</small>
+                        <div class="w-62">
+                            <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_language'" :id="'select_language'" v-model="proposal_submission_settings.language" data-style="select-lightgreen" @change="getSectorsSelect">
+                                <option value="1" selected>Español</option>
+                                <option value="2">Inglés</option>
+                            </select>
                         </div>
                     </div>
                 </div>
                 <div class="col-6 pl-0 mt-6">
                     <div class="d-flex input-group my-5" >
                         <span class="my-auto w-25">Tipo de proyecto</span>
-                        <div class="w-50">
-                            <input v-model="name" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
-                            <small class="text-danger " v-if="name_error">El nombre no es válido</small>
+                        <div class="w-62">
+                            <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_type_proyect'" :id="'select_type_proyect'" v-model="proposal_submission_settings.type_proyect" data-style="select-lightgreen" @change="getSectorsSelect">
+                                <option value="1" selected>Propuesta</option>
+                                <option value="2">Propuesta de Plan de comunicación</option>
+                                <option value="3">Propuesta de Plan de comunicación digital</option>
+                                <option value="4">Propuesta de email marketing</option>
+                                <option value="5">Propuesta de participación en evento</option>
+                            </select>
                         </div>
                     </div>
                 </div>
                 <div class="col-6 pl-0 mt-6">
                     <div class="d-flex input-group my-5" >
                         <span class="my-auto w-25">Nombre de proyecto</span>
-                        <div class="w-50">
-                            <input v-model="name" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
-                            <small class="text-danger " v-if="name_error">El nombre no es válido</small>
+                        <div class="w-62">
+                            <input v-model="proposal_submission_settings.name_proyect" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
                         </div>
                     </div>
                 </div>
                 <div class="col-6 pl-0 mt-6">
                     <div class="d-flex input-group my-5" >
                         <span class="my-auto w-25">Fecha de proyecto</span>
-                        <div class="w-50">
-                            <input v-model="name" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
-                            <small class="text-danger " v-if="name_error">El nombre no es válido</small>
+                        <div class="w-62">
+                            <Calendar v-model="proposal_submission_settings.date_proyect" class="w-100 borders-box text-dark-gray mt-1"  autocomplete="off"  dateFormat="dd-mm-yy"  />
                         </div>
                     </div>
                 </div>
@@ -344,8 +348,7 @@
                     <div class="d-flex input-group my-5" >
                         <span class="mb-auto w-25">Objetivos</span>
                         <div class="w-50">
-                            <Textarea v-model="value2" :autoResize="true" class="borders-box text-dark-gray" rows="5" cols="56" />
-                            <small class="text-danger " v-if="name_error">El nombre no es válido</small>
+                            <Textarea v-model="proposal_submission_settings.objetives" :autoResize="true" class="borders-box text-dark-gray" rows="5" cols="56" />
                         </div>
                     </div>
                 </div>
@@ -353,8 +356,7 @@
                     <div class="d-flex input-group my-5" >
                         <span class="mb-auto w-25">Propuesta</span>
                         <div class="w-50">
-                            <Textarea v-model="value2" :autoResize="true" class="borders-box text-dark-gray" rows="5" cols="56" />
-                            <small class="text-danger " v-if="name_error">El nombre no es válido</small>
+                            <Textarea v-model="proposal_submission_settings.proposal" :autoResize="true" class="borders-box text-dark-gray" rows="5" cols="56" />
                         </div>
                     </div>
                 </div>
@@ -362,8 +364,7 @@
                     <div class="d-flex input-group my-5" >
                         <span class="mb-auto w-25">Acciones</span>
                         <div class="w-50">
-                            <Textarea v-model="value2" :autoResize="true" class="borders-box text-dark-gray" rows="5" cols="56" />
-                            <small class="text-danger " v-if="name_error">El nombre no es válido</small>
+                            <Textarea v-model="proposal_submission_settings.actions" :autoResize="true" class="borders-box text-dark-gray" rows="5" cols="56" />
                         </div>
                     </div>
                 </div>
@@ -371,39 +372,193 @@
                     <div class="d-flex input-group my-5" >
                         <span class="mb-auto w-25">Observaciones</span>
                         <div class="w-50">
-                            <Textarea v-model="value2" :autoResize="true" class="borders-box text-dark-gray" rows="5" cols="56" />
-                            <small class="text-danger " v-if="name_error">El nombre no es válido</small>
+                            <Textarea v-model="proposal_submission_settings.observations" :autoResize="true" class="borders-box text-dark-gray" rows="5" cols="56" />
+                            <div style="display: -webkit-box;" class="mt-6">
+                                <div v-if="this.proposal_submission_settings.show_discounts == 0">
+                                    <button class="purple-border btn mr-4 font-weight-bold d-flex py-4" @click="this.changeStatusShowDiscounts(1)">
+                                        <div class="purple-circle mr-auto">
+                                            <div class="white-circle-purple"></div>
+                                        </div>
+                                        <span class="px-10">Mostrar descuentos</span>
+                                    </button>
+                                </div>
+                                <div v-else>
+                                    <button class="bg-purple btn mr-4 font-weight-bold color-white d-flex py-4" @click="this.changeStatusShowDiscounts(0)">
+                                        <div class="white-circle mr-auto">
+                                            <div class="purple-circle-white"></div>
+                                        </div>
+                                        <span class="px-10">Mostrar descuentos</span>
+                                    </button>
+                                </div>
+                                <div v-if="this.proposal_submission_settings.show_inserts == 0">
+                                    <button class="purple-border btn mr-4 font-weight-bold d-flex py-4" @click="this.changeStatusShowInserts(1)">
+                                        <div class="purple-circle mr-auto">
+                                            <div class="white-circle-purple"></div>
+                                        </div>
+                                        <span class="px-10">Mostrar inserciones como X</span>
+                                    </button>
+                                </div>
+                                <div v-else>
+                                    <button  class="bg-purple btn mr-4 font-weight-bold color-white d-flex py-4" @click="this.changeStatusShowInserts(0)">
+                                        <div class="white-circle mr-auto">
+                                            <div class="purple-circle-white"></div>
+                                        </div>
+                                        <span class="px-10">Mostrar inserciones como X</span>
+                                    </button>
+                                </div>
+                                <div v-if="this.proposal_submission_settings.show_invoices == 0">
+                                    <button class="purple-border btn mr-4 font-weight-bold d-flex py-4" @click="this.changeStatusShowInvoices(1)">
+                                        <div class="purple-circle mr-auto">
+                                            <div class="white-circle-purple"></div>
+                                        </div>
+                                        <span class="px-10">Mostrar facturas</span>
+                                    </button>
+                                </div>
+                                <div v-else>
+                                    <button  class="bg-purple btn mr-4 font-weight-bold color-white d-flex py-4" @click="this.changeStatusShowInvoices(0)">
+                                        <div class="white-circle mr-auto">
+                                            <div class="purple-circle-white"></div>
+                                        </div>
+                                        <span class="px-10">Mostrar facturas</span>
+                                    </button>
+                                </div>
+                                <div v-if="this.proposal_submission_settings.show_pvp == 0">
+                                    <button class="purple-border btn mr-4 font-weight-bold d-flex py-4" @click="this.changeStatusShowPvp(1)">
+                                        <div class="purple-circle mr-auto">
+                                            <div class="white-circle-purple"></div>
+                                        </div>
+                                        <span class="px-10">Mostrar PVP</span>
+                                    </button>
+                                </div>
+                                <div v-else>
+                                    <button  class="bg-purple btn mr-4 font-weight-bold color-white d-flex py-4" @click="this.changeStatusShowPvp(0)">
+                                        <div class="white-circle mr-auto">
+                                            <div class="purple-circle-white"></div>
+                                        </div>
+                                        <span class="px-10">Mostrar PVP</span>
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="col-12 pl-0 mt-6">
+                <div class="col-6 pl-0 mt-6">
                     <div class="d-flex input-group my-5" >
-                        <div class="d-flex" v-if="this.status == 1">
-                            <button class="purple-border btn mr-4 font-weight-bold d-flex py-4" @click="this.changeStatus(1)">
-                                <div class="purple-circle mr-auto">
-                                    <div class="white-circle-purple"></div>
-                                </div>
-                                <span class="px-10">Mostrar descuentos</span>
-                            </button>
-                            <button  class="bg-purple btn mr-4 font-weight-bold color-white d-flex py-4">
-                                <div class="white-circle mr-auto">
-                                    <div class="purple-circle-white"></div>
-                                </div>
-                                <span class="px-10">Mostrar inserciones como X</span>
-                            </button>
-                            <button  class="bg-purple btn mr-4 font-weight-bold color-white d-flex py-4">
-                                <div class="white-circle mr-auto">
-                                    <div class="purple-circle-white"></div>
-                                </div>
-                                <span class="px-10">Mostrar facturas</span>
-                            </button>
-                            <button  class="bg-purple btn mr-4 font-weight-bold color-white d-flex py-4">
-                                <div class="white-circle mr-auto">
-                                    <div class="purple-circle-white"></div>
-                                </div>
-                                <span class="px-10">Mostrar PVP</span>
-                            </button>
+                        <span class="my-auto w-25">Posibilidades de venta</span>
+                        <div class="w-62">
+                            <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_sales_possibilities'" :id="'select_sales_possibilities'" v-model="proposal_submission_settings.sales_possibilities" data-style="select-lightgreen" @change="getSectorsSelect">
+                                <option value="1">100% - Venta ganada</option>
+                                <option value="2">90% - Aprobado a falta de firma</option>
+                                <option value="3">60% - Pinta bien</option>
+                                <option value="4">30% - Dudoso</option>
+                                <option value="5">10% - Muy complicado</option>
+                                <option value="6">0% - Venta perdida</option>
+                            </select>
                         </div>
+                    </div>
+                </div>
+                <div class="mt-10">
+                    <button @click.native="this.generateProposal()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Generar propuesta</button>
+                </div>
+            </div>
+            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && is_show_buttons_bill && this.finish_proposal && this.generate_proposal">
+                <h3 class="color-blue">Propuesta 56539</h3>
+                <div class="mt-7">
+                    <div class="d-grid my-4">
+                        <span class="f-14 color-blue font-weight-bold">NOMBRE COMERCIAL</span>
+                        <span class="mt-1 text-block">{{ this.proposal_submission_settings.commercial_name }}</span>
+                    </div>
+                    <div class="d-grid my-4" v-if="this.proposal_submission_settings.name_proyect != ''">
+                        <span class="f-14 color-blue font-weight-bold">TÍTULO DEL PROYECTO</span>
+                        <span class="mt-1 text-block">{{ this.proposal_submission_settings.name_proyect }}</span>
+                    </div>
+                    <div class="d-grid my-4">
+                        <span class="f-14 color-blue font-weight-bold">TIPO DE PROYECTO</span>
+                        <span class="mt-1 text-block">{{ this.proposal_submission_settings.type_proyect }}</span>
+                    </div>
+                    <div class="d-grid my-4">
+                        <span class="f-14 color-blue font-weight-bold">FECHA</span>
+                        <span class="mt-1 text-block">{{ this.proposal_submission_settings.date_proyect }}</span>
+                    </div>
+                    <div class="d-grid my-4">
+                        <span class="f-14 color-blue font-weight-bold">OBJETIVOS</span>
+                        <span class="mt-1 text-block">{{ this.proposal_submission_settings.objetives }}</span>
+                    </div>
+                    <div class="d-grid my-4">
+                        <span class="f-14 color-blue font-weight-bold">PROPUESTA</span>
+                        <span class="mt-1 text-block">{{ this.proposal_submission_settings.proposal }}</span>
+                    </div>
+                    <div class="d-grid my-4">
+                        <span class="f-14 color-blue font-weight-bold">ACCIONES</span>
+                        <span class="mt-1 text-block">{{ this.proposal_submission_settings.actions }}</span>
+                    </div>
+                    <div class="d-grid mt-15 mb-4">
+                        <table width="100%" cellpadding="2" cellspacing="1">
+                            <tbody>
+                                <tr class="row-product-offer-proposal">
+                                    <td colspan="4" class="f-15 py-2"><span class="ml-5 gray-product-offer-proposal font-weight-bold"><b class="text-dark">Cliente:</b> ALFRED SMART SYSTEMS, S.L.</span></td>
+                                    <td colspan="2" class="py-2 td-border-left text-align-center"><span class="gray-product-offer-proposal font-weight-bolder">PROPUESTA Nº:</span><span class="text-dark"> 34233</span></td>
+                                </tr>
+                                <tr class="row-product-offer-proposal">
+                                    <td class="py-2"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">FECHA:</div><div class="ml-5 f-13 text-dark">28-10-2022</div></td>
+                                    <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">CONSULTOR:</div><div class="ml-5 f-13 text-dark">test occam</div></td>
+                                    <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">SECTOR:</div><div class="ml-5 f-13 text-dark">ARQUITECTURA</div></td>
+                                    <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">ANUNCIANTE:</div><div class="ml-5 f-13 text-dark">Alfred Smart Systems</div></td>
+                                    <td class="py-2 td-border-left bg-blue-light-white"><div class="f-13 ml-5 font-weight-bolder color-blue">OFERTA:</div><div class="ml-5 f-13 text-dark">1.500€</div></td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-grid mb-4 mt-15">
+                        <span class="f-14 color-blue font-weight-bold">PROPUESTA</span>
+                        <table width="100%" cellpadding="2" cellspacing="1">
+                            <thead class="custom-columns-datatable">
+                                <tr>
+                                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span>SERVICIOS</span></th>
+                                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>PVP</span></th>
+                                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>N</span></th>
+                                    <th tabindex="0" class="pb-3 text-align-center" v-for="index in Number(proposals.proposal_obj.array_dates.length)" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>{{ proposals.proposal_obj.array_dates[index - 1].date }}</span></th>
+                                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span>TOTAL</span></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <div class="d-contents" v-for="index in Number(proposals.proposal_obj.products.length)">
+                                    <tr class="row-product">
+                                        <td class="py-2" :colspan="proposals.proposal_obj.array_dates.length + 4">
+                                            <span class="ml-5">{{ proposals.proposal_obj.products[index - 1].product_obj.name }}</span>
+                                        </td>
+                                    </tr>
+                                    <tr class="row-article" v-for="index_article in Number(proposals.proposal_obj.products[index - 1].articles.length)">
+                                        <td valign="middle" class="td-border-right py-5"><span class="ml-5">{{ proposals.proposal_obj.products[index - 1].articles[index_article - 1].article_obj.name }}</span></td>
+                                        <td valign="middle" class="td-border-right text-align-center py-5"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products[index - 1].articles[index_article - 1].article_obj.pvp)) }}€</span></td>
+                                        <td valign="middle" class="td-border-right text-align-center py-5"><span class="">{{ proposals.proposal_obj.products[index - 1].articles[index_article - 1].amount }}</span></td>
+                                        <td v-for="index_arr_date in Number(proposals.proposal_obj.array_dates.length)" valign="middle" class="td-border-right py-5">
+                                            <template v-for="index_dates in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices.length)">
+                                                <template v-if="proposals.proposal_obj.array_dates[index_arr_date - 1].date == proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].date">
+                                                    <div class="d-grid px-5">
+                                                        <template v-for="index_pvp_date in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date.length)">
+                                                            <img v-for="index_pvp in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)" class="mx-auto my-2" width="8" src="/media/custom-imgs/circle.png" />
+                                                        </template>
+                                                    </div>
+                                                </template>
+                                            </template>
+                                        </td>
+                                        <td valign="middle" class="td-border-right text-align-center py-5"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products[index - 1].articles[index_article - 1].total)) }}€</span></td>
+                                    </tr>
+                                </div>
+                                <tr class="tr-total-datatable">
+                                    <td class="py-6"><span class="ml-5 font-weight-bolder">TOTAL</span></td>
+                                    <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products.total_individual_pvp)) }}€</span></td>
+                                    <td class="text-align-center"><span class="font-weight-bolder">{{ proposals.proposal_obj.products.total_amount_global }}</span></td>
+                                    <td class="text-align-center" v-for="index in Number(proposals.proposal_obj.array_dates.length)"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.array_dates[index - 1].total)) }}€</span></td>
+                                    <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products.total_global)) }}€</span></td>
+                                </tr>
+                                
+                            </tbody>
+                        </table>
+                    </div>
+                    <div class="d-grid mb-4 mt-15">
+                        <span class="f-14 color-blue font-weight-bold">PLAN DE PAGO</span>
                     </div>
                 </div>
             </div>
@@ -421,7 +576,7 @@ import FormAddArticleComponent from "./FormAddArticleComponent.vue";
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Textarea from 'primevue/textarea';
-
+import Calendar from 'primevue/calendar';
 
 export default {
     name: "FormComponent",
@@ -430,7 +585,8 @@ export default {
         FormAddArticleComponent,
         DataTable,
         Column,
-        Textarea
+        Textarea,
+        Calendar
     },
     data() {
         return {
@@ -446,7 +602,23 @@ export default {
             value_form1: [], //Formulario presupuesto
             is_show_buttons_bill: false,
             finish_proposal: false,
-            status: 1,
+            generate_proposal: false,
+            proposal_submission_settings: {
+                commercial_name: '',
+                language: '1',
+                type_proyect: '1',
+                name_proyect: '',
+                date_proyect: '',
+                objetives: 'Somos consultores y expertos en comunicación. Nuestra marca y nuestros servicios son líderes en el sector, y tienen el máximo reconocimiento, prestigio e influencia. Sabemos qué quiere nuestra audiencia, lo que nos permite ofrecer a ALFRED SMART SYSTEMS, S.L. una propuesta de valor única, diferencial y de éxito.\n\nHemos estudiado el potencial y la proyección de ALFRED SMART SYSTEMS, S.L. con el fin de crear una propuesta de comunicación eficaz que permita mejorar sus resultados y objetivos.\n\nLas acciones de comunicación para ALFRED SMART SYSTEMS, S.L. que incluimos en esta propuesta crean influencia y potencian la visibilidad y la relevancia de sus productos, impactando positivamente en nuestra audiencia e incitando a la acción.',
+                proposal: 'Hemos creado una propuesta con diferentes acciones de demostrada eficacia. Es una comunicación 360 grados, de fuerte impacto, de gran repercusión y de calidad, que convencerá a nuestra audiencia de la necesidad de utilizar los productos y servicios de su empresa.\n\nEsta propuesta incluye la inmediatez e impacto directo de las nuevas tecnologías de movilidad, la efectividad del branded content, la utilización selectiva de nuestras bases de datos y el posicionamiento estratégico y de marca de los formatos publicitarios.',
+                actions: 'Acciones Print: Acciones de marketing de contenido para conseguir credibilidad de marca, acciones de publicidad corporativa bien posicionadas para reforzar la relevancia, el posicionamiento estratégico y la diferenciación con la competencia.\n\nAcciones digitales: Acciones de gran impacto, como email marketing, banner y contenidos en web y newsletter, buscando la acción directa sobre la audiencia y la efectividad e inmediatez en el resultado. Además, estas acciones se potenciarán a través de nuestras redes sociales.\n\nAcciones Experiencias: Centradas en el patrocinio de un desayuno y en la participación en un evento de referencia sectorial, buscando la relación directa y personal con el cliente para la obtención de leads.',
+                observations: '',
+                show_discounts: 0,
+                show_inserts: 1,
+                show_invoices: 1,
+                show_pvp: 1,
+                sales_possibilities: '6'
+            }
         };
     },
     computed: {
@@ -610,7 +782,35 @@ export default {
             }
         },
         finishProposal(){
-            this.finish_proposal = true;
+            var is_empty = false;
+            this.proposals.bill_obj.array_bills.map(function(bill, key) {
+                if(bill.select_expiration == '' || bill.select_way_to_pay == ''){
+                    is_empty = true;
+                }
+            });
+            if(!is_empty){
+                this.proposal_submission_settings.commercial_name = this.name_company;
+                this.proposal_submission_settings.date_proyect = new Date();
+                this.proposals.status_view = 3;
+                this.finish_proposal = true;
+            }else{
+                swal("", "Rellena todos los datos", "warning");
+            }
+        },
+        changeStatusShowDiscounts(status){
+            this.proposal_submission_settings.show_discounts = status;
+        },
+        changeStatusShowInserts(status){
+            this.proposal_submission_settings.show_inserts = status;
+        },
+        changeStatusShowInvoices(status){
+            this.proposal_submission_settings.show_invoices = status;
+        },
+        changeStatusShowPvp(status){
+            this.proposal_submission_settings.show_pvp = status;
+        },
+        generateProposal(){
+            this.generate_proposal = true;
         }
     },
     mounted() {
@@ -658,6 +858,9 @@ export default {
 
                 me.loadFormObj();
             },
+            '$store.state.proposals.bill_obj.array_bills': function() {
+                console.log('hola');
+            }
         }
     
 };

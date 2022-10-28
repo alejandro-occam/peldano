@@ -780,3 +780,23 @@ a.text-hover-primary:hover, .text-hover-primary:hover{
 .bg-white{
     background-color: #fff !important;
 }
+
+.w-62{
+    width: 62% !important;
+}
+
+.text-block{
+    white-space: break-spaces;
+}
+
+.row-product-offer-proposal{
+    border-top-width: 1px;
+    border-top-style: solid;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-color: #ebeff2;
+}
+
+.gray-product-offer-proposal{
+    color: #707185;
+}
