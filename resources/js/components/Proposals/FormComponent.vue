@@ -474,7 +474,12 @@
                         <table width="100%" cellpadding="2" cellspacing="1">
                             <tbody>
                                 <tr class="row-product-offer-proposal">
-                                    <td colspan="4" class="f-15 py-2"><span class="ml-5 gray-product-offer-proposal font-weight-bold"><b class="text-dark">Cliente: </b>{{ this.name_company }}</span></td>
+                                    <template v-if="this.proposal_submission_settings.show_discounts == 1">
+                                        <td colspan="5" class="f-15 py-2"><span class="ml-5 gray-product-offer-proposal font-weight-bold"><b class="text-dark">Cliente: </b>{{ this.name_company }}</span></td>
+                                    </template>
+                                    <template v-else>
+                                        <td colspan="4" class="f-15 py-2"><span class="ml-5 gray-product-offer-proposal font-weight-bold"><b class="text-dark">Cliente: </b>{{ this.name_company }}</span></td>
+                                    </template>
                                     <td colspan="2" class="py-2 td-border-left text-align-center"><span class="gray-product-offer-proposal font-weight-bolder">PROPUESTA Nº:</span><span class="text-dark"> 34233</span></td>
                                 </tr>
                                 <tr class="row-product-offer-proposal">
@@ -482,6 +487,7 @@
                                     <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">CONSULTOR:</div><div class="ml-5 f-13 text-dark">{{ proposals.user_obj.name + ' ' + proposals.user_obj.surname }}</div></td>
                                     <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">SECTOR:</div><div class="ml-5 f-13 text-dark">{{ proposals.proposal_obj.products[0].articles[0].sector_obj.name }}</div></td>
                                     <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">ANUNCIANTE:</div><div class="ml-5 f-13 text-dark">{{ this.name_company }}</div></td>
+                                    <td class="py-2 td-border-left" v-if="this.proposal_submission_settings.show_discounts == 1"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">DESCUENTO:</div><div class="ml-5 f-13 text-dark">{{ this.discount }}%</div></td>
                                     <td class="py-2 td-border-left bg-blue-light-white"><div class="f-13 ml-5 font-weight-bolder color-blue">OFERTA:</div><div class="ml-5 f-13 text-dark">{{ this.offer }}€</div></td>
                                 </tr>
                             </tbody>
@@ -493,7 +499,7 @@
                             <thead class="custom-columns-datatable">
                                 <tr>
                                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span>SERVICIOS</span></th>
-                                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>PVP</span></th>
+                                    <th v-if="this.proposal_submission_settings.show_pvp == 1" tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>PVP</span></th>
                                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>N</span></th>
                                     <th tabindex="0" class="pb-3 text-align-center" v-for="index in Number(proposals.proposal_obj.array_dates.length)" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>{{ proposals.proposal_obj.array_dates[index - 1].date }}</span></th>
                                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span>TOTAL</span></th>
@@ -508,91 +514,101 @@
                                     </tr>
                                     <tr class="row-article" v-for="index_article in Number(proposals.proposal_obj.products[index - 1].articles.length)">
                                         <td valign="middle" class="td-border-right py-5"><span class="ml-5">{{ proposals.proposal_obj.products[index - 1].articles[index_article - 1].article_obj.name }}</span></td>
-                                        <td valign="middle" class="td-border-right text-align-center py-5"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products[index - 1].articles[index_article - 1].article_obj.pvp)) }}€</span></td>
+                                        <td v-if="this.proposal_submission_settings.show_pvp == 1" valign="middle" class="td-border-right text-align-center py-5"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products[index - 1].articles[index_article - 1].article_obj.pvp)) }}€</span></td>
                                         <td valign="middle" class="td-border-right text-align-center py-5"><span class="">{{ proposals.proposal_obj.products[index - 1].articles[index_article - 1].amount }}</span></td>
                                         <td v-for="index_arr_date in Number(proposals.proposal_obj.array_dates.length)" valign="middle" class="td-border-right py-5">
                                             <template v-for="index_dates in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices.length)">
                                                 <template v-if="proposals.proposal_obj.array_dates[index_arr_date - 1].date == proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].date">
                                                     <div class="d-grid px-5">
                                                         <template v-for="index_pvp_date in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date.length)">
-                                                            <img v-for="index_pvp in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)" class="mx-auto my-2" width="8" src="/media/custom-imgs/circle.png" />
+                                                            <img v-if="this.proposal_submission_settings.show_inserts == 1" v-for="index_pvp in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)" class="mx-auto my-2" width="8" src="/media/custom-imgs/circle.png" />
+                                                            <template v-else v-for="index_pvp in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)"><span class="mx-auto">{{ this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1] }}€</span></template>
                                                         </template>
                                                     </div>
                                                 </template>
                                             </template>
                                         </td>
-                                        <td valign="middle" class="td-border-right text-align-center py-5"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products[index - 1].articles[index_article - 1].total)) }}€</span></td>
+                                        <td valign="middle" class="td-border-right text-align-center py-5">
+                                            <span v-if="this.proposal_submission_settings.show_pvp == 1" class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products[index - 1].articles[index_article - 1].total)) }}€</span>
+                                            <span v-else class="">-</span>
+
+                                        </td>
                                     </tr>
                                 </div>
                                 <tr class="tr-total-datatable">
                                     <td class="py-6"><span class="ml-5 font-weight-bolder">TOTAL</span></td>
-                                    <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products.total_individual_pvp)) }}€</span></td>
+                                    <td class="text-align-center" v-if="this.proposal_submission_settings.show_pvp == 1"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products.total_individual_pvp)) }}€</span></td>
                                     <td class="text-align-center"><span class="font-weight-bolder">{{ proposals.proposal_obj.products.total_amount_global }}</span></td>
-                                    <td class="text-align-center" v-for="index in Number(proposals.proposal_obj.array_dates.length)"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.array_dates[index - 1].total)) }}€</span></td>
+                                    <td class="text-align-center" v-for="index in Number(proposals.proposal_obj.array_dates.length)"><span class="font-weight-bolder" v-if="this.proposal_submission_settings.show_pvp == 1">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.array_dates[index - 1].total)) }}€</span></td>
                                     <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products.total_global)) }}€</span></td>
                                 </tr>
                                 
                             </tbody>
                         </table>
                     </div>
-                    <div class="d-grid mb-4 mt-15">
-                        <span class="f-14 color-blue font-weight-bold">PLAN DE PAGO</span>
-                    </div>
-                    <table width="100%" cellpadding="2" cellspacing="1">
-                        <thead class="custom-columns-datatable">
-                            <tr>
-                                <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 50px;"><span>FACTURAS</span></th>
-                                <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>FECHA</span></th>
-                                <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>FORMA DE PAGO</span></th>
-                                <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>VENCIMIENTO</span></th>
-                                <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span>IMPORTE</span></th>
-                            </tr>
-                        </thead>
-                        <tbody>  
-                            <template v-for="(item, index) in Number(proposals.bill_obj.array_bills.length)" :key="index">
-                                <tr class="row-product text-align-center bg-white">
-                                    <td class="td-border-right" :rowspan="countRows(proposals.bill_obj.array_bills[index])">{{ index + 1 }}</td>
+                    <template v-if="this.proposal_submission_settings.show_invoices == 1">
+                        <div class="d-grid mb-4 mt-15">
+                            <span class="f-14 color-blue font-weight-bold">PLAN DE PAGO</span>
+                        </div>
+                        <table width="100%" cellpadding="2" cellspacing="1">
+                            <thead class="custom-columns-datatable">
+                                <tr>
+                                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 50px;"><span>FACTURAS</span></th>
+                                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>FECHA</span></th>
+                                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>FORMA DE PAGO</span></th>
+                                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>VENCIMIENTO</span></th>
+                                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span>IMPORTE</span></th>
                                 </tr>
-                                <tr class="row-product bg-white">
-                                    <td class="text-align-center td-border-right">{{ proposals.bill_obj.array_bills[index].date }}</td>
-                                    <td class="text-align-center py-4 px-5 td-border-right" width="20%">
-                                        {{ this.select_way_to_pay_options[proposals.bill_obj.array_bills[index].select_way_to_pay].text }}
-                                    </td>
-                                    <td class="text-align-center py-4 px-5 td-border-right">
-                                        {{ this.select_expiration_options[proposals.bill_obj.array_bills[index].select_expiration].text }}
-                                    </td>
-                                    <td class="text-align-center">
-                                        {{ $utils.roundAndFix(proposals.bill_obj.array_bills[index].amount) }}
-                                    </td>
-                                </tr>   
-                                <tr class="row-article" v-if="proposals.bill_obj.array_bills[index].observations != ''">
-                                    <td class="p-5" colspan="5">
-                                        <div class="d-flex">
-                                            <span class="my-auto col-2">Observaciones: {{ proposals.bill_obj.array_bills[index].observations }}</span>
-                                        </div>
-                                    </td>
-                                </tr>      
-                                <tr class="row-article" v-if="proposals.bill_obj.array_bills[index].order_number != ''">
-                                    <td class="p-5" colspan="5">
-                                        <div class="d-flex">
-                                            <span class="my-auto col-2">Núm. pedido: {{ proposals.bill_obj.array_bills[index].order_number }}</span>
-                                        </div>
-                                    </td>
+                            </thead>
+                            <tbody>  
+                                <template v-for="(item, index) in Number(proposals.bill_obj.array_bills.length)" :key="index">
+                                    <tr class="row-product text-align-center bg-white">
+                                        <td class="td-border-right" :rowspan="countRows(proposals.bill_obj.array_bills[index])">{{ index + 1 }}</td>
+                                    </tr>
+                                    <tr class="row-product bg-white">
+                                        <td class="text-align-center td-border-right">{{ proposals.bill_obj.array_bills[index].date }}</td>
+                                        <td class="text-align-center py-4 px-5 td-border-right" width="20%">
+                                            {{ this.select_way_to_pay_options[proposals.bill_obj.array_bills[index].select_way_to_pay].text }}
+                                        </td>
+                                        <td class="text-align-center py-4 px-5 td-border-right">
+                                            {{ this.select_expiration_options[proposals.bill_obj.array_bills[index].select_expiration].text }}
+                                        </td>
+                                        <td class="text-align-center">
+                                            {{ $utils.roundAndFix(proposals.bill_obj.array_bills[index].amount) }}
+                                        </td>
+                                    </tr>   
+                                    <tr class="row-article" v-if="proposals.bill_obj.array_bills[index].observations != ''">
+                                        <td class="p-5" colspan="5">
+                                            <div class="d-flex">
+                                                <span class="my-auto col-2">Observaciones: {{ proposals.bill_obj.array_bills[index].observations }}</span>
+                                            </div>
+                                        </td>
+                                    </tr>      
+                                    <tr class="row-article" v-if="proposals.bill_obj.array_bills[index].order_number != ''">
+                                        <td class="p-5" colspan="5">
+                                            <div class="d-flex">
+                                                <span class="my-auto col-2">Núm. pedido: {{ proposals.bill_obj.array_bills[index].order_number }}</span>
+                                            </div>
+                                        </td>
+                                    </tr>    
+                                    <tr class="row-article" v-if="proposals.bill_obj.array_bills[index].internal_observations != ''">
+                                        <td class="p-5" colspan="5">
+                                            <div class="d-flex">
+                                                <span class="my-auto col-2">Observaciones Internas: {{ proposals.bill_obj.array_bills[index].internal_observations }}</span>
+                                            </div>
+                                        </td>
+                                    </tr>   
+                                </template>       
+                                <tr class="tr-total-datatable">
+                                    <td colspan="4" class="py-6"><span class="ml-5 font-weight-bolder">TOTAL</span></td>
+                                    <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.roundAndFix(proposals.bill_obj.total_bill) }}€</span></td>
                                 </tr>    
-                                <tr class="row-article" v-if="proposals.bill_obj.array_bills[index].internal_observations != ''">
-                                    <td class="p-5" colspan="5">
-                                        <div class="d-flex">
-                                            <span class="my-auto col-2">Observaciones Internas: {{ proposals.bill_obj.array_bills[index].internal_observations }}</span>
-                                        </div>
-                                    </td>
-                                </tr>   
-                            </template>       
-                            <tr class="tr-total-datatable">
-                                <td colspan="4" class="py-6"><span class="ml-5 font-weight-bolder">TOTAL</span></td>
-                                <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.roundAndFix(proposals.bill_obj.total_bill) }}€</span></td>
-                            </tr>    
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </template>
+                    <div class="mt-10">
+                        <button @click.native="this.generateProposal()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Guardar y generar PDF</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -978,7 +994,7 @@ export default {
                 me.createBills();
             },
             
-        }
+    }
     
 };
 </script>

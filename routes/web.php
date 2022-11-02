@@ -31,7 +31,6 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('/get_users', [App\Http\Controllers\ProposalsController::class, 'getUsers'])->name('get_users');
     //Listar para el select de empresas
     Route::get('/get_companies', [App\Http\Controllers\ProposalsController::class, 'getCompanies'])->name('get_companies');
-    
     //END PROPOSALS
 
 
