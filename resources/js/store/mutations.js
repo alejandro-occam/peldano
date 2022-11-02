@@ -406,10 +406,11 @@ const mutations = {
 
     //Generar propuesta
     generateBill(state, params){
+        
         //Modificamos el objeto con los nuevos datos dados
         state.proposals.proposal_obj.products.map(function(products_obj, key_products_obj) {
             products_obj.articles.map(function(article_obj, key_article_obj) {
-                params.map(function(products, key_products) {
+                params.form.map(function(products, key_products) {
                     products.article.map(function(article, key) {
                         article.dates.map(function(date, key) {
                             if(article_obj.article_obj.id == date.article.id){
@@ -436,78 +437,99 @@ const mutations = {
             });
         });
 
-        var array_articles = [];
-          
-        //Guardamos con un nuevo formato para las facturas los articulos
-        state.proposals.proposal_obj.products.map(function(products, key) {
-            products.articles.map(function(article_obj, key) {
-                article_obj.dates_prices.map(function(dates_prices_obj, key) {
-                    dates_prices_obj.arr_pvp_date.map(function(arr_pvp_date_obj, key) {
-                        arr_pvp_date_obj.arr_pvp.map(function(arr_pvp_obj, key) {
-                            var article_obj_aux = {
-                                date: arr_pvp_date_obj.date,
-                                article: article_obj,
-                                id_product: products.product_obj.id,
-                                amount: arr_pvp_obj
-                            }
-                            array_articles.push(article_obj_aux);
+        //Comprobamos si es una propuesta normal o personalizada
+        if(params.num_custom_invoices == 0){
+            var array_articles = [];
+            
+            //Guardamos con un nuevo formato para las facturas los articulos
+            state.proposals.proposal_obj.products.map(function(products, key) {
+                products.articles.map(function(article_obj, key) {
+                    article_obj.dates_prices.map(function(dates_prices_obj, key) {
+                        dates_prices_obj.arr_pvp_date.map(function(arr_pvp_date_obj, key) {
+                            arr_pvp_date_obj.arr_pvp.map(function(arr_pvp_obj, key) {
+                                var article_obj_aux = {
+                                    date: arr_pvp_date_obj.date,
+                                    article: article_obj,
+                                    id_product: products.product_obj.id,
+                                    amount: arr_pvp_obj
+                                }
+                                array_articles.push(article_obj_aux);
+                            });
                         });
                     });
                 });
             });
-        });
 
-        //Ordenamos los artículos por fecha
-        array_articles = array_articles.sort(function(a,b){
-            var b_aux = Date.parse(new Date(changeFormatDate2(b.date)));
-            var a_aux = Date.parse(new Date(changeFormatDate2(a.date)));
-            return a_aux - b_aux;
-        });
+            //Ordenamos los artículos por fecha
+            array_articles = array_articles.sort(function(a,b){
+                var b_aux = Date.parse(new Date(changeFormatDate2(b.date)));
+                var a_aux = Date.parse(new Date(changeFormatDate2(a.date)));
+                return a_aux - b_aux;
+            });
 
-        var date_aux = array_articles[0].date;
-        var amount = 0;
-        var array_finish_bill = [];
-        var last_key = 0;
-        var total_bill = 0;
-        state.proposals.bill_obj.articles = array_articles;
+            var date_aux = array_articles[0].date;
+            var amount = 0;
+            var array_finish_bill = [];
+            var last_key = 0;
+            var total_bill = 0;
+            state.proposals.bill_obj.articles = array_articles;
 
-        //Creamos el objeto factura
-        array_articles.map(function(article_obj, key) {
-            if(key == 0){
-                amount = Number(article_obj.amount);
-                total_bill += Number(article_obj.amount);
-                var bill_month = {
-                    date: date_aux,
-                    amount: amount,
-                    article: article_obj,
-                    select_way_to_pay: '',
-                    select_expiration: '',
-                    observations: '',
-                    order_number: '',
-                    internal_observations: ''
-                }
+            //Creamos el objeto factura
+            array_articles.map(function(article_obj, key) {
+                if(key == 0){
+                    amount = Number(article_obj.amount);
+                    total_bill += Number(article_obj.amount);
+                    var bill_month = {
+                        date: date_aux,
+                        amount: amount,
+                        article: article_obj,
+                        select_way_to_pay: '',
+                        select_expiration: '',
+                        observations: '',
+                        order_number: '',
+                        internal_observations: ''
+                    }
 
-                array_finish_bill.push(bill_month);
+                    array_finish_bill.push(bill_month);
 
-            }else{
-                if(date_aux == article_obj.date){
-                    var is_break = false;
-                    array_finish_bill.map(function(bill_obj, key) {
-                        if(!is_break){
-                            if(bill_obj.date == article_obj.date){
-                                if(bill_obj.article.id_product == article_obj.id_product){
-                                    amount += Number(article_obj.amount);
-                                    total_bill += Number(article_obj.amount);
-                                    array_finish_bill[last_key].amount = amount;
-                                    is_break = true;
+                }else{
+                    if(date_aux == article_obj.date){
+                        var is_break = false;
+                        array_finish_bill.map(function(bill_obj, key) {
+                            if(!is_break){
+                                if(bill_obj.date == article_obj.date){
+                                    if(bill_obj.article.id_product == article_obj.id_product){
+                                        amount += Number(article_obj.amount);
+                                        total_bill += Number(article_obj.amount);
+                                        array_finish_bill[last_key].amount = amount;
+                                        is_break = true;
+                                    }
                                 }
                             }
-                        }
-                    });
+                        });
 
-                    if(!is_break){
+                        if(!is_break){
+                            amount = 0;
+                            date_aux = article_obj.date;
+                            amount += Number(article_obj.amount);
+                            total_bill += Number(article_obj.article.article_obj.pvp);
+                            var bill_month = {
+                                date: date_aux,
+                                amount: amount,
+                                article: article_obj,
+                                select_way_to_pay: '',
+                                select_expiration: '',
+                                observations: '',
+                                order_number: '',
+                                internal_observations: ''
+                            }
+                            array_finish_bill.push(bill_month);
+                            last_key = (array_finish_bill.length - 1);
+                        }
+
+                    }else{
                         amount = 0;
-                        date_aux = article_obj.date;
+                        date_aux =  article_obj.date;
                         amount += Number(article_obj.amount);
                         total_bill += Number(article_obj.article.article_obj.pvp);
                         var bill_month = {
@@ -523,30 +545,64 @@ const mutations = {
                         array_finish_bill.push(bill_month);
                         last_key = (array_finish_bill.length - 1);
                     }
-
-                }else{
-                    amount = 0;
-                    date_aux =  article_obj.date;
-                    amount += Number(article_obj.amount);
-                    total_bill += Number(article_obj.article.article_obj.pvp);
-                    var bill_month = {
-                        date: date_aux,
-                        amount: amount,
-                        article: article_obj,
-                        select_way_to_pay: '',
-                        select_expiration: '',
-                        observations: '',
-                        order_number: '',
-                        internal_observations: ''
-                    }
-                    array_finish_bill.push(bill_month);
-                    last_key = (array_finish_bill.length - 1);
                 }
-            }
-        });
+            });
 
-        state.proposals.bill_obj.array_bills = array_finish_bill;
-        state.proposals.bill_obj.total_bill = total_bill;
+            state.proposals.bill_obj.array_bills = array_finish_bill;
+            state.proposals.bill_obj.total_bill = total_bill;
+
+        }else{
+            
+            //Variable para saber el total
+            var total_amount = 0;
+
+            //Guardamos con un nuevo formato para las facturas los articulos
+            state.proposals.proposal_obj.products.map(function(products, key) {
+                products.articles.map(function(article_obj, key) {
+                    article_obj.dates_prices.map(function(dates_prices_obj, key) {
+                        dates_prices_obj.arr_pvp_date.map(function(arr_pvp_date_obj, key) {
+                            arr_pvp_date_obj.arr_pvp.map(function(arr_pvp_obj, key) {
+                                total_amount += arr_pvp_obj;
+                            });
+                        });
+                    });
+                });
+            });
+
+            var array_finish_bill = [];
+
+            //Consultamos el mes asctual y el año
+            var today = new Date();
+            var month = (today.getMonth()+1);
+            if((today.getMonth()+1) < 10){
+                month = '0'+ (today.getMonth()+1);
+            }
+            var date = '01-' + month + '-' + today.getFullYear();
+
+            //Creamos el objeto factura
+            for(var i=0; i<params.num_custom_invoices; i++){
+                var bill_month = {
+                    date: date,
+                    amount: total_amount / params.num_custom_invoices,
+                    article: '',
+                    select_way_to_pay: '',
+                    select_expiration: '',
+                    observations: '',
+                    order_number: '',
+                    internal_observations: ''
+                }
+                array_finish_bill.push(bill_month);
+                var newDate = new Date(today.setMonth(today.getMonth()+1));
+                var month = (newDate.getMonth()+1);
+                if((newDate.getMonth()+1) < 10){
+                    month = '0'+ (newDate.getMonth()+1);
+                }
+                date = '01-' + month + '-' + newDate.getFullYear();
+            }
+
+            state.proposals.bill_obj.array_bills = array_finish_bill;
+            state.proposals.bill_obj.total_bill = total_amount;
+        }
     }
 }
 

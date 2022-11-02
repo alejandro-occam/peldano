@@ -190,7 +190,7 @@
                 </select>
                 <div class="mt-10" v-if="!is_show_buttons_bill">
                     <button type="submit" class="btn bg-azul color-white px-5 font-weight-bolder mr-4" @click.native="createBills()">Crear factura simple</button>
-                    <button type="submit" class="btn bg-azul color-white px-5 font-weight-bolder ml-4">Crear factura personalizada</button>
+                    <button type="submit" class="btn bg-azul color-white px-5 font-weight-bolder ml-4" @click.native="openCustomInvoice()">Crear factura personalizada</button>
                 </div>
             </div>
             <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && is_show_buttons_bill && !this.finish_proposal && !this.generate_proposal">
@@ -471,7 +471,7 @@
                         <table width="100%" cellpadding="2" cellspacing="1">
                             <tbody>
                                 <tr class="row-product-offer-proposal">
-                                    <td colspan="4" class="f-15 py-2"><span class="ml-5 gray-product-offer-proposal font-weight-bold"><b class="text-dark">Cliente:</b>{{ this.name_company }}</span></td>
+                                    <td colspan="4" class="f-15 py-2"><span class="ml-5 gray-product-offer-proposal font-weight-bold"><b class="text-dark">Cliente: </b>{{ this.name_company }}</span></td>
                                     <td colspan="2" class="py-2 td-border-left text-align-center"><span class="gray-product-offer-proposal font-weight-bolder">PROPUESTA Nº:</span><span class="text-dark"> 34233</span></td>
                                 </tr>
                                 <tr class="row-product-offer-proposal">
@@ -595,6 +595,7 @@
         </div>
     </div>
     <FormAddArticleComponent></FormAddArticleComponent>
+    <ModalCustomInvoiceComponent></ModalCustomInvoiceComponent>
 </template>
 
 <script>
@@ -603,6 +604,7 @@ import { mapMutations, mapState, mapActions } from "vuex";
 
 import AddButtonComponent from "../Partials/AddButtonComponent.vue";
 import FormAddArticleComponent from "./FormAddArticleComponent.vue";
+import ModalCustomInvoiceComponent from "./ModalCustomInvoiceComponent.vue";
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Textarea from 'primevue/textarea';
@@ -616,7 +618,8 @@ export default {
         DataTable,
         Column,
         Textarea,
-        Calendar
+        Calendar,
+        ModalCustomInvoiceComponent
     },
     data() {
         return {
@@ -692,6 +695,9 @@ export default {
         openFormArticle(){
             $('#modal_form_article_proposals').modal('show');
         },
+        openCustomInvoice(){
+            $('#modal_custom_invoice').modal('show');
+        },
         getNameCompany(id){
             let me = this;
             me.proposals.array_companies.forEach(function callback(value, index, array) {
@@ -766,7 +772,11 @@ export default {
         },
         createBills(){
             this.is_show_buttons_bill = true;
-            this.generateBill(this.value_form1);
+            var params = {
+                form: this.value_form1,
+                num_custom_invoices: this.proposals.num_custom_invoices
+            }
+            this.generateBill(params);
         },
         loadFormObj(){
             let me = this;
@@ -936,6 +946,10 @@ export default {
                 }
 
                 me.loadFormObj();
+            },
+            '$store.state.proposals.num_custom_invoices': function() {
+                let me = this;
+                me.createBills();
             },
         }
     

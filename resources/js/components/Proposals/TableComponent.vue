@@ -107,7 +107,11 @@
             //Consultar fecha actual
             getNow() {
                 const today = new Date();
-                const date = today.getDate() + '-' + (today.getMonth()+1)+ '-' + today.getFullYear();
+                var month = (today.getMonth()+1);
+                if(month < 10){
+                    month = '0' + (today.getMonth()+1)
+                }
+                const date = today.getDate() + '-' + month + '-' + today.getFullYear();
                 this.date_from = date;
                 this.date_to = date;
             },

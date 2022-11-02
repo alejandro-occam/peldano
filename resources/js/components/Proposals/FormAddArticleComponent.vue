@@ -122,7 +122,7 @@
             </div>
         </div>
     </div>
-    </template>
+</template>
     
     <script>
 

@@ -63,7 +63,8 @@ const state = {
         user_obj: {
             name: null,
             surname: null
-        }
+        },
+        num_custom_invoices: 0
     },
     errors: {
         code: 0,
