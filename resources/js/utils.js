@@ -13,11 +13,15 @@ export const func = {
     //Consultar la fecha actual
     getNow() {
         const today = new Date();
+        var day = today.getDate();
+        if(day < 10){
+            day = '0' + today.getDate();
+        }
         var month = (today.getMonth()+1);
         if(month < 10){
             month = '0' + (today.getMonth()+1)
         }
-        const date = today.getDate() + '-' + month + '-' + today.getFullYear();
+        const date = day + '-' + month + '-' + today.getFullYear();
         return date;
     },
 

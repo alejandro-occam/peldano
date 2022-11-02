@@ -214,7 +214,10 @@
                                 <td class="py-1 pl-5 f-14" colspan="5">BIG DATA Data Email Marketing</td>
                             </tr>-->
                             <tr class="row-product">
-                                <td class="text-align-center td-border-right">{{ proposals.bill_obj.array_bills[index].date }}</td>
+                                <td class="text-align-center td-border-right" v-if="proposals.num_custom_invoices == 0">{{ proposals.bill_obj.array_bills[index].date }}</td>
+                                <td class="text-align-center td-border-right" v-else>
+                                    <Calendar class="w-100 borders-box text-dark-gray px-5"  autocomplete="off" v-model="proposals.bill_obj.array_bills[index].date" dateFormat="dd-mm-yy"  />
+                                </td>
                                 <td class="text-align-center py-4 px-5 td-border-right" width="20%">
                                     <select class="form-control text-dark select-custom select-filter bg-white" :name="'select_way_to_pay'" :id="'select_way_to_pay'" v-model="proposals.bill_obj.array_bills[index].select_way_to_pay" data-style="select-lightgreen">
                                         <option v-for="(item, index) in Number(this.select_way_to_pay_options.length)" :key="index" :value="this.select_way_to_pay_options[index].value">{{ this.select_way_to_pay_options[index].text }}</option>
@@ -856,20 +859,38 @@ export default {
             }
         },
         finishProposal(){
+            let me = this;
             var is_empty = false;
-            this.proposals.bill_obj.array_bills.map(function(bill, key) {
+            me.proposals.bill_obj.array_bills.map(function(bill, key) {
                 if(bill.select_expiration == '' || bill.select_way_to_pay == ''){
                     is_empty = true;
+                }       
+
+                if(typeof bill.date.getMonth === 'function'){
+                    if(bill.date.toISOString().includes('000Z')){
+                        bill.date = me.$utils.customFormDate(bill.date);
+                    }
                 }
             });
             if(!is_empty){
-                this.proposal_submission_settings.commercial_name = this.name_company;
-                this.proposal_submission_settings.date_proyect = new Date();
-                this.proposals.status_view = 3;
-                this.finish_proposal = true;
+                me.proposal_submission_settings.commercial_name = me.name_company;
+                me.proposal_submission_settings.date_proyect = me.$utils.getNow();
+                me.proposals.status_view = 3;
+                me.finish_proposal = true;
             }else{
                 swal("", "Rellena todos los datos", "warning");
             }
+        },
+        isDate(value) {
+            var dateFormat;
+            if (toString.call(value) === '[object Date]') {
+                return true;
+            }
+            if (typeof value.replace === 'function') {
+                value.replace(/^\s+|\s+$/gm, '');
+            }
+            dateFormat = /(^\d{1,4}[\.|\\/|-]\d{1,2}[\.|\\/|-]\d{1,4})(\s*(?:0?[1-9]:[0-5]|1(?=[012])\d:[0-5])\d\s*[ap]m)?$/;
+            return dateFormat.test(value);
         },
         changeStatusShowDiscounts(status){
             this.proposal_submission_settings.show_discounts = status;
@@ -884,6 +905,11 @@ export default {
             this.proposal_submission_settings.show_pvp = status;
         },
         generateProposal(){
+            if(typeof this.proposal_submission_settings.date_proyect.getMonth === 'function'){
+                if(this.proposal_submission_settings.date_proyect.toISOString().includes('000Z')){
+                    this.proposal_submission_settings.date_proyect = this.$utils.customFormDate(this.proposal_submission_settings.date_proyect);
+                }
+            }
             this.generate_proposal = true;
         },
         //Saber si estan rellenos observaciones, num pedido y observaciones internas
@@ -951,6 +977,7 @@ export default {
                 let me = this;
                 me.createBills();
             },
+            
         }
     
 };
