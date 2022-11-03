@@ -439,7 +439,7 @@
                     <button @click.native="this.generateProposal()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Generar propuesta</button>
                 </div>
             </div>
-            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && is_show_buttons_bill && this.finish_proposal && this.generate_proposal">
+            <div id="test" class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && is_show_buttons_bill && this.finish_proposal && this.generate_proposal">
                 <h3 class="color-blue">Propuesta 56539</h3>
                 <div class="mt-7">
                     <div class="d-grid my-4">
@@ -607,7 +607,7 @@
                         </table>
                     </template>
                     <div class="mt-10">
-                        <button @click.native="this.generateProposal()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Guardar y generar PDF</button>
+                        <button @click.native="this.generatePdf()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Guardar y generar PDF</button>
                     </div>
                 </div>
             </div>
@@ -693,7 +693,7 @@ export default {
                 type_proyect: '1',
                 name_proyect: '',
                 date_proyect: '',
-                objetives: 'Somos consultores y expertos en comunicación. Nuestra marca y nuestros servicios son líderes en el sector, y tienen el máximo reconocimiento, prestigio e influencia. Sabemos qué quiere nuestra audiencia, lo que nos permite ofrecer a ALFRED SMART SYSTEMS, S.L. una propuesta de valor única, diferencial y de éxito.\n\nHemos estudiado el potencial y la proyección de ALFRED SMART SYSTEMS, S.L. con el fin de crear una propuesta de comunicación eficaz que permita mejorar sus resultados y objetivos.\n\nLas acciones de comunicación para ALFRED SMART SYSTEMS, S.L. que incluimos en esta propuesta crean influencia y potencian la visibilidad y la relevancia de sus productos, impactando positivamente en nuestra audiencia e incitando a la acción.',
+                objetives: '',
                 proposal: 'Hemos creado una propuesta con diferentes acciones de demostrada eficacia. Es una comunicación 360 grados, de fuerte impacto, de gran repercusión y de calidad, que convencerá a nuestra audiencia de la necesidad de utilizar los productos y servicios de su empresa.\n\nEsta propuesta incluye la inmediatez e impacto directo de las nuevas tecnologías de movilidad, la efectividad del branded content, la utilización selectiva de nuestras bases de datos y el posicionamiento estratégico y de marca de los formatos publicitarios.',
                 actions: 'Acciones Print: Acciones de marketing de contenido para conseguir credibilidad de marca, acciones de publicidad corporativa bien posicionadas para reforzar la relevancia, el posicionamiento estratégico y la diferenciación con la competencia.\n\nAcciones digitales: Acciones de gran impacto, como email marketing, banner y contenidos en web y newsletter, buscando la acción directa sobre la audiencia y la efectividad e inmediatez en el resultado. Además, estas acciones se potenciarán a través de nuestras redes sociales.\n\nAcciones Experiencias: Centradas en el patrocinio de un desayuno y en la participación en un evento de referencia sectorial, buscando la relación directa y personal con el cliente para la obtención de leads.',
                 observations: '',
@@ -724,6 +724,8 @@ export default {
                     me.name_company = value.name;
                 }
             });
+            me.proposal_submission_settings.objetives = 'Somos consultores y expertos en comunicación. Nuestra marca y nuestros servicios son líderes en el sector, y tienen el máximo reconocimiento, prestigio e influencia. Sabemos qué quiere nuestra audiencia, lo que nos permite ofrecer a '+ me.name_company +' una propuesta de valor única, diferencial y de éxito.\n\nHemos estudiado el potencial y la proyección de '+ me.name_company +' con el fin de crear una propuesta de comunicación eficaz que permita mejorar sus resultados y objetivos.\n\nLas acciones de comunicación para '+ me.name_company +' que incluimos en esta propuesta crean influencia y potencian la visibilidad y la relevancia de sus productos, impactando positivamente en nuestra audiencia e incitando a la acción.';
+
         },
         changeValueBox(type, status){
             this.is_show_buttons_bill = false;
@@ -941,6 +943,12 @@ export default {
                 rows++;
             }
             return rows;
+        },
+        generatePdf(){
+            html2pdf(document.getElementById("test"), {
+				margin: 1,
+  			    filename: "i-was-html.pdf",
+			});
         }
     },
     mounted() {

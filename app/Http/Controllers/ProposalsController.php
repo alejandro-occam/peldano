@@ -7,6 +7,7 @@ use Auth;
 use App\Models\User;
 use App\Models\Company;
 use DB;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class ProposalsController extends Controller
 {
@@ -27,5 +28,13 @@ class ProposalsController extends Controller
 
         $response['user'] = $user;
         return response()->json($response);
+    }
+
+    //Generar pdf de la propuesta
+    function generatePdfProposal(){
+        $data = array();
+        $pdf = Pdf::loadView('pdf.invoice', $data)->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true]);
+        return $pdf->download('invoice.pdf');
+       
     }
 }
