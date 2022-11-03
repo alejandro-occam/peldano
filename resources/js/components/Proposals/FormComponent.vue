@@ -710,7 +710,7 @@ export default {
     },
     methods: {
         ...mapMutations(["clearError", "changeViewStatusProposals", "changeProposalObj", "changeValueIsChangeArticle", "generateBill"]),
-        ...mapActions(["getCompanies"]),
+        ...mapActions(["getCompanies", "saveProposal"]),
         openFormArticle(){
             $('#modal_form_article_proposals').modal('show');
         },
@@ -945,10 +945,8 @@ export default {
             return rows;
         },
         generatePdf(){
-            html2pdf(document.getElementById("test"), {
-				margin: 1,
-  			    filename: "i-was-html.pdf",
-			});
+            var params = this.proposals.proposal_obj.products;
+            this.saveProposal(params);
         }
     },
     mounted() {

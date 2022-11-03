@@ -30,8 +30,13 @@ class ProposalsController extends Controller
         return response()->json($response);
     }
 
+    //Guardar y generar la propuesta
+    function saveAndGenerateProposal(Request $request){
+        error_log($request);
+    }
+
     //Generar pdf de la propuesta
-    function generatePdfProposal(){
+    function generatePdfProposalTest(){
         $data = array();
         $pdf = Pdf::loadView('pdf.invoice', $data)->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true]);
         return $pdf->download('invoice.pdf');

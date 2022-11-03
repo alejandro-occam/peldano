@@ -472,6 +472,22 @@ const actions = {
             return error;
         }
     },
+
+    //Guardar propuesta
+    async saveProposal({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/save_generate_proposal",
+                params: params,
+                method: 'post'
+            });
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
     
 }
 
