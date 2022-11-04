@@ -130,7 +130,7 @@
                             read: {
                                 url:
                                     this.publicPath +
-                                    "/admin/list_articles",
+                                    "/admin/list_proposals",
                                 headers: {
                                     "X-CSRF-TOKEN": $(
                                         'meta[name="csrf-token"]'
@@ -184,7 +184,7 @@
                             template: function (row, data, index) {
                                 return (
                                     '<span class="text-dark">' +
-                                    row.calendar_name +
+                                    row.id_user +
                                     "</span>"
                                 );
                             },
@@ -197,7 +197,7 @@
                             template: function (row, data, index) {
                             return (
                                     '<span class="text-dark">' +
-                                    row.publication +
+                                    row.proposal_custom +
                                     "</span>"
                                 );
                             },
@@ -235,8 +235,8 @@
                             textAlign: "center",
                             template: function (row, data, index) {
                                 return (
-                                    '<span class="text-gray font-weight-bold">' +
-                                    row.english_name +
+                                    '<span class="text-dark font-weight-bold">' +
+                                    row.name_contact +
                                     "</span>"
                                 );
                             },
@@ -249,7 +249,7 @@
                             template: function (row, data, index) {
                                 return (
                                     '<span class="text-gray font-weight-bold">' +
-                                    row.english_name +
+                                    row.date_proyect +
                                     "</span>"
                                 );
                             },

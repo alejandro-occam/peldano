@@ -16,7 +16,21 @@ class Proposal extends Model
         'id_proposal_custom',
         'id_user',
         'id_contact',
-        'discount'
+        'discount',
+        'commercial_name',
+        'language',
+        'type_proyect',
+        'name_proyect',
+        'date_proyect',
+        'objetives',
+        'proposal',
+        'actions',
+        'observations',
+        'show_discounts',
+        'show_inserts',
+        'show_invoices',
+        'show_pvp',
+        'sales_possibilities',
     ];
 
     /**
@@ -30,6 +44,20 @@ class Proposal extends Model
         'id_user' => 'integer',
         'id_contact' => 'integer',
         'discount' => 'string',
+        'commercial_name' => 'string',
+        'language' => 'integer',
+        'type_proyect' => 'integer',
+        'name_proyect' => 'string',
+        'date_proyect' => 'string',
+        'objetives' => 'string',
+        'proposal' => 'string',
+        'actions' => 'string',
+        'observations' => 'string',
+        'show_discounts' => 'boolean',
+        'show_inserts' => 'boolean',
+        'show_invoices' => 'boolean',
+        'show_pvp' => 'boolean',
+        'sales_possibilities' => 'string',
     ];
 
     /**
@@ -42,6 +70,20 @@ class Proposal extends Model
         'id_proposal_custom',
         'id_user',
         'id_contact',
-        'discount'
+        'discount',
+        'commercial_name',
+        'language',
+        'type_proyect',
+        'name_proyect',
+        'date_proyect',
+        'objetives',
+        'proposal',
+        'actions',
+        'observations',
+        'show_discounts',
+        'show_inserts',
+        'show_invoices',
+        'show_pvp',
+        'sales_possibilities',
     ];
 }

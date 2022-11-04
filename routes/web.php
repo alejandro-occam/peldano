@@ -27,6 +27,8 @@ Auth::routes();
 Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
 
     //PROPOSALS
+    //Listar propuestas
+    Route::post('/list_proposals', [App\Http\Controllers\ProposalsController::class, 'listProposals'])->name('list_proposals');
     //Listar para el select de consultores
     Route::get('/get_users', [App\Http\Controllers\ProposalsController::class, 'getUsers'])->name('get_users');
     //Listar para el select de empresas

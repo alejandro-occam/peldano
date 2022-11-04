@@ -19,7 +19,7 @@
                         <span class="w-25">Empresa o nombre y apellidos</span>
                         <div class="mt-2 select-filter">
                             <select class="form-control select2 select-filter" id="select_company" v-model="select_company">
-                                <option :data-name="company.name" :value="company.id" v-for="company in proposals.array_companies" :key="company.id" v-text="company.name" ></option>
+                                <option :data-name="company.name" :value="company.id" v-for="company in proposals.array_companies" :key="company.id" v-text="company.name + ' - ' + company.fullname" ></option>
                             </select>
                         </div>
                     </div>
@@ -948,7 +948,7 @@ export default {
         },
         generatePdf(){
             var params = {
-                //array_products: this.proposals.proposal_obj.products,
+                proposal_submission_settings: this.proposal_submission_settings,
                 id_company: this.id_company,
                 bill_obj: this.proposals.bill_obj,
             }
