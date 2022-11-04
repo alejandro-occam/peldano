@@ -5,18 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Proposal extends Model
+class ServiceBill extends Model
 {
     use HasFactory;
 
-    public $table = 'proposals';
+    public $table = 'services_bills';
 
     public $fillable = [
         'id',
-        'id_proposal_custom',
-        'id_user',
-        'id_contact',
-        'discount'
+        'id_service',
+        'id_bill',
     ];
 
     /**
@@ -26,10 +24,8 @@ class Proposal extends Model
      */
     protected $casts = [
         'id' => 'integer',
-        'id_proposal_custom' => 'integer',
-        'id_user' => 'integer',
-        'id_contact' => 'integer',
-        'discount' => 'string',
+        'id_service' => 'integer',
+        'id_bill' => 'integer',
     ];
 
     /**
@@ -39,9 +35,7 @@ class Proposal extends Model
      */
     public static $rules = [
         'id',
-        'id_proposal_custom',
-        'id_user',
-        'id_contact',
-        'discount'
+        'id_service',
+        'id_bill',
     ];
 }

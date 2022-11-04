@@ -15,6 +15,7 @@ class CreateProposalsTable extends Migration
     {
         Schema::create('proposals', function (Blueprint $table) {
             $table->id();
+            $table->integer('id_proposal_custom')->default(0);
             $table->biginteger('id_user')->unsigned();
             $table->foreign('id_user')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->biginteger('id_contact')->unsigned();

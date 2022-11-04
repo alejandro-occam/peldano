@@ -607,7 +607,7 @@
                         </table>
                     </template>
                     <div class="mt-10">
-                        <button @click.native="this.generatePdf()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Guardar y generar PDF</button>
+                        <button v-on:click="this.generatePdf()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Guardar y generar PDF</button>
                     </div>
                 </div>
             </div>
@@ -646,6 +646,7 @@ export default {
             select_company: '',
             select_company_other_values: '',
             name_company: '',
+            id_company: 0,
             offer: 0,
             total: 0,
             discount: '0.00',
@@ -722,6 +723,7 @@ export default {
             me.proposals.array_companies.forEach(function callback(value, index, array) {
                 if(value.id == id){
                     me.name_company = value.name;
+                    me.id_company = value.id;
                 }
             });
             me.proposal_submission_settings.objetives = 'Somos consultores y expertos en comunicación. Nuestra marca y nuestros servicios son líderes en el sector, y tienen el máximo reconocimiento, prestigio e influencia. Sabemos qué quiere nuestra audiencia, lo que nos permite ofrecer a '+ me.name_company +' una propuesta de valor única, diferencial y de éxito.\n\nHemos estudiado el potencial y la proyección de '+ me.name_company +' con el fin de crear una propuesta de comunicación eficaz que permita mejorar sus resultados y objetivos.\n\nLas acciones de comunicación para '+ me.name_company +' que incluimos en esta propuesta crean influencia y potencian la visibilidad y la relevancia de sus productos, impactando positivamente en nuestra audiencia e incitando a la acción.';
@@ -945,7 +947,11 @@ export default {
             return rows;
         },
         generatePdf(){
-            var params = this.proposals.proposal_obj.products;
+            var params = {
+                //array_products: this.proposals.proposal_obj.products,
+                id_company: this.id_company,
+                bill_obj: this.proposals.bill_obj,
+            }
             this.saveProposal(params);
         }
     },
