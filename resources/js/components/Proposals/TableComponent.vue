@@ -21,7 +21,7 @@
         <div class="col-12 d-flex flex-wrap mt-6">
             <div class="mx-2 col-2">
                 <span class="text-dark font-weight-bold mb-2">Num. propuesta</span>
-                <input type="text" class="form-control bg-gray mt-3 select-filter text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
+                <input v-model="num_proposal" type="text" class="form-control bg-gray mt-3 select-filter text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
             </div>
             <div class="mx-2 col-2">
                 <span class="text-dark font-weight-bold mb-2">Consultor</span>
@@ -35,7 +35,7 @@
            
             <div class="mx-2 col-2">
                 <span class="text-dark font-weight-bold mb-2">Fecha desde</span>
-                <Calendar class="w-100 select-filter input-custom-calendar mt-3" inputId="date_from" v-model="date_from" autocomplete="off" dateFormat="dd-mm-yy"  />
+                <Calendar class="w-100 select-filter input-custom-calendar mt-3" inputId="date_from" v-model="date_from" autocomplete="off" dateFormat="dd-mm-yy" />
             </div>
 
             <div class="mx-2 col-2">
@@ -69,7 +69,7 @@
                 </select>
             </div>
             <div class="mx-2 col-12 d-flex mt-10">
-                <button type="submit" class="btn bg-azul color-white px-35 font-weight-bolder">Aplicar filtro</button>
+                <button type="submit" class="btn bg-azul color-white px-35 font-weight-bolder" v-on:click="this.listProposals(1)">Aplicar filtro</button>
             </div>
         </div>
         <div class="col-12 mt-15">
@@ -93,6 +93,7 @@
         data() {
             return {
                 publicPath: window.location.origin,
+                num_proposal: '',
                 select_consultant: '',
                 date_from: '',
                 date_to: '',
@@ -103,7 +104,7 @@
             };
         },
         methods: {
-            ...mapActions(["getUsers", "getSectors"]),
+            ...mapActions(["getUsers", "getSectors", "getInfoProposal"]),
             ...mapMutations(['changeViewStatusProposals']),
             //Consultar fecha actual
             getNow() {
@@ -122,21 +123,27 @@
             },
             listProposals(type) {
                 let me = this;
-
-                if(type == 1 || type == undefined){
-                    me.datatable.setDataSourceParam('select_consultant', me.select_consultant);
-                    me.datatable.setDataSourceParam('select_sector', me.select_sector);
-                }
-                
                 $("#list_proposals").KTDatatable("destroy");
                 $("#list_proposals").KTDatatable("init");
-                this.datatable = $("#list_proposals").KTDatatable({
+                if(type == 1 || type == undefined){
+                    me.datatable.setDataSourceParam('type', type);
+
+                    var date_ms_from = Date.parse(me.date_from);
+                    var date_ms_to = Date.parse(me.date_to);
+                    
+                    me.datatable.setDataSourceParam('num_proposal', me.num_proposal);
+                    me.datatable.setDataSourceParam('select_consultant', me.select_consultant);
+                    me.datatable.setDataSourceParam('select_sector', me.select_sector);
+                    me.datatable.setDataSourceParam('date_from', me.$utils.customFormDate(date_ms_from));
+                    me.datatable.setDataSourceParam('date_to', me.$utils.customFormDate(date_ms_to));
+                }
+                me.datatable = $("#list_proposals").KTDatatable({
                     data: {
                         type: "remote",
                         source: {
                             read: {
                                 url:
-                                    this.publicPath +
+                                me.publicPath +
                                     "/admin/list_proposals",
                                 headers: {
                                     "X-CSRF-TOKEN": $(
@@ -145,8 +152,9 @@
                                 },
                                 method: 'POST',
                                 params: {
-                                    select_consultant: ''
+                                    type: 0
                                 }
+
                             },
                         },
                         pageSize: 10,
@@ -231,7 +239,7 @@
                             template: function (row, data, index) {
                                 var html = '';
                                 if(row.english_name == undefined){
-                                    html = '<span class="text-gray font-weight-bold">--</span>';
+                                    html = '<span class="text-dark font-weight-bold">__</span>';
 
                                 }else{
                                     html = '<span class="text-gray font-weight-bold">' +
@@ -307,15 +315,11 @@
                     ],
                 });
 
-                $("#list_articles").on("click", ".btn-show", function () {
+                $("#list_proposals").on("click", ".btn-show", function () {
                     var id = $(this).data("id");
-                    me.getInfoArticle(id);
-                    $("#modal_delete_article").modal("show");           
+                    me.getInfoProposal(id);
                 });
             },
-            getConsultantSelect(){
-                this.listProposals(1);
-            }
         },
         computed: {
             ...mapState(["errors", "proposals", "config"]),

@@ -41,4 +41,9 @@ class Service extends Model
         'date',
         'id_article'
     ];
+
+    public function article()
+    {
+        return $this->belongsTo(Article::class, 'id_article');
+    }
 }

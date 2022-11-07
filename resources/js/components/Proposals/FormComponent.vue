@@ -710,7 +710,7 @@ export default {
             ...mapState(["errors", "proposals"]),
     },
     methods: {
-        ...mapMutations(["clearError", "changeViewStatusProposals", "changeProposalObj", "changeValueIsChangeArticle", "generateBill"]),
+        ...mapMutations(["clearError", "changeViewStatusProposals", "changeProposalObj", "changeValueIsChangeArticle", "generateBill", "clearObjectsProposal"]),
         ...mapActions(["getCompanies", "saveProposal"]),
         openFormArticle(){
             $('#modal_form_article_proposals').modal('show');
@@ -957,35 +957,35 @@ export default {
         },
         //Limpiar el data del component
         clearData(){
-            this.select_company = '';
-            this.select_company_other_values = '';
-            this.name_company = '';
-            this.id_company = 0;
-            this.offer = 0;
-            this.total = 0;
-            this.discount = '0.00';
-            this.fullname = '';
-            this.select_type_proposal = '1';
-            this.value_form1 = [];
-            this.is_show_buttons_bill = false;
-            this.finish_proposal = false;
-            this.generate_proposal = false;
-            this.proposal_submission_settings = {
-                commercial_name: '',
-                language: '1',
-                type_proyect: '1',
-                name_proyect: '',
-                date_proyect: '',
-                objetives: '',
-                proposal: 'Hemos creado una propuesta con diferentes acciones de demostrada eficacia. Es una comunicación 360 grados, de fuerte impacto, de gran repercusión y de calidad, que convencerá a nuestra audiencia de la necesidad de utilizar los productos y servicios de su empresa.\n\nEsta propuesta incluye la inmediatez e impacto directo de las nuevas tecnologías de movilidad, la efectividad del branded content, la utilización selectiva de nuestras bases de datos y el posicionamiento estratégico y de marca de los formatos publicitarios.',
-                actions: 'Acciones Print: Acciones de marketing de contenido para conseguir credibilidad de marca, acciones de publicidad corporativa bien posicionadas para reforzar la relevancia, el posicionamiento estratégico y la diferenciación con la competencia.\n\nAcciones digitales: Acciones de gran impacto, como email marketing, banner y contenidos en web y newsletter, buscando la acción directa sobre la audiencia y la efectividad e inmediatez en el resultado. Además, estas acciones se potenciarán a través de nuestras redes sociales.\n\nAcciones Experiencias: Centradas en el patrocinio de un desayuno y en la participación en un evento de referencia sectorial, buscando la relación directa y personal con el cliente para la obtención de leads.',
-                observations: '',
-                show_discounts: 0,
-                show_inserts: 1,
-                show_invoices: 1,
-                show_pvp: 1,
-                sales_possibilities: '6'
-            }
+            let me = this;
+            me.clearObjectsProposal();
+            me.select_company = '';
+            me.select_company_other_values = '';
+            me.name_company = '';
+            me.id_company = 0;
+            me.offer = 0;
+            me.total = 0;
+            me.discount = '0.00';
+            me.fullname = '';
+            me.select_type_proposal = '1';
+            //me.value_form1 = [];
+            me.is_show_buttons_bill = false;
+            me.finish_proposal = false;
+            me.generate_proposal = false;
+            me.proposal_submission_settings.commercial_name = '';
+            me.proposal_submission_settings.language = '1';
+            me.proposal_submission_settings.type_proyect = '1';
+            me.proposal_submission_settings.name_proyect = '';
+            me.proposal_submission_settings.date_proyect = '';
+            me.proposal_submission_settings.objetives = '';
+            me.proposal_submission_settings.proposal = 'Hemos creado una propuesta con diferentes acciones de demostrada eficacia. Es una comunicación 360 grados, de fuerte impacto, de gran repercusión y de calidad, que convencerá a nuestra audiencia de la necesidad de utilizar los productos y servicios de su empresa.\n\nEsta propuesta incluye la inmediatez e impacto directo de las nuevas tecnologías de movilidad, la efectividad del branded content, la utilización selectiva de nuestras bases de datos y el posicionamiento estratégico y de marca de los formatos publicitarios.';
+            me.proposal_submission_settings.actions = 'Acciones Print: Acciones de marketing de contenido para conseguir credibilidad de marca, acciones de publicidad corporativa bien posicionadas para reforzar la relevancia, el posicionamiento estratégico y la diferenciación con la competencia.\n\nAcciones digitales: Acciones de gran impacto, como email marketing, banner y contenidos en web y newsletter, buscando la acción directa sobre la audiencia y la efectividad e inmediatez en el resultado. Además, estas acciones se potenciarán a través de nuestras redes sociales.\n\nAcciones Experiencias: Centradas en el patrocinio de un desayuno y en la participación en un evento de referencia sectorial, buscando la relación directa y personal con el cliente para la obtención de leads.';
+            me.proposal_submission_settings.observations = '';
+            me.proposal_submission_settings.show_discounts = 0;
+            me.proposal_submission_settings.show_inserts = 1;
+            me.proposal_submission_settings.show_invoices = 1;
+            me.proposal_submission_settings.show_pvp = 1;
+            me.proposal_submission_settings.sales_possibilities = 6;
         }
     },
     mounted() {
@@ -1007,37 +1007,67 @@ export default {
         });
     },
     watch: {
-            '$store.state.errors.code': function() {
-                if(this.errors.type_error == 'save_proposal'){
-                    if(this.errors.code != ''){
-                        if(this.errors.code == 1000){
-                            $("#list_proposals").KTDatatable("reload");
-                            this.clearData();
-                            swal("", "Propuesta añadida correctamente", "success");
-                        }else{
-                            swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
-                        }
-                        this.clearError();
+        '$store.state.errors.code': function() {
+            if(this.errors.type_error == 'save_proposal'){
+                if(this.errors.code != ''){
+                    if(this.errors.code == 1000){
+                        $("#list_proposals").KTDatatable("reload");
+                        this.clearData();
+                        swal("", "Propuesta añadida correctamente", "success");
+                    }else{
+                        swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
                     }
+                    this.clearError();
                 }
-            },
-            '$store.state.proposals.proposal_obj.is_change': function() {
-                let me = this;
-                me.is_show_buttons_bill = false;
-                if(me.proposals.proposal_obj.is_change){
-                    me.changeValueIsChangeArticle();
-                    me.offer = me.$utils.roundAndFix(me.proposals.proposal_obj.products.total_global);
-                    me.total = me.$utils.roundAndFix(me.proposals.proposal_obj.products.total_global);
-                }
+            }
+        },
+        '$store.state.proposals.proposal_obj.is_change': function() {
+            let me = this;
+            me.is_show_buttons_bill = false;
+            if(me.proposals.proposal_obj.is_change){
+                me.changeValueIsChangeArticle();
+                me.offer = me.$utils.roundAndFix(me.proposals.proposal_obj.products.total_global);
+                me.total = me.$utils.roundAndFix(me.proposals.proposal_obj.products.total_global);
+            }
 
-                me.loadFormObj();
-            },
-            '$store.state.proposals.num_custom_invoices': function() {
-                let me = this;
-                me.createBills();
-            },
+            me.loadFormObj();
+        },
+        '$store.state.proposals.num_custom_invoices': function() {
+            let me = this;
+            me.createBills();
+        },
             
+    },
+    updated() {
+        if(this.select_company == ''){
+            let me = this;
+            $("#select_company").select2("destroy");
+
+            $("#select_company").select2();
+            $("#select_company").select2("val", "");
+            $('#select_company').select2({
+                placeholder: "Selecciona una empresa"
+            });
+            $('#select_company').on("change",function(){
+                me.select_company = $('#select_company').val();
+                me.getNameCompany(me.select_company);
+            });
+        }
+
+        if(this.select_company_other_values == ''){
+            let me = this;
+            $("#select_company_other_values").select2("destroy");
+
+            $("#select_company_other_values").select2();
+            $("#select_company_other_values").select2("val", "");
+            $('#select_company_other_values').select2({
+                placeholder: "Selecciona una empresa"
+            });
+            $('#select_company_other_values').on("change",function(){
+                me.select_company_other_values = $('#select_company_other_values').val();
+                me.getNameCompany(me.select_company_other_values);
+            });
+        }
     }
-    
 };
 </script>

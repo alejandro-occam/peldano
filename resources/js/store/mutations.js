@@ -603,6 +603,21 @@ const mutations = {
             state.proposals.bill_obj.array_bills = array_finish_bill;
             state.proposals.bill_obj.total_bill = total_amount;
         }
+    },
+
+    //Limpiamos los objetos utilizados para crear la propuesta
+    clearObjectsProposal(state){
+        state.proposals.num_custom_invoices = 0;
+        state.proposals.proposal_obj.products[0].product_obj = null;
+        state.proposals.proposal_obj.products[0].articles = [];
+        state.proposals.proposal_obj.products[0].articles_aux = [];
+        state.proposals.proposal_obj.products[0].total_global = 0;
+        state.proposals.proposal_obj.products[0].total_amount_global = 0;
+        state.proposals.proposal_obj.products[0].total_individual_pvp = 0;
+        state.proposals.proposal_obj.is_change = false;
+        state.proposals.proposal_obj.array_dates = [];
+        state.proposals.bill_obj.articles = [];
+        state.proposals.bill_obj.array_bills = [];
     }
 }
 

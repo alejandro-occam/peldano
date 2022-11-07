@@ -492,6 +492,158 @@ const actions = {
         }
     },
     
+    //Mostrar información de la propuesta
+    async getInfoProposal({ state }, id){
+        try {
+            const response = await http({
+                url: "/admin/get_info_proposal/"+id,
+                method: 'get'
+            });
+
+            var array_services = response.data.array_services;
+            state.proposals.proposal_obj.products.articles = [];
+            state.proposals.proposal_obj.products.dates_prices_aux = [];
+            var array_dates_aux = [];
+            var array_products = [];
+            array_services.forEach(function callback(service, index, array) {
+                array_dates_aux.push(service.date);
+                /*if(index == 0){
+                    state.proposals.proposal_obj.articles[0]
+                }*/
+
+                if(array_products.length == 0){
+                    var article = {
+                        amount: service.pvp,
+                        article_obj: service.article,
+                        dates: [service.date],
+                        dates_prices: [{
+                            arr_pvp_date: [{
+                                date: service.date,
+                                arr_pvp: [service.pvp]
+                            }]
+                        }],
+                        total: service.pvp
+                    }
+                    array_products.push({
+                        id_product: service.article.id_product,
+                        articles: [article]
+                    });
+
+                }else{
+                    var exist_1 = false;
+                    array_products.forEach(function callback(product, index, array) {
+                        if(product.id_product == service.article.id_product){
+                            exist_1 = true;
+                            var exist_2 = false;
+                            product.articles.forEach(function callback(article, index, array) {
+                                if(article.article_obj.id == service.id_article){
+                                    exist_2 = true;
+                                    article.dates.push(service.date);
+                                    article.total = article.total + service.pvp;
+                                    article.dates_prices.forEach(function callback(date_price, index, array) {
+                                        var exist_3 = false;
+                                        date_price.arr_pvp_date.forEach(function callback(pvp_date, index, array) {
+                                            if(pvp_date.date == service.date){
+                                                pvp_date.arr_pvp.push(service.pvp);
+                                                exist_3 = true;
+                                            }
+                                        });
+                                        if(!exist_3){
+                                            var arr_pvp_date = [{
+                                                date: service.date,
+                                                arr_pvp: [service.pvp]
+                                            }]
+                                            date_price.arr_pvp_date.push(arr_pvp_date);
+                                        }
+                                    });
+                                }
+                            });
+    
+                            if(!exist_2){
+                                var article = {
+                                    amount: service.pvp,
+                                    article_obj: service.article,
+                                    dates: [service.date],
+                                    dates_prices: [{
+                                        arr_pvp_date: [{
+                                            date: service.date,
+                                            arr_pvp: [service.pvp]
+                                        }]
+                                    }],
+                                    total: service.pvp
+                                }
+                                product.articles.push(article);
+                            }
+                        }
+                    });
+
+                    if(!exist_1){
+                        var article = {
+                            amount: service.pvp,
+                            article_obj: service.article,
+                            dates: [service.date],
+                            dates_prices: [{
+                                arr_pvp_date: [{
+                                    date: service.date,
+                                    arr_pvp: [service.pvp]
+                                }]
+                            }],
+                            total: service.pvp
+                        }
+                        array_products.push({
+                            id_product: service.article.id_product,
+                            articles: [article]
+                        });
+                    }
+                }
+                
+            });
+
+            console.log(array_products);
+
+            //Ordenamos las fechas de forma ascendente
+            array_dates_aux = array_dates_aux.sort(function(a,b){
+                var b_aux = Date.parse(new Date(changeFormatDate2(b)));
+                var a_aux = Date.parse(new Date(changeFormatDate2(a)));
+                return a_aux - b_aux;
+            });
+
+            var array_dates = [];
+            //Modificamos el formato de las fechas para las columnas
+            array_dates_aux.map(function(date, key) {
+                var new_date = changeFormatDate(date);
+                if(!array_dates.includes(new_date)){
+                    array_dates.push(new_date);
+                }
+            });
+            state.proposals.proposal_obj.array_dates = array_dates;
+
+
+
+            state.errors.code = response.data.code;
+
+        } catch (error) {
+            console.error(error);
+            return error;
+        }
+    }
+}
+
+//UTILS
+function changeFormatDate(date){
+    var date_aux = date.split('-');
+    var new_date = date_aux[1] + '-' + date_aux[0] + '-' +  date_aux[2];
+    var mydate = new Date(new_date);
+    var month = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN",
+    "JUL", "AGO", "SEP", "OCT", "NOV", "DEC"][mydate.getMonth()];
+    var str = month + mydate.getYear().toString().substr(-2);
+    return str;
+}
+
+function changeFormatDate2(date){
+    var date_aux = date.split('-');
+    var new_date = date_aux[2] + '-' + date_aux[1] + '-' + date_aux[0];
+    return new_date;
 }
 
 export default actions;

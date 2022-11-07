@@ -48,12 +48,26 @@ class ProposalsController extends Controller
                         ->leftJoin('proposals_bills', 'proposals.id', 'proposals_bills.id_proposal')
                         ->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill');
 
-        if($request->get('select_consultant') != ''){
-            $array_proposals = $array_proposals->where('proposals.id_user', $request->get('select_consultant'));
-        }
+        if($request->get('type') == 1){
+            if($request->get('num_proposal') != ''){
+                $array_proposals = $array_proposals->where('proposals.id_proposal_custom', $request->get('num_proposal'));
+            }
 
-        if($request->get('select_sector') != ''){
-            $array_proposals = $array_proposals->where('proposals.id_sector', $request->get('select_sector'));
+            if($request->get('select_consultant') != ''){
+                $array_proposals = $array_proposals->where('proposals.id_user', $request->get('select_consultant'));
+            }
+
+            if($request->get('select_sector') != ''){
+                $array_proposals = $array_proposals->where('proposals.id_sector', $request->get('select_sector'));
+            }
+
+            if($request->get('date_from') != ''){
+                $array_proposals = $array_proposals->where('proposals.date_proyect', '>=', $request->get('date_from'));
+            }
+
+            if($request->get('date_to') != ''){
+                $array_proposals = $array_proposals->where('proposals.date_proyect', '<=', $request->get('date_to'));
+            }
         }
 
         $array_proposals = $array_proposals->groupBy('proposals.id')
@@ -212,6 +226,9 @@ class ProposalsController extends Controller
                 'id_bill' => $bill->id
             ]);
         }
+
+        $response['code'] = 1000;
+        return response()->json($response);
     }
 
     //Generar pdf de la propuesta
@@ -219,6 +236,46 @@ class ProposalsController extends Controller
         $data = array();
         $pdf = Pdf::loadView('pdf.invoice', $data)->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true]);
         return $pdf->download('invoice.pdf');
-       
+    }
+
+    //Mostrar información de una propuesta
+    function getInfoProposal($id){
+        //Consultamos si existe la propuesta
+        $proposal = Proposal::find($id);
+        if(!$proposal){
+            $response['code'] = 1001;
+            return response()->json($response);
+        }
+
+        //Consultamos el array de facturas
+        $proposal_bills = Bill::select('bills.*')
+                            ->leftJoin('proposals_bills', 'proposals_bills.id_bill', 'bills.id')
+                            ->where('proposals_bills.id_proposal', '=', $proposal->id)
+                            ->get();
+
+        if(count($proposal_bills) <= 0){
+            $response['code'] = 1002;
+            return response()->json($response);
+        }
+
+        //Consultamos el array de servicios
+        $array_services = array();
+        foreach($proposal_bills as $bill){
+            $array_services_obj = Service::select('services.*')
+                                    ->leftJoin('services_bills', 'services.id', 'services_bills.id_service')
+                                    ->where('services_bills.id_bill', $bill->id)
+                                    ->with('article')
+                                    ->get();
+            
+            foreach($array_services_obj as $service){
+                $array_services[] = $service;
+            }
+        }
+        
+        $response['array_services'] = $array_services;
+        $response['proposal'] = $proposal;
+        $response['proposal_bills'] = $proposal_bills;
+        $response['code'] = 1000;
+        return response()->json($response);
     }
 }
