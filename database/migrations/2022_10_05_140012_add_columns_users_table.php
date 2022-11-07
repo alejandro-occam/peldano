@@ -21,7 +21,7 @@ class AddColumnsUsersTable extends Migration
             $table->foreign('id_position')->references('id')->on('positions');
             $table->string('extension')->nullable()->after('id_position');
             $table->string('mobile')->nullable()->after('extension');
-            $table->double('commission')->nullable()->after('discharge_date');
+            $table->double('commission')->nullable()->after('mobile');
             $table->boolean('active')->default(false)->after('commission');
         });
     }
