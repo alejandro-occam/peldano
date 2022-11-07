@@ -800,3 +800,8 @@ a.text-hover-primary:hover, .text-hover-primary:hover{
 .gray-product-offer-proposal{
     color: #707185;
 }
+
+.badge-light-success {
+    color: #50cd89;
+    background-color: #e8fff3;
+}

@@ -482,6 +482,9 @@ const actions = {
                 method: 'post'
             });
 
+            state.errors.type_error = 'save_proposal';
+            state.errors.code = response.data.code;
+
         } catch (error) {
             console.error(error);
 

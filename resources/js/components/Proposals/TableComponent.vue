@@ -25,7 +25,7 @@
             </div>
             <div class="mx-2 col-2">
                 <span class="text-dark font-weight-bold mb-2">Consultor</span>
-                <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_consultant'" :id="'select_consultant'" v-model="select_consultant" data-style="select-lightgreen">
+                <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_consultant'" :id="'select_consultant'" v-model="select_consultant" data-style="select-lightgreen" @change="getConsultantSelect">
                     <option value="" selected>
                         Selecciona un consultor
                     </option>
@@ -53,7 +53,7 @@
 
             <div class="mx-2 col-2 mt-5">
                 <span class="text-dark font-weight-bold mb-2">Sector</span>
-                <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" v-model="select_sector" data-style="select-lightgreen" @change="getProductsSelect">
+                <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" v-model="select_sector" data-style="select-lightgreen" @change="getConsultantSelect">
                     <option value="" selected>
                         Filtro por sector
                     </option>
@@ -98,7 +98,8 @@
                 date_to: '',
                 select_from_consultant: '1',
                 select_sector: '',
-                select_status_order: '1'
+                select_status_order: '1',
+                datatable: null
             };
         },
         methods: {
@@ -119,11 +120,17 @@
                 this.date_from = date;
                 this.date_to = date;
             },
-            listProposals() {
+            listProposals(type) {
                 let me = this;
+
+                if(type == 1 || type == undefined){
+                    me.datatable.setDataSourceParam('select_consultant', me.select_consultant);
+                    me.datatable.setDataSourceParam('select_sector', me.select_sector);
+                }
+                
                 $("#list_proposals").KTDatatable("destroy");
                 $("#list_proposals").KTDatatable("init");
-                $("#list_proposals").KTDatatable({
+                this.datatable = $("#list_proposals").KTDatatable({
                     data: {
                         type: "remote",
                         source: {
@@ -137,6 +144,9 @@
                                     ).attr("content"),
                                 },
                                 method: 'POST',
+                                params: {
+                                    select_consultant: ''
+                                }
                             },
                         },
                         pageSize: 10,
@@ -209,9 +219,7 @@
                             textAlign: "center",
                             template: function (row, data, index) {
                                 return (
-                                    '<span class="text-dark">' +
-                                    row.name +
-                                    "</span>"
+                                    '<span class="badge badge-light-success f-14 fw-bold">CERRADA</span>'
                                 );
                             },
                         },
@@ -221,11 +229,16 @@
                             sortable: !1,
                             textAlign: "center",
                             template: function (row, data, index) {
-                                return (
-                                    '<span class="text-gray font-weight-bold">' +
+                                var html = '';
+                                if(row.english_name == undefined){
+                                    html = '<span class="text-gray font-weight-bold">--</span>';
+
+                                }else{
+                                    html = '<span class="text-gray font-weight-bold">' +
                                     row.english_name +
                                     "</span>"
-                                );
+                                }
+                                return html;
                             },
                         },
                         {
@@ -262,7 +275,7 @@
                             template: function (row, data, index) {
                                 return (
                                     '<span class="text-gray font-weight-bold">' +
-                                    row.english_name +
+                                    row.total_amount +
                                     "</span>"
                                 );
                             },
@@ -275,7 +288,7 @@
                             template: function (row, data, index) {
                                 return (
                                     '<span class="text-gray font-weight-bold">' +
-                                    row.english_name +
+                                    row.sector_name.toUpperCase() +
                                     "</span>"
                                 );
                             },
@@ -300,6 +313,9 @@
                     $("#modal_delete_article").modal("show");           
                 });
             },
+            getConsultantSelect(){
+                this.listProposals(1);
+            }
         },
         computed: {
             ...mapState(["errors", "proposals", "config"]),
@@ -311,7 +327,7 @@
             }
             this.getSectors(params);
             this.getNow();
-            this.listProposals();
+            this.listProposals(0);
         },
         watch: {
             

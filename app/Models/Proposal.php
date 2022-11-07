@@ -31,6 +31,7 @@ class Proposal extends Model
         'show_invoices',
         'show_pvp',
         'sales_possibilities',
+        'id_sector'
     ];
 
     /**
@@ -58,6 +59,7 @@ class Proposal extends Model
         'show_invoices' => 'boolean',
         'show_pvp' => 'boolean',
         'sales_possibilities' => 'string',
+        'id_sector' => 'integer'
     ];
 
     /**
@@ -85,5 +87,6 @@ class Proposal extends Model
         'show_invoices',
         'show_pvp',
         'sales_possibilities',
+        'id_sector'
     ];
 }

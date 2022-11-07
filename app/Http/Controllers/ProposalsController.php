@@ -43,17 +43,42 @@ class ProposalsController extends Controller
             $search = $query['search_users'];
         }
 
-        $array_proposals = Proposal::skip($start)
-                        ->take($skip)
-                        ->get();
+        $array_proposals = Proposal::select('proposals.*', 'sectors.name as sector_name')
+                        ->leftJoin('sectors', 'sectors.id', 'proposals.id_sector')
+                        ->leftJoin('proposals_bills', 'proposals.id', 'proposals_bills.id_proposal')
+                        ->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill');
+
+        if($request->get('select_consultant') != ''){
+            $array_proposals = $array_proposals->where('proposals.id_user', $request->get('select_consultant'));
+        }
+
+        if($request->get('select_sector') != ''){
+            $array_proposals = $array_proposals->where('proposals.id_sector', $request->get('select_sector'));
+        }
+
+        $array_proposals = $array_proposals->groupBy('proposals.id')
+                                            ->skip($start)
+                                            ->take($skip)
+                                            ->get();
 
         foreach($array_proposals as $proposal){
+            //Consultamos el nombre del contacto
             $contact = Contact::find($proposal->id_contact);
             $proposal['name_contact'] = $contact->name.' '.$contact->surnames;
 
+            //Consultamos el numero de la propuesta
             $id_proposal_custom_aux = sprintf('%08d', $proposal->id_proposal_custom);
             $date_aux = explode("-", $proposal->date_proyect);
             $proposal['proposal_custom'] = 'EP'.$date_aux[2].$date_aux[1].'-'.$id_proposal_custom_aux;
+
+            //Consultamos el total 
+            $total = 0;
+            $proposal_bill = ProposalBill::select('bills.amount')->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill')->where('proposals_bills.id_proposal', $proposal->id)->get();
+            foreach($proposal_bill as $bill){
+                $total += $bill->amount;
+            }
+           
+            $proposal['total_amount'] = $total;
         }
 
         $total_proposals = Proposal::count();
@@ -156,6 +181,8 @@ class ProposalsController extends Controller
         $proposal_submission_settings = json_decode($request->get('proposal_submission_settings'));
         //$id_proposal_custom = sprintf('%08d', ($count_proposal + 1));
         $id_proposal_custom = ($count_proposal + 1);
+        $id_sector = $request->get('id_sector');
+
         $proposal = Proposal::create([
             'id_proposal_custom' => $id_proposal_custom,
             'id_user' => Auth::user()->id,
@@ -175,11 +202,11 @@ class ProposalsController extends Controller
             'show_invoices' => $proposal_submission_settings->show_invoices,
             'show_pvp' => $proposal_submission_settings->show_pvp,
             'sales_possibilities' => $proposal_submission_settings->sales_possibilities,
+            'id_sector' => $id_sector
         ]);
 
         //Creamos las relacion de la propuesta con la factura
         foreach($array_bills_aux as $bill){
-            error_log('$proposal->id: '.$proposal->id);
             ProposalBill::create([
                 'id_proposal' => $proposal->id,
                 'id_bill' => $bill->id

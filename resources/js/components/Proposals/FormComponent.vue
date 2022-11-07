@@ -951,8 +951,41 @@ export default {
                 proposal_submission_settings: this.proposal_submission_settings,
                 id_company: this.id_company,
                 bill_obj: this.proposals.bill_obj,
+                id_sector: this.proposals.proposal_obj.products[0].articles[0].sector_obj.id
             }
             this.saveProposal(params);
+        },
+        //Limpiar el data del component
+        clearData(){
+            this.select_company = '';
+            this.select_company_other_values = '';
+            this.name_company = '';
+            this.id_company = 0;
+            this.offer = 0;
+            this.total = 0;
+            this.discount = '0.00';
+            this.fullname = '';
+            this.select_type_proposal = '1';
+            this.value_form1 = [];
+            this.is_show_buttons_bill = false;
+            this.finish_proposal = false;
+            this.generate_proposal = false;
+            this.proposal_submission_settings = {
+                commercial_name: '',
+                language: '1',
+                type_proyect: '1',
+                name_proyect: '',
+                date_proyect: '',
+                objetives: '',
+                proposal: 'Hemos creado una propuesta con diferentes acciones de demostrada eficacia. Es una comunicación 360 grados, de fuerte impacto, de gran repercusión y de calidad, que convencerá a nuestra audiencia de la necesidad de utilizar los productos y servicios de su empresa.\n\nEsta propuesta incluye la inmediatez e impacto directo de las nuevas tecnologías de movilidad, la efectividad del branded content, la utilización selectiva de nuestras bases de datos y el posicionamiento estratégico y de marca de los formatos publicitarios.',
+                actions: 'Acciones Print: Acciones de marketing de contenido para conseguir credibilidad de marca, acciones de publicidad corporativa bien posicionadas para reforzar la relevancia, el posicionamiento estratégico y la diferenciación con la competencia.\n\nAcciones digitales: Acciones de gran impacto, como email marketing, banner y contenidos en web y newsletter, buscando la acción directa sobre la audiencia y la efectividad e inmediatez en el resultado. Además, estas acciones se potenciarán a través de nuestras redes sociales.\n\nAcciones Experiencias: Centradas en el patrocinio de un desayuno y en la participación en un evento de referencia sectorial, buscando la relación directa y personal con el cliente para la obtención de leads.',
+                observations: '',
+                show_discounts: 0,
+                show_inserts: 1,
+                show_invoices: 1,
+                show_pvp: 1,
+                sales_possibilities: '6'
+            }
         }
     },
     mounted() {
@@ -975,14 +1008,12 @@ export default {
     },
     watch: {
             '$store.state.errors.code': function() {
-                if(this.errors.type_error == 'delete_user'){
+                if(this.errors.type_error == 'save_proposal'){
                     if(this.errors.code != ''){
                         if(this.errors.code == 1000){
-                            $("#list_users").KTDatatable("reload");
-                            $("#modal_delete_user").modal("hide");
-                            swal("", "Usuario eliminado correctamente", "success");
-                        }else if(this.errors.code == 1001){
-                            swal("", "El usuario no existe", "warning");
+                            $("#list_proposals").KTDatatable("reload");
+                            this.clearData();
+                            swal("", "Propuesta añadida correctamente", "success");
                         }else{
                             swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
                         }
