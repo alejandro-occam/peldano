@@ -56,6 +56,7 @@ const state = {
             is_change: false,
             array_dates: []
         },
+        proposal_bd_obj: null,
         bill_obj: {
             articles: [],
             array_bills: []
@@ -64,7 +65,9 @@ const state = {
             name: null,
             surname: null
         },
-        num_custom_invoices: 0
+        num_custom_invoices: 0,
+        is_change_get_info: 0,
+        id_company: 0
     },
     errors: {
         code: 0,

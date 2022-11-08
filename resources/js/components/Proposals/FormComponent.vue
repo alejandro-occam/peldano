@@ -13,7 +13,7 @@
         </div>
         <div class="col-12 pl-0 mt-15">
             <h3 class="color-blue" v-if="!this.finish_proposal">Datos del cliente</h3>
-            <div class="my-5 col-12 row" v-if="!this.finish_proposal">
+            <div class="my-5 col-12 row" v-if="!this.finish_proposal && !this.generate_proposal">
                 <div class="input-group px-0 d-flex" v-if="this.select_company == '' && this.select_company_other_values == ''">
                     <div class="w-25">
                         <span class="w-25">Empresa o nombre y apellidos</span>
@@ -130,7 +130,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12 mt-15 pl-0" v-if="proposals.proposal_obj.products[0].product_obj != null && !this.finish_proposal && !this.generate_proposal">
+            <div class="col-12 mt-15 pl-0" v-if="proposals.proposal_obj.products[0].product_obj != null && !this.finish_proposal && !this.generate_proposal && proposals.is_change_get_info == 0">
                 <table width="100%" cellpadding="2" cellspacing="1">
                     <thead class="custom-columns-datatable">
 						<tr>
@@ -193,7 +193,7 @@
                     <button type="submit" class="btn bg-azul color-white px-5 font-weight-bolder ml-4" @click.native="openCustomInvoice()">Crear factura personalizada</button>
                 </div>
             </div>
-            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && is_show_buttons_bill && !this.finish_proposal && !this.generate_proposal">
+            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && this.is_show_buttons_bill && !this.finish_proposal && !this.generate_proposal">
                 <table width="100%" cellpadding="2" cellspacing="1">
                     <thead class="custom-columns-datatable">
 						<tr>
@@ -271,7 +271,7 @@
                     <button @click.native="this.finishProposal()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Finalizar propuesta</button>
                 </div>
             </div>
-            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && is_show_buttons_bill && this.finish_proposal && !this.generate_proposal">
+            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && this.is_show_buttons_bill && this.finish_proposal && !this.generate_proposal">
                 <h3 class="color-blue">Configuración de la presentación de la propuesta</h3>
                 <div class="col-6 pl-0 mt-6">
                     <div class="d-flex input-group mb-5 mt-10" >
@@ -439,37 +439,39 @@
                     <button @click.native="this.generateProposal()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Generar propuesta</button>
                 </div>
             </div>
-            <div id="test" class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && is_show_buttons_bill && this.finish_proposal && this.generate_proposal">
-                <h3 class="color-blue">Propuesta 56539</h3>
+            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && this.is_show_buttons_bill && this.finish_proposal && this.generate_proposal">
+                <h3 v-if="this.is_change_get_info == 0" class="color-blue">Propuesta 56539</h3>
                 <div class="mt-7">
-                    <div class="d-grid my-4">
-                        <span class="f-14 color-blue font-weight-bold">NOMBRE COMERCIAL</span>
-                        <span class="mt-1 text-block">{{ this.proposal_submission_settings.commercial_name }}</span>
-                    </div>
-                    <div class="d-grid my-4" v-if="this.proposal_submission_settings.name_proyect != ''">
-                        <span class="f-14 color-blue font-weight-bold">TÍTULO DEL PROYECTO</span>
-                        <span class="mt-1 text-block">{{ this.proposal_submission_settings.name_proyect }}</span>
-                    </div>
-                    <div class="d-grid my-4">
-                        <span class="f-14 color-blue font-weight-bold">TIPO DE PROYECTO</span>
-                        <span class="mt-1 text-block">{{ this.proposal_submission_settings.type_proyect }}</span>
-                    </div>
-                    <div class="d-grid my-4">
-                        <span class="f-14 color-blue font-weight-bold">FECHA</span>
-                        <span class="mt-1 text-block">{{ this.proposal_submission_settings.date_proyect }}</span>
-                    </div>
-                    <div class="d-grid my-4">
-                        <span class="f-14 color-blue font-weight-bold">OBJETIVOS</span>
-                        <span class="mt-1 text-block">{{ this.proposal_submission_settings.objetives }}</span>
-                    </div>
-                    <div class="d-grid my-4">
-                        <span class="f-14 color-blue font-weight-bold">PROPUESTA</span>
-                        <span class="mt-1 text-block">{{ this.proposal_submission_settings.proposal }}</span>
-                    </div>
-                    <div class="d-grid my-4">
-                        <span class="f-14 color-blue font-weight-bold">ACCIONES</span>
-                        <span class="mt-1 text-block">{{ this.proposal_submission_settings.actions }}</span>
-                    </div>
+                    <template v-if="this.is_change_get_info == 0">
+                        <div class="d-grid my-4">
+                            <span class="f-14 color-blue font-weight-bold">NOMBRE COMERCIAL</span>
+                            <span class="mt-1 text-block">{{ this.proposal_submission_settings.commercial_name }}</span>
+                        </div>
+                        <div class="d-grid my-4" v-if="this.proposal_submission_settings.name_proyect != ''">
+                            <span class="f-14 color-blue font-weight-bold">TÍTULO DEL PROYECTO</span>
+                            <span class="mt-1 text-block">{{ this.proposal_submission_settings.name_proyect }}</span>
+                        </div>
+                        <div class="d-grid my-4">
+                            <span class="f-14 color-blue font-weight-bold">TIPO DE PROYECTO</span>
+                            <span class="mt-1 text-block">{{ this.proposal_submission_settings.type_proyect }}</span>
+                        </div>
+                        <div class="d-grid my-4">
+                            <span class="f-14 color-blue font-weight-bold">FECHA</span>
+                            <span class="mt-1 text-block">{{ this.proposal_submission_settings.date_proyect }}</span>
+                        </div>
+                        <div class="d-grid my-4">
+                            <span class="f-14 color-blue font-weight-bold">OBJETIVOS</span>
+                            <span class="mt-1 text-block">{{ this.proposal_submission_settings.objetives }}</span>
+                        </div>
+                        <div class="d-grid my-4">
+                            <span class="f-14 color-blue font-weight-bold">PROPUESTA</span>
+                            <span class="mt-1 text-block">{{ this.proposal_submission_settings.proposal }}</span>
+                        </div>
+                        <div class="d-grid my-4">
+                            <span class="f-14 color-blue font-weight-bold">ACCIONES</span>
+                            <span class="mt-1 text-block">{{ this.proposal_submission_settings.actions }}</span>
+                        </div>
+                    </template>
                     <div class="d-grid mt-15 mb-4">
                         <table width="100%" cellpadding="2" cellspacing="1">
                             <tbody>
@@ -628,6 +630,7 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Textarea from 'primevue/textarea';
 import Calendar from 'primevue/calendar';
+import { throwStatement } from "@babel/types";
 
 export default {
     name: "FormComponent",
@@ -703,7 +706,8 @@ export default {
                 show_invoices: 1,
                 show_pvp: 1,
                 sales_possibilities: '6'
-            }
+            },
+            is_change_get_info: 0
         };
     },
     computed: {
@@ -1036,7 +1040,33 @@ export default {
             let me = this;
             me.createBills();
         },
-            
+        '$store.state.proposals.array_companies': function() {
+            if(this.proposals.is_change_get_info == 1){
+                this.finish_proposal = true;
+                this.generate_proposal = true;
+                this.is_change_get_info = this.proposals.is_change_get_info;
+                this.proposals.is_change_get_info = 0;
+                this.id_company = this.proposals.id_company;
+                this.select_company = this.id_company;
+                this.getNameCompany(this.select_company);
+                this.is_show_buttons_bill = true;
+                this.proposal_submission_settings.commercial_name = this.proposals.proposal_bd_obj.commercial_name;
+                this.proposal_submission_settings.language = this.proposals.proposal_bd_obj.language;
+                this.proposal_submission_settings.type_proyect = this.proposals.proposal_bd_obj.type_proyect;
+                this.proposal_submission_settings.name_proyect = this.proposals.proposal_bd_obj.name_proyect;
+                this.proposal_submission_settings.date_proyect = this.proposals.proposal_bd_obj.date_proyect;
+                this.proposal_submission_settings.objetives = this.proposals.proposal_bd_obj.objetives;
+                this.proposal_submission_settings.proposal = this.proposals.proposal_bd_obj.proposal;
+                this.proposal_submission_settings.actions = this.proposals.proposal_bd_obj.actions;
+                this.proposal_submission_settings.observations = this.proposals.proposal_bd_obj.observations;
+                this.proposal_submission_settings.show_discounts = this.proposals.proposal_bd_obj.show_discounts;
+                this.proposal_submission_settings.show_inserts = 0;
+                this.proposal_submission_settings.show_invoices = this.proposals.proposal_bd_obj.show_invoices;
+                this.proposal_submission_settings.show_pvp = this.proposals.proposal_bd_obj.show_pvp;
+                this.proposal_submission_settings.sales_possibilities = this.proposals.proposal_bd_obj.sales_possibilities;
+                this.loadFormObj();
+            }
+        },
     },
     updated() {
         if(this.select_company == ''){

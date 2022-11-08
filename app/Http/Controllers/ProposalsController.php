@@ -241,7 +241,12 @@ class ProposalsController extends Controller
     //Mostrar información de una propuesta
     function getInfoProposal($id){
         //Consultamos si existe la propuesta
-        $proposal = Proposal::find($id);
+        $proposal = Proposal::select('proposals.*', 'contacts.name as contact_name', 'contacts.surnames as contact_surnames', 'contacts.email as contact_email', 'contacts.phone as contact_phone', 'contacts.id_company')
+                                ->leftJoin('contacts', 'contacts.id', 'proposals.id_contact')
+                                ->where('proposals.id', $id)
+                                ->with('sector')
+                                ->first();
+
         if(!$proposal){
             $response['code'] = 1001;
             return response()->json($response);
@@ -268,6 +273,7 @@ class ProposalsController extends Controller
                                     ->get();
             
             foreach($array_services_obj as $service){
+                $service['product'] = $service->article->product;
                 $array_services[] = $service;
             }
         }

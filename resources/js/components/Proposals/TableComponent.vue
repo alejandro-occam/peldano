@@ -103,6 +103,19 @@
                 datatable: null
             };
         },
+        computed: {
+            ...mapState(["errors", "proposals", "config"]),
+        },
+        mounted() {
+            this.getUsers();
+            var params = {
+                type: 1
+            }
+            this.getSectors(params);
+            this.getNow();
+            this.listProposals(0);
+        },
+        
         methods: {
             ...mapActions(["getUsers", "getSectors", "getInfoProposal"]),
             ...mapMutations(['changeViewStatusProposals']),
@@ -321,20 +334,5 @@
                 });
             },
         },
-        computed: {
-            ...mapState(["errors", "proposals", "config"]),
-        },
-        mounted() {
-            this.getUsers();
-            var params = {
-                type: 1
-            }
-            this.getSectors(params);
-            this.getNow();
-            this.listProposals(0);
-        },
-        watch: {
-            
-        }
     };
 </script>

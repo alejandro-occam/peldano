@@ -47,4 +47,9 @@ class Article extends Model
         'id_product',
         'is_exempt'
     ];
+
+    public function product()
+    {
+        return $this->belongsTo(Product::class, 'id_product');
+    }
 }

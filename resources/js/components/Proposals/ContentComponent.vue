@@ -41,24 +41,5 @@ export default {
         ...mapMutations(["clearError"]),
         
     },
-    watch: {
-            '$store.state.errors.code': function() {
-                if(this.errors.type_error == 'delete_user'){
-                    if(this.errors.code != ''){
-                        if(this.errors.code == 1000){
-                            $("#list_users").KTDatatable("reload");
-                            $("#modal_delete_user").modal("hide");
-                            swal("", "Usuario eliminado correctamente", "success");
-                        }else if(this.errors.code == 1001){
-                            swal("", "El usuario no existe", "warning");
-                        }else{
-                            swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
-                        }
-                        this.clearError();
-                    }
-                }
-            }
-        }
-    
 };
 </script>

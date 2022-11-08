@@ -89,4 +89,9 @@ class Proposal extends Model
         'sales_possibilities',
         'id_sector'
     ];
+
+    public function sector()
+    {
+        return $this->belongsTo(Sector::class, 'id_sector');
+    }
 }
