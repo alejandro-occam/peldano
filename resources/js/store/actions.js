@@ -500,90 +500,80 @@ const actions = {
                 method: 'get'
             });
 
-            var array_services = response.data.array_services;
-            state.proposals.proposal_obj.products.articles = [];
-            state.proposals.proposal_obj.products.dates_prices_aux = [];
-            var array_dates_aux = [];
-            var array_products = [];
-            var proposal = response.data.proposal
-            array_services.forEach(function callback(service, index, array) {
-                array_dates_aux.push(service.date);
-                /*if(index == 0){
-                    state.proposals.proposal_obj.articles[0]
-                }*/
+            //Rellenar objetos para el store y mostrar la información de las propuestas
+            createObjectsStore({ state }, response);
 
-                if(array_products.length == 0){
-                    var article = {
-                        amount: service.pvp,
-                        article_obj: service.article,
-                        dates: [service.date],
-                        dates_prices: [{
-                            arr_pvp_date: [{
-                                date: service.date,
-                                arr_pvp: [service.pvp]
-                            }],
-                            date: changeFormatDate(service.date)
-                        }],
-                        total: service.pvp,
-                        sector_obj: proposal.sector
-                    }
-                    array_products.push({
-                        id_product: service.article.id_product,
-                        articles: [article],
-                        product_obj: service.product,
-                    });
+        } catch (error) {
+            console.error(error);
+            return error;
+        }
+    }
+}
 
-                }else{
-                    var exist_1 = false;
-                    array_products.forEach(function callback(product, index, array) {
-                        if(product.id_product == service.article.id_product){
-                            exist_1 = true;
-                            var exist_2 = false;
-                            product.articles.forEach(function callback(article, index, array) {
-                                if(article.article_obj.id == service.id_article){
-                                    exist_2 = true;
-                                    article.dates.push(service.date);
-                                    article.total = article.total + service.pvp;
-                                    article.dates_prices.forEach(function callback(date_price, index, array) {
-                                        var exist_3 = false;
-                                        date_price.arr_pvp_date.forEach(function callback(pvp_date, index, array) {
-                                            if(pvp_date.date == service.date){
-                                                pvp_date.arr_pvp.push(service.pvp);
-                                                exist_3 = true;
-                                            }
-                                        });
-                                        if(!exist_3){
-                                            var arr_pvp_date = [{
-                                                date: service.date,
-                                                arr_pvp: [service.pvp]
-                                            }]
-                                            date_price.arr_pvp_date.push(arr_pvp_date);
-                                        }
-                                    });
+//Rellenar objetos para el store y mostrar la información de las propuestas
+function createObjectsStore({ state }, response){
+    var array_services = response.data.array_services;
+    state.proposals.proposal_obj.products.articles = [];
+    state.proposals.proposal_obj.products.dates_prices_aux = [];
+    state.proposals.bill_obj.array_bills = [];
+    var array_dates_aux = [];
+    var array_products = [];
+    var proposal = response.data.proposal
+    array_services.forEach(function callback(service, index, array) {
+        array_dates_aux.push(service.date);
+
+        if(array_products.length == 0){
+            var article = {
+                amount: service.pvp,
+                article_obj: service.article,
+                dates: [service.date],
+                dates_prices: [{
+                    arr_pvp_date: [{
+                        date: service.date,
+                        arr_pvp: [service.pvp]
+                    }],
+                    date: changeFormatDate(service.date)
+                }],
+                total: service.pvp,
+                sector_obj: proposal.sector
+            }
+            array_products.push({
+                id_product: service.article.id_product,
+                articles: [article],
+                product_obj: service.product,
+            });
+
+        }else{
+            var exist_1 = false;
+            array_products.forEach(function callback(product, index, array) {
+                if(product.id_product == service.article.id_product){
+                    exist_1 = true;
+                    var exist_2 = false;
+                    product.articles.forEach(function callback(article, index, array) {
+                        if(article.article_obj.id == service.id_article){
+                            exist_2 = true;
+                            article.dates.push(service.date);
+                            article.total = article.total + service.pvp;
+                            article.dates_prices.forEach(function callback(date_price, index, array) {
+                                var exist_3 = false;
+                                date_price.arr_pvp_date.forEach(function callback(pvp_date, index, array) {
+                                    if(pvp_date.date == service.date){
+                                        pvp_date.arr_pvp.push(service.pvp);
+                                        exist_3 = true;
+                                    }
+                                });
+                                if(!exist_3){
+                                    var arr_pvp_date = [{
+                                        date: service.date,
+                                        arr_pvp: [service.pvp]
+                                    }]
+                                    date_price.arr_pvp_date.push(arr_pvp_date);
                                 }
                             });
-    
-                            if(!exist_2){
-                                var article = {
-                                    amount: service.pvp,
-                                    article_obj: service.article,
-                                    dates: [service.date],
-                                    dates_prices: [{
-                                        arr_pvp_date: [{
-                                            date: service.date,
-                                            arr_pvp: [service.pvp]
-                                        }],
-                                        date: changeFormatDate(service.date)
-                                    }],
-                                    total: service.pvp,
-                                    sector_obj: proposal.sector
-                                }
-                                product.articles.push(article);
-                            }
                         }
                     });
 
-                    if(!exist_1){
+                    if(!exist_2){
                         var article = {
                             amount: service.pvp,
                             article_obj: service.article,
@@ -598,91 +588,115 @@ const actions = {
                             total: service.pvp,
                             sector_obj: proposal.sector
                         }
-                        array_products.push({
-                            id_product: service.article.id_product,
-                            articles: [article],
-                            product_obj: service.product
-                        });
+                        product.articles.push(article);
                     }
                 }
-                
             });
 
-            state.proposals.proposal_obj.products = array_products;
-
-            //Ordenamos las fechas de forma ascendente
-            array_dates_aux = array_dates_aux.sort(function(a,b){
-                var b_aux = Date.parse(new Date(changeFormatDate2(b)));
-                var a_aux = Date.parse(new Date(changeFormatDate2(a)));
-                return a_aux - b_aux;
-            });
-
-            var array_dates = [];
-            //Modificamos el formato de las fechas para las columnas
-            array_dates_aux.map(function(date, key) {
-                var new_date = changeFormatDate(date);
-                if(!array_dates.includes(new_date)){
-                    var date_obj = {
-                        date: new_date,
-                        total: 10
-                    }
-                    array_dates.push(date_obj);
-                    //array_dates.push(new_date);
+            if(!exist_1){
+                var article = {
+                    amount: service.pvp,
+                    article_obj: service.article,
+                    dates: [service.date],
+                    dates_prices: [{
+                        arr_pvp_date: [{
+                            date: service.date,
+                            arr_pvp: [service.pvp]
+                        }],
+                        date: changeFormatDate(service.date)
+                    }],
+                    total: service.pvp,
+                    sector_obj: proposal.sector
                 }
-            });
-
-            //Recogemos datos de la propuesta
-            var proposal = response.data.proposal
-            var proposal_submission_settings = {
-                commercial_name: proposal.commercial_name,
-                language: proposal.language,
-                type_proyect: proposal.type_proyect,
-                name_proyect: proposal.name_proyect,
-                date_proyect: proposal.date_proyect,
-                objetives: proposal.objetives,
-                proposal: proposal.proposal,
-                actions: proposal.actions,
-                observations: proposal.observations,
-                show_discounts: proposal.show_discounts,
-                show_inserts: proposal.show_inserts,
-                show_invoices: proposal.show_invoices,
-                show_pvp: proposal.show_pvp,
-                sales_possibilities: proposal.sales_possibilities,
-                id_proposal_custom: proposal.id_proposal_custom
+                array_products.push({
+                    id_product: service.article.id_product,
+                    articles: [article],
+                    product_obj: service.product
+                });
             }
-            
-            //Recogemos datos de las facturas
-            var array_bills = response.data.proposal_bills;
-            array_bills.map(function(bill, key) {
-                var bill = {  
-                    amount: bill.amount,
-                    article: {
+        }
+        
+    });
 
-                    },
-                    date: bill.date,
-                    internal_observations: bill.internal_observations,
-                    observations: bill.observations,
-                    order_number: bill.num_order,
-                    select_expiration: bill.expiration,
-                    select_way_to_pay: bill.way_to_pay,
+    state.proposals.proposal_obj.products = array_products;
+
+    //Ordenamos las fechas de forma ascendente
+    array_dates_aux = array_dates_aux.sort(function(a,b){
+        var b_aux = Date.parse(new Date(changeFormatDate2(b)));
+        var a_aux = Date.parse(new Date(changeFormatDate2(a)));
+        return a_aux - b_aux;
+    });
+
+    var array_dates = [];
+    //Modificamos el formato de las fechas para las columnas
+    array_dates_aux.map(function(date, key) {
+        var new_date = changeFormatDate(date);
+        var date_obj = {
+            date: new_date,
+            total: 10
+        }
+        if(array_dates.length > 0){
+            var exist = false;
+            array_dates.map(function(date_obj, key) {
+                if(changeFormatDate(date) == date_obj.date){
+                    exist = true;
                 }
-                state.proposals.bill_obj.array_bills.push(bill);
             });
 
-            //Guardamos datos
-            state.proposals.proposal_bd_obj = proposal_submission_settings;
-            state.proposals.proposal_obj.array_dates = array_dates;
-            state.proposals.status_view = 2;
-            state.errors.type_error = 'get_info_proposal';
-            state.errors.code = response.data.code;
-            state.proposals.is_change_get_info = 1;
-            state.proposals.id_company = response.data.proposal.id_company;
-
-        } catch (error) {
-            console.error(error);
-            return error;
+            if(!exist){
+                array_dates.push(date_obj);
+            }
+        }else{
+            array_dates.push(date_obj);
         }
+    });
+
+    //Recogemos datos de la propuesta
+    var proposal = response.data.proposal
+    var proposal_submission_settings = {
+        commercial_name: proposal.commercial_name,
+        language: proposal.language,
+        type_proyect: proposal.type_proyect,
+        name_proyect: proposal.name_proyect,
+        date_proyect: proposal.date_proyect,
+        objetives: proposal.objetives,
+        proposal: proposal.proposal,
+        actions: proposal.actions,
+        observations: proposal.observations,
+        show_discounts: proposal.show_discounts,
+        show_inserts: proposal.show_inserts,
+        show_invoices: proposal.show_invoices,
+        show_pvp: proposal.show_pvp,
+        sales_possibilities: proposal.sales_possibilities,
+        id_proposal_custom: proposal.id_proposal_custom
     }
+    
+    //Recogemos datos de las facturas
+    var array_bills = response.data.proposal_bills;
+    array_bills.map(function(bill, key) {
+        var bill = {  
+            amount: bill.amount,
+            article: {
+
+            },
+            date: bill.date,
+            internal_observations: bill.internal_observations,
+            observations: bill.observations,
+            order_number: bill.num_order,
+            select_expiration: bill.expiration,
+            select_way_to_pay: bill.way_to_pay,
+        }
+        state.proposals.bill_obj.array_bills.push(bill);
+    });
+
+    //Guardamos datos
+    state.proposals.proposal_bd_obj = proposal_submission_settings;
+    state.proposals.proposal_obj.array_dates = array_dates;
+    state.proposals.status_view = 2;
+    state.errors.type_error = 'get_info_proposal';
+    state.errors.code = response.data.code;
+    state.proposals.is_change_get_info = 1;
+    state.proposals.id_company = response.data.proposal.id_company;
 }
 
 //UTILS
