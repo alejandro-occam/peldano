@@ -142,6 +142,7 @@
                         </tr>
 					</thead>
                     <tbody>
+                        
                         <div class="d-contents" v-for="index in Number(proposals.proposal_obj.products.length)">
                             <tr class="row-product">
                                 <td class="py-2" :colspan="proposals.proposal_obj.array_dates.length + 4">
@@ -157,7 +158,7 @@
                                         <template v-if="proposals.proposal_obj.array_dates[index_arr_date - 1].date == proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].date">
                                             <div class="d-grid px-5">
                                                 <template v-for="index_pvp_date in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date.length)">
-                                                    <input v-model="this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1]" 
+                                                    <input v-if="this.value_form1.length > 0" v-model="this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1]" 
                                                     v-for="index_pvp in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)" 
                                                     @input="changeValuesOffer($event)"
                                                     type="text" class="form-control discount bg-blue-light-white text-align-center not-border my-2" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0"/>
@@ -711,7 +712,7 @@ export default {
         };
     },
     computed: {
-            ...mapState(["errors", "proposals"]),
+        ...mapState(["errors", "proposals"]),
     },
     methods: {
         ...mapMutations(["clearError", "changeViewStatusProposals", "changeProposalObj", "changeValueIsChangeArticle", "generateBill", "clearObjectsProposal"]),
@@ -993,6 +994,7 @@ export default {
         }
     },
     mounted() {
+        console.log('adios');
         let me = this;
         $('#select_company').select2({
             placeholder: "Selecciona una empresa"
@@ -1064,7 +1066,7 @@ export default {
                 this.proposal_submission_settings.show_invoices = this.proposals.proposal_bd_obj.show_invoices;
                 this.proposal_submission_settings.show_pvp = this.proposals.proposal_bd_obj.show_pvp;
                 this.proposal_submission_settings.sales_possibilities = this.proposals.proposal_bd_obj.sales_possibilities;
-                this.loadFormObj();
+                this.loadFormObj();        
             }
         },
     },
