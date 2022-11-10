@@ -240,9 +240,9 @@ class ProposalsController extends Controller
         $data['fullname'] = $fullname;
         $data['sector_name'] = $sector->name;
         $data['proposal_obj'] = json_decode($request->get('proposal_obj'));
-        $pdf = Pdf::loadView('pdf.invoice', $data)->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true]);
+        /*$pdf = Pdf::loadView('pdf.invoice', $data)->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true]);
         $content = $pdf->download()->getOriginalContent();
-        Storage::put('public/bubla.pdf',$content);
+        Storage::put('public/bubla.pdf',$content);*/
         $response['code'] = 1000;
         return response()->json($response);
     }
