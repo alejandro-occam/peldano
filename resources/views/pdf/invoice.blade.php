@@ -255,7 +255,7 @@
                                                                 </td><!--v-if-->
                                                                 <td colspan="2" class="py-2 td-border-left bg-blue-light-white">
                                                                     <div class="f-13 ml-5 font-weight-bolder color-blue">OFERTA:</div>
-                                                                    <div class="ml-5 f-13 text-dark">20.00€</div>
+                                                                    <div class="ml-5 f-13 text-dark">{{ $total_bill }}€</div>
                                                                 </td>
                                                             </tr>
                                                         </tbody>
@@ -275,9 +275,11 @@
                                                                 <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;">
                                                                     <span>N</span>
                                                                 </th>
+                                                                @foreach($proposal_obj.array_dates as $date_obj)
                                                                 <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;">
-                                                                    <span>NOV22</span>
+                                                                    <span>{{ $date_obj->date }}</span>
                                                                 </th>
+                                                                @endforeach
                                                                 <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;">
                                                                     <span>TOTAL</span>
                                                                 </th>

@@ -16,7 +16,8 @@ class Contact extends Model
         'surnames',
         'email',
         'phone',
-        'id_company'
+        'id_company',
+        'id_hubspot'
     ];
 
     /**
@@ -30,6 +31,7 @@ class Contact extends Model
         'email' => 'string',
         'phone' => 'string',
         'id_company' => 'integer',
+        'id_hubspot' => 'string'
     ];
 
     /**
@@ -42,6 +44,7 @@ class Contact extends Model
         'surnames',
         'email',
         'phone',
-        'id_company'
+        'id_company',
+        'id_hubspot'
     ];
 }
