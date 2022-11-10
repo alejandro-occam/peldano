@@ -13,9 +13,10 @@ use App\Models\ServiceBill;
 use App\Models\Proposal;
 use App\Models\ProposalBill;
 use App\Models\Article;
+use App\Models\Sector;
 use DB;
 use Barryvdh\DomPDF\Facade\Pdf;
-
+use Storage;
 class ProposalsController extends Controller
 {
     //Listar propuestas
@@ -222,6 +223,11 @@ class ProposalsController extends Controller
             'id_sector' => $id_sector
         ]);
 
+        $fullname = Auth::user()->name.' '.Auth::user()->surnames;
+
+        //Consultamos el nombre del sector
+        $sector = Sector::find($proposal->id_sector);
+
         //Creamos las relacion de la propuesta con la factura
         foreach($array_bills_aux as $bill){
             ProposalBill::create([
@@ -230,6 +236,13 @@ class ProposalsController extends Controller
             ]);
         }
 
+        $data['proposal'] = $proposal;
+        $data['fullname'] = $fullname;
+        $data['sector_name'] = $sector->name;
+        $data['proposal_obj'] = json_decode($request->get('proposal_obj'));
+        $pdf = Pdf::loadView('pdf.invoice', $data)->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true]);
+        $content = $pdf->download()->getOriginalContent();
+        Storage::put('public/bubla.pdf',$content);
         $response['code'] = 1000;
         return response()->json($response);
     }
@@ -249,7 +262,7 @@ class ProposalsController extends Controller
                                 ->where('proposals.id', $id)
                                 ->with('sector')
                                 ->first();
-                                
+
         $proposal['id_proposal_custom_aux'] = sprintf('%08d', $proposal->id_proposal_custom);
 
         if(!$proposal){

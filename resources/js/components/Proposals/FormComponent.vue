@@ -956,7 +956,8 @@ export default {
                 proposal_submission_settings: this.proposal_submission_settings,
                 id_company: this.id_company,
                 bill_obj: this.proposals.bill_obj,
-                id_sector: this.proposals.proposal_obj.products[0].articles[0].sector_obj.id
+                id_sector: this.proposals.proposal_obj.products[0].articles[0].sector_obj.id,
+                proposal_obj: this.proposals.proposal_obj,
             }
             this.saveProposal(params);
         },

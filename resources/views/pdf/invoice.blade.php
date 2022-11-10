@@ -202,35 +202,26 @@
                             <div data-select2-id="7">
                                 <div class="col-12 pl-0 mt-15">
                                         <div id="test" class="col-12 pl-0 mt-10">
-                                            <h1 class="color-blue">Occam SL</h1>
-                                            <h3 class="color-blue" style="font-weight: normal !important;">03-11-2022</h3>
+                                            <h1 class="color-blue">{!! $proposal->commercial_name !!}</h1>
+                                            <h3 class="color-blue" style="font-weight: normal !important;">{!! $proposal->date_proyect !!}</h3>
                                             <div class="mt-7">
                                                 <div class="d-grid my-4">
                                                     <span class="f-14 color-blue font-weight-bolder">OBJETIVOS</span> <br>
                                                 </div>
                                                 <div class="d-grid">
-                                                    <span class="mt-1 text-block">
-                                                        Somos consultores y expertos en comunicación. Nuestra marca y nuestros servicios son líderes en el sector, y tienen el máximo reconocimiento, prestigio e influencia. Sabemos qué quiere nuestra audiencia, lo que nos permite ofrecer a Occam SL una propuesta de valor única, diferencial y de éxito.
-                                                        Hemos estudiado el potencial y la proyección de Occam SL con el fin de crear una propuesta de comunicación eficaz que permita mejorar sus resultados y objetivos.
-                                                        Las acciones de comunicación para Occam SL que incluimos en esta propuesta crean influencia y potencian la visibilidad y la relevancia de sus productos, impactando positivamente en nuestra audiencia e incitando a la acción.
-                                                    </span>
+                                                    <span class="mt-1 text-block">{!! $proposal->objetives !!}</span>
                                                 </div>
                                                 <div class="d-grid my-4">
                                                     <span class="f-14 color-blue font-weight-bolder">PROPUESTA</span>
                                                 </div>
                                                 <div class="d-grid">
-                                                    <span class="mt-1 text-block">Hemos creado una propuesta con diferentes acciones de demostrada eficacia. Es una comunicación 360 grados, de fuerte impacto, de gran repercusión y de calidad, que convencerá a nuestra audiencia de la necesidad de utilizar los productos y servicios de su empresa.
-                                                        Esta propuesta incluye la inmediatez e impacto directo de las nuevas tecnologías de movilidad, la efectividad del branded content, la utilización selectiva de nuestras bases de datos y el posicionamiento estratégico y de marca de los formatos publicitarios.
-                                                    </span>
+                                                    <span class="mt-1 text-block">{!! $proposal->proposal !!}</span>
                                                 </div>
                                                 <div class="d-grid my-4">
                                                     <span class="f-14 color-blue font-weight-bolder">ACCIONES</span>
                                                 </div>
                                                 <div class="d-grid">
-                                                    <span class="mt-1 text-block">Acciones Print: Acciones de marketing de contenido para conseguir credibilidad de marca, acciones de publicidad corporativa bien posicionadas para reforzar la relevancia, el posicionamiento estratégico y la diferenciación con la competencia.
-                                                        Acciones digitales: Acciones de gran impacto, como email marketing, banner y contenidos en web y newsletter, buscando la acción directa sobre la audiencia y la efectividad e inmediatez en el resultado. Además, estas acciones se potenciarán a través de nuestras redes sociales.
-                                                        Acciones Experiencias: Centradas en el patrocinio de un desayuno y en la participación en un evento de referencia sectorial, buscando la relación directa y personal con el cliente para la obtención de leads.
-                                                    </span>
+                                                    <span class="mt-1 text-block">{!! $proposal->actions !!}</span>
                                                 </div>
                                                 <div class="page-break"></div>
                                                 <div class="d-grid mt-15 mb-4">
@@ -238,29 +229,29 @@
                                                         <tbody>
                                                             <tr class="row-product-offer-proposal">
                                                                 <td colspan="4" class="f-15 py-2">
-                                                                    <span class=" gray-product-offer-proposal"><b class="text-dark ml-5">Cliente: </b>Occam SL</span>
+                                                                    <span class=" gray-product-offer-proposal"><b class="text-dark ml-5">Cliente: </b>{!! $proposal->commercial_name !!}</span>
                                                                 </td>
                                                                 <td colspan="2" class="py-2 td-border-left text-align-center">
-                                                                    <span class="gray-product-offer-proposal font-weight-bolder">PROPUESTA Nº:</span>
-                                                                    <span class="text-dark"> 34233</span>
+                                                                    <span class="gray-product-offer-proposal font-weight-bolder">PROPUESTA Nº: </span>
+                                                                    <span class="text-dark">{!! $proposal->id_proposal_custom !!}</span>
                                                                 </td>
                                                             </tr>
                                                             <tr class="row-product-offer-proposal">
                                                                 <td class="py-2">
                                                                     <div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">FECHA:</div>
-                                                                    <div class="ml-5 f-13 text-dark">03-11-2022</div>
+                                                                    <div class="ml-5 f-13 text-dark">{!! $proposal->date_proyect !!}</div>
                                                                 </td>
                                                                 <td class="py-2 td-border-left">
                                                                     <div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">CONSULTOR:</div>
-                                                                    <div class="ml-5 f-13 text-dark">Alejandro Occam</div>
+                                                                    <div class="ml-5 f-13 text-dark">{!! $fullname !!}</div>
                                                                 </td>
                                                                 <td class="py-2 td-border-left">
                                                                     <div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">SECTOR:</div>
-                                                                    <div class="ml-5 f-13 text-dark">Sector 1</div>
+                                                                    <div class="ml-5 f-13 text-dark">{!! $sector_name !!}</div>
                                                                 </td>
                                                                 <td class="py-2 td-border-left">
                                                                     <div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">ANUNCIANTE:</div>
-                                                                    <div class="ml-5 f-13 text-dark">Occam SL</div>
+                                                                    <div class="ml-5 f-13 text-dark">{!! $proposal->commercial_name !!}</div>
                                                                 </td><!--v-if-->
                                                                 <td colspan="2" class="py-2 td-border-left bg-blue-light-white">
                                                                     <div class="f-13 ml-5 font-weight-bolder color-blue">OFERTA:</div>
