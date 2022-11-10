@@ -12,6 +12,7 @@ use App\Models\Bill;
 use App\Models\ServiceBill;
 use App\Models\Proposal;
 use App\Models\ProposalBill;
+use App\Models\Article;
 use DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 
@@ -179,7 +180,9 @@ class ProposalsController extends Controller
 
             //Creamos la relación entre las facturas y los artículos
             foreach($array_services_aux as $service){
-                if($service->date == $bill->date && $bill_obj->article->article->article_obj->id == $service->id_article){
+                //Consultamos el producto del servicio
+                $article = Article::find($service->id_article);
+                if($service->date == $bill->date && $bill_obj->article->id_product == $article->id_product){
                     ServiceBill::create([
                         'id_service' => $service->id,
                         'id_bill' => $bill->id,
@@ -246,6 +249,8 @@ class ProposalsController extends Controller
                                 ->where('proposals.id', $id)
                                 ->with('sector')
                                 ->first();
+                                
+        $proposal['id_proposal_custom_aux'] = sprintf('%08d', $proposal->id_proposal_custom);
 
         if(!$proposal){
             $response['code'] = 1001;
@@ -277,6 +282,8 @@ class ProposalsController extends Controller
                 $array_services[] = $service;
             }
         }
+
+        error_log('array_services: '.count($array_services));
         
         $response['array_services'] = $array_services;
         $response['proposal'] = $proposal;

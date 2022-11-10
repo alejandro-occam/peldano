@@ -524,7 +524,7 @@ function createObjectsStore({ state }, response){
 
         if(array_products.length == 0){
             var article = {
-                amount: service.pvp,
+                amount: 1,
                 article_obj: service.article,
                 dates: [service.date],
                 dates_prices: [{
@@ -552,30 +552,46 @@ function createObjectsStore({ state }, response){
                     product.articles.forEach(function callback(article, index, array) {
                         if(article.article_obj.id == service.id_article){
                             exist_2 = true;
+                            article.amount += 1;
                             article.dates.push(service.date);
                             article.total = article.total + service.pvp;
+                            var exist_3 = false;
                             article.dates_prices.forEach(function callback(date_price, index, array) {
-                                var exist_3 = false;
-                                date_price.arr_pvp_date.forEach(function callback(pvp_date, index, array) {
-                                    if(pvp_date.date == service.date){
-                                        pvp_date.arr_pvp.push(service.pvp);
-                                        exist_3 = true;
+                                if(date_price.date == changeFormatDate(service.date)){
+                                    exist_3 = true;
+                                    var exist_4 = false;
+                                    date_price.arr_pvp_date.forEach(function callback(pvp_date, index, array) {
+                                        if(pvp_date.date == service.date){
+                                            pvp_date.arr_pvp.push(service.pvp);
+                                            exist_4 = true;
+                                        }
+                                    });
+                                    if(!exist_4){
+                                        var pvp_date = {
+                                            date: service.date,
+                                            arr_pvp: [service.pvp]
+                                        };
+                                        date_price.arr_pvp_date.push(pvp_date);
                                     }
-                                });
-                                if(!exist_3){
-                                    var arr_pvp_date = [{
+                                }
+                                
+                            });
+                            if(!exist_3){
+                                var date_price = {
+                                    date: changeFormatDate(service.date),
+                                    arr_pvp_date: [{
                                         date: service.date,
                                         arr_pvp: [service.pvp]
                                     }]
-                                    date_price.arr_pvp_date.push(arr_pvp_date);
                                 }
-                            });
+                                article.dates_prices.push(date_price);
+                            }
                         }
                     });
 
                     if(!exist_2){
                         var article = {
-                            amount: service.pvp,
+                            amount: 1,
                             article_obj: service.article,
                             dates: [service.date],
                             dates_prices: [{
@@ -595,7 +611,7 @@ function createObjectsStore({ state }, response){
 
             if(!exist_1){
                 var article = {
-                    amount: service.pvp,
+                    amount: 1,
                     article_obj: service.article,
                     dates: [service.date],
                     dates_prices: [{
@@ -617,8 +633,28 @@ function createObjectsStore({ state }, response){
         }
         
     });
-
     state.proposals.proposal_obj.products = array_products;
+
+    //Consultamos los totales
+    var total_amount_global = 0;
+    var total_individual_pvp = 0;
+    var total_global = 0;
+    state.proposals.proposal_obj.products.map(function(product, key) {
+        product.articles.map(function(article, key) {
+            total_individual_pvp += article.article_obj.pvp;
+            article.dates_prices.map(function(date_price, key) {
+                date_price.arr_pvp_date.map(function(pvp_date, key) {
+                    total_amount_global += pvp_date.arr_pvp.length;
+                    pvp_date.arr_pvp.map(function(pvp, key) {
+                        total_global += Number(pvp);
+                    });
+                });
+            });
+        });
+    });
+    state.proposals.proposal_obj.products.total_individual_pvp = total_individual_pvp;
+    state.proposals.proposal_obj.products.total_amount_global = total_amount_global;
+    state.proposals.proposal_obj.products.total_global = total_global;
 
     //Ordenamos las fechas de forma ascendente
     array_dates_aux = array_dates_aux.sort(function(a,b){
@@ -631,24 +667,33 @@ function createObjectsStore({ state }, response){
     //Modificamos el formato de las fechas para las columnas
     array_dates_aux.map(function(date, key) {
         var new_date = changeFormatDate(date);
-        var date_obj = {
-            date: new_date,
-            total: 10
+        if(!array_dates.includes(new_date)){
+            array_dates.push(new_date);
         }
-        if(array_dates.length > 0){
-            var exist = false;
-            array_dates.map(function(date_obj, key) {
-                if(changeFormatDate(date) == date_obj.date){
-                    exist = true;
-                }
-            });
+    });
 
-            if(!exist){
-                array_dates.push(date_obj);
-            }
-        }else{
-            array_dates.push(date_obj);
+    //Cargamos en el array de fechas para las columnas los totales de cada mes
+    var array_dates_prices = [];
+    array_dates.map(function(date, key) {
+        var total_date = 0;
+        state.proposals.proposal_obj.products.map(function(articles_obj, key) {
+            articles_obj.articles.map(function(article_finish, key) {
+                article_finish.dates_prices.map(function(date_aux, key) {
+                    if(date_aux.date == date){
+                        date_aux.arr_pvp_date.map(function(pvp_date, key) {
+                            pvp_date.arr_pvp.map(function(pvp, key) {
+                                total_date += pvp;
+                            });
+                        });
+                    }
+                });
+            });
+        });
+        var date_obj = {
+            date: date,
+            total: total_date
         }
+        array_dates_prices.push(date_obj);
     });
 
     //Recogemos datos de la propuesta
@@ -668,12 +713,15 @@ function createObjectsStore({ state }, response){
         show_invoices: proposal.show_invoices,
         show_pvp: proposal.show_pvp,
         sales_possibilities: proposal.sales_possibilities,
-        id_proposal_custom: proposal.id_proposal_custom
+        id_proposal_custom: proposal.id_proposal_custom,
+        id_proposal_custom_aux: proposal.id_proposal_custom_aux
     }
     
     //Recogemos datos de las facturas
     var array_bills = response.data.proposal_bills;
+    var total_bill = 0;
     array_bills.map(function(bill, key) {
+        total_bill += bill.amount;
         var bill = {  
             amount: bill.amount,
             article: {
@@ -689,9 +737,12 @@ function createObjectsStore({ state }, response){
         state.proposals.bill_obj.array_bills.push(bill);
     });
 
+    state.proposals.bill_obj.total_bill = total_bill;
+
     //Guardamos datos
     state.proposals.proposal_bd_obj = proposal_submission_settings;
-    state.proposals.proposal_obj.array_dates = array_dates;
+    //state.proposals.proposal_obj.array_dates = array_dates;
+    state.proposals.proposal_obj.array_dates = array_dates_prices;
     state.proposals.status_view = 2;
     state.errors.type_error = 'get_info_proposal';
     state.errors.code = response.data.code;

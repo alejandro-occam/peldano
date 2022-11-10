@@ -441,7 +441,7 @@
                 </div>
             </div>
             <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && this.is_show_buttons_bill && this.finish_proposal && this.generate_proposal">
-                <h3 v-if="this.is_change_get_info == 0" class="color-blue">Propuesta 56539</h3>
+                <h3 v-if="this.is_change_get_info == 0" class="color-blue"></h3>
                 <div class="mt-7">
                     <template v-if="this.is_change_get_info == 0">
                         <div class="d-grid my-4">
@@ -483,7 +483,7 @@
                                     <template v-else>
                                         <td colspan="4" class="f-15 py-2"><span class="ml-5 gray-product-offer-proposal font-weight-bold"><b class="text-dark">Cliente: </b>{{ this.name_company }}</span></td>
                                     </template>
-                                    <td colspan="2" class="py-2 td-border-left text-align-center"><span class="gray-product-offer-proposal font-weight-bolder">PROPUESTA Nº:</span><span class="text-dark"> 34233</span></td>
+                                    <td colspan="2" class="py-2 td-border-left text-align-center"><span v-if="proposals.proposal_bd_obj != null" class="gray-product-offer-proposal font-weight-bolder">PROPUESTA Nº: </span><span v-if="proposals.proposal_bd_obj != null" class="text-dark"> {{ proposals.proposal_bd_obj.id_proposal_custom_aux }}</span></td>
                                 </tr>
                                 <tr class="row-product-offer-proposal">
                                     <td class="py-2"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">FECHA:</div><div class="ml-5 f-13 text-dark">{{ this.$utils.getNow() }}</div></td>
@@ -1066,9 +1066,10 @@ export default {
                 this.proposal_submission_settings.show_invoices = this.proposals.proposal_bd_obj.show_invoices;
                 this.proposal_submission_settings.show_pvp = this.proposals.proposal_bd_obj.show_pvp;
                 this.proposal_submission_settings.sales_possibilities = this.proposals.proposal_bd_obj.sales_possibilities;
+                this.offer = this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.bill_obj.total_bill));
                 this.loadFormObj();        
             }
-        },
+        },  
     },
     updated() {
         if(this.select_company == ''){
