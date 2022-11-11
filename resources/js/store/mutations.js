@@ -282,9 +282,9 @@ const mutations = {
                 });
             });
         });
-        state.proposals.proposal_obj.products.total_global = total_global;
-        state.proposals.proposal_obj.products.total_amount_global = total_amount_global;
-        state.proposals.proposal_obj.products.total_individual_pvp = total_individual_pvp;
+        state.proposals.proposal_obj.total_global = total_global;
+        state.proposals.proposal_obj.total_amount_global = total_amount_global;
+        state.proposals.proposal_obj.total_individual_pvp = total_individual_pvp;
 
 
         //Cargamos en el array de fechas para las columnas los totales de cada mes
@@ -371,9 +371,9 @@ const mutations = {
                 });
             });
         });
-        state.proposals.proposal_obj.products.total_global = total_global;
-        state.proposals.proposal_obj.products.total_amount_global = total_amount_global;
-        state.proposals.proposal_obj.products.total_individual_pvp = total_individual_pvp;
+        state.proposals.proposal_obj.total_global = total_global;
+        state.proposals.proposal_obj.total_amount_global = total_amount_global;
+        state.proposals.proposal_obj.total_individual_pvp = total_individual_pvp;
 
 
         //Cargamos en el array de fechas para las columnas los totales de cada mes
@@ -611,9 +611,9 @@ const mutations = {
         state.proposals.proposal_obj.products[0].product_obj = null;
         state.proposals.proposal_obj.products[0].articles = [];
         state.proposals.proposal_obj.products[0].articles_aux = [];
-        state.proposals.proposal_obj.products[0].total_global = 0;
-        state.proposals.proposal_obj.products[0].total_amount_global = 0;
-        state.proposals.proposal_obj.products[0].total_individual_pvp = 0;
+        state.proposals.proposal_obj.total_global = 0;
+        state.proposals.proposal_obj.total_amount_global = 0;
+        state.proposals.proposal_obj.total_individual_pvp = 0;
         state.proposals.proposal_obj.is_change = false;
         state.proposals.proposal_obj.array_dates = [];
         state.proposals.bill_obj.articles = [];

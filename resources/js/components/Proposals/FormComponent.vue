@@ -121,7 +121,7 @@
                                             <span>TARIFA</span>
                                         </div>
                                         <div class="f-15 color-dark-gray font-weight-bolder px-8 py-2 mt-3">
-                                            <span >{{ this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.proposal_obj.products.total_global)) }}€</span>
+                                            <span >{{ this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.proposal_obj.total_global)) }}€</span>
                                         </div>
                                     </div>
                                 </div>
@@ -172,10 +172,10 @@
                         </div>
                         <tr class="tr-total-datatable">
                             <td class="py-6"><span class="ml-5 font-weight-bolder">TOTAL</span></td>
-                            <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products.total_individual_pvp)) }}€</span></td>
-                            <td class="text-align-center"><span class="font-weight-bolder">{{ proposals.proposal_obj.products.total_amount_global }}</span></td>
+                            <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.total_individual_pvp)) }}€</span></td>
+                            <td class="text-align-center"><span class="font-weight-bolder">{{ proposals.proposal_obj.total_amount_global }}</span></td>
                             <td class="text-align-center" v-for="index in Number(proposals.proposal_obj.array_dates.length)"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.array_dates[index - 1].total)) }}€</span></td>
-                            <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products.total_global)) }}€</span></td>
+                            <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.total_global)) }}€</span></td>
                         </tr>
                         
                     </tbody>
@@ -540,10 +540,10 @@
                                 </div>
                                 <tr class="tr-total-datatable">
                                     <td class="py-6"><span class="ml-5 font-weight-bolder">TOTAL</span></td>
-                                    <td class="text-align-center" v-if="this.proposal_submission_settings.show_pvp == 1"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products.total_individual_pvp)) }}€</span></td>
-                                    <td class="text-align-center"><span class="font-weight-bolder">{{ proposals.proposal_obj.products.total_amount_global }}</span></td>
+                                    <td class="text-align-center" v-if="this.proposal_submission_settings.show_pvp == 1"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.total_individual_pvp)) }}€</span></td>
+                                    <td class="text-align-center"><span class="font-weight-bolder">{{ proposals.proposal_obj.total_amount_global }}</span></td>
                                     <td class="text-align-center" v-for="index in Number(proposals.proposal_obj.array_dates.length)"><span class="font-weight-bolder" v-if="this.proposal_submission_settings.show_pvp == 1">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.array_dates[index - 1].total)) }}€</span></td>
-                                    <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products.total_global)) }}€</span></td>
+                                    <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.total_global)) }}€</span></td>
                                 </tr>
                                 
                             </tbody>
@@ -737,11 +737,11 @@ export default {
         changeValueBox(type, status){
             this.is_show_buttons_bill = false;
             if(type == 1){
-                var difference = this.proposals.proposal_obj.products.total_global - this.offer;
-                this.discount = this.$utils.roundAndFix(difference / (this.proposals.proposal_obj.products.total_global) * 100);
+                var difference = this.proposals.proposal_obj.total_global - this.offer;
+                this.discount = this.$utils.roundAndFix(difference / (this.proposals.proposal_obj.total_global) * 100);
 
             }else{
-                var difference = ((100 - this.discount) / 100) * this.proposals.proposal_obj.products.total_global;
+                var difference = ((100 - this.discount) / 100) * this.proposals.proposal_obj.total_global;
                 this.offer = parseFloat(this.$utils.roundAndFix(difference));
 
             }
@@ -958,6 +958,9 @@ export default {
                 bill_obj: this.proposals.bill_obj,
                 id_sector: this.proposals.proposal_obj.products[0].articles[0].sector_obj.id,
                 proposal_obj: this.proposals.proposal_obj,
+                value_form1: this.value_form1,
+                select_way_to_pay_options: this.select_way_to_pay_options,
+                select_expiration_options: this.select_expiration_options
             }
             this.saveProposal(params);
         },
@@ -995,7 +998,6 @@ export default {
         }
     },
     mounted() {
-        console.log('adios');
         let me = this;
         $('#select_company').select2({
             placeholder: "Selecciona una empresa"
@@ -1033,8 +1035,8 @@ export default {
             me.is_show_buttons_bill = false;
             if(me.proposals.proposal_obj.is_change){
                 me.changeValueIsChangeArticle();
-                me.offer = me.$utils.roundAndFix(me.proposals.proposal_obj.products.total_global);
-                me.total = me.$utils.roundAndFix(me.proposals.proposal_obj.products.total_global);
+                me.offer = me.$utils.roundAndFix(me.proposals.proposal_obj.total_global);
+                me.total = me.$utils.roundAndFix(me.proposals.proposal_obj.total_global);
             }
 
             me.loadFormObj();

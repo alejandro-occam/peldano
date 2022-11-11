@@ -188,6 +188,15 @@
             .bg-white{
                 background-color: #fff !important;
             }
+            .p-5{
+                padding: 1rem !important;
+            }
+            .col-2 {
+                -webkit-box-flex: 0;
+                -ms-flex: 0 0 16.6666666667%;
+                flex: 0 0 16.6666666667%;
+                max-width: 16.6666666667%;
+            }
         </style>
     </head>
     <!--end::Head-->
@@ -275,7 +284,7 @@
                                                                 <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;">
                                                                     <span>N</span>
                                                                 </th>
-                                                                @foreach($proposal_obj.array_dates as $date_obj)
+                                                                @foreach($proposal_obj->array_dates as $date_obj)
                                                                 <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;">
                                                                     <span>{{ $date_obj->date }}</span>
                                                                 </th>
@@ -286,45 +295,61 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr class="row-product">
-                                                                <td class="py-2" colspan="5">
-                                                                    <span class="ml-5">Producto 1</span>
-                                                                </td>
-                                                            </tr>
-                                                            <tr class="row-article">
-                                                                <td valign="middle" class="td-border-right py-5">
-                                                                    <span class="ml-5">Articulo 1</span>
-                                                                </td>
-                                                                <td valign="middle" class="td-border-right text-align-center py-5">
-                                                                    <span class="">20,00€</span>
-                                                                </td>
-                                                                <td valign="middle" class="td-border-right text-align-center py-5">
-                                                                    <span class="">1</span>
-                                                                </td>
-                                                                <td valign="middle" class="td-border-right py-5">
-                                                                    <div class="d-grid px-5">
-                                                                        <img class="mx-auto my-2" width="8" src="{{ asset('/media/custom-imgs/circle.png') }}" />
-                                                                    </div>
-                                                                </td>
-                                                                <td valign="middle" class="td-border-right text-align-center py-5">
-                                                                    <span class="">20,00€</span>
-                                                                </td>
-                                                            </tr>
+                                                            @foreach($proposal_obj->products as $key_product => $product)
+                                                                <tr class="row-product">
+                                                                    <td class="py-2" colspan="{{ count($proposal_obj->array_dates) + 4 }}">
+                                                                        <span class="ml-5">{{ $product->product_obj->name }}</span>
+                                                                    </td>
+                                                                </tr>
+                                                                @foreach($product->articles as $key_article => $article)
+                                                                    <tr class="row-article">
+                                                                        <td valign="middle" class="td-border-right py-5">
+                                                                            <span class="ml-5">{{ $article->article_obj->name }}</span>
+                                                                        </td>
+                                                                        <td valign="middle" class="td-border-right text-align-center py-5">
+                                                                            <span class="">{{ $article->article_obj->pvp }}€</span>
+                                                                        </td>
+                                                                        <td valign="middle" class="td-border-right text-align-center py-5">
+                                                                            <span class="">{{ $article->amount }}</span>
+                                                                        </td>
+                                                                        @foreach($proposal_obj->array_dates as $key_array_dates => $date)
+                                                                        <td valign="middle" class="td-border-right py-5">
+                                                                            @foreach($article->dates_prices as $key_dates_prices => $date_price)
+                                                                                @if($date->date == $date_price->date)
+                                                                                    @foreach($date_price->arr_pvp_date as $key_arr_pvp_date => $pvp_date)
+                                                                                        <div class="d-grid px-5">
+                                                                                            @foreach($pvp_date->arr_pvp as $pvp)
+                                                                                                <span class="mx-auto text-align-center">{{ $pvp }}€</span>
+                                                                                            @endforeach                                                                                
+                                                                                        </div>
+                                                                                    @endforeach
+                                                                                @endif
+                                                                            @endforeach
+                                                                        </td>
+                                                                        @endforeach  
+                                                                        <td valign="middle" class="td-border-right text-align-center py-5">
+                                                                            <span class="">{{ $article->total }}€</span>
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+                                                            @endforeach
                                                             <tr class="tr-total-datatable">
                                                                 <td class="py-6">
                                                                     <span class="ml-5 font-weight-bolder">TOTAL</span>
                                                                 </td>
                                                                 <td class="text-align-center">
-                                                                    <span class="font-weight-bolder">20,00€</span>
+                                                                    <span class="font-weight-bolder">{{ $proposal_obj->total_individual_pvp }}€</span>
                                                                 </td>
                                                                 <td class="text-align-center">
-                                                                    <span class="font-weight-bolder">1</span>
+                                                                    <span class="font-weight-bolder">{{ $proposal_obj->total_amount_global }}</span>
                                                                 </td>
+                                                                @foreach($proposal_obj->array_dates as $key_array_dates => $date)
+                                                                    <td class="text-align-center">
+                                                                        <span class="font-weight-bolder">{{ $date->total }}€</span>
+                                                                    </td>
+                                                                @endforeach
                                                                 <td class="text-align-center">
-                                                                    <span class="font-weight-bolder">20,00€</span>
-                                                                </td>
-                                                                <td class="text-align-center">
-                                                                    <span class="font-weight-bolder">20,00€</span>
+                                                                    <span class="font-weight-bolder">{{ $proposal_obj->total_global }}€</span>
                                                                 </td>
                                                             </tr>
                                                         </tbody>
@@ -355,21 +380,55 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr class="row-product text-align-center bg-white">
-                                                            <td class="td-border-right" rowspan="2">1</td>
-                                                        </tr>
-                                                        <tr class="row-product bg-white">
-                                                            <td class="text-align-center td-border-right">03-11-2022</td>
-                                                            <td class="text-align-center py-4 px-5 td-border-right" width="20%">Recibo bancario</td>
-                                                            <td class="text-align-center py-4 px-5 td-border-right">15 días</td>
-                                                            <td class="text-align-center">20.00</td>
-                                                        </tr>
+                                                        @foreach($array_bills as $key_bill => $bill)
+                                                            <tr class="row-product text-align-center bg-white">
+                                                                <td class="td-border-right" rowspan="{{ $bill->rows }}">{{ $key_bill + 1 }}</td>
+                                                            </tr>
+                                                            <tr class="row-product bg-white">
+                                                                <td class="text-align-center td-border-right">{{ $bill->date }}</td>
+                                                                <td class="text-align-center py-4 px-5 td-border-right" width="20%">
+                                                                    {{ json_decode($select_way_to_pay_options[$bill->select_way_to_pay])->text }}
+                                                                </td>
+                                                                <td class="text-align-center py-4 px-5 td-border-right">
+                                                                    {{ json_decode($select_expiration_options[$bill->select_expiration])->text }}
+                                                                </td>
+                                                                <td class="text-align-center">{{ $bill->amount }}</td>
+                                                            </tr>
+                                                            @if(!empty($bill->observations))
+                                                                <tr class="row-article">
+                                                                    <td class="p-5" colspan="4">
+                                                                        <div class="d-flex">
+                                                                            <span class="my-auto col-2">Observaciones: {{ $bill->observations }}</span>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+                                                            @if(!empty($bill->order_number))
+                                                                <tr class="row-article">
+                                                                    <td class="p-5" colspan="4">
+                                                                        <div class="d-flex">
+                                                                            <span class="my-auto col-2">Núm. pedido: {{ $bill->order_number }}</span>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+                                                            @if(!empty($bill->internal_observations))
+                                                                <tr class="row-article">
+                                                                    <td class="p-5" colspan="4">
+                                                                        <div class="d-flex">
+                                                                            <span class="my-auto col-2">Observaciones Internas: {{ $bill->internal_observations }}</span>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+                                                            
+                                                        @endforeach
                                                         <tr class="tr-total-datatable">
                                                             <td colspan="4" class="py-6">
                                                                 <span class="ml-5 font-weight-bolder">TOTAL</span>
                                                             </td>
                                                             <td class="text-align-center">
-                                                                <span class="font-weight-bolder">20.00€</span>
+                                                                <span class="font-weight-bolder">{{ $bill_obj->total_bill }}€</span>
                                                             </td>
                                                         </tr>
                                                     </tbody>

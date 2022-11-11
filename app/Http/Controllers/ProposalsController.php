@@ -236,14 +236,34 @@ class ProposalsController extends Controller
             ]);
         }
 
+        //Contabilizamos el colspan de plan de pago
+        $bill_obj2 = json_decode($request->get('bill_obj'));
+        foreach($bill_obj2->array_bills as $bill){
+            $rows = 2;
+            if($bill->observations != ''){
+                $rows++;
+            }
+            if($bill->order_number != ''){
+                $rows++;
+            }
+            if($bill->internal_observations != ''){
+                $rows++;
+            }
+            $bill->rows = $rows;
+        }
+        
         $data['proposal'] = $proposal;
         $data['fullname'] = $fullname;
         $data['sector_name'] = $sector->name;
         $data['proposal_obj'] = json_decode($request->get('proposal_obj'));
-        //$array_bills_obj = $bill_obj->array_bills;
-        error_log('count: '.print_r($bill_obj, true));
-        $data['array_bills'] = json_decode($bill_obj)->array_bills;
-        $data['total_bill'] = json_decode($bill_obj)->total_bill;
+        $data['bill_obj'] = $bill_obj2;
+        $data['array_bills'] = $bill_obj2->array_bills;
+        $data['total_bill'] = $bill_obj2->total_bill;
+        $data['value_form1'] = $request->get('value_form1');
+        $data['proposal_submission_settings'] = $proposal_submission_settings;
+       
+        $data['select_way_to_pay_options'] = $request->get('select_way_to_pay_options');
+        $data['select_expiration_options'] = $request->get('select_expiration_options');
         $pdf = Pdf::loadView('pdf.invoice', $data)->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true]);
         $content = $pdf->download()->getOriginalContent();
         Storage::put('public/bubla.pdf',$content);
