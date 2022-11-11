@@ -1022,6 +1022,11 @@ export default {
                     if(this.errors.code == 1000){
                         $("#list_proposals").KTDatatable("reload");
                         this.clearData();
+                        if(this.errors.msg != ''){
+                            var url = this.errors.msg;
+                            this.errors.msg = '';
+                            window.open(url);
+                        }
                         swal("", "Propuesta añadida correctamente", "success");
                     }else{
                         swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");

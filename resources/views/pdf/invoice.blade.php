@@ -3,8 +3,6 @@
     <!--begin::Head-->
     <head><base href="../../../">
         <meta charset="utf-8" />
-        <title>Login</title>
-        <meta name="description" content="Login page example" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <!--begin::Page Custom Styles(used by this page)-->
         <link href="{{ url('/css/login.css') }}" rel="stylesheet" type="text/css" />
@@ -211,6 +209,8 @@
                             <div data-select2-id="7">
                                 <div class="col-12 pl-0 mt-15">
                                         <div id="test" class="col-12 pl-0 mt-10">
+                                            <img src="{{public_path('logo.jpg')}}"/>
+                                            <div class="page-break"></div>
                                             <h1 class="color-blue">{!! $proposal->commercial_name !!}</h1>
                                             <h3 class="color-blue" style="font-weight: normal !important;">{!! $proposal->date_proyect !!}</h3>
                                             <div class="mt-7">

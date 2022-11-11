@@ -252,6 +252,7 @@ class ProposalsController extends Controller
             $bill->rows = $rows;
         }
         
+        //Preparamos los datos a pasar al pdf
         $data['proposal'] = $proposal;
         $data['fullname'] = $fullname;
         $data['sector_name'] = $sector->name;
@@ -261,14 +262,21 @@ class ProposalsController extends Controller
         $data['total_bill'] = $bill_obj2->total_bill;
         $data['value_form1'] = $request->get('value_form1');
         $data['proposal_submission_settings'] = $proposal_submission_settings;
-       
         $data['select_way_to_pay_options'] = $request->get('select_way_to_pay_options');
         $data['select_expiration_options'] = $request->get('select_expiration_options');
+
+        //Generamos el pdf
         $pdf = Pdf::loadView('pdf.invoice', $data)->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true]);
         $content = $pdf->download()->getOriginalContent();
-        Storage::put('public/bubla.pdf',$content);
-        /*$response['code'] = 1000;
-        return response()->json($response);*/
+        Storage::put('pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf',$content);
+
+        //Guardamos el fichero
+        $proposal->pdf_file = 'pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf';
+        $proposal->save();
+
+        $response['pdf_file'] = $proposal->pdf_file;
+        $response['code'] = 1000;
+        return response()->json($response);
     }
 
     //Generar pdf de la propuesta

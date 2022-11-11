@@ -104,6 +104,11 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('/download_list_articles_csv/{filter?}', [App\Http\Controllers\ConfigurationController::class, 'downloadListArticlesCsv'])->name('download_list_articles_csv');
     //END CONFIGURATION
 
+    //Ruta para los pdfs
+    Route::get('pdfs_bills/{slug}', [
+        App\Http\Controllers\FileController::class, 'showPdf'
+    ]);
+
     Route::get('/{vue_capture?}', function () {
         return view('layouts.back.admin');
     })->where('vue_capture', '[\/\w\.-]*');

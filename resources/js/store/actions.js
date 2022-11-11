@@ -484,6 +484,7 @@ const actions = {
 
             state.errors.type_error = 'save_proposal';
             state.errors.code = response.data.code;
+            state.errors.msg = response.data.pdf_file;
 
         } catch (error) {
             console.error(error);
