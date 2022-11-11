@@ -121,7 +121,7 @@
                                             <span>TARIFA</span>
                                         </div>
                                         <div class="f-15 color-dark-gray font-weight-bolder px-8 py-2 mt-3">
-                                            <span >{{ this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.proposal_obj.total_global)) }}€</span>
+                                            <span >{{ this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.proposal_obj.total_global_normal)) }}€</span>
                                         </div>
                                     </div>
                                 </div>
@@ -737,11 +737,11 @@ export default {
         changeValueBox(type, status){
             this.is_show_buttons_bill = false;
             if(type == 1){
-                var difference = this.proposals.proposal_obj.total_global - this.offer;
-                this.discount = this.$utils.roundAndFix(difference / (this.proposals.proposal_obj.total_global) * 100);
+                var difference = this.proposals.proposal_obj.total_global_normal - this.offer;
+                this.discount = this.$utils.roundAndFix(difference / (this.proposals.proposal_obj.total_global_normal) * 100);
 
             }else{
-                var difference = ((100 - this.discount) / 100) * this.proposals.proposal_obj.total_global;
+                var difference = ((100 - this.discount) / 100) * this.proposals.proposal_obj.total_global_normal;
                 this.offer = parseFloat(this.$utils.roundAndFix(difference));
 
             }
@@ -754,9 +754,18 @@ export default {
                 //Modificamos los valores de los inputs
                 this.rewalkForm1(2, new_value);
             }
+
+            var params = {
+                status: 0,
+                form: this.value_form1
+            }
             
+            if(status != undefined){
+                this.changeProposalObj(params);
+            }
+           
         },
-        rewalkForm1(type){
+        rewalkForm1(type, new_value){
             let me = this;
             var value = 0;
             me.value_form1.map(function(product, key_product) {
@@ -767,8 +776,9 @@ export default {
                                 if(type == 1){
                                     value += 1;
                                 }else{
-                                    pvp_obj = pvp_obj * (1 - (me.discount  /100));
-                                    me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = me.$utils.roundAndFix(pvp_obj);
+                                    //pvp_obj = pvp_obj * (1 - (me.discount  /100));
+                                    //me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = me.$utils.roundAndFix(pvp_obj);
+                                    me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = new_value;
                                 }
                             });
                         });
@@ -795,7 +805,11 @@ export default {
             });
             me.offer = this.$utils.roundAndFix(total);
             this.changeValueBox(1);
-            this.changeProposalObj(me.value_form1);
+            var params = {
+                status: 1,
+                form: me.value_form1
+            }
+            this.changeProposalObj(params);
             me.is_show_buttons_bill = false;
         },
         createBills(){
