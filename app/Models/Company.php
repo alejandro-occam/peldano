@@ -14,7 +14,8 @@ class Company extends Model
     public $fillable = [
         'name',
         'nif',
-        'address'
+        'address',
+        'id_hubspot'
     ];
 
     /**
@@ -26,6 +27,7 @@ class Company extends Model
         'name' => 'string',
         'nif' => 'string',
         'address' => 'string',
+        'id_hubspot' => 'string'
     ];
 
     /**
@@ -36,6 +38,7 @@ class Company extends Model
     public static $rules = [
         'name',
         'nif',
-        'address'
+        'address',
+        'id_hubspot'
     ];
 }

@@ -12,8 +12,8 @@
                 />
         </div>
         <div class="col-12 pl-0 mt-15">
-            <h3 class="color-blue" v-if="!this.finish_proposal && this.is_change_get_info == 0">Datos del cliente</h3>
-            <div class="my-5 col-12 row" v-if="!this.finish_proposal && !this.generate_proposal && this.is_change_get_info == 0">
+            <h3 class="color-blue" v-if="!this.finish_proposal">Datos del cliente</h3>
+            <div class="my-5 col-12 row" v-if="!this.finish_proposal && !this.generate_proposal">
                 <div class="input-group px-0 d-flex" v-if="this.select_company == '' && this.select_company_other_values == ''">
                     <div class="w-25">
                         <span class="w-25">Empresa o nombre y apellidos</span>
@@ -38,13 +38,13 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-15" v-if="(this.select_company != '' || this.select_company_other_values != '') && !this.finish_proposal && !this.generate_proposal && this.is_change_get_info == 0">
+            <div class="mt-15" v-if="(this.select_company != '' || this.select_company_other_values != '') && !this.finish_proposal && !this.generate_proposal">
                 <button type="button" class="btn bg-azul color-white px-5 font-weight-bolder" @click="this.openFormArticle()">
                     <img class="mr-2" width="24" height="24" src="/media/custom-imgs/icono_btn_annadir_articulo_blanco.svg" />
                     Añadir artículo
                 </button>
             </div>
-            <div class="mb-5 mt-15 col-12 row" v-if="proposals.proposal_obj.products[0].product_obj != null && !this.generate_proposal && this.is_change_get_info == 0">
+            <div class="mb-5 mt-15 col-12 row" v-if="proposals.proposal_obj.products[0].product_obj != null && !this.generate_proposal">
                 <div>
                     <img class="mr-2" width="150" height="150" src="/media/custom-imgs/icono_ficha_ordenes.svg" />
                 </div>
@@ -121,7 +121,7 @@
                                             <span>TARIFA</span>
                                         </div>
                                         <div class="f-15 color-dark-gray font-weight-bolder px-8 py-2 mt-3">
-                                            <span >{{ this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.proposal_obj.products.total_global)) }}€</span>
+                                            <span >{{ this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.proposal_obj.total_global_normal)) }}€</span>
                                         </div>
                                     </div>
                                 </div>
@@ -130,7 +130,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12 mt-15 pl-0" v-if="proposals.proposal_obj.products[0].product_obj != null && !this.finish_proposal && !this.generate_proposal && this.is_change_get_info == 0">
+            <div class="col-12 mt-15 pl-0" v-if="proposals.proposal_obj.products[0].product_obj != null && !this.finish_proposal && !this.generate_proposal">
                 <table width="100%" cellpadding="2" cellspacing="1">
                     <thead class="custom-columns-datatable">
 						<tr>
@@ -142,6 +142,7 @@
                         </tr>
 					</thead>
                     <tbody>
+                        
                         <div class="d-contents" v-for="index in Number(proposals.proposal_obj.products.length)">
                             <tr class="row-product">
                                 <td class="py-2" :colspan="proposals.proposal_obj.array_dates.length + 4">
@@ -157,7 +158,7 @@
                                         <template v-if="proposals.proposal_obj.array_dates[index_arr_date - 1].date == proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].date">
                                             <div class="d-grid px-5">
                                                 <template v-for="index_pvp_date in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date.length)">
-                                                    <input v-model="this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1]" 
+                                                    <input v-if="this.value_form1.length > 0" v-model="this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1]" 
                                                     v-for="index_pvp in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)" 
                                                     @input="changeValuesOffer($event)"
                                                     type="text" class="form-control discount bg-blue-light-white text-align-center not-border my-2" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0"/>
@@ -171,16 +172,16 @@
                         </div>
                         <tr class="tr-total-datatable">
                             <td class="py-6"><span class="ml-5 font-weight-bolder">TOTAL</span></td>
-                            <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products.total_individual_pvp)) }}€</span></td>
-                            <td class="text-align-center"><span class="font-weight-bolder">{{ proposals.proposal_obj.products.total_amount_global }}</span></td>
+                            <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.total_individual_pvp)) }}€</span></td>
+                            <td class="text-align-center"><span class="font-weight-bolder">{{ proposals.proposal_obj.total_amount_global }}</span></td>
                             <td class="text-align-center" v-for="index in Number(proposals.proposal_obj.array_dates.length)"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.array_dates[index - 1].total)) }}€</span></td>
-                            <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products.total_global)) }}€</span></td>
+                            <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.total_global)) }}€</span></td>
                         </tr>
                         
                     </tbody>
                 </table>
             </div>
-            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && !this.finish_proposal && !this.generate_proposal && this.is_change_get_info == 0">
+            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && !this.finish_proposal && !this.generate_proposal">
                 <span class="text-dark font-weight-bold mb-2">Tipo de propuesta</span>
                 <select class="form-control bg-gray text-dark select-custom select-filter mt-3 col-2" :name="'select_type_proposal'" :id="'select_type_proposal'" v-model="select_type_proposal" data-style="select-lightgreen">
                     <option value="1" selected>Normal</option>
@@ -193,7 +194,7 @@
                     <button type="submit" class="btn bg-azul color-white px-5 font-weight-bolder ml-4" @click.native="openCustomInvoice()">Crear factura personalizada</button>
                 </div>
             </div>
-            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && this.is_show_buttons_bill && !this.finish_proposal && !this.generate_proposal && this.is_change_get_info == 0">
+            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && this.is_show_buttons_bill && !this.finish_proposal && !this.generate_proposal">
                 <table width="100%" cellpadding="2" cellspacing="1">
                     <thead class="custom-columns-datatable">
 						<tr>
@@ -271,7 +272,7 @@
                     <button @click.native="this.finishProposal()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Finalizar propuesta</button>
                 </div>
             </div>
-            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && this.is_show_buttons_bill && this.finish_proposal && !this.generate_proposal && this.is_change_get_info == 0">
+            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && this.is_show_buttons_bill && this.finish_proposal && !this.generate_proposal">
                 <h3 class="color-blue">Configuración de la presentación de la propuesta</h3>
                 <div class="col-6 pl-0 mt-6">
                     <div class="d-flex input-group mb-5 mt-10" >
@@ -440,7 +441,7 @@
                 </div>
             </div>
             <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && this.is_show_buttons_bill && this.finish_proposal && this.generate_proposal">
-                <h3 v-if="this.is_change_get_info == 0" class="color-blue">Propuesta 56539</h3>
+                <h3 v-if="this.is_change_get_info == 0" class="color-blue"></h3>
                 <div class="mt-7">
                     <template v-if="this.is_change_get_info == 0">
                         <div class="d-grid my-4">
@@ -482,7 +483,7 @@
                                     <template v-else>
                                         <td colspan="4" class="f-15 py-2"><span class="ml-5 gray-product-offer-proposal font-weight-bold"><b class="text-dark">Cliente: </b>{{ this.name_company }}</span></td>
                                     </template>
-                                    <td colspan="2" class="py-2 td-border-left text-align-center"><span class="gray-product-offer-proposal font-weight-bolder">PROPUESTA Nº:</span><span class="text-dark"> 34233</span></td>
+                                    <td colspan="2" class="py-2 td-border-left text-align-center"><span v-if="proposals.proposal_bd_obj != null" class="gray-product-offer-proposal font-weight-bolder">PROPUESTA Nº: </span><span v-if="proposals.proposal_bd_obj != null" class="text-dark"> {{ proposals.proposal_bd_obj.id_proposal_custom_aux }}</span></td>
                                 </tr>
                                 <tr class="row-product-offer-proposal">
                                     <td class="py-2"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">FECHA:</div><div class="ml-5 f-13 text-dark">{{ this.$utils.getNow() }}</div></td>
@@ -539,10 +540,10 @@
                                 </div>
                                 <tr class="tr-total-datatable">
                                     <td class="py-6"><span class="ml-5 font-weight-bolder">TOTAL</span></td>
-                                    <td class="text-align-center" v-if="this.proposal_submission_settings.show_pvp == 1"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products.total_individual_pvp)) }}€</span></td>
-                                    <td class="text-align-center"><span class="font-weight-bolder">{{ proposals.proposal_obj.products.total_amount_global }}</span></td>
+                                    <td class="text-align-center" v-if="this.proposal_submission_settings.show_pvp == 1"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.total_individual_pvp)) }}€</span></td>
+                                    <td class="text-align-center"><span class="font-weight-bolder">{{ proposals.proposal_obj.total_amount_global }}</span></td>
                                     <td class="text-align-center" v-for="index in Number(proposals.proposal_obj.array_dates.length)"><span class="font-weight-bolder" v-if="this.proposal_submission_settings.show_pvp == 1">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.array_dates[index - 1].total)) }}€</span></td>
-                                    <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products.total_global)) }}€</span></td>
+                                    <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.total_global)) }}€</span></td>
                                 </tr>
                                 
                             </tbody>
@@ -711,7 +712,7 @@ export default {
         };
     },
     computed: {
-            ...mapState(["errors", "proposals"]),
+        ...mapState(["errors", "proposals"]),
     },
     methods: {
         ...mapMutations(["clearError", "changeViewStatusProposals", "changeProposalObj", "changeValueIsChangeArticle", "generateBill", "clearObjectsProposal"]),
@@ -736,11 +737,11 @@ export default {
         changeValueBox(type, status){
             this.is_show_buttons_bill = false;
             if(type == 1){
-                var difference = this.proposals.proposal_obj.products.total_global - this.offer;
-                this.discount = this.$utils.roundAndFix(difference / (this.proposals.proposal_obj.products.total_global) * 100);
+                var difference = this.proposals.proposal_obj.total_global_normal - this.offer;
+                this.discount = this.$utils.roundAndFix(difference / (this.proposals.proposal_obj.total_global_normal) * 100);
 
             }else{
-                var difference = ((100 - this.discount) / 100) * this.proposals.proposal_obj.products.total_global;
+                var difference = ((100 - this.discount) / 100) * this.proposals.proposal_obj.total_global_normal;
                 this.offer = parseFloat(this.$utils.roundAndFix(difference));
 
             }
@@ -753,9 +754,18 @@ export default {
                 //Modificamos los valores de los inputs
                 this.rewalkForm1(2, new_value);
             }
+
+            var params = {
+                status: 0,
+                form: this.value_form1
+            }
             
+            if(status != undefined){
+                this.changeProposalObj(params);
+            }
+           
         },
-        rewalkForm1(type){
+        rewalkForm1(type, new_value){
             let me = this;
             var value = 0;
             me.value_form1.map(function(product, key_product) {
@@ -766,8 +776,9 @@ export default {
                                 if(type == 1){
                                     value += 1;
                                 }else{
-                                    pvp_obj = pvp_obj * (1 - (me.discount  /100));
-                                    me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = me.$utils.roundAndFix(pvp_obj);
+                                    //pvp_obj = pvp_obj * (1 - (me.discount  /100));
+                                    //me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = me.$utils.roundAndFix(pvp_obj);
+                                    me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = new_value;
                                 }
                             });
                         });
@@ -794,7 +805,11 @@ export default {
             });
             me.offer = this.$utils.roundAndFix(total);
             this.changeValueBox(1);
-            this.changeProposalObj(me.value_form1);
+            var params = {
+                status: 1,
+                form: me.value_form1
+            }
+            this.changeProposalObj(params);
             me.is_show_buttons_bill = false;
         },
         createBills(){
@@ -955,7 +970,11 @@ export default {
                 proposal_submission_settings: this.proposal_submission_settings,
                 id_company: this.id_company,
                 bill_obj: this.proposals.bill_obj,
-                id_sector: this.proposals.proposal_obj.products[0].articles[0].sector_obj.id
+                id_sector: this.proposals.proposal_obj.products[0].articles[0].sector_obj.id,
+                proposal_obj: this.proposals.proposal_obj,
+                value_form1: this.value_form1,
+                select_way_to_pay_options: this.select_way_to_pay_options,
+                select_expiration_options: this.select_expiration_options
             }
             this.saveProposal(params);
         },
@@ -1017,6 +1036,11 @@ export default {
                     if(this.errors.code == 1000){
                         $("#list_proposals").KTDatatable("reload");
                         this.clearData();
+                        if(this.errors.msg != ''){
+                            var url = this.errors.msg;
+                            this.errors.msg = '';
+                            window.open(url);
+                        }
                         swal("", "Propuesta añadida correctamente", "success");
                     }else{
                         swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
@@ -1030,8 +1054,8 @@ export default {
             me.is_show_buttons_bill = false;
             if(me.proposals.proposal_obj.is_change){
                 me.changeValueIsChangeArticle();
-                me.offer = me.$utils.roundAndFix(me.proposals.proposal_obj.products.total_global);
-                me.total = me.$utils.roundAndFix(me.proposals.proposal_obj.products.total_global);
+                me.offer = me.$utils.roundAndFix(me.proposals.proposal_obj.total_global);
+                me.total = me.$utils.roundAndFix(me.proposals.proposal_obj.total_global);
             }
 
             me.loadFormObj();
@@ -1064,9 +1088,10 @@ export default {
                 this.proposal_submission_settings.show_invoices = this.proposals.proposal_bd_obj.show_invoices;
                 this.proposal_submission_settings.show_pvp = this.proposals.proposal_bd_obj.show_pvp;
                 this.proposal_submission_settings.sales_possibilities = this.proposals.proposal_bd_obj.sales_possibilities;
-                this.loadFormObj();
+                this.offer = this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.bill_obj.total_bill));
+                this.loadFormObj();        
             }
-        },
+        },  
     },
     updated() {
         if(this.select_company == ''){

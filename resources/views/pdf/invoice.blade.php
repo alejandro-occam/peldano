@@ -3,8 +3,6 @@
     <!--begin::Head-->
     <head><base href="../../../">
         <meta charset="utf-8" />
-        <title>Login</title>
-        <meta name="description" content="Login page example" />
         <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
         <!--begin::Page Custom Styles(used by this page)-->
         <link href="{{ url('/css/login.css') }}" rel="stylesheet" type="text/css" />
@@ -188,6 +186,15 @@
             .bg-white{
                 background-color: #fff !important;
             }
+            .p-5{
+                padding: 1rem !important;
+            }
+            .col-2 {
+                -webkit-box-flex: 0;
+                -ms-flex: 0 0 16.6666666667%;
+                flex: 0 0 16.6666666667%;
+                max-width: 16.6666666667%;
+            }
         </style>
     </head>
     <!--end::Head-->
@@ -202,35 +209,28 @@
                             <div data-select2-id="7">
                                 <div class="col-12 pl-0 mt-15">
                                         <div id="test" class="col-12 pl-0 mt-10">
-                                            <h1 class="color-blue">Occam SL</h1>
-                                            <h3 class="color-blue" style="font-weight: normal !important;">03-11-2022</h3>
+                                            <img src="{{public_path('logo.jpg')}}"/>
+                                            <div class="page-break"></div>
+                                            <h1 class="color-blue">{!! $proposal->commercial_name !!}</h1>
+                                            <h3 class="color-blue" style="font-weight: normal !important;">{!! $proposal->date_proyect !!}</h3>
                                             <div class="mt-7">
                                                 <div class="d-grid my-4">
                                                     <span class="f-14 color-blue font-weight-bolder">OBJETIVOS</span> <br>
                                                 </div>
                                                 <div class="d-grid">
-                                                    <span class="mt-1 text-block">
-                                                        Somos consultores y expertos en comunicación. Nuestra marca y nuestros servicios son líderes en el sector, y tienen el máximo reconocimiento, prestigio e influencia. Sabemos qué quiere nuestra audiencia, lo que nos permite ofrecer a Occam SL una propuesta de valor única, diferencial y de éxito.
-                                                        Hemos estudiado el potencial y la proyección de Occam SL con el fin de crear una propuesta de comunicación eficaz que permita mejorar sus resultados y objetivos.
-                                                        Las acciones de comunicación para Occam SL que incluimos en esta propuesta crean influencia y potencian la visibilidad y la relevancia de sus productos, impactando positivamente en nuestra audiencia e incitando a la acción.
-                                                    </span>
+                                                    <span class="mt-1 text-block">{!! $proposal->objetives !!}</span>
                                                 </div>
                                                 <div class="d-grid my-4">
                                                     <span class="f-14 color-blue font-weight-bolder">PROPUESTA</span>
                                                 </div>
                                                 <div class="d-grid">
-                                                    <span class="mt-1 text-block">Hemos creado una propuesta con diferentes acciones de demostrada eficacia. Es una comunicación 360 grados, de fuerte impacto, de gran repercusión y de calidad, que convencerá a nuestra audiencia de la necesidad de utilizar los productos y servicios de su empresa.
-                                                        Esta propuesta incluye la inmediatez e impacto directo de las nuevas tecnologías de movilidad, la efectividad del branded content, la utilización selectiva de nuestras bases de datos y el posicionamiento estratégico y de marca de los formatos publicitarios.
-                                                    </span>
+                                                    <span class="mt-1 text-block">{!! $proposal->proposal !!}</span>
                                                 </div>
                                                 <div class="d-grid my-4">
                                                     <span class="f-14 color-blue font-weight-bolder">ACCIONES</span>
                                                 </div>
                                                 <div class="d-grid">
-                                                    <span class="mt-1 text-block">Acciones Print: Acciones de marketing de contenido para conseguir credibilidad de marca, acciones de publicidad corporativa bien posicionadas para reforzar la relevancia, el posicionamiento estratégico y la diferenciación con la competencia.
-                                                        Acciones digitales: Acciones de gran impacto, como email marketing, banner y contenidos en web y newsletter, buscando la acción directa sobre la audiencia y la efectividad e inmediatez en el resultado. Además, estas acciones se potenciarán a través de nuestras redes sociales.
-                                                        Acciones Experiencias: Centradas en el patrocinio de un desayuno y en la participación en un evento de referencia sectorial, buscando la relación directa y personal con el cliente para la obtención de leads.
-                                                    </span>
+                                                    <span class="mt-1 text-block">{!! $proposal->actions !!}</span>
                                                 </div>
                                                 <div class="page-break"></div>
                                                 <div class="d-grid mt-15 mb-4">
@@ -238,33 +238,33 @@
                                                         <tbody>
                                                             <tr class="row-product-offer-proposal">
                                                                 <td colspan="4" class="f-15 py-2">
-                                                                    <span class=" gray-product-offer-proposal"><b class="text-dark ml-5">Cliente: </b>Occam SL</span>
+                                                                    <span class=" gray-product-offer-proposal"><b class="text-dark ml-5">Cliente: </b>{!! $proposal->commercial_name !!}</span>
                                                                 </td>
                                                                 <td colspan="2" class="py-2 td-border-left text-align-center">
-                                                                    <span class="gray-product-offer-proposal font-weight-bolder">PROPUESTA Nº:</span>
-                                                                    <span class="text-dark"> 34233</span>
+                                                                    <span class="gray-product-offer-proposal font-weight-bolder">PROPUESTA Nº: </span>
+                                                                    <span class="text-dark">{!! $proposal->id_proposal_custom !!}</span>
                                                                 </td>
                                                             </tr>
                                                             <tr class="row-product-offer-proposal">
                                                                 <td class="py-2">
                                                                     <div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">FECHA:</div>
-                                                                    <div class="ml-5 f-13 text-dark">03-11-2022</div>
+                                                                    <div class="ml-5 f-13 text-dark">{!! $proposal->date_proyect !!}</div>
                                                                 </td>
                                                                 <td class="py-2 td-border-left">
                                                                     <div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">CONSULTOR:</div>
-                                                                    <div class="ml-5 f-13 text-dark">Alejandro Occam</div>
+                                                                    <div class="ml-5 f-13 text-dark">{!! $fullname !!}</div>
                                                                 </td>
                                                                 <td class="py-2 td-border-left">
                                                                     <div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">SECTOR:</div>
-                                                                    <div class="ml-5 f-13 text-dark">Sector 1</div>
+                                                                    <div class="ml-5 f-13 text-dark">{!! $sector_name !!}</div>
                                                                 </td>
                                                                 <td class="py-2 td-border-left">
                                                                     <div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">ANUNCIANTE:</div>
-                                                                    <div class="ml-5 f-13 text-dark">Occam SL</div>
+                                                                    <div class="ml-5 f-13 text-dark">{!! $proposal->commercial_name !!}</div>
                                                                 </td><!--v-if-->
                                                                 <td colspan="2" class="py-2 td-border-left bg-blue-light-white">
                                                                     <div class="f-13 ml-5 font-weight-bolder color-blue">OFERTA:</div>
-                                                                    <div class="ml-5 f-13 text-dark">20.00€</div>
+                                                                    <div class="ml-5 f-13 text-dark">{{ $total_bill }}€</div>
                                                                 </td>
                                                             </tr>
                                                         </tbody>
@@ -284,54 +284,72 @@
                                                                 <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;">
                                                                     <span>N</span>
                                                                 </th>
+                                                                @foreach($proposal_obj->array_dates as $date_obj)
                                                                 <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;">
-                                                                    <span>NOV22</span>
+                                                                    <span>{{ $date_obj->date }}</span>
                                                                 </th>
+                                                                @endforeach
                                                                 <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;">
                                                                     <span>TOTAL</span>
                                                                 </th>
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            <tr class="row-product">
-                                                                <td class="py-2" colspan="5">
-                                                                    <span class="ml-5">Producto 1</span>
-                                                                </td>
-                                                            </tr>
-                                                            <tr class="row-article">
-                                                                <td valign="middle" class="td-border-right py-5">
-                                                                    <span class="ml-5">Articulo 1</span>
-                                                                </td>
-                                                                <td valign="middle" class="td-border-right text-align-center py-5">
-                                                                    <span class="">20,00€</span>
-                                                                </td>
-                                                                <td valign="middle" class="td-border-right text-align-center py-5">
-                                                                    <span class="">1</span>
-                                                                </td>
-                                                                <td valign="middle" class="td-border-right py-5">
-                                                                    <div class="d-grid px-5">
-                                                                        <img class="mx-auto my-2" width="8" src="{{ asset('/media/custom-imgs/circle.png') }}" />
-                                                                    </div>
-                                                                </td>
-                                                                <td valign="middle" class="td-border-right text-align-center py-5">
-                                                                    <span class="">20,00€</span>
-                                                                </td>
-                                                            </tr>
+                                                            @foreach($proposal_obj->products as $key_product => $product)
+                                                                <tr class="row-product">
+                                                                    <td class="py-2" colspan="{{ count($proposal_obj->array_dates) + 4 }}">
+                                                                        <span class="ml-5">{{ $product->product_obj->name }}</span>
+                                                                    </td>
+                                                                </tr>
+                                                                @foreach($product->articles as $key_article => $article)
+                                                                    <tr class="row-article">
+                                                                        <td valign="middle" class="td-border-right py-5">
+                                                                            <span class="ml-5">{{ $article->article_obj->name }}</span>
+                                                                        </td>
+                                                                        <td valign="middle" class="td-border-right text-align-center py-5">
+                                                                            <span class="">{{ $article->article_obj->pvp }}€</span>
+                                                                        </td>
+                                                                        <td valign="middle" class="td-border-right text-align-center py-5">
+                                                                            <span class="">{{ $article->amount }}</span>
+                                                                        </td>
+                                                                        @foreach($proposal_obj->array_dates as $key_array_dates => $date)
+                                                                        <td valign="middle" class="td-border-right py-5">
+                                                                            @foreach($article->dates_prices as $key_dates_prices => $date_price)
+                                                                                @if($date->date == $date_price->date)
+                                                                                    @foreach($date_price->arr_pvp_date as $key_arr_pvp_date => $pvp_date)
+                                                                                        <div class="d-grid px-5">
+                                                                                            @foreach($pvp_date->arr_pvp as $pvp)
+                                                                                                <span class="mx-auto text-align-center">{{ $pvp }}€</span>
+                                                                                            @endforeach                                                                                
+                                                                                        </div>
+                                                                                    @endforeach
+                                                                                @endif
+                                                                            @endforeach
+                                                                        </td>
+                                                                        @endforeach  
+                                                                        <td valign="middle" class="td-border-right text-align-center py-5">
+                                                                            <span class="">{{ $article->total }}€</span>
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+                                                            @endforeach
                                                             <tr class="tr-total-datatable">
                                                                 <td class="py-6">
                                                                     <span class="ml-5 font-weight-bolder">TOTAL</span>
                                                                 </td>
                                                                 <td class="text-align-center">
-                                                                    <span class="font-weight-bolder">20,00€</span>
+                                                                    <span class="font-weight-bolder">{{ $proposal_obj->total_individual_pvp }}€</span>
                                                                 </td>
                                                                 <td class="text-align-center">
-                                                                    <span class="font-weight-bolder">1</span>
+                                                                    <span class="font-weight-bolder">{{ $proposal_obj->total_amount_global }}</span>
                                                                 </td>
+                                                                @foreach($proposal_obj->array_dates as $key_array_dates => $date)
+                                                                    <td class="text-align-center">
+                                                                        <span class="font-weight-bolder">{{ $date->total }}€</span>
+                                                                    </td>
+                                                                @endforeach
                                                                 <td class="text-align-center">
-                                                                    <span class="font-weight-bolder">20,00€</span>
-                                                                </td>
-                                                                <td class="text-align-center">
-                                                                    <span class="font-weight-bolder">20,00€</span>
+                                                                    <span class="font-weight-bolder">{{ $proposal_obj->total_global }}€</span>
                                                                 </td>
                                                             </tr>
                                                         </tbody>
@@ -362,21 +380,55 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        <tr class="row-product text-align-center bg-white">
-                                                            <td class="td-border-right" rowspan="2">1</td>
-                                                        </tr>
-                                                        <tr class="row-product bg-white">
-                                                            <td class="text-align-center td-border-right">03-11-2022</td>
-                                                            <td class="text-align-center py-4 px-5 td-border-right" width="20%">Recibo bancario</td>
-                                                            <td class="text-align-center py-4 px-5 td-border-right">15 días</td>
-                                                            <td class="text-align-center">20.00</td>
-                                                        </tr>
+                                                        @foreach($array_bills as $key_bill => $bill)
+                                                            <tr class="row-product text-align-center bg-white">
+                                                                <td class="td-border-right" rowspan="{{ $bill->rows }}">{{ $key_bill + 1 }}</td>
+                                                            </tr>
+                                                            <tr class="row-product bg-white">
+                                                                <td class="text-align-center td-border-right">{{ $bill->date }}</td>
+                                                                <td class="text-align-center py-4 px-5 td-border-right" width="20%">
+                                                                    {{ json_decode($select_way_to_pay_options[$bill->select_way_to_pay])->text }}
+                                                                </td>
+                                                                <td class="text-align-center py-4 px-5 td-border-right">
+                                                                    {{ json_decode($select_expiration_options[$bill->select_expiration])->text }}
+                                                                </td>
+                                                                <td class="text-align-center">{{ $bill->amount }}</td>
+                                                            </tr>
+                                                            @if(!empty($bill->observations))
+                                                                <tr class="row-article">
+                                                                    <td class="p-5" colspan="4">
+                                                                        <div class="d-flex">
+                                                                            <span class="my-auto col-2">Observaciones: {{ $bill->observations }}</span>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+                                                            @if(!empty($bill->order_number))
+                                                                <tr class="row-article">
+                                                                    <td class="p-5" colspan="4">
+                                                                        <div class="d-flex">
+                                                                            <span class="my-auto col-2">Núm. pedido: {{ $bill->order_number }}</span>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+                                                            @if(!empty($bill->internal_observations))
+                                                                <tr class="row-article">
+                                                                    <td class="p-5" colspan="4">
+                                                                        <div class="d-flex">
+                                                                            <span class="my-auto col-2">Observaciones Internas: {{ $bill->internal_observations }}</span>
+                                                                        </div>
+                                                                    </td>
+                                                                </tr>
+                                                            @endif
+                                                            
+                                                        @endforeach
                                                         <tr class="tr-total-datatable">
                                                             <td colspan="4" class="py-6">
                                                                 <span class="ml-5 font-weight-bolder">TOTAL</span>
                                                             </td>
                                                             <td class="text-align-center">
-                                                                <span class="font-weight-bolder">20.00€</span>
+                                                                <span class="font-weight-bolder">{{ $bill_obj->total_bill }}€</span>
                                                             </td>
                                                         </tr>
                                                     </tbody>

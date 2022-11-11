@@ -265,6 +265,7 @@ const mutations = {
         var total_global = 0;
         var total_amount_global = 0;
         var total_individual_pvp = 0;
+        var total_global_normal = 0;
         state.proposals.proposal_obj.products.map(function(articles_obj, key) {
             articles_obj.articles.map(function(article_finish, key) {
                 total_individual_pvp += article_finish.article_obj.pvp;
@@ -277,14 +278,16 @@ const mutations = {
                         pvp_date.arr_pvp.map(function(pvp, key) {
                             article_finish.total += pvp;
                             total_global += pvp;
+                            total_global_normal += article_finish.article_obj.pvp;
                         });
                     });
                 });
             });
         });
-        state.proposals.proposal_obj.products.total_global = total_global;
-        state.proposals.proposal_obj.products.total_amount_global = total_amount_global;
-        state.proposals.proposal_obj.products.total_individual_pvp = total_individual_pvp;
+        state.proposals.proposal_obj.total_global_normal = total_global_normal;
+        state.proposals.proposal_obj.total_global = total_global;
+        state.proposals.proposal_obj.total_amount_global = total_amount_global;
+        state.proposals.proposal_obj.total_individual_pvp = total_individual_pvp;
 
 
         //Cargamos en el array de fechas para las columnas los totales de cada mes
@@ -323,7 +326,7 @@ const mutations = {
         //Modificamos el objeto con los nuevos datos dados
         state.proposals.proposal_obj.products.map(function(products_obj, key_products_obj) {
             products_obj.articles.map(function(article_obj, key_article_obj) {
-                params.map(function(products, key_products) {
+                params.form.map(function(products, key_products) {
                     products.article.map(function(article, key) {
                         article.dates.map(function(date, key) {
                             if(article_obj.article_obj.id == date.article.id){
@@ -351,6 +354,7 @@ const mutations = {
         });
 
         //Consultamos la cantidad de articulos y su total
+        var total_global_normal = 0;
         var total_global = 0;
         var total_amount_global = 0;
         var total_individual_pvp = 0;
@@ -366,14 +370,16 @@ const mutations = {
                         pvp_date.arr_pvp.map(function(pvp, key) {
                             article_finish.total += Number(pvp);
                             total_global += Number(pvp);
+                            total_global_normal += article_finish.article_obj.pvp;
                         });
                     });
                 });
             });
         });
-        state.proposals.proposal_obj.products.total_global = total_global;
-        state.proposals.proposal_obj.products.total_amount_global = total_amount_global;
-        state.proposals.proposal_obj.products.total_individual_pvp = total_individual_pvp;
+        state.proposals.proposal_obj.total_global_normal = total_global_normal;
+        state.proposals.proposal_obj.total_global = total_global;
+        state.proposals.proposal_obj.total_amount_global = total_amount_global;
+        state.proposals.proposal_obj.total_individual_pvp = total_individual_pvp;
 
 
         //Cargamos en el array de fechas para las columnas los totales de cada mes
@@ -401,7 +407,10 @@ const mutations = {
         });
 
         state.proposals.proposal_obj.array_dates = array_dates_prices;
-        state.proposals.proposal_obj.is_change = true;
+        if(params.status == 1){
+            state.proposals.proposal_obj.is_change = true;
+        }
+        
     },
 
     //Generar propuesta
@@ -512,7 +521,7 @@ const mutations = {
                             amount = 0;
                             date_aux = article_obj.date;
                             amount += Number(article_obj.amount);
-                            total_bill += Number(article_obj.article.article_obj.pvp);
+                            total_bill += Number(article_obj.amount);
                             var bill_month = {
                                 date: date_aux,
                                 amount: amount,
@@ -531,7 +540,7 @@ const mutations = {
                         amount = 0;
                         date_aux =  article_obj.date;
                         amount += Number(article_obj.amount);
-                        total_bill += Number(article_obj.article.article_obj.pvp);
+                        total_bill += Number(article_obj.amount);
                         var bill_month = {
                             date: date_aux,
                             amount: amount,
@@ -611,9 +620,10 @@ const mutations = {
         state.proposals.proposal_obj.products[0].product_obj = null;
         state.proposals.proposal_obj.products[0].articles = [];
         state.proposals.proposal_obj.products[0].articles_aux = [];
-        state.proposals.proposal_obj.products[0].total_global = 0;
-        state.proposals.proposal_obj.products[0].total_amount_global = 0;
-        state.proposals.proposal_obj.products[0].total_individual_pvp = 0;
+        state.proposals.proposal_obj.total_global = 0;
+        state.proposals.proposal_obj.total_global_normal = 0;
+        state.proposals.proposal_obj.total_amount_global = 0;
+        state.proposals.proposal_obj.total_individual_pvp = 0;
         state.proposals.proposal_obj.is_change = false;
         state.proposals.proposal_obj.array_dates = [];
         state.proposals.bill_obj.articles = [];
