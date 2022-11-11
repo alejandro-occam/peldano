@@ -17,6 +17,8 @@ use App\Models\Sector;
 use DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Storage;
+use Illuminate\Support\Facades\Log;
+
 class ProposalsController extends Controller
 {
     //Listar propuestas
@@ -257,6 +259,7 @@ class ProposalsController extends Controller
         $data['fullname'] = $fullname;
         $data['sector_name'] = $sector->name;
         $data['proposal_obj'] = json_decode($request->get('proposal_obj'));
+        Log::Info('proposal_obj: ' . print_r($data['proposal_obj'], true));
         $data['bill_obj'] = $bill_obj2;
         $data['array_bills'] = $bill_obj2->array_bills;
         $data['total_bill'] = $bill_obj2->total_bill;
