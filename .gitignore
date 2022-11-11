@@ -16,3 +16,6 @@ yarn-error.log
 
 package-lock.json
 public/js/admin.js
+resources/js/consts.js
+config/constants.php
+.DS_Store
