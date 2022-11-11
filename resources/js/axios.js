@@ -1,9 +1,8 @@
 import axios from "axios";
+import Consts from "./consts";
 
 const http = axios.create({
-    //baseURL: "http://seahold_front.test",
-    //baseURL: "http://seahold.io/",
-    baseURL: 'https://peldano.occamagenciadigital.com/',
+    baseURL: Consts.defaultApiRoute,
 });
 
 export default http;

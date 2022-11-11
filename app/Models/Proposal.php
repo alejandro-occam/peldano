@@ -31,7 +31,8 @@ class Proposal extends Model
         'show_invoices',
         'show_pvp',
         'sales_possibilities',
-        'id_sector'
+        'id_sector',
+        'pdf_file'
     ];
 
     /**
@@ -59,7 +60,8 @@ class Proposal extends Model
         'show_invoices' => 'boolean',
         'show_pvp' => 'boolean',
         'sales_possibilities' => 'string',
-        'id_sector' => 'integer'
+        'id_sector' => 'integer',
+        'pdf_file' => 'string'
     ];
 
     /**
@@ -87,7 +89,8 @@ class Proposal extends Model
         'show_invoices',
         'show_pvp',
         'sales_possibilities',
-        'id_sector'
+        'id_sector',
+        'pdf_file'
     ];
 
     public function sector()

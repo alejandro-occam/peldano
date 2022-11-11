@@ -12,9 +12,11 @@ use App\Models\Bill;
 use App\Models\ServiceBill;
 use App\Models\Proposal;
 use App\Models\ProposalBill;
+use App\Models\Article;
+use App\Models\Sector;
 use DB;
 use Barryvdh\DomPDF\Facade\Pdf;
-
+use Storage;
 class ProposalsController extends Controller
 {
     //Listar propuestas
@@ -179,7 +181,9 @@ class ProposalsController extends Controller
 
             //Creamos la relación entre las facturas y los artículos
             foreach($array_services_aux as $service){
-                if($service->date == $bill->date && $bill_obj->article->article->article_obj->id == $service->id_article){
+                //Consultamos el producto del servicio
+                $article = Article::find($service->id_article);
+                if($service->date == $bill->date && $bill_obj->article->id_product == $article->id_product){
                     ServiceBill::create([
                         'id_service' => $service->id,
                         'id_bill' => $bill->id,
@@ -219,6 +223,11 @@ class ProposalsController extends Controller
             'id_sector' => $id_sector
         ]);
 
+        $fullname = Auth::user()->name.' '.Auth::user()->surnames;
+
+        //Consultamos el nombre del sector
+        $sector = Sector::find($proposal->id_sector);
+
         //Creamos las relacion de la propuesta con la factura
         foreach($array_bills_aux as $bill){
             ProposalBill::create([
@@ -227,6 +236,45 @@ class ProposalsController extends Controller
             ]);
         }
 
+        //Contabilizamos el colspan de plan de pago
+        $bill_obj2 = json_decode($request->get('bill_obj'));
+        foreach($bill_obj2->array_bills as $bill){
+            $rows = 2;
+            if($bill->observations != ''){
+                $rows++;
+            }
+            if($bill->order_number != ''){
+                $rows++;
+            }
+            if($bill->internal_observations != ''){
+                $rows++;
+            }
+            $bill->rows = $rows;
+        }
+        
+        //Preparamos los datos a pasar al pdf
+        $data['proposal'] = $proposal;
+        $data['fullname'] = $fullname;
+        $data['sector_name'] = $sector->name;
+        $data['proposal_obj'] = json_decode($request->get('proposal_obj'));
+        $data['bill_obj'] = $bill_obj2;
+        $data['array_bills'] = $bill_obj2->array_bills;
+        $data['total_bill'] = $bill_obj2->total_bill;
+        $data['value_form1'] = $request->get('value_form1');
+        $data['proposal_submission_settings'] = $proposal_submission_settings;
+        $data['select_way_to_pay_options'] = $request->get('select_way_to_pay_options');
+        $data['select_expiration_options'] = $request->get('select_expiration_options');
+
+        //Generamos el pdf
+        $pdf = Pdf::loadView('pdf.invoice', $data)->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true]);
+        $content = $pdf->download()->getOriginalContent();
+        Storage::put('pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf',$content);
+
+        //Guardamos el fichero
+        $proposal->pdf_file = 'pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf';
+        $proposal->save();
+
+        $response['pdf_file'] = $proposal->pdf_file;
         $response['code'] = 1000;
         return response()->json($response);
     }
@@ -246,6 +294,8 @@ class ProposalsController extends Controller
                                 ->where('proposals.id', $id)
                                 ->with('sector')
                                 ->first();
+
+        $proposal['id_proposal_custom_aux'] = sprintf('%08d', $proposal->id_proposal_custom);
 
         if(!$proposal){
             $response['code'] = 1001;
@@ -277,6 +327,8 @@ class ProposalsController extends Controller
                 $array_services[] = $service;
             }
         }
+
+        error_log('array_services: '.count($array_services));
         
         $response['array_services'] = $array_services;
         $response['proposal'] = $proposal;
