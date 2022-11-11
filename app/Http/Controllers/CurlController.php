@@ -13,7 +13,7 @@ class CurlController extends Controller
         $ch = @curl_init();
         @curl_setopt($ch, CURLOPT_POST, false);
         @curl_setopt($ch, CURLOPT_URL, $endpoint);
-        @curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'authorization: Bearer pat-eu1-ec2c556e-9678-4b3d-b17d-553415227a01'));
+        @curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json', 'authorization: Bearer '.config('constants.bearer')));
         @curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
         $result = array(
             "response"      => @curl_exec($ch),

@@ -1,8 +1,8 @@
 import axios from "axios";
+import Consts from "./consts";
 
 const http = axios.create({
-    //baseURL: 'https://peldano.occamagenciadigital.com/',
-    baseURL: 'http://127.0.0.1:8000/',
+    baseURL: Consts.defaultApiRoute,
 });
 
 export default http;
