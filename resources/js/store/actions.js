@@ -653,9 +653,9 @@ function createObjectsStore({ state }, response){
             });
         });
     });
-    state.proposals.proposal_obj.products.total_individual_pvp = total_individual_pvp;
-    state.proposals.proposal_obj.products.total_amount_global = total_amount_global;
-    state.proposals.proposal_obj.products.total_global = total_global;
+    state.proposals.proposal_obj.total_individual_pvp = total_individual_pvp;
+    state.proposals.proposal_obj.total_amount_global = total_amount_global;
+    state.proposals.proposal_obj.total_global = total_global;
 
     //Ordenamos las fechas de forma ascendente
     array_dates_aux = array_dates_aux.sort(function(a,b){
