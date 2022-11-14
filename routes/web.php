@@ -39,6 +39,9 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('/generate_pdf_proposal_test', [App\Http\Controllers\ProposalsController::class, 'generatePdfProposalTest'])->name('generate_pdf_proposal_test');
     //Consultar información de una propuesta
     Route::get('/get_info_proposal/{id}', [App\Http\Controllers\ProposalsController::class, 'getInfoProposal'])->name('get_info_proposal');
+    //Actualizar propuesta 
+    Route::post('/update_proposal', [App\Http\Controllers\ProposalsController::class, 'updateProposal'])->name('update_proposal');
+    
     //END PROPOSALS
 
 

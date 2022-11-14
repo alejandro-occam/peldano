@@ -1,8 +1,18 @@
 <template>
     <div>
-        <div class="d-flex">
-            <AddButtonComponent
-                    :columns="'col-1 ml-auto'"
+        <div class="col-12 d-flex flex-wrap justify-content-between">
+            <template v-if="proposals.status_view == 3 && proposals.proposal_bd_obj != null">
+                <AddButtonComponent
+                    :columns="'ml-auto mr-7'"
+                    :text="'Modificar'"
+                    :id="'btn_add_user'"
+                    :src="'/media/custom-imgs/icono_btn_editar.svg'"
+                    :width="16"
+                    :height="16"
+                    @click.native="updateProposalFront()"
+                />
+                <AddButtonComponent
+                    :columns="''"
                     :text="'Volver'"
                     :id="'btn_add_user'"
                     :src="'/media/custom-imgs/flecha_btn_volver.svg'"
@@ -10,6 +20,19 @@
                     :height="16"
                     @click.native="changeViewStatusProposals(1)"
                 />
+            </template>
+            <template v-else>
+                <AddButtonComponent
+                    :columns="'ml-auto'"
+                    :text="'Volver'"
+                    :id="'btn_add_user'"
+                    :src="'/media/custom-imgs/flecha_btn_volver.svg'"
+                    :width="16"
+                    :height="16"
+                    @click.native="changeViewStatusProposals(1)"
+                />
+            </template>
+            
         </div>
         <div class="col-12 pl-0 mt-15">
             <h3 class="color-blue" v-if="!this.finish_proposal">Datos del cliente</h3>
@@ -50,7 +73,7 @@
                 </div>
                 <div>
                     <div class="ml-10">
-                        <!--<div><h2 class="text-dark">Propuesta 56528</h2></div>-->
+                        <div v-if="proposals.status_view == 3 && proposals.proposal_bd_obj != null"><h2 class="text-dark">Propuesta {{ proposals.proposal_bd_obj.id_proposal_custom_aux }}</h2></div>
                         <div class="f-20">
                             <span class="text-dark font-weight-bold">Cliente: <span class="color-dark-gray font-weight-bold">{{ name_company }}</span></span>
                         </div>
@@ -716,7 +739,7 @@ export default {
     },
     methods: {
         ...mapMutations(["clearError", "changeViewStatusProposals", "changeProposalObj", "changeValueIsChangeArticle", "generateBill", "clearObjectsProposal"]),
-        ...mapActions(["getCompanies", "saveProposal"]),
+        ...mapActions(["getCompanies", "saveProposal", "updateProposal"]),
         openFormArticle(){
             $('#modal_form_article_proposals').modal('show');
         },
@@ -976,7 +999,12 @@ export default {
                 select_way_to_pay_options: this.select_way_to_pay_options,
                 select_expiration_options: this.select_expiration_options
             }
-            this.saveProposal(params);
+            if(this.proposals.status_view == 3 && this.proposals.proposal_bd_obj != null){
+                params.id_proposal = this.proposals.proposal_bd_obj.id;
+                this.updateProposal(params);
+            }else{
+                this.saveProposal(params);
+            }
         },
         //Limpiar el data del component
         clearData(){
@@ -1009,9 +1037,15 @@ export default {
             me.proposal_submission_settings.show_invoices = 1;
             me.proposal_submission_settings.show_pvp = 1;
             me.proposal_submission_settings.sales_possibilities = 6;
+        },
+        //Modificar propuesta
+        updateProposalFront(){
+            this.generate_proposal = false;
+            this.finish_proposal = false;
         }
     },
     mounted() {
+        this.clearError();
         let me = this;
         $('#select_company').select2({
             placeholder: "Selecciona una empresa"
@@ -1045,9 +1079,25 @@ export default {
                     }else{
                         swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
                     }
-                    this.clearError();
+                }
+
+            }else if(this.errors.type_error == 'update_proposal'){
+                if(this.errors.code != ''){
+                    if(this.errors.code == 1000){
+                        $("#list_proposals").KTDatatable("reload");
+                        this.clearData();
+                        if(this.errors.msg != ''){
+                            var url = this.errors.msg;
+                            this.errors.msg = '';
+                            window.open(url);
+                        }
+                        swal("", "Propuesta actualizada correctamente", "success");
+                    }else{
+                        swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
+                    }
                 }
             }
+            this.clearError();
         },
         '$store.state.proposals.proposal_obj.is_change': function() {
             let me = this;

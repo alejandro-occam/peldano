@@ -508,7 +508,27 @@ const actions = {
             console.error(error);
             return error;
         }
-    }
+    },
+
+    //Actualizar propuesta
+    async updateProposal({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/update_proposal",
+                params: params,
+                method: 'post'
+            });
+
+            state.errors.type_error = 'update_proposal';
+            state.errors.code = response.data.code;
+            state.errors.msg = response.data.pdf_file;
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
 }
 
 //Rellenar objetos para el store y mostrar la información de las propuestas
@@ -541,6 +561,7 @@ function createObjectsStore({ state }, response){
             array_products.push({
                 id_product: service.article.id_product,
                 articles: [article],
+                articles_aux: [article],
                 product_obj: service.product,
             });
 
@@ -655,6 +676,7 @@ function createObjectsStore({ state }, response){
     });
     state.proposals.proposal_obj.total_individual_pvp = total_individual_pvp;
     state.proposals.proposal_obj.total_amount_global = total_amount_global;
+    state.proposals.proposal_obj.total_global_normal = total_global;
     state.proposals.proposal_obj.total_global = total_global;
 
     //Ordenamos las fechas de forma ascendente
@@ -700,6 +722,7 @@ function createObjectsStore({ state }, response){
     //Recogemos datos de la propuesta
     var proposal = response.data.proposal
     var proposal_submission_settings = {
+        id: proposal.id,
         commercial_name: proposal.commercial_name,
         language: proposal.language,
         type_proyect: proposal.type_proyect,
@@ -719,14 +742,14 @@ function createObjectsStore({ state }, response){
     }
     
     //Recogemos datos de las facturas
-    var array_bills = response.data.proposal_bills;
+    /*var array_bills = response.data.proposal_bills;
     var total_bill = 0;
     array_bills.map(function(bill, key) {
         total_bill += bill.amount;
-        var bill = {  
+        var bill_obj = {  
             amount: bill.amount,
             article: {
-
+                id_product: bill.array_articles[0].id_product
             },
             date: bill.date,
             internal_observations: bill.internal_observations,
@@ -735,16 +758,127 @@ function createObjectsStore({ state }, response){
             select_expiration: bill.expiration,
             select_way_to_pay: bill.way_to_pay,
         }
-        state.proposals.bill_obj.array_bills.push(bill);
+        state.proposals.bill_obj.array_bills.push(bill_obj);
+        state.proposals.bill_obj.articles = bill.array_articles;
     });
 
+    state.proposals.bill_obj.total_bill = total_bill;*/
+    //Guardamos con un nuevo formato para las facturas los articulos
+    var array_articles = [];
+    state.proposals.proposal_obj.products.map(function(products, key) {
+        products.articles.map(function(article_obj, key) {
+            article_obj.dates_prices.map(function(dates_prices_obj, key) {
+                dates_prices_obj.arr_pvp_date.map(function(arr_pvp_date_obj, key) {
+                    arr_pvp_date_obj.arr_pvp.map(function(arr_pvp_obj, key) {
+                        var article_obj_aux = {
+                            date: arr_pvp_date_obj.date,
+                            article: article_obj,
+                            id_product: products.product_obj.id,
+                            amount: arr_pvp_obj
+                        }
+                        array_articles.push(article_obj_aux);
+                    });
+                });
+            });
+        });
+    });
+
+    //Ordenamos los artículos por fecha
+    array_articles = array_articles.sort(function(a,b){
+        var b_aux = Date.parse(new Date(changeFormatDate2(b.date)));
+        var a_aux = Date.parse(new Date(changeFormatDate2(a.date)));
+        return a_aux - b_aux;
+    });
+
+    var date_aux = array_articles[0].date;
+    var amount = 0;
+    var array_finish_bill = [];
+    var last_key = 0;
+    var total_bill = 0;
+    state.proposals.bill_obj.articles = array_articles;
+
+    //Creamos el objeto factura
+    var array_bills = response.data.proposal_bills;
+    array_articles.map(function(article_obj, key) {
+        if(key == 0){
+            amount = Number(article_obj.amount);
+            total_bill += Number(article_obj.amount);
+            var bill_month = {
+                date: date_aux,
+                amount: amount,
+                article: article_obj,
+                select_way_to_pay: array_bills[key].way_to_pay,
+                select_expiration: array_bills[key].expiration,
+                observations: array_bills[key].observations,
+                order_number: array_bills[key].num_order,
+                internal_observations: array_bills[key].internal_observations,
+            }
+
+            array_finish_bill.push(bill_month);
+
+        }else{
+            if(date_aux == article_obj.date){
+                var is_break = false;
+                array_finish_bill.map(function(bill_obj, key) {
+                    if(!is_break){
+                        if(bill_obj.date == article_obj.date){
+                            if(bill_obj.article.id_product == article_obj.id_product){
+                                amount += Number(article_obj.amount);
+                                total_bill += Number(article_obj.amount);
+                                array_finish_bill[last_key].amount = amount;
+                                is_break = true;
+                            }
+                        }
+                    }
+                });
+
+                if(!is_break){
+                    amount = 0;
+                    date_aux = article_obj.date;
+                    amount += Number(article_obj.amount);
+                    total_bill += Number(article_obj.amount);
+                    var bill_month = {
+                        date: date_aux,
+                        amount: amount,
+                        article: article_obj,
+                        select_way_to_pay: array_bills[key].way_to_pay,
+                        select_expiration: array_bills[key].expiration,
+                        observations: array_bills[key].observations,
+                        order_number: array_bills[key].num_order,
+                        internal_observations: array_bills[key].internal_observations,
+                    }
+                    array_finish_bill.push(bill_month);
+                    last_key = (array_finish_bill.length - 1);
+                }
+
+            }else{
+                amount = 0;
+                date_aux =  article_obj.date;
+                amount += Number(article_obj.amount);
+                total_bill += Number(article_obj.amount);
+                var bill_month = {
+                    date: date_aux,
+                    amount: amount,
+                    article: article_obj,
+                    select_way_to_pay: array_bills[key].way_to_pay,
+                    select_expiration: array_bills[key].expiration,
+                    observations: array_bills[key].observations,
+                    order_number: array_bills[key].num_order,
+                    internal_observations: array_bills[key].internal_observations,
+                }
+                array_finish_bill.push(bill_month);
+                last_key = (array_finish_bill.length - 1);
+            }
+        }
+    });
+
+    state.proposals.bill_obj.array_bills = array_finish_bill;
     state.proposals.bill_obj.total_bill = total_bill;
 
     //Guardamos datos
     state.proposals.proposal_bd_obj = proposal_submission_settings;
-    //state.proposals.proposal_obj.array_dates = array_dates;
     state.proposals.proposal_obj.array_dates = array_dates_prices;
-    state.proposals.status_view = 2;
+    state.proposals.status_view = 3;
     state.errors.type_error = 'get_info_proposal';
     state.errors.code = response.data.code;
     state.proposals.is_change_get_info = 1;

@@ -334,5 +334,10 @@
                 });
             },
         },
+        watch: {
+            '$store.state.errors.code': async function() {
+                console.log('hola');
+            }
+        }
     };
 </script>

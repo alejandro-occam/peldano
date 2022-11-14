@@ -11,6 +11,8 @@ const mutations = {
     //Limpiar error usuario
     clearError(state) {
         state.errors.code = 0;
+        state.errors.type_error = '';
+        state.errors.msg = '';
     },
 
     //Control form usuarios
@@ -70,9 +72,12 @@ const mutations = {
         });
 
         //Si existe el producto para nuesto artículo lo añadimos y si no creamos el producto
-        if(exist_product){
+        if(exist_product && state.proposals.proposal_obj.products[exist_product_key].articles_aux != undefined){
             state.proposals.proposal_obj.products[exist_product_key].articles_aux.push(article);
             
+        }else if(exist_product && state.proposals.proposal_obj.products[exist_product_key].articles_aux == undefined){
+            state.proposals.proposal_obj.products[exist_product_key].articles_aux = [article];
+
         }else{
             var product = {
                 product_obj: params.product_obj,
@@ -84,7 +89,12 @@ const mutations = {
         //Guardamos las fechas de nuestro artículo en un array e inicializamos variables
         state.proposals.proposal_obj.products.map(function(articles_obj, key) {
             articles_obj.articles = [];
-            articles_obj.articles_aux.dates_prices_aux = [];
+            if(articles_obj.articles_aux != undefined){
+                articles_obj.articles_aux.dates_prices_aux = [];
+            }else{
+                articles_obj.articles_aux.dates_prices_aux = null;
+            }
+            
             //Guardamos ya formateado las fechas para las columnas de la tabla
             articles_obj.articles_aux.map(function(article, key) {
                 article.dates_prices_aux = [];
