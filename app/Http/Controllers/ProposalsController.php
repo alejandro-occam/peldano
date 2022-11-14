@@ -494,4 +494,39 @@ class ProposalsController extends Controller
         $response['code'] = 1000;
         return response()->json($response);
     }
+
+    //Eliminar propuesta
+    function deleteProposal($id){
+        $proposal = Proposal::find($id);
+        if(!$proposal){
+            $response['code'] = 1001;
+            return response()->json($response);
+        }
+
+        //Eliminamos la propuesta
+        $array_bills = array();
+        $array_proposals_bills = ProposalBill::where('id_proposal', $proposal->id)->get();
+        foreach($array_proposals_bills as $proposal_bill){
+            $array_bills[] = $proposal_bill->id_bill;
+            $proposal_bill->delete();
+        }
+        $array_services = array();
+        foreach($array_bills as $bill){
+            $array_services_bills = ServiceBill::where('id_bill', $bill)->get();
+            foreach($array_services_bills as $service_bill){
+                $array_services[] = $service_bill->id_service;
+                $service_bill->delete();
+            }
+            Bill::find($bill)->delete();
+        }
+        foreach($array_services as $service){
+            Service::find($service)->delete();
+        }
+
+        $proposal->delete();
+
+        $response['code'] = 1000;
+        return response()->json($response);
+
+    }
 }

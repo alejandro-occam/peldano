@@ -529,6 +529,23 @@ const actions = {
             return error;
         }
     },
+
+    //Eliminar propuesta
+    async deleteProposal({ state }, id){
+        try {
+            const response = await http({
+                url: "/admin/delete_proposal/"+id,
+                method: 'get'
+            });
+
+            state.errors.type_error = 'delete_proposal';
+            state.errors.code = response.data.code;
+
+        } catch (error) {
+            console.error(error);
+            return error;
+        }
+    },
 }
 
 //Rellenar objetos para el store y mostrar la información de las propuestas

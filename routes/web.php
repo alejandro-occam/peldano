@@ -41,7 +41,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('/get_info_proposal/{id}', [App\Http\Controllers\ProposalsController::class, 'getInfoProposal'])->name('get_info_proposal');
     //Actualizar propuesta 
     Route::post('/update_proposal', [App\Http\Controllers\ProposalsController::class, 'updateProposal'])->name('update_proposal');
-    
+    //Eliminar propuesta 
+    Route::get('/delete_proposal/{id}', [App\Http\Controllers\ProposalsController::class, 'deleteProposal'])->name('delete_proposal');
     //END PROPOSALS
 
 

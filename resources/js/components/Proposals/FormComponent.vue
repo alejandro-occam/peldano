@@ -4,28 +4,38 @@
             <template v-if="proposals.status_view == 3 && proposals.proposal_bd_obj != null">
                 <AddButtonComponent
                     :columns="'ml-auto mr-7'"
-                    :text="'Modificar'"
-                    :id="'btn_add_user'"
-                    :src="'/media/custom-imgs/icono_btn_editar.svg'"
-                    :width="16"
-                    :height="16"
-                    @click.native="updateProposalFront()"
-                />
-                <AddButtonComponent
-                    :columns="''"
                     :text="'Volver'"
-                    :id="'btn_add_user'"
+                    :id="'btn_return'"
                     :src="'/media/custom-imgs/flecha_btn_volver.svg'"
                     :width="16"
                     :height="16"
                     @click.native="changeViewStatusProposals(1)"
                 />
+                <AddButtonComponent
+                    :columns="'mr-7'"
+                    :text="'Modificar'"
+                    :id="'btn_update_proposal'"
+                    :src="'/media/custom-imgs/icono_btn_editar.svg'"
+                    :width="16"
+                    :height="16"
+                    @click.native="updateProposalFront()"
+                />
+                <DeleteButtonComponent
+                    :columns="''"
+                    :text="'Eliminar'"
+                    :id="'btn_add_user'"
+                    :src="'/media/custom-imgs/icono_btn_borrar.svg'"
+                    :width="16"
+                    :height="16"
+                    @click.native="deleteProposalAction()"
+                />
+                
             </template>
             <template v-else>
                 <AddButtonComponent
                     :columns="'ml-auto'"
                     :text="'Volver'"
-                    :id="'btn_add_user'"
+                    :id="'btn_return'"
                     :src="'/media/custom-imgs/flecha_btn_volver.svg'"
                     :width="16"
                     :height="16"
@@ -648,6 +658,7 @@
 import { mapMutations, mapState, mapActions } from "vuex";
 
 import AddButtonComponent from "../Partials/AddButtonComponent.vue";
+import DeleteButtonComponent from "../Partials/DeleteButtonComponent.vue"
 import FormAddArticleComponent from "./FormAddArticleComponent.vue";
 import ModalCustomInvoiceComponent from "./ModalCustomInvoiceComponent.vue";
 import DataTable from 'primevue/datatable';
@@ -665,7 +676,8 @@ export default {
         Column,
         Textarea,
         Calendar,
-        ModalCustomInvoiceComponent
+        ModalCustomInvoiceComponent,
+        DeleteButtonComponent
     },
     data() {
         return {
@@ -731,7 +743,8 @@ export default {
                 show_pvp: 1,
                 sales_possibilities: '6'
             },
-            is_change_get_info: 0
+            is_change_get_info: 0,
+            is_updating: 0
         };
     },
     computed: {
@@ -739,7 +752,7 @@ export default {
     },
     methods: {
         ...mapMutations(["clearError", "changeViewStatusProposals", "changeProposalObj", "changeValueIsChangeArticle", "generateBill", "clearObjectsProposal"]),
-        ...mapActions(["getCompanies", "saveProposal", "updateProposal"]),
+        ...mapActions(["getCompanies", "saveProposal", "updateProposal", "deleteProposal"]),
         openFormArticle(){
             $('#modal_form_article_proposals').modal('show');
         },
@@ -1042,6 +1055,26 @@ export default {
         updateProposalFront(){
             this.generate_proposal = false;
             this.finish_proposal = false;
+        },
+        //Eliminar propuesta
+        deleteProposalAction(){
+            let me = this;
+            let id_proposal = this.proposals.proposal_bd_obj.id;
+            swal({
+                title: "¿Eliminar propuesta?",
+                text: "¿Está seguro? Esta propuesta se eliminará",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Eliminar",
+                cancelButtonText: "Cancelar",
+                closeOnCancel: true,
+                closeOnConfirm: false
+            }, function(isConfirm) {
+                if (isConfirm) {
+                    me.deleteProposal(id_proposal);
+                }
+            });
         }
     },
     mounted() {
@@ -1069,6 +1102,7 @@ export default {
                 if(this.errors.code != ''){
                     if(this.errors.code == 1000){
                         $("#list_proposals").KTDatatable("reload");
+                        this.proposals.status_view = 1;
                         this.clearData();
                         if(this.errors.msg != ''){
                             var url = this.errors.msg;
@@ -1085,6 +1119,7 @@ export default {
                 if(this.errors.code != ''){
                     if(this.errors.code == 1000){
                         $("#list_proposals").KTDatatable("reload");
+                        this.proposals.status_view = 1;
                         this.clearData();
                         if(this.errors.msg != ''){
                             var url = this.errors.msg;
@@ -1092,6 +1127,22 @@ export default {
                             window.open(url);
                         }
                         swal("", "Propuesta actualizada correctamente", "success");
+                    }else{
+                        swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
+                    }
+                }
+            }else if(this.errors.type_error == 'delete_proposal'){
+                if(this.errors.code != ''){
+                    if(this.errors.code == 1000){
+                        $("#list_proposals").KTDatatable("reload");
+                        this.proposals.status_view = 1;
+                        this.clearData();
+                        if(this.errors.msg != ''){
+                            var url = this.errors.msg;
+                            this.errors.msg = '';
+                            window.open(url);
+                        }
+                        swal("", "Propuesta eliminada correctamente", "success");
                     }else{
                         swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
                     }
