@@ -45,6 +45,10 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('/delete_proposal/{id}', [App\Http\Controllers\ProposalsController::class, 'deleteProposal'])->name('delete_proposal');
     //END PROPOSALS
 
+    //ÓRDENES
+    //Listar órdenes
+    Route::post('/list_orders', [App\Http\Controllers\OrdersController::class, 'listOrders'])->name('list_orders');
+    //END ORDENES
 
     //CONFIGURATION
     //USUARIOS

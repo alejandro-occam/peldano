@@ -9,7 +9,7 @@
                     :src="'/media/custom-imgs/flecha_btn_volver.svg'"
                     :width="16"
                     :height="16"
-                    @click.native="changeViewStatusProposals(1)"
+                    @click.native="returnView()"
                 />
                 <AddButtonComponent
                     :columns="'mr-7'"
@@ -39,7 +39,7 @@
                     :src="'/media/custom-imgs/flecha_btn_volver.svg'"
                     :width="16"
                     :height="16"
-                    @click.native="changeViewStatusProposals(1)"
+                    @click.native="returnView()"
                 />
             </template>
             
@@ -1075,6 +1075,10 @@ export default {
                     me.deleteProposal(id_proposal);
                 }
             });
+        },
+        returnView(){
+            this.changeViewStatusProposals(1);
+            this.clearObjectsProposal();
         }
     },
     mounted() {

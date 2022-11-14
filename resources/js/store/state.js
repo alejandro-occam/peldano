@@ -69,6 +69,9 @@ const state = {
         is_change_get_info: 0,
         id_company: 0
     },
+    orders: {
+        status_view: 1,
+    },
     errors: {
         code: 0,
         type_error: ''

@@ -282,8 +282,12 @@ class ProposalsController extends Controller
     //Generar pdf de la propuesta
     function generatePdfProposalTest(){
         $data = array();
-        $pdf = Pdf::loadView('pdf.invoice', $data)->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true]);
+        //$pdf = Pdf::loadView('pdf.test', $data)->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
+        $data = array();
+        $data['text'] = 'hola';
+        $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pdf.test', $data);
         return $pdf->download('invoice.pdf');
+        //return $pdf->stream('Idea.pdf');
     }
 
     //Mostrar información de una propuesta
@@ -471,6 +475,47 @@ class ProposalsController extends Controller
             }
             $bill->rows = $rows;
         }
+
+        $html_propuesta = '';
+        $proposal_obj = json_decode($request->get('proposal_obj'));
+        foreach($proposal_obj->products as $key_product => $product){
+            $html_propuesta .='<tr class="row-product">
+                                <td class="py-2" colspan="{{ count($proposal_obj->array_dates) + 4 }}">
+                                    <span class="ml-5">{{ $product->product_obj->name }}</span>
+                                </td>
+                            </tr>';
+            foreach($product->articles as $key_article => $article){
+                $html_propuesta .= '<tr class="row-article">
+                                <td valign="middle" class="td-border-right py-5">
+                                    <span class="ml-5">'.$article->article_obj->name.'</span>
+                                    </td>
+                                    <td valign="middle" class="td-border-right text-align-center py-5">
+                                        <span class="">'.$article->article_obj->pvp.'€</span>
+                                        </td>
+                                        <td valign="middle" class="td-border-right text-align-center py-5">
+                                            <span class="">'.$article->amount.'</span>
+                                            </td>';
+                foreach($proposal_obj->array_dates as $key_array_dates => $date){
+                    $html_propuesta.='<td valign="middle" class="td-border-right py-5">';
+                    foreach($article->dates_prices as $key_dates_prices => $date_price){
+                        if($date->date == $date_price->date){
+                            foreach($date_price->arr_pvp_date as $key_arr_pvp_date => $pvp_date){
+                                $html_propuesta.='<div class="d-grid px-5">';
+                                foreach($pvp_date->arr_pvp as $pvp){
+                                    $html_propuesta.='<span class="mx-auto text-align-center">'.$pvp.'€</span>';
+                                }
+                                $html_propuesta.='</div>';
+                            }
+                        }
+                    }
+                    $html_propuesta.='</td>';
+                }
+                $html_propuesta.='<td valign="middle" class="td-border-right text-align-center py-5">
+                                <span class="">'.$article->total.'€</span>
+                                </td>
+                            </tr>';
+            }
+        }
          
         //Preparamos los datos a pasar al pdf
         $data['proposal'] = $proposal;
@@ -478,15 +523,13 @@ class ProposalsController extends Controller
         $data['sector_name'] = $sector->name;
         $data['proposal_obj'] = json_decode($request->get('proposal_obj'));
         $data['bill_obj'] = $bill_obj2;
-        $data['array_bills'] = $bill_obj2->array_bills;
-        $data['total_bill'] = $bill_obj2->total_bill;
-        $data['value_form1'] = $request->get('value_form1');
-        $data['proposal_submission_settings'] = $proposal_submission_settings;
         $data['select_way_to_pay_options'] = $request->get('select_way_to_pay_options');
         $data['select_expiration_options'] = $request->get('select_expiration_options');
+        $data['html_propuesta'] = $html_propuesta;
 
         //Generamos el pdf
-        $pdf = Pdf::loadView('pdf.invoice', $data)->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true]);
+        $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pdf.invoice', $data);
+        //$pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pdf.test', $data);
         $content = $pdf->download()->getOriginalContent();
         Storage::put('pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf',$content);
 

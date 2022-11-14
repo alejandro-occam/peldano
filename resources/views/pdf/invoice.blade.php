@@ -195,6 +195,27 @@
                 flex: 0 0 16.6666666667%;
                 max-width: 16.6666666667%;
             }
+            .header,
+            .footer {
+                width: 100%;
+                position: fixed;
+            }
+            .header {
+                top: 0px;
+            }
+            .footer {
+                bottom: 0px;
+            }
+            .pagenum:before {
+                content: counter(page);
+            }
+            .float-right{
+                float: right
+            }
+            .my-auto{
+                margin-top: auto;
+                margin-bottom: auto;
+            }
         </style>
     </head>
     <!--end::Head-->
@@ -209,8 +230,19 @@
                             <div data-select2-id="7">
                                 <div class="col-12 pl-0 mt-15">
                                         <div id="test" class="col-12 pl-0 mt-10">
-                                            <img src="{{public_path('logo.jpg')}}"/>
+                                            <div class="col-12 pl-0 mt-10 text-align-center">
+                                                <img src="https://peldano.occamagenciadigital.com/logo.jpg" width="300px" >
+                                            </div>
+                                            <div>
+                                                <h2 class="color-blue">Propuesta</h2>
+                                                <span class="f-15">ALFRED SMART SYSTEMS, S.L.</span><br>
+                                                <span class="f-15">02/11/2022</span>
+                                            </div>
                                             <div class="page-break"></div>
+                                            <div class="header d-flex">
+                                                <span class="f-13 color-blue">Propuesta</span>
+                                                <img class="float-right my-auto" src="https://peldano.occamagenciadigital.com/logo.jpg" width="30px" >
+                                            </div>
                                             <h1 class="color-blue">{!! $proposal->commercial_name !!}</h1>
                                             <h3 class="color-blue" style="font-weight: normal !important;">{!! $proposal->date_proyect !!}</h3>
                                             <div class="mt-7">
@@ -232,7 +264,15 @@
                                                 <div class="d-grid">
                                                     <span class="mt-1 text-block">{!! $proposal->actions !!}</span>
                                                 </div>
+                                                <div class="footer d-flex">
+                                                    <span class="f-13 color-blue">Comunicamos. Conectamos. Impulsamos</span>
+                                                    <img class="float-right my-auto" src="https://peldano.occamagenciadigital.com/logo.jpg" width="30px" >
+                                                </div>
                                                 <div class="page-break"></div>
+                                                <div class="header d-flex">
+                                                    <span class="f-13 color-blue">Propuesta</span>
+                                                    <img class="float-right my-auto" src="https://peldano.occamagenciadigital.com/logo.jpg" width="30px" >
+                                                </div>
                                                 <div class="d-grid mt-15 mb-4">
                                                     <table width="100%" cellpadding="2" cellspacing="1" id="table_1">
                                                         <tbody>
@@ -264,7 +304,7 @@
                                                                 </td><!--v-if-->
                                                                 <td colspan="2" class="py-2 td-border-left bg-blue-light-white">
                                                                     <div class="f-13 ml-5 font-weight-bolder color-blue">OFERTA:</div>
-                                                                    <div class="ml-5 f-13 text-dark">{{ $total_bill }}€</div>
+                                                                    <div class="ml-5 f-13 text-dark">{{ $bill_obj->total_bill }}€</div>
                                                                 </td>
                                                             </tr>
                                                         </tbody>
@@ -295,44 +335,7 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            @foreach($proposal_obj->products as $key_product => $product)
-                                                                <tr class="row-product">
-                                                                    <td class="py-2" colspan="{{ count($proposal_obj->array_dates) + 4 }}">
-                                                                        <span class="ml-5">{{ $product->product_obj->name }}</span>
-                                                                    </td>
-                                                                </tr>
-                                                                @foreach($product->articles as $key_article => $article)
-                                                                    <tr class="row-article">
-                                                                        <td valign="middle" class="td-border-right py-5">
-                                                                            <span class="ml-5">{{ $article->article_obj->name }}</span>
-                                                                        </td>
-                                                                        <td valign="middle" class="td-border-right text-align-center py-5">
-                                                                            <span class="">{{ $article->article_obj->pvp }}€</span>
-                                                                        </td>
-                                                                        <td valign="middle" class="td-border-right text-align-center py-5">
-                                                                            <span class="">{{ $article->amount }}</span>
-                                                                        </td>
-                                                                        @foreach($proposal_obj->array_dates as $key_array_dates => $date)
-                                                                        <td valign="middle" class="td-border-right py-5">
-                                                                            @foreach($article->dates_prices as $key_dates_prices => $date_price)
-                                                                                @if($date->date == $date_price->date)
-                                                                                    @foreach($date_price->arr_pvp_date as $key_arr_pvp_date => $pvp_date)
-                                                                                        <div class="d-grid px-5">
-                                                                                            @foreach($pvp_date->arr_pvp as $pvp)
-                                                                                                <span class="mx-auto text-align-center">{{ $pvp }}€</span>
-                                                                                            @endforeach                                                                                
-                                                                                        </div>
-                                                                                    @endforeach
-                                                                                @endif
-                                                                            @endforeach
-                                                                        </td>
-                                                                        @endforeach  
-                                                                        <td valign="middle" class="td-border-right text-align-center py-5">
-                                                                            <span class="">{{ $article->total }}€</span>
-                                                                        </td>
-                                                                    </tr>
-                                                                @endforeach
-                                                            @endforeach
+                                                            {{ $html_propuesta }}
                                                             <tr class="tr-total-datatable">
                                                                 <td class="py-6">
                                                                     <span class="ml-5 font-weight-bolder">TOTAL</span>
@@ -380,7 +383,7 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @foreach($array_bills as $key_bill => $bill)
+                                                        @foreach($bill_obj->array_bills as $key_bill => $bill)
                                                             <tr class="row-product text-align-center bg-white">
                                                                 <td class="td-border-right" rowspan="{{ $bill->rows }}">{{ $key_bill + 1 }}</td>
                                                             </tr>
@@ -433,6 +436,10 @@
                                                         </tr>
                                                     </tbody>
                                                 </table>
+                                                <div class="footer d-flex">
+                                                    <span class="f-13 color-blue">Comunicamos. Conectamos. Impulsamos</span>
+                                                    <img class="float-right my-auto" src="https://peldano.occamagenciadigital.com/logo.jpg" width="30px" >
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
