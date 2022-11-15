@@ -158,6 +158,7 @@
                 show_amount_dates: false
             };
         },
+        props: ["type"],
         computed: {
             ...mapState(["config", "errors", "proposals"]),
         },
@@ -333,7 +334,8 @@
                     product_obj: this.product_obj,
                     article_obj: this.article_obj,
                     amount: this.amount,
-                    dates: this.date
+                    dates: this.date,
+                    type: this.type
                 }
                 this.saveProposalObject(params);
             }

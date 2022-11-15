@@ -107,7 +107,7 @@
             ...mapState(["errors", "proposals", "config"]),
         },
         mounted() {
-            this.getUsers();
+            this.getUsers(1);
             var params = {
                 type: 1
             }

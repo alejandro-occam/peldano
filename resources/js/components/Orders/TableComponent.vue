@@ -15,7 +15,7 @@
                 :src="'/media/custom-imgs/icono_btn_annadir_propuesta.svg'"
                 :width="25"
                 :height="25"
-                @click.native="changeViewStatusProposals(2)"
+                @click.native="changeViewStatusOrders(3)"
             />
         </div>
         <div class="col-12 d-flex flex-wrap mt-6">
@@ -137,7 +137,7 @@
             ...mapState(["errors", "proposals", "config"]),
         },
         mounted() {
-            this.getUsers();
+            this.getUsers(2);
             var params = {
                 type: 1
             }
@@ -147,8 +147,8 @@
         },
         
         methods: {
-            ...mapActions(["getUsers", "getSectors"]),
-            ...mapMutations(['changeViewStatusProposals']),
+            ...mapActions(["getUsers", "getSectors", "getInfoOrder"]),
+            ...mapMutations(['changeViewStatusOrders']),
             //Consultar fecha actual
             getNow() {
                 const today = new Date();
