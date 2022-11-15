@@ -15,7 +15,7 @@
                 :src="'/media/custom-imgs/icono_btn_annadir_propuesta.svg'"
                 :width="25"
                 :height="25"
-                @click.native="changeViewStatusOrders(3)"
+                @click.native="changeViewStatusOrders(2)"
             />
         </div>
         <div class="col-12 d-flex flex-wrap mt-6">
@@ -421,7 +421,7 @@
 
                 $("#list_orders").on("click", ".btn-show", function () {
                     var id = $(this).data("id");
-                    me.getInfoProposal(id);
+                    me.getInfoOrder(id);
                 });
             },
             changeStatusShowAll(status){

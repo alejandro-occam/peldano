@@ -925,9 +925,15 @@ const mutations = {
     //Limpiamos los objetos utilizados para crear la propuesta
     clearObjectsProposal(state){
         state.proposals.num_custom_invoices = 0;
-        state.proposals.proposal_obj.products[0].product_obj = null;
-        state.proposals.proposal_obj.products[0].articles = [];
-        state.proposals.proposal_obj.products[0].articles_aux = [];
+        state.proposals.proposal_obj.products = [];
+        state.proposals.proposal_obj.products = [{
+            product_obj: null,
+            articles: [],
+            articles_aux: [],
+            total_global: 0,
+            total_amount_global: 0,
+            total_individual_pvp: 0,
+        }];
         state.proposals.proposal_obj.total_global = 0;
         state.proposals.proposal_obj.total_global_normal = 0;
         state.proposals.proposal_obj.total_amount_global = 0;
@@ -943,9 +949,15 @@ const mutations = {
     //Limpiamos los objetos utilizados para crear la orden
     clearObjectsOrders(state){
         state.orders.num_custom_invoices = 0;
-        state.orders.proposal_obj.products[0].product_obj = null;
-        state.orders.proposal_obj.products[0].articles = [];
-        state.orders.proposal_obj.products[0].articles_aux = [];
+        state.orders.proposal_obj.products = [];
+        state.orders.proposal_obj.products = [{
+            product_obj: null,
+            articles: [],
+            articles_aux: [],
+            total_global: 0,
+            total_amount_global: 0,
+            total_individual_pvp: 0,
+        }];
         state.orders.proposal_obj.total_global = 0;
         state.orders.proposal_obj.total_global_normal = 0;
         state.orders.proposal_obj.total_amount_global = 0;

@@ -160,7 +160,7 @@
         },
         props: ["type"],
         computed: {
-            ...mapState(["config", "errors", "proposals"]),
+            ...mapState(["config", "errors", "proposals", "orders"]),
         },
         methods: {
             ...mapActions(["getAreas", "getSectors", "getBrands", "getProducts", "getArticles", "addArticle", "updateArticle"]),

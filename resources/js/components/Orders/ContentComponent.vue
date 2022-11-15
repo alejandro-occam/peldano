@@ -8,7 +8,6 @@
                 <div class="card-body body-tab-step">
                     <TableComponent v-if="orders.status_view == 1"></TableComponent>
                     <FormComponent v-else-if="orders.status_view == 2"></FormComponent>
-                    <FormProposalComponent v-else></FormProposalComponent>
                 </div>
             </div>
         </div>
@@ -18,7 +17,6 @@
 <script>
 import TableComponent from "./TableComponent.vue";
 import FormComponent from "./FormComponent.vue";
-import FormProposalComponent from "./FormProposalComponent.vue";
 import { mapMutations, mapState } from "vuex";
 
 export default {
@@ -26,7 +24,6 @@ export default {
     components: {
         TableComponent,
         FormComponent,
-        FormProposalComponent
     },
     data() {
         return {
