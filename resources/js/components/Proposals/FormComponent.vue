@@ -616,21 +616,21 @@
                                     <tr class="row-article" v-if="proposals.bill_obj.array_bills[index].observations != ''">
                                         <td class="p-5" colspan="5">
                                             <div class="d-flex">
-                                                <span class="my-auto col-2">Observaciones: {{ proposals.bill_obj.array_bills[index].observations }}</span>
+                                                <span class="my-auto col-12">Observaciones: {{ proposals.bill_obj.array_bills[index].observations }}</span>
                                             </div>
                                         </td>
                                     </tr>      
                                     <tr class="row-article" v-if="proposals.bill_obj.array_bills[index].order_number != ''">
                                         <td class="p-5" colspan="5">
                                             <div class="d-flex">
-                                                <span class="my-auto col-2">Núm. pedido: {{ proposals.bill_obj.array_bills[index].order_number }}</span>
+                                                <span class="my-auto col-12">Núm. pedido: {{ proposals.bill_obj.array_bills[index].order_number }}</span>
                                             </div>
                                         </td>
                                     </tr>    
                                     <tr class="row-article" v-if="proposals.bill_obj.array_bills[index].internal_observations != ''">
                                         <td class="p-5" colspan="5">
                                             <div class="d-flex">
-                                                <span class="my-auto col-2">Observaciones Internas: {{ proposals.bill_obj.array_bills[index].internal_observations }}</span>
+                                                <span class="my-auto col-12">Observaciones Internas: {{ proposals.bill_obj.array_bills[index].internal_observations }}</span>
                                             </div>
                                         </td>
                                     </tr>   

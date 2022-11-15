@@ -252,21 +252,24 @@ class ProposalsController extends Controller
             $bill->rows = $rows;
         }
         
+        
+        $path = 'media/custom-imgs/logo_azul.png';
+        $type = pathinfo($path, PATHINFO_EXTENSION);
+        $data_base64 = file_get_contents($path);
+        $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data_base64);
+         
         //Preparamos los datos a pasar al pdf
         $data['proposal'] = $proposal;
         $data['fullname'] = $fullname;
         $data['sector_name'] = $sector->name;
         $data['proposal_obj'] = json_decode($request->get('proposal_obj'));
         $data['bill_obj'] = $bill_obj2;
-        $data['array_bills'] = $bill_obj2->array_bills;
-        $data['total_bill'] = $bill_obj2->total_bill;
-        $data['value_form1'] = $request->get('value_form1');
-        $data['proposal_submission_settings'] = $proposal_submission_settings;
         $data['select_way_to_pay_options'] = $request->get('select_way_to_pay_options');
         $data['select_expiration_options'] = $request->get('select_expiration_options');
+        $data['base64'] = $base64;
 
         //Generamos el pdf
-        $pdf = Pdf::loadView('pdf.invoice', $data)->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true]);
+        $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pdf.invoice', $data);
         $content = $pdf->download()->getOriginalContent();
         Storage::put('pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf',$content);
 

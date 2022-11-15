@@ -638,6 +638,8 @@ const mutations = {
         state.proposals.proposal_obj.array_dates = [];
         state.proposals.bill_obj.articles = [];
         state.proposals.bill_obj.array_bills = [];
+        state.proposals.bill_obj.total_bill = 0;
+        state.proposals.proposal_bd_obj = null;
     }
 }
 

@@ -816,6 +816,10 @@ function createObjectsStore({ state }, response){
 
     //Creamos el objeto factura
     var array_bills = response.data.proposal_bills;
+    console.log(array_bills);
+    console.log(array_articles);
+
+    var count_bill = 0;
     array_articles.map(function(article_obj, key) {
         if(key == 0){
             amount = Number(article_obj.amount);
@@ -824,13 +828,14 @@ function createObjectsStore({ state }, response){
                 date: date_aux,
                 amount: amount,
                 article: article_obj,
-                select_way_to_pay: array_bills[key].way_to_pay,
-                select_expiration: array_bills[key].expiration,
-                observations: array_bills[key].observations,
-                order_number: array_bills[key].num_order,
-                internal_observations: array_bills[key].internal_observations,
+                select_way_to_pay: array_bills[count_bill].way_to_pay,
+                select_expiration: array_bills[count_bill].expiration,
+                observations: array_bills[count_bill].observations,
+                order_number: array_bills[count_bill].num_order,
+                internal_observations: array_bills[count_bill].internal_observations,
             }
 
+            count_bill ++;
             array_finish_bill.push(bill_month);
 
         }else{
@@ -858,13 +863,14 @@ function createObjectsStore({ state }, response){
                         date: date_aux,
                         amount: amount,
                         article: article_obj,
-                        select_way_to_pay: array_bills[key].way_to_pay,
-                        select_expiration: array_bills[key].expiration,
-                        observations: array_bills[key].observations,
-                        order_number: array_bills[key].num_order,
-                        internal_observations: array_bills[key].internal_observations,
+                        select_way_to_pay: array_bills[count_bill].way_to_pay,
+                        select_expiration: array_bills[count_bill].expiration,
+                        observations: array_bills[count_bill].observations,
+                        order_number: array_bills[count_bill].num_order,
+                        internal_observations: array_bills[count_bill].internal_observations,
                     }
                     array_finish_bill.push(bill_month);
+                    count_bill++;
                     last_key = (array_finish_bill.length - 1);
                 }
 
@@ -877,12 +883,13 @@ function createObjectsStore({ state }, response){
                     date: date_aux,
                     amount: amount,
                     article: article_obj,
-                    select_way_to_pay: array_bills[key].way_to_pay,
-                    select_expiration: array_bills[key].expiration,
-                    observations: array_bills[key].observations,
-                    order_number: array_bills[key].num_order,
-                    internal_observations: array_bills[key].internal_observations,
+                    select_way_to_pay: array_bills[count_bill].way_to_pay,
+                    select_expiration: array_bills[count_bill].expiration,
+                    observations: array_bills[count_bill].observations,
+                    order_number: array_bills[count_bill].num_order,
+                    internal_observations: array_bills[count_bill].internal_observations,
                 }
+                count_bill++;
                 array_finish_bill.push(bill_month);
                 last_key = (array_finish_bill.length - 1);
             }
