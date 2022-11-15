@@ -267,7 +267,7 @@ class ProposalsController extends Controller
         $data['select_way_to_pay_options'] = $request->get('select_way_to_pay_options');
         $data['select_expiration_options'] = $request->get('select_expiration_options');
         $data['base64'] = $base64;
-
+                
         //Generamos el pdf
         $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pdf.invoice', $data);
         $content = $pdf->download()->getOriginalContent();
@@ -287,7 +287,7 @@ class ProposalsController extends Controller
         $data = array();
         //$pdf = Pdf::loadView('pdf.test', $data)->setOptions(['defaultFont' => 'sans-serif', 'isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true]);
         $data = array();
-        $data['text'] = 'hola';
+        
         $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pdf.test', $data);
         return $pdf->download('invoice.pdf');
         //return $pdf->stream('Idea.pdf');
@@ -493,7 +493,7 @@ class ProposalsController extends Controller
         $data['select_way_to_pay_options'] = $request->get('select_way_to_pay_options');
         $data['select_expiration_options'] = $request->get('select_expiration_options');
         $data['base64'] = $base64;
-
+                
         //Generamos el pdf
         $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pdf.invoice', $data);
         $content = $pdf->download()->getOriginalContent();
