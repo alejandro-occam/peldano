@@ -2,21 +2,8 @@
 <html lang="en">
     <!--begin::Head-->
     <head><base href="../../../">
-        <meta charset="utf-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
-        <!--begin::Page Custom Styles(used by this page)-->
-        <link href="{{ url('/css/login.css') }}" rel="stylesheet" type="text/css" />
-        <link href="{{ url('/css/pages/login/login-1.css') }}" rel="stylesheet" type="text/css" />
-        <!--end::Page Custom Styles-->
-        <!--begin::Global Theme Styles(used by all pages)-->
-        <link href="{{ url('/plugins/global/plugins.bundle.css') }}" rel="stylesheet" type="text/css" />
-        <link href="{{ url('/plugins/custom/prismjs/prismjs.bundle.css') }}" rel="stylesheet" type="text/css" />
-        <link href="{{ url('/css/style.bundle.css') }}" rel="stylesheet" type="text/css" />
-        <!--end::Global Theme Styles-->
-        <!--begin::Layout Themes(used by all pages)-->
-        <!--end::Layout Themes-->
-        <link rel="shortcut icon" />
-        <link rel="shortcut icon" href="{{asset('assets/media/logos/favicon.ico')}}"/> 
+        <meta charset="utf-8" /> 
+        <title>Propuesta: {!! $proposal->id_proposal_custom !!}</title>
         <style>
             .color-blue, .color-blue:hover{
                 color: #2e49ff;
@@ -231,7 +218,7 @@
                                 <div class="col-12 pl-0 mt-15">
                                         <div id="test" class="col-12 pl-0 mt-10">
                                             <div class="col-12 pl-0 mt-10 text-align-center">
-                                                <img src="https://peldano.occamagenciadigital.com/logo.jpg" width="300px" >
+                                                <img src="https://peldano.occamagenciadigital.com/logo_azul.png" width="300px" >
                                             </div>
                                             <div>
                                                 <h2 class="color-blue">Propuesta</h2>
@@ -241,7 +228,7 @@
                                             <div class="page-break"></div>
                                             <div class="header d-flex">
                                                 <span class="f-13 color-blue">Propuesta</span>
-                                                <img class="float-right my-auto" src="https://peldano.occamagenciadigital.com/logo.jpg" width="30px" >
+                                                <img class="float-right my-auto" src="https://peldano.occamagenciadigital.com/logo_azul.png" width="30px" >
                                             </div>
                                             <h1 class="color-blue">{!! $proposal->commercial_name !!}</h1>
                                             <h3 class="color-blue" style="font-weight: normal !important;">{!! $proposal->date_proyect !!}</h3>
@@ -266,12 +253,12 @@
                                                 </div>
                                                 <div class="footer d-flex">
                                                     <span class="f-13 color-blue">Comunicamos. Conectamos. Impulsamos</span>
-                                                    <img class="float-right my-auto" src="https://peldano.occamagenciadigital.com/logo.jpg" width="30px" >
+                                                    <img class="float-right my-auto" src="https://peldano.occamagenciadigital.com/logo_azul.png" width="30px" >
                                                 </div>
                                                 <div class="page-break"></div>
                                                 <div class="header d-flex">
                                                     <span class="f-13 color-blue">Propuesta</span>
-                                                    <img class="float-right my-auto" src="https://peldano.occamagenciadigital.com/logo.jpg" width="30px" >
+                                                    <img class="float-right my-auto" src="https://peldano.occamagenciadigital.com/logo_azul.png" width="30px" >
                                                 </div>
                                                 <div class="d-grid mt-15 mb-4">
                                                     <table width="100%" cellpadding="2" cellspacing="1" id="table_1">
@@ -335,7 +322,44 @@
                                                             </tr>
                                                         </thead>
                                                         <tbody>
-                                                            {{ $html_propuesta }}
+                                                            @foreach($proposal_obj->products as $key_product => $product)
+                                                                <tr class="row-product">
+                                                                    <td class="py-2" colspan="{{ count($proposal_obj->array_dates) + 4 }}">
+                                                                        <span class="ml-5">{{ $product->product_obj->name }}</span>
+                                                                    </td>
+                                                                </tr>
+                                                                @foreach($product->articles as $key_article => $article)
+                                                                    <tr class="row-article">
+                                                                        <td valign="middle" class="td-border-right py-5">
+                                                                            <span class="ml-5">{{ $article->article_obj->name }}</span>
+                                                                        </td>
+                                                                        <td valign="middle" class="td-border-right text-align-center py-5">
+                                                                            <span class="">{{ $article->article_obj->pvp }}€</span>
+                                                                        </td>
+                                                                        <td valign="middle" class="td-border-right text-align-center py-5">
+                                                                            <span class="">{{ $article->amount }}</span>
+                                                                        </td>
+                                                                        @foreach($proposal_obj->array_dates as $key_array_dates => $date)
+                                                                        <td valign="middle" class="td-border-right py-5">
+                                                                            @foreach($article->dates_prices as $key_dates_prices => $date_price)
+                                                                                @if($date->date == $date_price->date)
+                                                                                    @foreach($date_price->arr_pvp_date as $key_arr_pvp_date => $pvp_date)
+                                                                                        <div class="d-grid px-5">
+                                                                                            @foreach($pvp_date->arr_pvp as $pvp)
+                                                                                                <span class="mx-auto text-align-center">{{ $pvp }}€</span>
+                                                                                            @endforeach                                                                                
+                                                                                        </div>
+                                                                                    @endforeach
+                                                                                @endif
+                                                                            @endforeach
+                                                                        </td>
+                                                                        @endforeach  
+                                                                        <td valign="middle" class="td-border-right text-align-center py-5">
+                                                                            <span class="">{{ $article->total }}€</span>
+                                                                        </td>
+                                                                    </tr>
+                                                                @endforeach
+                                                            @endforeach
                                                             <tr class="tr-total-datatable">
                                                                 <td class="py-6">
                                                                     <span class="ml-5 font-weight-bolder">TOTAL</span>
@@ -438,7 +462,7 @@
                                                 </table>
                                                 <div class="footer d-flex">
                                                     <span class="f-13 color-blue">Comunicamos. Conectamos. Impulsamos</span>
-                                                    <img class="float-right my-auto" src="https://peldano.occamagenciadigital.com/logo.jpg" width="30px" >
+                                                    <img class="float-right my-auto" src="https://peldano.occamagenciadigital.com/logo_azul.png" width="30px" >
                                                 </div>
                                             </div>
                                         </div>
@@ -449,20 +473,6 @@
                 </div>
             </div>
         </div>
-        <!--end::Main-->
-        <script>var HOST_URL = "https://preview.keenthemes.com/metronic/theme/html/tools/preview";</script>
-        <!--begin::Global Config(global config for global JS scripts)-->
-        <!--end::Global Config-->
-        <!--begin::Global Theme Bundle(used by all pages)-->
-        <script src="{{ url('/plugins/global/plugins.bundle.js') }}"></script>
-        <script src="{{ url('/plugins/custom/prismjs/prismjs.bundle.js') }}"></script>
-        <script src="{{ url('/js/scripts.bundle.js') }}"></script>
-        <!--end::Global Theme Bundle-->
-        <!--begin::Page Scripts(used by this page)-->
-        <script src="{{ url('/js/login.js') }}"></script>
-        <!--end::Page Scripts-->
-        <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
-        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js"></script>
     </body>
     <!--end::Body-->
 </html>

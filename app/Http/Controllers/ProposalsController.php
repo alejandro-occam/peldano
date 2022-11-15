@@ -476,46 +476,10 @@ class ProposalsController extends Controller
             $bill->rows = $rows;
         }
 
-        $html_propuesta = '';
-        $proposal_obj = json_decode($request->get('proposal_obj'));
-        foreach($proposal_obj->products as $key_product => $product){
-            $html_propuesta .='<tr class="row-product">
-                                <td class="py-2" colspan="{{ count($proposal_obj->array_dates) + 4 }}">
-                                    <span class="ml-5">{{ $product->product_obj->name }}</span>
-                                </td>
-                            </tr>';
-            foreach($product->articles as $key_article => $article){
-                $html_propuesta .= '<tr class="row-article">
-                                <td valign="middle" class="td-border-right py-5">
-                                    <span class="ml-5">'.$article->article_obj->name.'</span>
-                                    </td>
-                                    <td valign="middle" class="td-border-right text-align-center py-5">
-                                        <span class="">'.$article->article_obj->pvp.'€</span>
-                                        </td>
-                                        <td valign="middle" class="td-border-right text-align-center py-5">
-                                            <span class="">'.$article->amount.'</span>
-                                            </td>';
-                foreach($proposal_obj->array_dates as $key_array_dates => $date){
-                    $html_propuesta.='<td valign="middle" class="td-border-right py-5">';
-                    foreach($article->dates_prices as $key_dates_prices => $date_price){
-                        if($date->date == $date_price->date){
-                            foreach($date_price->arr_pvp_date as $key_arr_pvp_date => $pvp_date){
-                                $html_propuesta.='<div class="d-grid px-5">';
-                                foreach($pvp_date->arr_pvp as $pvp){
-                                    $html_propuesta.='<span class="mx-auto text-align-center">'.$pvp.'€</span>';
-                                }
-                                $html_propuesta.='</div>';
-                            }
-                        }
-                    }
-                    $html_propuesta.='</td>';
-                }
-                $html_propuesta.='<td valign="middle" class="td-border-right text-align-center py-5">
-                                <span class="">'.$article->total.'€</span>
-                                </td>
-                            </tr>';
-            }
-        }
+        $path = 'media/custom-imgs/logo_azul.png';
+        $type = pathinfo($path, PATHINFO_EXTENSION);
+        $data_base64 = file_get_contents($path);
+        $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data_base64);
          
         //Preparamos los datos a pasar al pdf
         $data['proposal'] = $proposal;
@@ -525,11 +489,10 @@ class ProposalsController extends Controller
         $data['bill_obj'] = $bill_obj2;
         $data['select_way_to_pay_options'] = $request->get('select_way_to_pay_options');
         $data['select_expiration_options'] = $request->get('select_expiration_options');
-        $data['html_propuesta'] = $html_propuesta;
+        $data['base64'] = $base64;
 
         //Generamos el pdf
         $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pdf.invoice', $data);
-        //$pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pdf.test', $data);
         $content = $pdf->download()->getOriginalContent();
         Storage::put('pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf',$content);
 
