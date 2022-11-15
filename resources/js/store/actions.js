@@ -124,7 +124,6 @@ const actions = {
         }
     },
 
-
     //Eliminar un calendario
     async deleteCalendar({ state }, id){
         try {
@@ -570,6 +569,26 @@ const actions = {
 
         } catch (error) {
             console.error(error);
+            return error;
+        }
+    },
+
+    //Listar propuestas para exportar 
+    async listProposalsToExport({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/list_proposals_to_export",
+                params: {
+                    select_calendar_filter: params.select_calendar_filter
+                },
+                method: 'post'
+            });
+
+            state.proposals.html_proposal_list = response.data.array_proposals;
+
+        } catch (error) {
+            console.error(error);
+
             return error;
         }
     },

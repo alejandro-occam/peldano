@@ -39,12 +39,6 @@ class ProposalsController extends Controller
             }
         }
 
-        //Barra de busqueda
-        $search = '';
-        if (isset($query['search_users'])) {
-            $search = $query['search_users'];
-        }
-
         $array_proposals = Proposal::select('proposals.*', 'sectors.name as sector_name')
                         ->leftJoin('sectors', 'sectors.id', 'proposals.id_sector')
                         ->leftJoin('proposals_bills', 'proposals.id', 'proposals_bills.id_proposal')
@@ -537,5 +531,177 @@ class ProposalsController extends Controller
         $response['code'] = 1000;
         return response()->json($response);
 
+    }
+
+    //Listar tabla de propuestas para exportar
+    function listProposalsToExport(Request $request){
+        $array_proposals = Proposal::select('proposals.*', 'sectors.name as sector_name')
+                        ->leftJoin('sectors', 'sectors.id', 'proposals.id_sector')
+                        ->leftJoin('proposals_bills', 'proposals.id', 'proposals_bills.id_proposal')
+                        ->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill');
+
+        if($request->get('type') == 1){
+            if($request->get('num_proposal') != ''){
+                $array_proposals = $array_proposals->where('proposals.id_proposal_custom', $request->get('num_proposal'));
+            }
+
+            if($request->get('select_consultant') != ''){
+                $array_proposals = $array_proposals->where('proposals.id_user', $request->get('select_consultant'));
+            }
+
+            if($request->get('select_sector') != ''){
+                $array_proposals = $array_proposals->where('proposals.id_sector', $request->get('select_sector'));
+            }
+
+            if($request->get('date_from') != ''){
+                $array_proposals = $array_proposals->where('proposals.date_proyect', '>=', $request->get('date_from'));
+            }
+
+            if($request->get('date_to') != ''){
+                $array_proposals = $array_proposals->where('proposals.date_proyect', '<=', $request->get('date_to'));
+            }
+        }
+
+        $array_proposals = $array_proposals->groupBy('proposals.id')
+                                            ->get();
+
+        foreach($array_proposals as $proposal){
+            //Consultamos el nombre del contacto
+            $contact = Contact::find($proposal->id_contact);
+            $proposal['name_contact'] = $contact->name.' '.$contact->surnames;
+
+            //Consultamos el numero de la propuesta
+            $id_proposal_custom_aux = sprintf('%08d', $proposal->id_proposal_custom);
+            $date_aux = explode("-", $proposal->date_proyect);
+            $proposal['proposal_custom'] = 'EP'.$date_aux[2].$date_aux[1].'-'.$id_proposal_custom_aux;
+
+            //Consultamos el total 
+            $total = 0;
+            $proposal_bill = ProposalBill::select('bills.amount')->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill')->where('proposals_bills.id_proposal', $proposal->id)->get();
+            foreach($proposal_bill as $bill){
+                $total += $bill->amount;
+            }
+           
+            $proposal['total_amount'] = $total;
+        }
+        
+        $html = '';
+        foreach($array_proposals as $proposal){
+            $html .= '<tr data-row="0" class="datatable-row" style="left: 0px;">
+                        <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#id_user" aria-label="null">
+                            <span class="mx-auto">
+                                <span class="text-dark">'.$proposal->id_user.'</span>
+                            </span>
+                        </td>
+                        <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#proposal_custom" aria-label="null">
+                            <span class="mx-auto">
+                                <span class="text-dark">'.$proposal['proposal_custom'].'</span>
+                            </span>
+                        </td>
+                        <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#status" aria-label="null">
+                            <span class="mx-auto">
+                                <span class="text-dark">CERRADA</span>
+                            </span>
+                        </td>
+                        <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#code" aria-label="null">
+                            <span class="mx-auto">
+                                <span class="text-gray font-weight-bold">--</span>
+                            </span>
+                        </td>
+                        <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#name_contact" aria-label="null">
+                            <span class="mx-auto">
+                                <span class="text-gray font-weight-bold">'.$proposal['name_contact'].'</span>
+                            </span>
+                        </td>
+                        <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#date_proyect" aria-label="null">
+                            <span class="mx-auto">
+                                <span class="text-gray font-weight-bold">'.$proposal->date_proyect.'</span>
+                            </span>
+                        </td>
+                        <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#total_amount" aria-label="null">
+                            <span class="mx-auto">
+                                <span class="text-gray font-weight-bold">'.$proposal['total_amount'].'</span>
+                            </span>
+                        </td>
+                        <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#sector_name" aria-label="null">
+                            <span class="mx-auto">
+                                <span class="text-gray font-weight-bold">'.strtoupper($proposal->sector_name).'</span>
+                            </span>
+                        </td>
+                    </tr>';
+        }
+
+        $response['code'] = 1000;
+        $response['array_proposals'] = $html;
+        return response()->json($response);
+    }
+
+    //Descargar tabla propuestas csv
+    function downloadListProposalssCsv($select_calendar_filter){    
+        //Creamos las columnas del fichero
+        $array_custom_calendars = array (
+            array('Consultor', 'Propuesta', 'Estado', 'Código', 'Nombre del cliente', 'Fecha', 'Total', 'Portada')
+        );
+
+        $spreadsheet = new Spreadsheet();
+        $sheet = $spreadsheet->getActiveSheet();
+        //Creamos las cabeceras
+        $sheet->setCellValue('A1', 'Consultor');
+        $sheet->setCellValue('B1', 'Propuesta');
+        $sheet->setCellValue('C1', 'Estado');
+        $sheet->setCellValue('D1', 'Código');
+        $sheet->setCellValue('E1', 'Nombre del cliente');
+        $sheet->setCellValue('F1', 'Fecha');
+        $sheet->setCellValue('G1', 'Total');
+        $sheet->setCellValue('H1', 'Sector');
+
+        //Consultamos los usuarios
+        $array_proposals = Proposal::select('proposals.*', 'sectors.name as sector_name')
+                        ->leftJoin('sectors', 'sectors.id', 'proposals.id_sector')
+                        ->leftJoin('proposals_bills', 'proposals.id', 'proposals_bills.id_proposal')
+                        ->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill');
+
+        if($request->get('type') == 1){
+            if($request->get('num_proposal') != ''){
+                $array_proposals = $array_proposals->where('proposals.id_proposal_custom', $request->get('num_proposal'));
+            }
+
+            if($request->get('select_consultant') != ''){
+                $array_proposals = $array_proposals->where('proposals.id_user', $request->get('select_consultant'));
+            }
+
+            if($request->get('select_sector') != ''){
+                $array_proposals = $array_proposals->where('proposals.id_sector', $request->get('select_sector'));
+            }
+
+            if($request->get('date_from') != ''){
+                $array_proposals = $array_proposals->where('proposals.date_proyect', '>=', $request->get('date_from'));
+            }
+
+            if($request->get('date_to') != ''){
+                $array_proposals = $array_proposals->where('proposals.date_proyect', '<=', $request->get('date_to'));
+            }
+        }
+
+        $array_proposals = $array_proposals->groupBy('proposals.id')
+                                            ->get();
+        
+
+        foreach($array_calendars as $key => $calendar){
+            $sheet->setCellValue('A'.($key+2), $calendar->calendar_name);
+            $sheet->setCellValue('B'.($key+2), $calendar->number);
+            $sheet->setCellValue('C'.($key+2), $calendar->title);
+            $sheet->setCellValue('D'.($key+2), $calendar->drafting);
+            $sheet->setCellValue('E'.($key+2), $calendar->commercial);
+            $sheet->setCellValue('F'.($key+2), $calendar->output);
+            $sheet->setCellValue('G'.($key+2), $calendar->billing);
+            $sheet->setCellValue('H'.($key+2), $calendar->front_page);
+        }
+
+        $writer = new Xlsx($spreadsheet);
+        $writer = new Xlsx($spreadsheet);
+        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+        header('Content-Disposition: attachment; filename="'.'calendarios.xlsx');
+        $writer->save('php://output');
     }
 }

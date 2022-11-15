@@ -238,6 +238,7 @@
                             title: "Consult.",
                             sortable: !1,
                             textAlign: "center",
+                            width: 75,
                             template: function (row, data, index) {
                                 return (
                                     '<span class="text-dark">' +
@@ -251,6 +252,7 @@
                             title: "Propuesta",
                             sortable: !1,
                             textAlign: "center",
+                            width: 200,
                             template: function (row, data, index) {
                             return (
                                     '<span class="text-dark">' +
@@ -260,32 +262,27 @@
                             },
                         },
                         {
-                            field: "#status",
+                            field: "#code",
                             title: "Código",
                             sortable: !1,
                             textAlign: "center",
+                            width: 100,
                             template: function (row, data, index) {
                                 return (
-                                    '<span class="badge badge-light-success f-14 fw-bold">CERRADA</span>'
+                                    '<span class="text-gray font-weight-bold">010414</span>'
                                 );
                             },
                         },
                         {
-                            field: "#code",
+                            field: "#type",
                             title: "Tipo",
                             sortable: !1,
                             textAlign: "center",
+                            width: 50,
                             template: function (row, data, index) {
-                                var html = '';
-                                if(row.english_name == undefined){
-                                    html = '<span class="text-dark font-weight-bold">__</span>';
-
-                                }else{
-                                    html = '<span class="text-gray font-weight-bold">' +
-                                    row.english_name +
-                                    "</span>"
-                                }
-                                return html;
+                                return (
+                                    '<span class="text-gray font-weight-bold">NP</span>'
+                                );
                             },
                         },
                         {
@@ -293,6 +290,7 @@
                             title: "Nombre del cliente",
                             sortable: !1,
                             textAlign: "center",
+                            width: 200,
                             template: function (row, data, index) {
                                 return (
                                     '<span class="text-dark font-weight-bold">' +
@@ -306,6 +304,7 @@
                             title: "Fecha",
                             sortable: !1,
                             textAlign: "center",
+                            width: 100,
                             template: function (row, data, index) {
                                 return (
                                     '<span class="text-gray font-weight-bold">' +
@@ -315,67 +314,61 @@
                             },
                         },
                         {
-                            field: "#total",
+                            field: "#edition",
                             title: "Edición",
                             sortable: !1,
                             textAlign: "center",
+                            width: 100,
                             template: function (row, data, index) {
                                 return (
-                                    '<span class="text-gray font-weight-bold">' +
-                                    row.total_amount +
-                                    "</span>"
+                                    '<span class="text-gray font-weight-bold">--</span>'
                                 );
                             },
                         },
                         {
-                            field: "#sector",
+                            field: "#status",
                             title: "Estado",
                             sortable: !1,
                             textAlign: "center",
                             template: function (row, data, index) {
                                 return (
-                                    '<span class="text-gray font-weight-bold">' +
-                                    row.sector_name.toUpperCase() +
-                                    "</span>"
+                                    '<span class="badge badge-light-success f-14 fw-bold">CERRADA</span>'
                                 );
                             },
                         },
                         {
-                            field: "#sector",
+                            field: "#ctrl",
                             title: "Ctrl",
                             sortable: !1,
                             textAlign: "center",
+                            width: 50,
                             template: function (row, data, index) {
                                 return (
-                                    '<span class="text-gray font-weight-bold">' +
-                                    row.sector_name.toUpperCase() +
-                                    "</span>"
+                                    '<span class="text-gray font-weight-bold">NO</span>'
                                 );
                             },
                         },
                         {
-                            field: "#sector",
+                            field: "#total",
                             title: "Total",
                             sortable: !1,
                             textAlign: "center",
+                            width: 100,
                             template: function (row, data, index) {
                                 return (
-                                    '<span class="text-gray font-weight-bold">' +
-                                    row.sector_name.toUpperCase() +
-                                    "</span>"
+                                    '<span class="text-gray font-weight-bold">3986.00</span>'
                                 );
                             },
                         },
                         {
-                            field: "#sector",
+                            field: "#dto",
                             title: "Dto",
                             sortable: !1,
                             textAlign: "center",
+                            width: 100,
                             template: function (row, data, index) {
                                 return (
-                                    '<span class="text-gray font-weight-bold">' +
-                                    row.sector_name.toUpperCase() +
-                                    "</span>"
+                                    '<span class="text-gray font-weight-bold">52,04%</span>'
                                 );
                             },
                         },
@@ -384,6 +377,7 @@
                             title: "Sector",
                             sortable: !1,
                             textAlign: "center",
+                            width: 100,
                             template: function (row, data, index) {
                                 return (
                                     '<span class="text-gray font-weight-bold">' +
@@ -393,15 +387,14 @@
                             },
                         },
                         {
-                            field: "#sector",
+                            field: "#new_recovered",
                             title: "Nuevo recuperado",
                             sortable: !1,
                             textAlign: "center",
+                            width: 100,
                             template: function (row, data, index) {
                                 return (
-                                    '<span class="text-gray font-weight-bold">' +
-                                    row.sector_name.toUpperCase() +
-                                    "</span>"
+                                    '<span class="text-gray font-weight-bold">SÍ</span>'
                                 );
                             },
                         },
