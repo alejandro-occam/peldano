@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="col-12 d-flex flex-wrap justify-content-between">
-            <template v-if="(proposals.status_view == 2 && proposals.proposal_bd_obj != null)">
+            <template v-if="(proposals.status_view == 2 && proposals.proposal_bd_obj != null && !this.create_order && !this.is_updating)">
                 <AddButtonComponent
                     :columns="'ml-auto mr-7'"
                     :text="'Volver'"
@@ -336,7 +336,7 @@
                         </tr>    
                     </tbody>
                 </table>
-                <div class="mt-10">
+                <div class="mt-10" v-if="!this.create_order">
                     <button @click.native="this.finishProposal()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Finalizar propuesta</button>
                 </div>
             </div>
@@ -1093,6 +1093,7 @@ export default {
         updateProposalFront(){
             this.generate_proposal = false;
             this.finish_proposal = false;
+            this.is_updating = true;
             this.create_order = false;
         },
         //Eliminar propuesta
@@ -1119,6 +1120,7 @@ export default {
         createOrder(){
             this.generate_proposal = false;
             this.finish_proposal = false;
+            this.is_updating = false;
             this.create_order = true;
         },
         compareDates(){
