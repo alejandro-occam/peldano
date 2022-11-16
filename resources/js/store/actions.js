@@ -590,6 +590,25 @@ const actions = {
             return error;
         }
     },
+
+    //Crear orden
+    async createOrder({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/create_order",
+                params: params,
+                method: 'post'
+            });
+
+            state.errors.type_error = 'create_order';
+            state.errors.code = response.data.code;
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
 }
 
 //Rellenar objetos para el store y mostrar la información de las propuestas u ordenes

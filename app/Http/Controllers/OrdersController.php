@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use App\Models\Order;
 use App\Models\Proposal;
 use App\Models\Contact;
 use App\Models\ProposalBill;
@@ -35,7 +36,8 @@ class OrdersController extends Controller
             $search = $query['search_users'];
         }
 
-        $array_proposals = Proposal::select('proposals.*', 'sectors.name as sector_name')
+        $array_proposals = Order::select('proposals.*', 'sectors.name as sector_name')
+                        ->leftJoin('proposals', 'proposals.id', 'orders.id_proposal')  
                         ->leftJoin('sectors', 'sectors.id', 'proposals.id_sector')
                         ->leftJoin('proposals_bills', 'proposals.id', 'proposals_bills.id_proposal')
                         ->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill');

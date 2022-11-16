@@ -18,7 +18,7 @@
                     :src="'/media/custom-imgs/icono_btn_crear_orden.svg'"
                     :width="16"
                     :height="16"
-                    @click.native="createOrder()"
+                    @click.native="createOrderView()"
                 />
                 <AddButtonComponent
                     :columns="'mr-7'"
@@ -352,6 +352,9 @@
                 </table>
                 <div class="mt-10" v-if="!this.create_order">
                     <button @click.native="this.finishProposal()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Finalizar propuesta</button>
+                </div>
+                <div class="mt-10" v-else>
+                    <button @click.native="this.createOrderBtn()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Crear orden</button>
                 </div>
             </div>
             <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && this.is_show_buttons_bill && this.finish_proposal && !this.generate_proposal">
@@ -803,7 +806,7 @@ export default {
     },
     methods: {
         ...mapMutations(["clearError", "changeViewStatusProposals", "changeProposalObj", "changeValueIsChangeArticle", "generateBill", "clearObjectsProposal"]),
-        ...mapActions(["getCompanies", "saveProposal", "updateProposal", "deleteProposal"]),
+        ...mapActions(["getCompanies", "saveProposal", "updateProposal", "deleteProposal", "createOrder"]),
         openFormArticle(){
             $('#modal_form_article_proposals').modal('show');
         },
@@ -839,7 +842,7 @@ export default {
 
                 var new_value = this.offer / total_inputs;
                 //Modificamos los valores de los inputs
-                this.rewalkForm1(2, new_value);
+                this.rewalkForm1(2, this.discount);
             }
 
             var params = {
@@ -863,9 +866,9 @@ export default {
                                 if(type == 1){
                                     value += 1;
                                 }else{
-                                    //pvp_obj = pvp_obj * (1 - (me.discount  /100));
-                                    //me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = me.$utils.roundAndFix(pvp_obj);
-                                    me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = new_value;
+                                    pvp_obj = pvp_obj * (1 - (me.discount  /100));
+                                    me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = me.$utils.roundAndFix(pvp_obj);
+                                    //me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = new_value;
                                 }
                             });
                         });
@@ -1130,12 +1133,19 @@ export default {
                 }
             });
         },
-        //Crear propuesta
-        createOrder(){
+        //Cambio de vista para crear orden
+        createOrderView(){
             this.generate_proposal = false;
             this.finish_proposal = false;
             this.is_updating = false;
             this.create_order = true;
+        },
+        //Crear orden
+        createOrderBtn(){
+            var params = {
+                'id_proposal': this.proposals.proposal_bd_obj.id
+            }
+            this.createOrder(params);
         },
         //Botón volver
         returnView(){
@@ -1214,6 +1224,19 @@ export default {
                         swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
                     }
                 }
+
+            }if(this.errors.type_error == 'create_order'){
+                if(this.errors.code != ''){
+                    if(this.errors.code == 1000){
+                        $("#list_proposals").KTDatatable("reload");
+                        this.proposals.status_view = 1;
+                        this.clearData();
+                        swal("", "Orden creada correctamente", "success");
+                    }else{
+                        swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
+                    }
+                }
+
             }
             this.clearError();
         },
