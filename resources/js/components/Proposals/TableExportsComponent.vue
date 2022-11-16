@@ -147,14 +147,47 @@
                 select_from_consultant: '1',
                 select_sector: '',
                 select_status_order: '1',
-                datatable: null
+                datatable: null,
+                type: 0
             };
         },
         methods: {
             ...mapMutations(["changeViewStatusProposals"]),
             ...mapActions(["getUsers", "listProposalsToExport", "downloadListCalendarsCsv"]),
+            //Consultar fecha actual
+            getNow() {
+                const today = new Date();
+                var day = today.getDate();
+                if(day < 10){
+                    day = '0' + today.getDate();
+                }
+                var month = (today.getMonth()+1);
+                if(month < 10){
+                    month = '0' + (today.getMonth()+1)
+                }
+                const date = day + '-' + month + '-' + today.getFullYear();
+                this.date_from = date;
+                this.date_to = date;
+            },
+            //Descargar excell
             downloadFile(){
-                window.open(this.publicPath + "/admin/download_list_calendars_csv/" + this.select_calendar_filter,"_self")
+                var regexNum = new RegExp("/^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/");
+                var date_ms_from = this.date_from;
+                var date_ms_to = this.date_to;
+                if (!regexNum.test(this.date_from)){
+                    date_ms_from = Date.parse(this.date_from);
+                }
+                if (!regexNum.test(this.date_to)){
+                    date_ms_from = Date.parse(this.date_to);
+                }
+            
+                window.open(this.publicPath + "/admin/download_list_proposals_csv?type="+this.type
+                                                                                +"&num_proposal="+this.num_proposal
+                                                                                +"&select_consultant="+this.select_consultant
+                                                                                +"&select_sector="+this.select_sector
+                                                                                +"&date_from="+date_ms_from
+                                                                                +"&date_to="+date_ms_to
+                                                                                ,"_self")
             },
             printPage(){
                 // Get HTML to print from element
@@ -187,9 +220,17 @@
                
             },
             listProposals(type){
+                this.type = type;
                 if(type == 1 || type == undefined){
-                    var date_ms_from = Date.parse(this.date_from);
-                    var date_ms_to = Date.parse(this.date_to);
+
+                    var date_ms_from = this.date_from;
+                    var date_ms_to = this.date_to;
+                    if(!isNaN(Date.parse(this.date_from))){
+                        date_ms_from = Date.parse(this.date_from);
+                    }
+                    if(!isNaN(Date.parse(this.date_to))){
+                        date_ms_to = Date.parse(this.date_to);
+                    }
                     var param = {
                         type: type,
                         num_proposal: this.num_proposal,
@@ -206,6 +247,7 @@
             ...mapState(["config", "proposals"])
         },
         mounted() {
+            this.getNow();
             var param = {
                 type: 0
             }

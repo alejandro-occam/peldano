@@ -17,6 +17,9 @@ use App\Models\Sector;
 use DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Storage;
+use PhpOffice\PhpSpreadsheet\Spreadsheet;
+use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
+
 class ProposalsController extends Controller
 {
     //Listar propuestas
@@ -637,7 +640,7 @@ class ProposalsController extends Controller
     }
 
     //Descargar tabla propuestas csv
-    function downloadListProposalssCsv($select_calendar_filter){    
+    function downloadListProposalsCsv(Request $request){    
         //Creamos las columnas del fichero
         $array_custom_calendars = array (
             array('Consultor', 'Propuesta', 'Estado', 'Código', 'Nombre del cliente', 'Fecha', 'Total', 'Portada')
@@ -711,17 +714,17 @@ class ProposalsController extends Controller
             $sheet->setCellValue('A'.($key+2), $proposal->id_user);
             $sheet->setCellValue('B'.($key+2), $proposal['proposal_custom']);
             $sheet->setCellValue('C'.($key+2), 'CERRADA');
-            $sheet->setCellValue('D'.($key+2), $proposal->drafting);
+            $sheet->setCellValue('D'.($key+2), '--');
             $sheet->setCellValue('E'.($key+2), $proposal['name_contact']);
-            $sheet->setCellValue('F'.($key+2), $proposal->output);
-            $sheet->setCellValue('G'.($key+2), $proposal->billing);
-            $sheet->setCellValue('H'.($key+2), $proposal->front_page);
+            $sheet->setCellValue('F'.($key+2), $proposal->date_proyect);
+            $sheet->setCellValue('G'.($key+2), $proposal['total_amount']);
+            $sheet->setCellValue('H'.($key+2), $proposal['sector_name']);
         }
 
         $writer = new Xlsx($spreadsheet);
         $writer = new Xlsx($spreadsheet);
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment; filename="'.'calendarios.xlsx');
+        header('Content-Disposition: attachment; filename="'.'propuestas.xlsx');
         $writer->save('php://output');
     }
 }
