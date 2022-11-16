@@ -67,6 +67,38 @@ const state = {
         },
         num_custom_invoices: 0,
         is_change_get_info: 0,
+        id_company: 0,
+        html_proposal_list: ''
+    },
+    orders: {
+        array_users: null,
+        array_companies: null,
+        status_view: 1,
+        proposal_obj: {
+            products:[
+                {
+                    product_obj: null,
+                    articles: [],
+                    articles_aux: [],
+                    total_global: 0,
+                    total_amount_global: 0,
+                    total_individual_pvp: 0,
+                }
+            ],
+            is_change: false,
+            array_dates: []
+        },
+        proposal_bd_obj: null,
+        bill_obj: {
+            articles: [],
+            array_bills: []
+        },
+        user_obj: {
+            name: null,
+            surname: null
+        },
+        num_custom_invoices: 0,
+        is_change_get_info: 0,
         id_company: 0
     },
     errors: {

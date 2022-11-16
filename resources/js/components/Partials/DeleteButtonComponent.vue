@@ -1,5 +1,5 @@
 <template>
-    <button type="button" class="d-flex align-items-center justify-content-center btn btn-gray px-5" :class="columns" :id="id">
+    <button type="button" class="d-flex align-items-center justify-content-center btn color-red px-5 bg-light-red" :class="columns" :id="id">
         <img class="mr-2" :width="width" :height="height" :src="src" />
         <span>{{ text }}</span>
     </button>

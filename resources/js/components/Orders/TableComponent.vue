@@ -8,22 +8,17 @@
                 :src="'/media/custom-imgs/icono_btn_exportar.svg'"
                 :width="16"
                 :height="16"
-                @click.native="changeViewStatusProposals(3)"
             />
             <AddButtonComponent
                 :columns="'px-4'"
-                :text="'Añadir propuesta'"
+                :text="'Nueva propuesta'"
                 :src="'/media/custom-imgs/icono_btn_annadir_propuesta.svg'"
                 :width="25"
                 :height="25"
-                @click.native="changeViewStatusProposals(2)"
+                @click.native="changeViewStatusOrders(2)"
             />
         </div>
         <div class="col-12 d-flex flex-wrap mt-6">
-            <div class="mx-2 col-2">
-                <span class="text-dark font-weight-bold mb-2">Num. propuesta</span>
-                <input v-model="num_proposal" type="text" class="form-control bg-gray mt-3 select-filter text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
-            </div>
             <div class="mx-2 col-2">
                 <span class="text-dark font-weight-bold mb-2">Consultor</span>
                 <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_consultant'" :id="'select_consultant'" v-model="select_consultant" data-style="select-lightgreen" @change="getConsultantSelect">
@@ -31,6 +26,16 @@
                         Selecciona un consultor
                     </option>
                     <option :value="user.id" v-for="user in proposals.array_users"  :key="user.id" v-text="user.name + ' ' + user.surname" ></option>
+                </select>
+            </div>
+
+            <div class="mx-2 col-2">
+                <span class="text-dark font-weight-bold mb-2">Sector</span>
+                <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" v-model="select_sector" data-style="select-lightgreen" @change="getConsultantSelect">
+                    <option value="" selected>
+                        Filtro por sector
+                    </option>
+                    <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
                 </select>
             </div>
            
@@ -53,28 +58,51 @@
             </div>
 
             <div class="mx-2 col-2 mt-5">
-                <span class="text-dark font-weight-bold mb-2">Sector</span>
-                <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" v-model="select_sector" data-style="select-lightgreen" @change="getConsultantSelect">
-                    <option value="" selected>
-                        Filtro por sector
-                    </option>
-                    <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
-                </select>
+                <span class="text-dark font-weight-bold mb-2">Num. orden</span>
+                <input v-model="num_proposal" type="text" class="form-control bg-gray mt-3 select-filter text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
             </div>
 
-            <div class="mx-2 col-2 d-flex">
+            <div class="mx-2 mt-5 col-2 d-grid">
+                <span class="text-dark font-weight-bold mb-2">Estado</span>
+                <select class="form-control bg-gray text-dark select-custom select-filter mt-auto" :name="'select_status_order'" :id="'select_status_order'" v-model="select_status_order" data-style="select-lightgreen" @change="getProductsSelect">
+                    <option value="1" selected>Cualquiera</option>
+                    <option value="2">FIRMADA</option>
+                    <option value="3">ANULADA</option>
+                    <option value="4">EDITANDO</option>
+                </select>
+            </div>
+            <div class="mx-2 mt-5 col-2 d-grid">
+                <span class="text-dark font-weight-bold mb-2"></span>
                 <select class="form-control bg-gray text-dark select-custom select-filter mt-auto" :name="'select_status_order'" :id="'select_status_order'" v-model="select_status_order" data-style="select-lightgreen" @change="getProductsSelect">
                     <option value="1" selected>No han pasado la orden</option>
                     <option value="2">Han pasado a orden</option>
                     <option value="3">Todas</option>
                 </select>
             </div>
+            <div class="mx-2 mt-auto col-2 d-grid">
+                <div v-if="this.show_all == 0">
+                    <button class="purple-border btn mr-4 font-weight-bold d-flex py-4" @click="this.changeStatusShowAll(1)">
+                        <div class="purple-circle mr-auto my-auto">
+                            <div class="white-circle-purple"></div>
+                        </div>
+                        <span class="px-10">Mostrar todo</span>
+                    </button>
+                </div>
+                <div v-else>
+                    <button  class="bg-purple btn mr-4 font-weight-bold color-white d-flex py-4" @click="this.changeStatusShowAll(0)">
+                        <div class="white-circle mr-auto my-auto">
+                            <div class="purple-circle-white"></div>
+                        </div>
+                        <span class="px-10">Mostrar todo</span>
+                    </button>
+                </div>
+            </div>
             <div class="mx-2 col-12 d-flex mt-10">
                 <button type="submit" class="btn bg-azul color-white px-35 font-weight-bolder" v-on:click="this.listProposals(1)">Aplicar filtro</button>
             </div>
         </div>
         <div class="col-12 mt-15">
-            <div class="datatable datatable-bordered datatable-head-custom" id="list_proposals" style="width: 100%" ></div>
+            <div class="datatable datatable-bordered datatable-head-custom" id="list_orders" style="width: 100%" ></div>
         </div>
     </div>
 </template>
@@ -101,25 +129,26 @@
                 select_from_consultant: '1',
                 select_sector: '',
                 select_status_order: '1',
-                datatable: null
+                datatable: null,
+                show_all: 0
             };
         },
         computed: {
             ...mapState(["errors", "proposals", "config"]),
         },
         mounted() {
-            this.getUsers(1);
+            this.getUsers(2);
             var params = {
                 type: 1
             }
             this.getSectors(params);
             this.getNow();
-            this.listProposals(0);
+            this.listOrders(0);
         },
         
         methods: {
-            ...mapActions(["getUsers", "getSectors", "getInfoProposal"]),
-            ...mapMutations(['changeViewStatusProposals']),
+            ...mapActions(["getUsers", "getSectors", "getInfoOrder"]),
+            ...mapMutations(['changeViewStatusOrders']),
             //Consultar fecha actual
             getNow() {
                 const today = new Date();
@@ -135,10 +164,10 @@
                 this.date_from = date;
                 this.date_to = date;
             },
-            listProposals(type) {
+            listOrders(type) {
                 let me = this;
-                $("#list_proposals").KTDatatable("destroy");
-                $("#list_proposals").KTDatatable("init");
+                $("#list_orders").KTDatatable("destroy");
+                $("#list_orders").KTDatatable("init");
                 if(type == 1 || type == undefined){
                     me.datatable.setDataSourceParam('type', type);
 
@@ -151,14 +180,14 @@
                     me.datatable.setDataSourceParam('date_from', me.$utils.customFormDate(date_ms_from));
                     me.datatable.setDataSourceParam('date_to', me.$utils.customFormDate(date_ms_to));
                 }
-                me.datatable = $("#list_proposals").KTDatatable({
+                me.datatable = $("#list_orders").KTDatatable({
                     data: {
                         type: "remote",
                         source: {
                             read: {
                                 url:
                                 me.publicPath +
-                                    "/admin/list_proposals",
+                                    "/admin/list_orders",
                                 headers: {
                                     "X-CSRF-TOKEN": $(
                                         'meta[name="csrf-token"]'
@@ -187,10 +216,6 @@
                     },
                     sortable: !0,
                     pagination: !0,
-                    search: {
-                        input: $('#search_articles'),
-                        key: "search_articles",
-                    },
                     translate: {
                         records: {
                             processing: "Cargando...",
@@ -210,9 +235,10 @@
                     columns: [
                         {
                             field: "#consultant",
-                            title: "Consultor",
+                            title: "Consult.",
                             sortable: !1,
                             textAlign: "center",
+                            width: 75,
                             template: function (row, data, index) {
                                 return (
                                     '<span class="text-dark">' +
@@ -226,11 +252,76 @@
                             title: "Propuesta",
                             sortable: !1,
                             textAlign: "center",
+                            width: 200,
                             template: function (row, data, index) {
                             return (
                                     '<span class="text-dark">' +
                                     row.proposal_custom +
                                     "</span>"
+                                );
+                            },
+                        },
+                        {
+                            field: "#code",
+                            title: "Código",
+                            sortable: !1,
+                            textAlign: "center",
+                            width: 100,
+                            template: function (row, data, index) {
+                                return (
+                                    '<span class="text-gray font-weight-bold">010414</span>'
+                                );
+                            },
+                        },
+                        {
+                            field: "#type",
+                            title: "Tipo",
+                            sortable: !1,
+                            textAlign: "center",
+                            width: 50,
+                            template: function (row, data, index) {
+                                return (
+                                    '<span class="text-gray font-weight-bold">NP</span>'
+                                );
+                            },
+                        },
+                        {
+                            field: "#name_client",
+                            title: "Nombre del cliente",
+                            sortable: !1,
+                            textAlign: "center",
+                            width: 200,
+                            template: function (row, data, index) {
+                                return (
+                                    '<span class="text-dark font-weight-bold">' +
+                                    row.name_contact +
+                                    "</span>"
+                                );
+                            },
+                        },
+                        {
+                            field: "#date",
+                            title: "Fecha",
+                            sortable: !1,
+                            textAlign: "center",
+                            width: 100,
+                            template: function (row, data, index) {
+                                return (
+                                    '<span class="text-gray font-weight-bold">' +
+                                    row.date_proyect +
+                                    "</span>"
+                                );
+                            },
+                        },
+                        {
+                            field: "#edition",
+                            title: "Edición",
+                            sortable: !1,
+                            textAlign: "center",
+                            width: 100,
+                            template: function (row, data, index) {
+                                return (
+                                    '<span class="text-gray font-weight-bold">--</span>'
                                 );
                             },
                         },
@@ -246,46 +337,14 @@
                             },
                         },
                         {
-                            field: "#code",
-                            title: "Código",
+                            field: "#ctrl",
+                            title: "Ctrl",
                             sortable: !1,
                             textAlign: "center",
-                            template: function (row, data, index) {
-                                var html = '';
-                                if(row.english_name == undefined){
-                                    html = '<span class="text-dark font-weight-bold">__</span>';
-
-                                }else{
-                                    html = '<span class="text-gray font-weight-bold">' +
-                                    row.english_name +
-                                    "</span>"
-                                }
-                                return html;
-                            },
-                        },
-                        {
-                            field: "#name_client",
-                            title: "Nombre del cliente",
-                            sortable: !1,
-                            textAlign: "center",
+                            width: 50,
                             template: function (row, data, index) {
                                 return (
-                                    '<span class="text-dark font-weight-bold">' +
-                                    row.name_contact +
-                                    "</span>"
-                                );
-                            },
-                        },
-                        {
-                            field: "#date",
-                            title: "Fecha",
-                            sortable: !1,
-                            textAlign: "center",
-                            template: function (row, data, index) {
-                                return (
-                                    '<span class="text-gray font-weight-bold">' +
-                                    row.date_proyect +
-                                    "</span>"
+                                    '<span class="text-gray font-weight-bold">NO</span>'
                                 );
                             },
                         },
@@ -294,11 +353,22 @@
                             title: "Total",
                             sortable: !1,
                             textAlign: "center",
+                            width: 100,
                             template: function (row, data, index) {
                                 return (
-                                    '<span class="text-gray font-weight-bold">' +
-                                    row.total_amount +
-                                    "</span>"
+                                    '<span class="text-gray font-weight-bold">3986.00</span>'
+                                );
+                            },
+                        },
+                        {
+                            field: "#dto",
+                            title: "Dto",
+                            sortable: !1,
+                            textAlign: "center",
+                            width: 100,
+                            template: function (row, data, index) {
+                                return (
+                                    '<span class="text-gray font-weight-bold">52,04%</span>'
                                 );
                             },
                         },
@@ -307,11 +377,24 @@
                             title: "Sector",
                             sortable: !1,
                             textAlign: "center",
+                            width: 100,
                             template: function (row, data, index) {
                                 return (
                                     '<span class="text-gray font-weight-bold">' +
                                     row.sector_name.toUpperCase() +
                                     "</span>"
+                                );
+                            },
+                        },
+                        {
+                            field: "#new_recovered",
+                            title: "Nuevo recuperado",
+                            sortable: !1,
+                            textAlign: "center",
+                            width: 100,
+                            template: function (row, data, index) {
+                                return (
+                                    '<span class="text-gray font-weight-bold">SÍ</span>'
                                 );
                             },
                         },
@@ -329,11 +412,14 @@
                     ],
                 });
 
-                $("#list_proposals").on("click", ".btn-show", function () {
+                $("#list_orders").on("click", ".btn-show", function () {
                     var id = $(this).data("id");
-                    me.getInfoProposal(id);
+                    me.getInfoOrder(id);
                 });
             },
+            changeStatusShowAll(status){
+                this.show_all = status;
+            }
         }
     };
 </script>

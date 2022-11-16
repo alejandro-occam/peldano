@@ -14,6 +14,16 @@
                     </div>
                 </router-link>
             </li>
+            <li lass="nav-item mb-3 {{ Request::is('/admin/orders') ? 'menu-item-active' : '' }}" data-toggle="tooltip" data-placement="right" data-container="body" data-boundary="window">
+                <router-link to="/admin/orders" class="menu-link">
+                    <div style="padding: 9px 25px;">
+                        <span class="svg-icon svg-icon-xl color-gray menu-text" >
+                            <img class="btn-folder mr-2 config" src="{{ Request::is('/admin/orders') ? '/media/custom-imgs/icono_config_activo.svg' : '/media/custom-imgs/icono_config_desactivo.svg' }}" width="35" height="35"/>
+                            <b>Órdenes</b>
+                        </span>
+                    </div>
+                </router-link>
+            </li>
             <li lass="nav-item mb-3 {{ Request::is('/admin/configuration') ? 'menu-item-active' : '' }}" data-toggle="tooltip" data-placement="right" data-container="body" data-boundary="window">
                 <router-link to="/admin/configuration" class="menu-link">
                     <div style="padding: 9px 25px;">

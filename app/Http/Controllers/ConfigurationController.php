@@ -590,7 +590,6 @@ class ConfigurationController extends Controller
 
     //Consultar sectores
     function getSectors($id = 0){
-        error_log('id: '.$id);
         if($id == 0){
             $array_sectors = Sector::get();
         }else{

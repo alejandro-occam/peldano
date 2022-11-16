@@ -39,8 +39,20 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('/generate_pdf_proposal_test', [App\Http\Controllers\ProposalsController::class, 'generatePdfProposalTest'])->name('generate_pdf_proposal_test');
     //Consultar información de una propuesta
     Route::get('/get_info_proposal/{id}', [App\Http\Controllers\ProposalsController::class, 'getInfoProposal'])->name('get_info_proposal');
+    //Actualizar propuesta 
+    Route::post('/update_proposal', [App\Http\Controllers\ProposalsController::class, 'updateProposal'])->name('update_proposal');
+    //Eliminar propuesta 
+    Route::get('/delete_proposal/{id}', [App\Http\Controllers\ProposalsController::class, 'deleteProposal'])->name('delete_proposal');
+    //Listado de propuestas para exportar
+    Route::post('/list_proposals_to_export', [App\Http\Controllers\ProposalsController::class, 'listProposalsToExport'])->name('list_proposals_to_export');
+    //Descargar CSV de propuestas
+    Route::get('/download_list_proposals_csv', [App\Http\Controllers\ProposalsController::class, 'downloadListProposalsCsv'])->name('download_list_proposals_csv');
     //END PROPOSALS
 
+    //ÓRDENES
+    //Listar órdenes
+    Route::post('/list_orders', [App\Http\Controllers\OrdersController::class, 'listOrders'])->name('list_orders');
+    //END ORDENES
 
     //CONFIGURATION
     //USUARIOS

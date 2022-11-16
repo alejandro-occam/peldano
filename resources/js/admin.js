@@ -10,6 +10,7 @@ import { createApp, h } from "vue";
 import { createWebHistory, createRouter } from "vue-router";
 
 import ConfigurationIndex from "./components/Configuration/ContentComponent.vue";
+import OrdersIndex from "./components/Orders/ContentComponent.vue";
 import ProposalsIndex from "./components/Proposals/ContentComponent.vue";
 
 
@@ -17,6 +18,10 @@ const routes = [
     {
       path: "/admin/proposals",
       component: ProposalsIndex,
+    },
+    {
+      path: "/admin/orders",
+      component: OrdersIndex,
     },
     {
       path: "/admin/configuration",
