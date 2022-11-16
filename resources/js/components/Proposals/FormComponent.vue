@@ -265,16 +265,30 @@
                                     <Calendar class="w-100 borders-box text-dark-gray px-5"  autocomplete="off" v-model="proposals.bill_obj.array_bills[index].date" dateFormat="dd-mm-yy"  />
                                 </td>
                                 <td class="text-align-center py-4 px-5 td-border-right" width="20%">
-                                    <select v-if="this.date_now < this.proposal_submission_settings.date_proyect" class="form-control text-dark select-custom select-filter bg-white" :name="'select_way_to_pay'" :id="'select_way_to_pay'" v-model="proposals.bill_obj.array_bills[index].select_way_to_pay" data-style="select-lightgreen">
-                                        <option v-for="(item, index) in Number(this.select_way_to_pay_options.length)" :key="index" :value="this.select_way_to_pay_options[index].value">{{ this.select_way_to_pay_options[index].text }}</option>
-                                    </select>
-                                    <span v-else>{{ this.select_way_to_pay_options[proposals.bill_obj.array_bills[index].select_way_to_pay].text }}</span>
+                                    <template v-if="!this.create_order">
+                                        <select class="form-control text-dark select-custom select-filter bg-white" :name="'select_way_to_pay'" :id="'select_way_to_pay'" v-model="proposals.bill_obj.array_bills[index].select_way_to_pay" data-style="select-lightgreen">
+                                            <option v-for="(item, index) in Number(this.select_way_to_pay_options.length)" :key="index" :value="this.select_way_to_pay_options[index].value">{{ this.select_way_to_pay_options[index].text }}</option>
+                                        </select>
+                                    </template>
+                                    <template v-else>
+                                        <select v-if="this.date_now < this.proposal_submission_settings.date_proyect" class="form-control text-dark select-custom select-filter bg-white" :name="'select_way_to_pay'" :id="'select_way_to_pay'" v-model="proposals.bill_obj.array_bills[index].select_way_to_pay" data-style="select-lightgreen">
+                                            <option v-for="(item, index) in Number(this.select_way_to_pay_options.length)" :key="index" :value="this.select_way_to_pay_options[index].value">{{ this.select_way_to_pay_options[index].text }}</option>
+                                        </select>
+                                        <span v-else>{{ this.select_way_to_pay_options[proposals.bill_obj.array_bills[index].select_way_to_pay].text }}</span>
+                                    </template>
                                 </td>
                                 <td class="text-align-center py-4 px-5 td-border-right">
-                                    <select v-if="this.date_now < this.proposal_submission_settings.date_proyect" class="form-control text-dark select-custom select-filter bg-white" :name="'select_expiration'" :id="'select_expiration'" v-model="proposals.bill_obj.array_bills[index].select_expiration" data-style="select-lightgreen">
-                                        <option v-for="(item, index) in Number(this.select_expiration_options.length)" :key="index" :value="this.select_expiration_options[index].value">{{ this.select_expiration_options[index].text }}</option>
-                                    </select>
-                                    <span v-else>{{ this.select_expiration_options[proposals.bill_obj.array_bills[index].select_expiration].text }}</span>
+                                    <template v-if="!this.create_order">
+                                        <select class="form-control text-dark select-custom select-filter bg-white" :name="'select_expiration'" :id="'select_expiration'" v-model="proposals.bill_obj.array_bills[index].select_expiration" data-style="select-lightgreen">
+                                            <option v-for="(item, index) in Number(this.select_expiration_options.length)" :key="index" :value="this.select_expiration_options[index].value">{{ this.select_expiration_options[index].text }}</option>
+                                        </select>
+                                    </template>
+                                    <template v-else>
+                                        <select v-if="this.date_now < this.proposal_submission_settings.date_proyect" class="form-control text-dark select-custom select-filter bg-white" :name="'select_expiration'" :id="'select_expiration'" v-model="proposals.bill_obj.array_bills[index].select_expiration" data-style="select-lightgreen">
+                                            <option v-for="(item, index) in Number(this.select_expiration_options.length)" :key="index" :value="this.select_expiration_options[index].value">{{ this.select_expiration_options[index].text }}</option>
+                                        </select>
+                                        <span v-else>{{ this.select_expiration_options[proposals.bill_obj.array_bills[index].select_expiration].text }}</span>
+                                    </template>
                                 </td>
                                 <td class="text-align-center td-border-right">
                                     {{ $utils.roundAndFix(proposals.bill_obj.array_bills[index].amount) }}
@@ -1122,11 +1136,6 @@ export default {
             this.finish_proposal = false;
             this.is_updating = false;
             this.create_order = true;
-        },
-        compareDates(){
-            if ("2012-11-01" < "2012-11-04") {
-                alert ("Error!");
-            }
         },
         //Botón volver
         returnView(){
