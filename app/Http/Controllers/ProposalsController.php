@@ -687,15 +687,35 @@ class ProposalsController extends Controller
                                             ->get();
         
 
-        foreach($array_calendars as $key => $calendar){
-            $sheet->setCellValue('A'.($key+2), $calendar->calendar_name);
-            $sheet->setCellValue('B'.($key+2), $calendar->number);
-            $sheet->setCellValue('C'.($key+2), $calendar->title);
-            $sheet->setCellValue('D'.($key+2), $calendar->drafting);
-            $sheet->setCellValue('E'.($key+2), $calendar->commercial);
-            $sheet->setCellValue('F'.($key+2), $calendar->output);
-            $sheet->setCellValue('G'.($key+2), $calendar->billing);
-            $sheet->setCellValue('H'.($key+2), $calendar->front_page);
+        foreach($array_proposals as $proposal){
+            //Consultamos el nombre del contacto
+            $contact = Contact::find($proposal->id_contact);
+            $proposal['name_contact'] = $contact->name.' '.$contact->surnames;
+
+            //Consultamos el numero de la propuesta
+            $id_proposal_custom_aux = sprintf('%08d', $proposal->id_proposal_custom);
+            $date_aux = explode("-", $proposal->date_proyect);
+            $proposal['proposal_custom'] = 'EP'.$date_aux[2].$date_aux[1].'-'.$id_proposal_custom_aux;
+
+            //Consultamos el total 
+            $total = 0;
+            $proposal_bill = ProposalBill::select('bills.amount')->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill')->where('proposals_bills.id_proposal', $proposal->id)->get();
+            foreach($proposal_bill as $bill){
+                $total += $bill->amount;
+            }
+            
+            $proposal['total_amount'] = $total;
+        }
+
+        foreach($array_proposals as $key => $proposal){
+            $sheet->setCellValue('A'.($key+2), $proposal->id_user);
+            $sheet->setCellValue('B'.($key+2), $proposal['proposal_custom']);
+            $sheet->setCellValue('C'.($key+2), 'CERRADA');
+            $sheet->setCellValue('D'.($key+2), $proposal->drafting);
+            $sheet->setCellValue('E'.($key+2), $proposal['name_contact']);
+            $sheet->setCellValue('F'.($key+2), $proposal->output);
+            $sheet->setCellValue('G'.($key+2), $proposal->billing);
+            $sheet->setCellValue('H'.($key+2), $proposal->front_page);
         }
 
         $writer = new Xlsx($spreadsheet);
