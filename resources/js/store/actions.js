@@ -578,9 +578,7 @@ const actions = {
         try {
             const response = await http({
                 url: "/admin/list_proposals_to_export",
-                params: {
-                    select_calendar_filter: params.select_calendar_filter
-                },
+                params: params,
                 method: 'post'
             });
 
@@ -928,11 +926,7 @@ function createObjectsStore({ state }, response, type){
     //Guardamos datos
     custom_state.proposal_bd_obj = proposal_submission_settings;
     custom_state.proposal_obj.array_dates = array_dates_prices;
-    if(type == 1){
-        custom_state.status_view = 3;
-    }else{
-        custom_state.status_view = 2;
-    }
+    custom_state.status_view = 2;
     state.errors.type_error = 'get_info_proposal';
     state.errors.code = response.data.code;
     custom_state.is_change_get_info = 1;

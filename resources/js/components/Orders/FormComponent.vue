@@ -271,7 +271,7 @@
                                 <td class="text-align-center td-border-right">
                                     {{ $utils.roundAndFix(orders.bill_obj.array_bills[index].amount) }}
                                 </td>
-                                <td  v-if="this.is_change_get_info == 0" class="td-border-right text-align-center">
+                                <td v-if="this.is_change_get_info == 0" class="td-border-right text-align-center">
                                     <button type="button" class="btn"><img width="40" height="40" src="/media/custom-imgs/icono_tabla_aplicar_todos.svg" @click.native="changeOptions(index)" /></button>
                                 </td>
                             </tr>   

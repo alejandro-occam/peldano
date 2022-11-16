@@ -171,14 +171,15 @@
             },
             //Descargar excell
             downloadFile(){
-                var regexNum = new RegExp("/^(0?[1-9]|[12][0-9]|3[01])[\/\-](0?[1-9]|1[012])[\/\-]\d{4}$/");
                 var date_ms_from = this.date_from;
                 var date_ms_to = this.date_to;
-                if (!regexNum.test(this.date_from)){
+                if(!isNaN(Date.parse(this.date_from))){
                     date_ms_from = Date.parse(this.date_from);
+                    date_ms_from = this.$utils.customFormDate(date_ms_from);
                 }
-                if (!regexNum.test(this.date_to)){
-                    date_ms_from = Date.parse(this.date_to);
+                if(!isNaN(Date.parse(this.date_to))){
+                    date_ms_to = Date.parse(this.date_to);
+                    date_ms_to = this.$utils.customFormDate(date_ms_to);
                 }
             
                 window.open(this.publicPath + "/admin/download_list_proposals_csv?type="+this.type
@@ -227,17 +228,19 @@
                     var date_ms_to = this.date_to;
                     if(!isNaN(Date.parse(this.date_from))){
                         date_ms_from = Date.parse(this.date_from);
+                        date_ms_from = this.$utils.customFormDate(date_ms_from);
                     }
                     if(!isNaN(Date.parse(this.date_to))){
                         date_ms_to = Date.parse(this.date_to);
+                        date_ms_to = this.$utils.customFormDate(date_ms_to);
                     }
                     var param = {
                         type: type,
                         num_proposal: this.num_proposal,
                         select_consultant: this.select_consultant,
                         select_sector: this.select_sector,
-                        date_from: this.$utils.customFormDate(date_ms_from),
-                        date_to: this.$utils.customFormDate(date_ms_to)
+                        date_from: date_ms_from,
+                        date_to: date_ms_to
                     }
                     this.listProposalsToExport(param);
                 }
