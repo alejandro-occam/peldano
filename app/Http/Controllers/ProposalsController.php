@@ -204,7 +204,7 @@ class ProposalsController extends Controller
             'id_proposal_custom' => $id_proposal_custom,
             'id_user' => Auth::user()->id,
             'id_contact' => $id_company,
-            'discount' => 0,
+            'discount' => $proposal_submission_settings->discount,
             'commercial_name' => $proposal_submission_settings->commercial_name,
             'language' => $proposal_submission_settings->language,
             'type_proyect' => $proposal_submission_settings->type_proyect,

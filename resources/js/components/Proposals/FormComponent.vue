@@ -575,7 +575,7 @@
                                     <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">CONSULTOR:</div><div class="ml-5 f-13 text-dark">{{ proposals.user_obj.name + ' ' + proposals.user_obj.surname }}</div></td>
                                     <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">SECTOR:</div><div class="ml-5 f-13 text-dark">{{ proposals.proposal_obj.products[0].articles[0].sector_obj.name }}</div></td>
                                     <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">ANUNCIANTE:</div><div class="ml-5 f-13 text-dark">{{ this.name_company }}</div></td>
-                                    <td class="py-2 td-border-left" v-if="this.proposal_submission_settings.show_discounts == 1"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">DESCUENTO:</div><div class="ml-5 f-13 text-dark">{{ this.discount }}%</div></td>
+                                    <td class="py-2 td-border-left" v-if="this.proposal_submission_settings.show_discounts == 1"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">DESCUENTO:</div><div class="ml-5 f-13 text-dark">{{ this.proposal_submission_settings.discount }}%</div></td>
                                     <td class="py-2 td-border-left bg-blue-light-white"><div class="f-13 ml-5 font-weight-bolder color-blue">OFERTA:</div><div class="ml-5 f-13 text-dark">{{ this.offer }}€</div></td>
                                 </tr>
                             </tbody>
@@ -793,7 +793,8 @@ export default {
                 show_inserts: 1,
                 show_invoices: 1,
                 show_pvp: 1,
-                sales_possibilities: '6'
+                sales_possibilities: '6',
+                discount: 0
             },
             is_change_get_info: 0,
             is_updating: false,
@@ -935,12 +936,14 @@ export default {
                                                         article: article.article_obj,
                                                         date_pvp: [{
                                                             date: pvp_date.date,
-                                                            pvp: []
+                                                            pvp: [],
+                                                            pvp_default: []
                                                         }]
                                                     }]
                                                 }]
                                             });
                                             me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
 
                                         }else if(me.value_form1[key_product].article[key_article] == undefined){
                                             me.value_form1[key_product].article.push({
@@ -948,11 +951,13 @@ export default {
                                                     article: article.article_obj,
                                                     date_pvp: [{
                                                         date: pvp_date.date,
-                                                        pvp: []
+                                                        pvp: [],
+                                                        pvp_default: []
                                                     }]
                                                 }]
                                             });
                                             me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
 
                                         }else if(me.value_form1[key_product].article[key_article].dates[key_dates] == undefined){
                                             me.value_form1[key_product].article[key_article].dates.push({
@@ -963,6 +968,7 @@ export default {
                                                 }]
                                             });
                                             me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
 
                                         }else if(me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date] == undefined){
                                             me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp.push({
@@ -971,10 +977,11 @@ export default {
                                             });
 
                                             me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
 
                                         }else{
                                             me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
-
+                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
                                         }
                                     });
                                 });
@@ -1010,6 +1017,7 @@ export default {
             if(!is_empty){
                 me.proposal_submission_settings.commercial_name = me.name_company;
                 me.proposal_submission_settings.date_proyect = me.$utils.getNow();
+                me.proposal_submission_settings.discount = me.discount;
                 me.proposals.status_view = 2;
                 me.finish_proposal = true;
             }else{
@@ -1092,7 +1100,6 @@ export default {
             me.discount = '0.00';
             me.fullname = '';
             me.select_type_proposal = '1';
-            //me.value_form1 = [];
             me.is_show_buttons_bill = false;
             me.finish_proposal = false;
             me.generate_proposal = false;
@@ -1284,6 +1291,8 @@ export default {
                 this.proposal_submission_settings.show_invoices = this.proposals.proposal_bd_obj.show_invoices;
                 this.proposal_submission_settings.show_pvp = this.proposals.proposal_bd_obj.show_pvp;
                 this.proposal_submission_settings.sales_possibilities = this.proposals.proposal_bd_obj.sales_possibilities;
+                this.proposal_submission_settings.discount = this.proposals.proposal_bd_obj.discount;
+                this.discount = this.proposal_submission_settings.discount;
                 this.offer = this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.bill_obj.total_bill));
                 this.loadFormObj();        
             }
