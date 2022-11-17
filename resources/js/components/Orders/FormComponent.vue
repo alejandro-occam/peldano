@@ -259,14 +259,16 @@
                                     <Calendar class="w-100 borders-box text-dark-gray px-5"  autocomplete="off" v-model="orders.bill_obj.array_bills[index].date" dateFormat="dd-mm-yy"  />
                                 </td>
                                 <td class="text-align-center py-4 px-5 td-border-right" width="20%">
-                                    <select class="form-control text-dark select-custom select-filter bg-white" :name="'select_way_to_pay'" :id="'select_way_to_pay'" v-model="orders.bill_obj.array_bills[index].select_way_to_pay" data-style="select-lightgreen">
+                                    <select v-if="this.date_now < this.proposal_submission_settings.date_proyect" class="form-control text-dark select-custom select-filter bg-white" :name="'select_way_to_pay'" :id="'select_way_to_pay'" v-model="orders.bill_obj.array_bills[index].select_way_to_pay" data-style="select-lightgreen">
                                         <option v-for="(item, index) in Number(this.select_way_to_pay_options.length)" :key="index" :value="this.select_way_to_pay_options[index].value">{{ this.select_way_to_pay_options[index].text }}</option>
                                     </select>
+                                    <span v-else>{{ this.select_way_to_pay_options[orders.bill_obj.array_bills[index].select_way_to_pay].text }}</span>
                                 </td>
                                 <td class="text-align-center py-4 px-5 td-border-right">
-                                    <select class="form-control text-dark select-custom select-filter bg-white" :name="'select_expiration'" :id="'select_expiration'" v-model="orders.bill_obj.array_bills[index].select_expiration" data-style="select-lightgreen">
+                                    <select v-if="this.date_now < this.proposal_submission_settings.date_proyect" class="form-control text-dark select-custom select-filter bg-white" :name="'select_expiration'" :id="'select_expiration'" v-model="orders.bill_obj.array_bills[index].select_expiration" data-style="select-lightgreen">
                                         <option v-for="(item, index) in Number(this.select_expiration_options.length)" :key="index" :value="this.select_expiration_options[index].value">{{ this.select_expiration_options[index].text }}</option>
                                     </select>
+                                    <span v-else>{{ this.select_expiration_options[orders.bill_obj.array_bills[index].select_expiration].text }}</span>
                                 </td>
                                 <td class="text-align-center td-border-right">
                                     {{ $utils.roundAndFix(orders.bill_obj.array_bills[index].amount) }}
@@ -285,7 +287,8 @@
                                 <td v-else class="p-5" colspan="5">
                                     <div class="d-flex">
                                         <span class="my-auto col-2">Observaciones</span>
-                                        <input type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" v-model="orders.bill_obj.array_bills[index].observations" placeholder="Observaciones" />
+                                        <input v-if="this.date_now < this.proposal_submission_settings.date_proyect" type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" v-model="orders.bill_obj.array_bills[index].observations" placeholder="Observaciones" />
+                                        <span class="my-auto col-10" v-else>{{ orders.bill_obj.array_bills[index].observations }}</span>
                                     </div>
                                 </td>
                             </tr>      
@@ -299,7 +302,8 @@
                                 <td v-else class="p-5" colspan="5">
                                     <div class="d-flex">
                                         <span class="my-auto col-2">Núm. pedido</span>
-                                        <input type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" v-model="orders.bill_obj.array_bills[index].order_number" placeholder="Número de pedido" />
+                                        <input v-if="this.date_now < this.proposal_submission_settings.date_proyect" type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" v-model="orders.bill_obj.array_bills[index].order_number" placeholder="Número de pedido" />
+                                        <span class="my-auto col-10" v-else>{{ orders.bill_obj.array_bills[index].order_number }}</span>
                                     </div>
                                 </td>
                             </tr>    
@@ -313,7 +317,8 @@
                                 <td v-else class="p-5" colspan="5">
                                     <div class="d-flex">
                                         <span class="my-auto col-2">Observaciones Internas</span>
-                                        <input type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" v-model="orders.bill_obj.array_bills[index].internal_observations" placeholder="Observaciones Internas" />
+                                        <input v-if="this.date_now < this.proposal_submission_settings.date_proyect" type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" v-model="orders.bill_obj.array_bills[index].internal_observations" placeholder="Observaciones Internas" />
+                                        <span class="my-auto col-10" v-else>{{ orders.bill_obj.array_bills[index].internal_observations }}</span>
                                     </div>
                                 </td>
                             </tr>   
@@ -769,7 +774,8 @@ export default {
                 sales_possibilities: '6'
             },
             is_change_get_info: 0,
-            is_updating: 0
+            is_updating: 0,
+            date_now: ''
         };
     },
     computed: {
@@ -1076,6 +1082,7 @@ export default {
             me.proposal_submission_settings.show_invoices = 1;
             me.proposal_submission_settings.show_pvp = 1;
             me.proposal_submission_settings.sales_possibilities = 6;
+            me.proposal_submission_settings.discount = 0;
         },
         //Modificar propuesta
         updateProposalFront(){
@@ -1108,6 +1115,7 @@ export default {
         }
     },
     mounted() {
+        this.date_now = this.$utils.getNow();
         this.clearError();
         let me = this;
         $('#select_company').select2({
@@ -1219,6 +1227,8 @@ export default {
                 this.proposal_submission_settings.show_invoices = this.orders.proposal_bd_obj.show_invoices;
                 this.proposal_submission_settings.show_pvp = this.orders.proposal_bd_obj.show_pvp;
                 this.proposal_submission_settings.sales_possibilities = this.orders.proposal_bd_obj.sales_possibilities;
+                this.proposal_submission_settings.discount = this.orders.proposal_bd_obj.discount;
+                this.discount =  this.proposal_submission_settings.discount;
                 this.offer = this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.orders.bill_obj.total_bill));
                 this.loadFormObj();        
                 this.offer = this.orders.bill_obj.total_bill;

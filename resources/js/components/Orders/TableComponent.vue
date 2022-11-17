@@ -356,7 +356,7 @@
                             width: 100,
                             template: function (row, data, index) {
                                 return (
-                                    '<span class="text-gray font-weight-bold">3986.00</span>'
+                                    '<span class="text-gray font-weight-bold">'+row.total_amount+'</span>'
                                 );
                             },
                         },
@@ -368,7 +368,7 @@
                             width: 100,
                             template: function (row, data, index) {
                                 return (
-                                    '<span class="text-gray font-weight-bold">52,04%</span>'
+                                    '<span class="text-gray font-weight-bold">'+row.discount+'%</span>'
                                 );
                             },
                         },

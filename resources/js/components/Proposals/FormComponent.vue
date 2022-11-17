@@ -1117,6 +1117,7 @@ export default {
             me.proposal_submission_settings.show_invoices = 1;
             me.proposal_submission_settings.show_pvp = 1;
             me.proposal_submission_settings.sales_possibilities = 6;
+            me.proposal_submission_settings.discount = 0;
         },
         //Modificar propuesta
         updateProposalFront(){
