@@ -866,8 +866,13 @@ export default {
                                 if(type == 1){
                                     value += 1;
                                 }else{
-                                    pvp_obj = pvp_obj * (1 - (me.discount  /100));
-                                    me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = me.$utils.roundAndFix(pvp_obj);
+                                    if(me.discount != 0){
+                                        pvp_obj = me.value_form1[key_product].article[key_article].dates[key_dates].article.pvp * (1 - (me.discount  /100));
+                                        me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = me.$utils.roundAndFix(pvp_obj);
+                                    }else{
+                                        me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = me.$utils.roundAndFix(me.value_form1[key_product].article[key_article].dates[key_dates].article.pvp);
+                                    }
+                                   
                                     //me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = new_value;
                                 }
                             });
