@@ -591,6 +591,24 @@ const actions = {
         }
     },
 
+    //Listar ordenes para exportar 
+    async listOrdersToExport({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/list_orders_to_export",
+                params: params,
+                method: 'post'
+            });
+
+            state.orders.html_orders_list = response.data.array_orders;
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
+
     //Crear orden
     async createOrder({ state }, params){
         try {

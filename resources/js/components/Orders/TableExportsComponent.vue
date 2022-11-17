@@ -71,7 +71,7 @@
 
             <div class="mx-2 col-2 mt-5">
                 <span class="text-dark font-weight-bold mb-2">Num. orden</span>
-                <input v-model="num_proposal" type="text" class="form-control bg-gray mt-3 select-filter text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
+                <input v-model="num_order" type="text" class="form-control bg-gray mt-3 select-filter text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
             </div>
 
             <div class="mx-2 mt-5 col-2 d-grid">
@@ -182,7 +182,7 @@
         data() {
             return {
                 publicPath: window.location.origin,
-                num_proposal: '',
+                num_order: '',
                 select_consultant: '',
                 date_from: '',
                 date_to: '',
@@ -190,7 +190,6 @@
                 select_sector: '',
                 select_status_order: '1',
                 datatable: null,
-                type: 0,
                 show_all: 0
             };
         },
@@ -225,8 +224,8 @@
                     date_ms_to = this.$utils.customFormDate(date_ms_to);
                 }
             
-                window.open(this.publicPath + "/admin/download_list_proposals_csv?type="+this.type
-                                                                                +"&num_proposal="+this.num_proposal
+                window.open(this.publicPath + "/admin/download_list_orders_csv?type="+this.type
+                                                                                +"&num_order="+this.num_order
                                                                                 +"&select_consultant="+this.select_consultant
                                                                                 +"&select_sector="+this.select_sector
                                                                                 +"&date_from="+date_ms_from
@@ -300,7 +299,7 @@
             var param = {
                 type: 0
             }
-            //this.listProposalsToExport(param);
+            this.listOrdersToExport(param);
             this.getUsers(1);
         }
     };

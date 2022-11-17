@@ -54,6 +54,11 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     //ÓRDENES
     //Listar órdenes
     Route::post('/list_orders', [App\Http\Controllers\OrdersController::class, 'listOrders'])->name('list_orders');
+    //Listado de ordenes para exportar
+    Route::post('/list_orders_to_export', [App\Http\Controllers\OrdersController::class, 'listOrdersToExport'])->name('list_orders_to_export');
+    //Descargar CSV de propuestas
+    Route::get('/download_list_orders_csv', [App\Http\Controllers\OrdersController::class, 'downloadListOrdersCsv'])->name('download_list_orders_csv');
+    
     //END ORDENES
 
     //CONFIGURATION

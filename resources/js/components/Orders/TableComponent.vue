@@ -60,7 +60,7 @@
 
             <div class="mx-2 col-2 mt-5">
                 <span class="text-dark font-weight-bold mb-2">Num. orden</span>
-                <input v-model="num_proposal" type="text" class="form-control bg-gray mt-3 select-filter text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
+                <input v-model="num_order" type="text" class="form-control bg-gray mt-3 select-filter text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
             </div>
 
             <div class="mx-2 mt-5 col-2 d-grid">
@@ -99,7 +99,7 @@
                 </div>
             </div>
             <div class="mx-2 col-12 d-flex mt-10">
-                <button type="submit" class="btn bg-azul color-white px-35 font-weight-bolder" v-on:click="this.listProposals(1)">Aplicar filtro</button>
+                <button type="submit" class="btn bg-azul color-white px-35 font-weight-bolder" v-on:click="this.listOrders(1)">Aplicar filtro</button>
             </div>
         </div>
         <div class="col-12 mt-15">
@@ -123,7 +123,7 @@
         data() {
             return {
                 publicPath: window.location.origin,
-                num_proposal: '',
+                num_order: '',
                 select_consultant: '',
                 date_from: '',
                 date_to: '',
@@ -175,11 +175,11 @@
                     var date_ms_from = Date.parse(me.date_from);
                     var date_ms_to = Date.parse(me.date_to);
                     
-                    me.datatable.setDataSourceParam('num_proposal', me.num_proposal);
                     me.datatable.setDataSourceParam('select_consultant', me.select_consultant);
                     me.datatable.setDataSourceParam('select_sector', me.select_sector);
                     me.datatable.setDataSourceParam('date_from', me.$utils.customFormDate(date_ms_from));
                     me.datatable.setDataSourceParam('date_to', me.$utils.customFormDate(date_ms_to));
+                    me.datatable.setDataSourceParam('num_order', me.num_order);
                 }
                 me.datatable = $("#list_orders").KTDatatable({
                     data: {
