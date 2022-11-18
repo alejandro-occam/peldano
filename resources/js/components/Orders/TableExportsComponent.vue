@@ -86,9 +86,9 @@
             <div class="mx-2 mt-5 col-2 d-grid">
                 <span class="text-dark font-weight-bold mb-2"></span>
                 <select class="form-control bg-gray text-dark select-custom select-filter mt-auto" :name="'select_status_order'" :id="'select_status_order'" v-model="select_status_order" data-style="select-lightgreen" @change="getProductsSelect">
-                    <option value="1" selected>No han pasado la orden</option>
-                    <option value="2">Han pasado a orden</option>
-                    <option value="3">Todas</option>
+                    <option value="1" selected>Excluyendo intercambios</option>
+                    <option value="2">Todas</option>
+                    <option value="3">Solo intercambios</option>
                 </select>
             </div>
             <div class="mx-2 mt-auto col-2 d-grid">
