@@ -41,9 +41,8 @@ class GetTokenSage extends Command
     public function handle()
     {
         $requ_curls = new CurlController();
-        
         //Consultamos el token de nuestro cliente
-        /*$url = 'https://id.sage.com/oauth/token';
+        $url = 'https://id.sage.com/oauth/token';
         $params['grant_type'] = 'authorization_code';
         $params['client_id'] = config('constants.client_id_sage');
         $params['client_secret'] = config('constants.client_secret_sage');
@@ -57,8 +56,8 @@ class GetTokenSage extends Command
             $array['id_token'] = $data_token_sage['id_token'];
             $data = var_export($array, 1);
             File::put(app_path() . '/../config/constants.php', "<?php\n return $data ;");
-        }*/
-        $url = 'https://sage200.sage.es/api/sales/SalesInvoices';
+        }
+        /*$url = 'https://sage200.sage.es/api/sales/SalesInvoices';
         $params['CompanyId'] = config('constants.id_company_sage');
         $params['CustomerId'] = '6972a7f8-a876-49fd-856b-19b86d5425f5'; // Esto sería la empresa o contacto a quien se lo asociamos
         $params['InvoiceType'] = '1'; //Lo ponemos de momento Undefined
@@ -71,6 +70,6 @@ class GetTokenSage extends Command
         $params['Lines'][] = $line;
         //error_log(print_r(json_encode($params), true));
         $response = json_decode($requ_curls->postSageCurl($url, $params, 3)['response'], true);
-        error_log(print_r($response, true));
+        error_log(print_r($response, true));*/
     }
 }
