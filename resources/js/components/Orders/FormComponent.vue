@@ -1116,24 +1116,31 @@ export default {
         }
     },
     mounted() {
-        this.date_now = this.$utils.getNow();
-        this.clearError();
-        let me = this;
-        $('#select_company').select2({
-            placeholder: "Selecciona una empresa"
-        });
-        $('#select_company_other_values').select2({
-            placeholder: "Selecciona una empresa"
-        });
-        this.getCompanies(2);
-        $('#select_company').on("change",function(){
-            me.select_company = $('#select_company').val();
-            me.getNameCompany(me.select_company);
-        });
-        $('#select_company_other_values').on("change",function(){
-            me.select_company_other_values = $('#select_company_other_values').val();
-            me.getNameCompany(me.select_company_other_values);
-        });
+        if(this.orders.proposal_obj.array_dates != undefined && this.offer == 0 && this.orders.proposal_obj.array_dates.length > 0 && !this.orders.is_change_get_info){
+            this.changeViewStatusOrders(1);
+            this.clearObjectsOrders();
+
+        }else{
+            this.date_now = this.$utils.getNow();
+            this.clearError();
+            let me = this;
+            $('#select_company').select2({
+                placeholder: "Selecciona una empresa"
+            });
+            $('#select_company_other_values').select2({
+                placeholder: "Selecciona una empresa"
+            });
+            this.getCompanies(2);
+            $('#select_company').on("change",function(){
+                me.select_company = $('#select_company').val();
+                me.getNameCompany(me.select_company);
+            });
+            $('#select_company_other_values').on("change",function(){
+                me.select_company_other_values = $('#select_company_other_values').val();
+                me.getNameCompany(me.select_company_other_values);
+            });
+
+        }
     },
     watch: {
         '$store.state.errors.code': function() {
