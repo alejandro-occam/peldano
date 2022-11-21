@@ -3,11 +3,13 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
 
 class ExternalRequestController extends Controller
 {
     //Guardar empresas desde Hubspot
     function saveCompaniesFromHubspot(Request $request){
+        Log::error('request: ' .  print_r($request, true));
         //Comprobamos si existe la empresa
         $company = Company::where('id_hubspot', $company_hubspot['id'])->first();
         if($company){
@@ -28,6 +30,7 @@ class ExternalRequestController extends Controller
 
     //Guardar contactos desde Hubspot
     function saveContactsFromHubspot(Request $request){
+        Log::error('request: ' .  print_r($request, true));
         //Comprobamos si existe la empresa
         $company = Company::where('id_hubspot', $company_hubspot['id'])->first();
         if($company){
