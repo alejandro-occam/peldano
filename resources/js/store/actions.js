@@ -590,6 +590,43 @@ const actions = {
             return error;
         }
     },
+
+    //Listar ordenes para exportar 
+    async listOrdersToExport({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/list_orders_to_export",
+                params: params,
+                method: 'post'
+            });
+
+            state.orders.html_orders_list = response.data.array_orders;
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
+
+    //Crear orden
+    async createOrder({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/create_order",
+                params: params,
+                method: 'post'
+            });
+
+            state.errors.type_error = 'create_order';
+            state.errors.code = response.data.code;
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
 }
 
 //Rellenar objetos para el store y mostrar la información de las propuestas u ordenes
@@ -726,6 +763,7 @@ function createObjectsStore({ state }, response, type){
     var total_amount_global = 0;
     var total_individual_pvp = 0;
     var total_global = 0;
+    var total_global_default = 0;
     custom_state.proposal_obj.products.map(function(product, key) {
         product.articles.map(function(article, key) {
             total_individual_pvp += article.article_obj.pvp;
@@ -734,6 +772,7 @@ function createObjectsStore({ state }, response, type){
                     total_amount_global += pvp_date.arr_pvp.length;
                     pvp_date.arr_pvp.map(function(pvp, key) {
                         total_global += Number(pvp);
+                        total_global_default += Number(article.article_obj.pvp);
                     });
                 });
             });
@@ -741,7 +780,7 @@ function createObjectsStore({ state }, response, type){
     });
     custom_state.proposal_obj.total_individual_pvp = total_individual_pvp;
     custom_state.proposal_obj.total_amount_global = total_amount_global;
-    custom_state.proposal_obj.total_global_normal = total_global;
+    custom_state.proposal_obj.total_global_normal = total_global_default;
     custom_state.proposal_obj.total_global = total_global;
 
     //Ordenamos las fechas de forma ascendente
@@ -803,7 +842,8 @@ function createObjectsStore({ state }, response, type){
         show_pvp: proposal.show_pvp,
         sales_possibilities: proposal.sales_possibilities,
         id_proposal_custom: proposal.id_proposal_custom,
-        id_proposal_custom_aux: proposal.id_proposal_custom_aux
+        id_proposal_custom_aux: proposal.id_proposal_custom_aux,
+        discount: proposal.discount
     }
     
     //Guardamos con un nuevo formato para las facturas los articulos

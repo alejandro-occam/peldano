@@ -253,7 +253,7 @@
                                 <div class="col-12 pl-0 mt-15">
                                     <div id="test" class="col-12 pl-0 mt-10">
                                         <div class="col-12 pl-0 mt-10 text-align-center">
-                                            <img src="https://peldano.occamagenciadigital.com/logo_azul.png" width="300px" >
+                                            <img src="https://peldano.occamagenciadigital.com/media/custom-imgs/logo_azul.png" width="300px" >
                                         </div>
                                         <div>
                                             <h2 class="color-blue">Propuesta</h2>
@@ -262,12 +262,12 @@
                                         </div>
                                         <div class="footer d-flex">
                                             <span class="f-13 color-blue">Comunicamos. Conectamos. Impulsamos</span>
-                                            <img class="float-right my-auto" src="https://peldano.occamagenciadigital.com/logo_azul.png" width="30px" >
+                                            <img class="float-right my-auto" src="https://peldano.occamagenciadigital.com/media/custom-imgs/logo_azul.png" width="30px" >
                                         </div>
                                         <div class="page-break"></div>
                                         <div class="header d-flex">
                                             <span class="f-13 color-blue">Propuesta</span>
-                                            <img class="float-right my-auto" src="https://peldano.occamagenciadigital.com/logo_azul.png" width="30px" >
+                                            <img class="float-right my-auto" src="https://peldano.occamagenciadigital.com/media/custom-imgs/logo_azul.png" width="30px" >
                                         </div>
                                         <h1 class="color-blue">{!! $proposal->commercial_name !!}</h1>
                                         <h3 class="color-blue" style="font-weight: normal !important;">{!! $proposal->date_proyect !!}</h3>
@@ -296,7 +296,7 @@
                                             <div class="page-break"></div>
                                             <div class="header d-flex">
                                                 <span class="f-13 color-blue">Propuesta</span>
-                                                <img class="float-right my-auto" src="https://peldano.occamagenciadigital.com/logo_azul.png" width="30px" >
+                                                <img class="float-right my-auto" src="https://peldano.occamagenciadigital.com/media/custom-imgs/logo_azul.png" width="30px" >
                                             </div>
                                             <div class="d-grid mt-10 mb-4">
                                                 <table width="100%" cellpadding="2" cellspacing="1" id="table_1">

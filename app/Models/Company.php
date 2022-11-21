@@ -15,7 +15,8 @@ class Company extends Model
         'name',
         'nif',
         'address',
-        'id_hubspot'
+        'id_hubspot',
+        'id_sage'
     ];
 
     /**
@@ -27,7 +28,8 @@ class Company extends Model
         'name' => 'string',
         'nif' => 'string',
         'address' => 'string',
-        'id_hubspot' => 'string'
+        'id_hubspot' => 'string',
+        'id_sage' => 'string'
     ];
 
     /**
@@ -39,6 +41,7 @@ class Company extends Model
         'name',
         'nif',
         'address',
-        'id_hubspot'
+        'id_hubspot',
+        'id_sage'
     ];
 }

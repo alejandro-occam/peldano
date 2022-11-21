@@ -18,7 +18,7 @@
                     :src="'/media/custom-imgs/icono_btn_crear_orden.svg'"
                     :width="16"
                     :height="16"
-                    @click.native="createOrder()"
+                    @click.native="createOrderView()"
                 />
                 <AddButtonComponent
                     :columns="'mr-7'"
@@ -353,6 +353,9 @@
                 <div class="mt-10" v-if="!this.create_order">
                     <button @click.native="this.finishProposal()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Finalizar propuesta</button>
                 </div>
+                <div class="mt-10" v-else>
+                    <button @click.native="this.createOrderBtn()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Crear orden</button>
+                </div>
             </div>
             <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && this.is_show_buttons_bill && this.finish_proposal && !this.generate_proposal">
                 <h3 class="color-blue">Configuración de la presentación de la propuesta</h3>
@@ -572,7 +575,7 @@
                                     <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">CONSULTOR:</div><div class="ml-5 f-13 text-dark">{{ proposals.user_obj.name + ' ' + proposals.user_obj.surname }}</div></td>
                                     <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">SECTOR:</div><div class="ml-5 f-13 text-dark">{{ proposals.proposal_obj.products[0].articles[0].sector_obj.name }}</div></td>
                                     <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">ANUNCIANTE:</div><div class="ml-5 f-13 text-dark">{{ this.name_company }}</div></td>
-                                    <td class="py-2 td-border-left" v-if="this.proposal_submission_settings.show_discounts == 1"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">DESCUENTO:</div><div class="ml-5 f-13 text-dark">{{ this.discount }}%</div></td>
+                                    <td class="py-2 td-border-left" v-if="this.proposal_submission_settings.show_discounts == 1"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">DESCUENTO:</div><div class="ml-5 f-13 text-dark">{{ this.proposal_submission_settings.discount }}%</div></td>
                                     <td class="py-2 td-border-left bg-blue-light-white"><div class="f-13 ml-5 font-weight-bolder color-blue">OFERTA:</div><div class="ml-5 f-13 text-dark">{{ this.offer }}€</div></td>
                                 </tr>
                             </tbody>
@@ -790,7 +793,8 @@ export default {
                 show_inserts: 1,
                 show_invoices: 1,
                 show_pvp: 1,
-                sales_possibilities: '6'
+                sales_possibilities: '6',
+                discount: 0
             },
             is_change_get_info: 0,
             is_updating: false,
@@ -803,7 +807,7 @@ export default {
     },
     methods: {
         ...mapMutations(["clearError", "changeViewStatusProposals", "changeProposalObj", "changeValueIsChangeArticle", "generateBill", "clearObjectsProposal"]),
-        ...mapActions(["getCompanies", "saveProposal", "updateProposal", "deleteProposal"]),
+        ...mapActions(["getCompanies", "saveProposal", "updateProposal", "deleteProposal", "createOrder"]),
         openFormArticle(){
             $('#modal_form_article_proposals').modal('show');
         },
@@ -839,7 +843,7 @@ export default {
 
                 var new_value = this.offer / total_inputs;
                 //Modificamos los valores de los inputs
-                this.rewalkForm1(2, new_value);
+                this.rewalkForm1(2, this.discount);
             }
 
             var params = {
@@ -863,9 +867,14 @@ export default {
                                 if(type == 1){
                                     value += 1;
                                 }else{
-                                    //pvp_obj = pvp_obj * (1 - (me.discount  /100));
-                                    //me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = me.$utils.roundAndFix(pvp_obj);
-                                    me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = new_value;
+                                    if(me.discount != 0){
+                                        pvp_obj = me.value_form1[key_product].article[key_article].dates[key_dates].article.pvp * (1 - (me.discount  /100));
+                                        me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = me.$utils.roundAndFix(pvp_obj);
+                                    }else{
+                                        me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = me.$utils.roundAndFix(me.value_form1[key_product].article[key_article].dates[key_dates].article.pvp);
+                                    }
+                                   
+                                    //me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = new_value;
                                 }
                             });
                         });
@@ -927,12 +936,14 @@ export default {
                                                         article: article.article_obj,
                                                         date_pvp: [{
                                                             date: pvp_date.date,
-                                                            pvp: []
+                                                            pvp: [],
+                                                            pvp_default: []
                                                         }]
                                                     }]
                                                 }]
                                             });
                                             me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
 
                                         }else if(me.value_form1[key_product].article[key_article] == undefined){
                                             me.value_form1[key_product].article.push({
@@ -940,11 +951,13 @@ export default {
                                                     article: article.article_obj,
                                                     date_pvp: [{
                                                         date: pvp_date.date,
-                                                        pvp: []
+                                                        pvp: [],
+                                                        pvp_default: []
                                                     }]
                                                 }]
                                             });
                                             me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
 
                                         }else if(me.value_form1[key_product].article[key_article].dates[key_dates] == undefined){
                                             me.value_form1[key_product].article[key_article].dates.push({
@@ -955,6 +968,7 @@ export default {
                                                 }]
                                             });
                                             me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
 
                                         }else if(me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date] == undefined){
                                             me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp.push({
@@ -963,10 +977,11 @@ export default {
                                             });
 
                                             me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
 
                                         }else{
                                             me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
-
+                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
                                         }
                                     });
                                 });
@@ -1002,6 +1017,7 @@ export default {
             if(!is_empty){
                 me.proposal_submission_settings.commercial_name = me.name_company;
                 me.proposal_submission_settings.date_proyect = me.$utils.getNow();
+                me.proposal_submission_settings.discount = me.discount;
                 me.proposals.status_view = 2;
                 me.finish_proposal = true;
             }else{
@@ -1084,7 +1100,6 @@ export default {
             me.discount = '0.00';
             me.fullname = '';
             me.select_type_proposal = '1';
-            //me.value_form1 = [];
             me.is_show_buttons_bill = false;
             me.finish_proposal = false;
             me.generate_proposal = false;
@@ -1102,6 +1117,7 @@ export default {
             me.proposal_submission_settings.show_invoices = 1;
             me.proposal_submission_settings.show_pvp = 1;
             me.proposal_submission_settings.sales_possibilities = 6;
+            me.proposal_submission_settings.discount = 0;
         },
         //Modificar propuesta
         updateProposalFront(){
@@ -1130,38 +1146,52 @@ export default {
                 }
             });
         },
-        //Crear propuesta
-        createOrder(){
+        //Cambio de vista para crear orden
+        createOrderView(){
             this.generate_proposal = false;
             this.finish_proposal = false;
             this.is_updating = false;
             this.create_order = true;
         },
+        //Crear orden
+        createOrderBtn(){
+            var params = {
+                'id_proposal': this.proposals.proposal_bd_obj.id
+            }
+            this.createOrder(params);
+        },
         //Botón volver
         returnView(){
             this.changeViewStatusProposals(1);
             this.clearObjectsProposal();
-        }
+        },
     },
     mounted() {
-        this.date_now = this.$utils.getNow();
-        this.clearError();
-        let me = this;
-        $('#select_company').select2({
-            placeholder: "Selecciona una empresa"
-        });
-        $('#select_company_other_values').select2({
-            placeholder: "Selecciona una empresa"
-        });
-        this.getCompanies(1);
-        $('#select_company').on("change",function(){
-            me.select_company = $('#select_company').val();
-            me.getNameCompany(me.select_company);
-        });
-        $('#select_company_other_values').on("change",function(){
-            me.select_company_other_values = $('#select_company_other_values').val();
-            me.getNameCompany(me.select_company_other_values);
-        });
+        if(this.proposals.proposal_obj.array_dates != undefined && this.offer == 0 && this.proposals.proposal_obj.array_dates.length > 0 && !this.proposals.is_change_get_info){
+            this.changeViewStatusProposals(1);
+            this.clearObjectsProposal();
+
+        }else{
+
+            this.date_now = this.$utils.getNow();
+            this.clearError();
+            let me = this;
+            $('#select_company').select2({
+                placeholder: "Selecciona una empresa"
+            });
+            $('#select_company_other_values').select2({
+                placeholder: "Selecciona una empresa"
+            });
+            this.getCompanies(1);
+            $('#select_company').on("change",function(){
+                me.select_company = $('#select_company').val();
+                me.getNameCompany(me.select_company);
+            });
+            $('#select_company_other_values').on("change",function(){
+                me.select_company_other_values = $('#select_company_other_values').val();
+                me.getNameCompany(me.select_company_other_values);
+            });
+        }
     },
     watch: {
         '$store.state.errors.code': function() {
@@ -1214,6 +1244,19 @@ export default {
                         swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
                     }
                 }
+
+            }if(this.errors.type_error == 'create_order'){
+                if(this.errors.code != ''){
+                    if(this.errors.code == 1000){
+                        $("#list_proposals").KTDatatable("reload");
+                        this.proposals.status_view = 1;
+                        this.clearData();
+                        swal("", "Orden creada correctamente", "success");
+                    }else{
+                        swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
+                    }
+                }
+
             }
             this.clearError();
         },
@@ -1256,6 +1299,8 @@ export default {
                 this.proposal_submission_settings.show_invoices = this.proposals.proposal_bd_obj.show_invoices;
                 this.proposal_submission_settings.show_pvp = this.proposals.proposal_bd_obj.show_pvp;
                 this.proposal_submission_settings.sales_possibilities = this.proposals.proposal_bd_obj.sales_possibilities;
+                this.proposal_submission_settings.discount = this.proposals.proposal_bd_obj.discount;
+                this.discount = this.proposal_submission_settings.discount;
                 this.offer = this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.bill_obj.total_bill));
                 this.loadFormObj();        
             }

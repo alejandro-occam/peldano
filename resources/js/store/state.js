@@ -99,7 +99,11 @@ const state = {
         },
         num_custom_invoices: 0,
         is_change_get_info: 0,
-        id_company: 0
+        id_company: 0,
+        html_orders_list: ''
+    },
+    reports: {
+        status_view: 1,
     },
     errors: {
         code: 0,

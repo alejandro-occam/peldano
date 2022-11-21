@@ -17,7 +17,9 @@ class Article extends Model
         'english_name',
         'pvp',
         'id_product',
-        'is_exempt'
+        'is_exempt',
+        'id_sage',
+        'id_family_sage',
     ];
 
     /**
@@ -31,7 +33,9 @@ class Article extends Model
         'english_name' => 'string',
         'pvp' => 'double',
         'id_product' => 'integer',
-        'is_exempt' => 'boolean'
+        'is_exempt' => 'boolean',
+        'id_sage' => 'string',
+        'id_family_sage' => 'string'
     ];
 
     /**
@@ -45,7 +49,9 @@ class Article extends Model
         'english_name',
         'pvp',
         'id_product',
-        'is_exempt'
+        'is_exempt',
+        'id_sage',
+        'id_family_sage'
     ];
 
     public function product()
