@@ -12,9 +12,13 @@ import { createWebHistory, createRouter } from "vue-router";
 import ConfigurationIndex from "./components/Configuration/ContentComponent.vue";
 import OrdersIndex from "./components/Orders/ContentComponent.vue";
 import ProposalsIndex from "./components/Proposals/ContentComponent.vue";
-
+import ReportsIndex from "./components/Reports/ContentComponent.vue";
 
 const routes = [
+    {
+      path: "/admin/reports",
+      component: ReportsIndex,
+    },
     {
       path: "/admin/proposals",
       component: ProposalsIndex,

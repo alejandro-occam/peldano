@@ -102,6 +102,9 @@ const state = {
         id_company: 0,
         html_orders_list: ''
     },
+    reports: {
+        status_view: 1,
+    },
     errors: {
         code: 0,
         type_error: ''
