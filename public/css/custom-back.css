@@ -819,7 +819,7 @@ a.text-hover-primary:hover, .text-hover-primary:hover{
     cursor: pointer;
 }
 
-.bg-tarjet-reports.selected{
+.bg-tarjet-reports.selected, .bg-tarjet-reports:hover{
     background-color: #0551d8;
     color: #fff;
     cursor: pointer;
@@ -829,6 +829,10 @@ a.text-hover-primary:hover, .text-hover-primary:hover{
     content:url("/media/custom-imgs/flecha_R_azul.svg");
 }
 
-.bg-tarjet-reports.selected>img.arrow{
+.bg-tarjet-reports.selected>img.arrow, .bg-tarjet-reports:hover>img.arrow{
     content:url("/media/custom-imgs/flecha_R_blanca.svg");
+}
+
+.p-divider.p-divider-horizontal:before{
+    border-top-style: solid !important;
 }

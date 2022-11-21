@@ -968,6 +968,11 @@ const mutations = {
         state.orders.bill_obj.array_bills = [];
         state.orders.bill_obj.total_bill = 0;
         state.orders.proposal_bd_obj = null;
+    },
+
+    //Cambiamos de vistas en Informes
+    changeViewStatusReports(state, n){
+        state.reports.status_view = n;
     }
 }
 
