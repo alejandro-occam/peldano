@@ -621,7 +621,6 @@ class ConfigurationController extends Controller
         return response()->json($response);
     }
 
-
     //Listado de artículos
     function listArticles(Request $request){
         //Elementos para la paginación 
@@ -746,12 +745,75 @@ class ConfigurationController extends Controller
             $response['code'] = 1003;
             return response()->json($response);
         }
-        
+
+        //Consultamos el Area, Sector y Marca del artículo
+        $brand = Brand::find($product->id_brand);
+        if(!$brand){
+            $response['code'] = 1003;
+            return response()->json($response);
+        }
+
+        $sector = Sector::find($brand->id_sector);
+        if(!$sector){
+            $response['code'] = 1003;
+            return response()->json($response);
+        }
+
+        $area = Area::find($sector->id_area);
+        if(!$area){
+            $response['code'] = 1003;
+            return response()->json($response);
+        }
+
+        //Creamos un objeto para el controller curl
+        $requ_curls = new CurlController();
+
+        //Consultamos el product family del artículo
+        $company = config('constants.id_company_sage');
+        $url = 'https://sage200.sage.es/api/sales/ProductFamilies?api-version=1.0&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Name%20eq%20%27'.$area->id."-".$sector->id."-".$brand->id."-".$product->id.'%27';
+        $data = json_decode($requ_curls->getSageCurl($url)['response'], true);
+        $product_family_id = '';
+        if(count($data['value']) == 0){
+            //Si no existe creamos un product family
+            $param['CompanyId'] = $company;
+            $param['Name'] = $area->id."-".$sector->id."-".$brand->id."-".$product->id;
+            $url = 'https://sage200.sage.es/api/sales/ProductFamilies?api-version=1.0';
+            $response = json_decode($requ_curls->postSageCurl($url, $param)['response'], true);
+            $product_family_id = $response['Id'];
+        }else{
+            $array_product_family = $data['value'];
+            foreach($array_product_family as $product_family){
+                $product_family_id = $product_family['Id'];
+            }
+        }
+
+        //Consultamos si existe el artículo con este product family y nombre
+        $custom_name = str_replace(' ', '%20', $name);
+        $url = 'https://sage200.sage.es/api/sales/Products?api-version=1.0&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Name%20eq%20%27'.$custom_name.'%27%20and%20FamilyId%20eq%20%27'.$product_family_id.'%27';
+        $data_product = json_decode($requ_curls->getSageCurl($url)['response'], true);
+        if(count($data_product['value']) == 0){
+            //Si no existe creamos un product family
+            $param['CompanyId'] = $company;
+            $param['Name'] = $name;
+            $param['SalesPriceIncludingTaxes'] = false;
+            $param['SalesPrice'] = $price;
+            $param['FamilyId'] = $product_family_id;
+            $url = 'https://sage200.sage.es/api/sales/Products?api-version=1.0';
+            $response = json_decode($requ_curls->postSageCurl($url, $param)['response'], true);
+            $product_id = $response['Id'];
+
+        }else{
+            $response['code'] = 1004;
+            return response()->json($response);
+        }
+
         Article::create([
             'name' => $name,
             'english_name' => $name_eng,
             'pvp' => $price,
             'id_product' => $id_product,
+            'id_sage' => $product_id,
+            'id_family_sage' => $product_family_id
         ]);
 
         $response['code'] = 1000;
@@ -827,7 +889,72 @@ class ConfigurationController extends Controller
             $response['code'] = 1003;
             return response()->json($response);
         }
-        
+
+        //Consultamos el Area, Sector y Marca del artículo
+        $brand = Brand::find($product->id_brand);
+        if(!$brand){
+            $response['code'] = 1003;
+            return response()->json($response);
+        }
+
+        $sector = Sector::find($brand->id_sector);
+        if(!$sector){
+            $response['code'] = 1003;
+            return response()->json($response);
+        }
+
+        $area = Area::find($sector->id_area);
+        if(!$area){
+            $response['code'] = 1003;
+            return response()->json($response);
+        }
+
+        if($name != $product->name){
+            /*//Creamos un objeto para el controller curl
+            $requ_curls = new CurlController();
+
+            //Consultamos el product family del artículo
+            $company = config('constants.id_company_sage');
+            $url = 'https://sage200.sage.es/api/sales/ProductFamilies?api-version=1.0&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Name%20eq%20%27'.$area->id."-".$sector->id."-".$brand->id."-".$product->id.'%27';
+            $data = json_decode($requ_curls->getSageCurl($url)['response'], true);
+            $product_family_id = '';
+            if(count($data['value']) == 0){
+                //Si no existe creamos un product family
+                $param['CompanyId'] = $company;
+                $param['Name'] = $area->id."-".$sector->id."-".$brand->id."-".$product->id;
+                $url = 'https://sage200.sage.es/api/sales/ProductFamilies?api-version=1.0';
+                $response = json_decode($requ_curls->postSageCurl($url, $param)['response'], true);
+                $product_family_id = $response['Id'];
+            }else{
+                $array_product_family = $data['value'];
+                foreach($array_product_family as $product_family){
+                    $product_family_id = $product_family['Id'];
+                }
+            }
+
+            //Consultamos si existe el artículo con este product family y nombre
+            $custom_name = str_replace(' ', '%20', $name);
+            $url = 'https://sage200.sage.es/api/sales/Products?api-version=1.0&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Name%20eq%20%27'.$custom_name.'%27%20and%20FamilyId%20eq%20%27'.$product_family_id.'%27';
+            $data_product = json_decode($requ_curls->getSageCurl($url)['response'], true);
+            if(count($data_product['value']) == 0){
+                //Si no existe creamos un product family
+                $param['CompanyId'] = $company;
+                $param['Name'] = $name;
+                $param['SalesPriceIncludingTaxes'] = false;
+                $param['SalesPrice'] = $price;
+                $param['FamilyId'] = $product_family_id;
+                $url = 'https://sage200.sage.es/api/sales/Products?api-version=1.0';
+                $response = json_decode($requ_curls->postSageCurl($url, $param)['response'], true);
+                $product_id = $response['Id'];
+
+            }else{
+                $response['code'] = 1004;
+                return response()->json($response);
+            }
+
+            //¿Eliminamos el producto si se cambia el nombre?*/
+        }
+
         //Consultamos si existe el artículo
         $article = Article::find($id);
         if(!$article){

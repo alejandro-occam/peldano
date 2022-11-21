@@ -99,5 +99,10 @@ class GetContactsCompanies extends Command
                 }
             }
         }
+        /*$company = config('constants.id_company_sage');
+        $url = 'https://sage200.sage.es:443/api/sales/ProductFamilies?api-version=1.0&$filter=CompanyId%20eq%20%27'.$company.'%27';
+        error_log($url);
+        $data = json_decode($requ_curls->getSageCurl($url)['response'], true);
+        error_log(print_r($data, true));*/
     }
 }
