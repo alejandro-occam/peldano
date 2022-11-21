@@ -11,7 +11,7 @@ class ExternalRequestController extends Controller
     function saveCompaniesFromHubspot(Request $request){
         Log::error('request: ' .  print_r($request->get('hub_id'), true));
         //Comprobamos si existe la empresa
-        $company = Company::where('id_hubspot', $company_hubspot['id'])->first();
+        /*$company = Company::where('id_hubspot', $company_hubspot['id'])->first();
         if($company){
             $company->name = $company_hubspot['properties']['name'];
             $company->nif = $company_hubspot['properties']['nif'];
@@ -25,7 +25,7 @@ class ExternalRequestController extends Controller
                 'address' => '',
                 'id_hubspot' => $company_hubspot['id']
             ]);
-        }
+        }*/
     }
 
     //Guardar contactos desde Hubspot
