@@ -89,7 +89,7 @@ class ReadCalendarCsv extends Command
     //Formateo de fechas
     function formatingDate($date){
         $custom_date = '';
-        if(!empty($date)){
+        if(!empty($date) && $date != '0000-00-00'){
             $date = date_create($date);
             $custom_date = date_format($date,"d-m-Y");
         }
