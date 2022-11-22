@@ -105,16 +105,464 @@
     </div>
     <Divider class="my-15" />
     <div class="col-12 d-flex flex-wrap mt-6">
-        <div class="col-12 d-flex flex-wrap justify-content-between mb-10">
+        <div class="col-12 flex-wrap justify-content-between mb-10">
             <h3 class="color-blue my-auto">Resultados</h3>
-            <div class="field col-12 md:col-4">
-                <label for="multiple">Multiple</label>
-                <Calendar inputId="multiple" v-model="date" selectionMode="multiple" :manualInput="false" />
+            <div class="row mt-10">
+                <div class="field col-4 md:col-4 px-40">
+                    <Calendar inputId="multiple" autocomplete="off" v-model="date1" dateFormat="dd-mm-yy" selectionMode="range" class="w-100 select-filter input-custom-calendar-reports mt-3 text-align-center" :hideOnRangeSelection="true" :manualInput="true" />
+                    <Chart class="mt-3" type="pie" :data="this.chartData" :options="this.lightOptions" />
+                </div>
+                <div class="field col-4 md:col-4 px-40">
+                    <Calendar inputId="multiple" autocomplete="off" v-model="date2" dateFormat="dd-mm-yy" selectionMode="range" class="w-100 select-filter input-custom-calendar-reports mt-3" :hideOnRangeSelection="true" :manualInput="true" />
+                    <Chart class="mt-3" type="pie" :data="this.chartData" :options="this.lightOptions" />
+                </div>
             </div>
         </div>
     </div>
     <div class="col-12 mt-15">
-        <div class="datatable datatable-bordered datatable-head-custom" id="list_proposals" style="width: 100%" ></div>
+        <table width="100%" cellpadding="2" cellspacing="1">
+            <thead class="custom-columns-datatable">
+                <tr>
+                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 50px;"><span>SEC</span></th>
+                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 50px;"><span>TIPO</span></th>
+                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 125px;"><span>PERIODO</span></th>
+                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>*Jan-22</span></th>
+                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Feb-22</span></th>
+                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Mar-22</span></th>
+                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Apr-22</span></th>
+                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>May-22</span></th>
+                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Jun-22</span></th>
+                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Jul-22</span></th>
+                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Aug-22</span></th>
+                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Sep-22</span></th>
+                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Oct-22</span></th>
+                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Nov-22</span></th>
+                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>*Dec-22</span></th>
+                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>TOTAL</span></th>
+                </tr>
+            </thead>
+            <tbody>  
+                <!--CAR DIGITAL-->
+                <tr class="row-product text-align-center bg-white">
+                    <td class="td-border-right bg-light-blue-table" :rowspan="4">CAR</td>
+                    <td class="td-border-right" :rowspan="4">DIGITAL</td>
+                </tr>
+                <tr class="row-product bg-white">
+                    <td class="td-border-right pl-3">01-01-2020 a 30-12-2020</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                </tr>   
+                <tr class="row-product bg-white">
+                    <td class="td-border-right pl-3 bg-light-blue-table">01-01-2021 a 30-12-2021</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                </tr>   
+                <tr class="row-product bg-white">
+                    <td class="td-border-right pl-3 bg-purple color-white">Diferencia%</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                </tr>   
+                <!--CAR EXPERIENCIA-->
+                <tr class="row-product text-align-center bg-white">
+                    <td class="td-border-right bg-light-blue-table" :rowspan="4">CAR</td>
+                    <td class="td-border-right" :rowspan="4">EXPERIENCIA</td>
+                </tr>
+                <tr class="row-product bg-white">
+                    <td class="td-border-right pl-3">01-01-2020 a 30-12-2020</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                </tr>   
+                <tr class="row-product bg-white">
+                    <td class="td-border-right pl-3 bg-light-blue-table">01-01-2021 a 30-12-2021</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                </tr>   
+                <tr class="row-product bg-white">
+                    <td class="td-border-right pl-3 bg-purple color-white">Diferencia%</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                </tr>   
+                <!--CAR OTROS-->
+                <tr class="row-product text-align-center bg-white">
+                    <td class="td-border-right bg-light-blue-table" :rowspan="4">CAR</td>
+                    <td class="td-border-right" :rowspan="4">OTROS</td>
+                </tr>
+                <tr class="row-product bg-white">
+                    <td class="td-border-right pl-3">01-01-2020 a 30-12-2020</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                </tr>   
+                <tr class="row-product bg-white">
+                    <td class="td-border-right pl-3 bg-light-blue-table">01-01-2021 a 30-12-2021</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                </tr>   
+                <tr class="row-product bg-white">
+                    <td class="td-border-right pl-3 bg-purple color-white">Diferencia%</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                </tr>   
+                <!--CARAVANING-->
+                <tr class="row-product bg-white">
+                    <td class="td-border-right bg-light-blue-table pl-5" :rowspan="4" colspan="2">CARAVANING</td>
+                </tr>
+                <tr class="row-product bg-white">
+                    <td class="td-border-right pl-3">01-01-2020 a 30-12-2020</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                </tr>   
+                <tr class="row-product bg-white">
+                    <td class="td-border-right pl-3 bg-light-blue-table">01-01-2021 a 30-12-2021</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                </tr>   
+                <tr class="row-product bg-white">
+                    <td class="td-border-right pl-3 bg-purple color-white">Diferencia%</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                </tr>   
+                <!--OTROS-->
+                <tr class="row-product bg-white">
+                    <td class="td-border-right bg-light-blue-diference-table pl-5" :rowspan="4" colspan="2">OTROS</td>
+                </tr>
+                <tr class="row-product bg-white">
+                    <td class="td-border-right pl-3">01-01-2020 a 30-12-2020</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                </tr>   
+                <tr class="row-product bg-white">
+                    <td class="td-border-right pl-3 bg-light-blue-table">01-01-2021 a 30-12-2021</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                </tr>   
+                <tr class="row-product bg-white">
+                    <td class="td-border-right pl-3 bg-purple color-white">Diferencia%</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                </tr>   
+                <!--EXPERIENCIA-->
+                <tr class="row-product bg-white">
+                    <td class="td-border-right bg-light-blue-diference-table pl-5" :rowspan="4" colspan="2">EXPERIENCIA</td>
+                </tr>
+                <tr class="row-product bg-white">
+                    <td class="td-border-right pl-3">01-01-2020 a 30-12-2020</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                </tr>   
+                <tr class="row-product bg-white">
+                    <td class="td-border-right pl-3 bg-light-blue-table">01-01-2021 a 30-12-2021</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                </tr>   
+                <tr class="row-product bg-white">
+                    <td class="td-border-right pl-3 bg-purple color-white">Diferencia%</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                </tr>   
+                <!--DIGITAL-->
+                <tr class="row-product bg-white">
+                    <td class="td-border-right bg-light-blue-diference-table pl-5" :rowspan="4" colspan="2">DIGITAL</td>
+                </tr>
+                <tr class="row-product bg-white">
+                    <td class="td-border-right pl-3">01-01-2020 a 30-12-2020</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                </tr>   
+                <tr class="row-product bg-white">
+                    <td class="td-border-right pl-3 bg-light-blue-table">01-01-2021 a 30-12-2021</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                </tr>   
+                <tr class="row-product bg-white">
+                    <td class="td-border-right pl-3 bg-purple color-white">Diferencia%</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                </tr>   
+                <!--TOTAL-->
+                <tr class="row-product bg-white">
+                    <td class="td-border-right bg-light-blue-table pl-5" :rowspan="4" colspan="2">TOTAL</td>
+                </tr>
+                <tr class="row-product bg-white">
+                    <td class="td-border-right pl-3">01-01-2020 a 30-12-2020</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                    <td class="text-align-center td-border-right">0</td>
+                </tr>   
+                <tr class="row-product bg-white">
+                    <td class="td-border-right pl-3 bg-light-blue-table">01-01-2021 a 30-12-2021</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
+                </tr>   
+                <tr class="row-product bg-white">
+                    <td class="td-border-right pl-3 bg-purple color-white">Diferencia%</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                </tr>   
+            </tbody>
+        </table>
     </div>
 </template>
 
@@ -124,13 +572,15 @@
     import AddButtonComponent from "../../../Partials/AddButtonComponent.vue";
     import Calendar from 'primevue/calendar';
     import Divider from 'primevue/divider';
+    import Chart from 'primevue/chart';
 
     export default {
         name: "TableComponentOption1",
         components: {
             AddButtonComponent,
             Calendar,
-            Divider
+            Divider,
+            Chart
         },
         data() {
             return {
@@ -143,20 +593,38 @@
                 select_sector: '',
                 select_status_order: '1',
                 datatable: null,
-                date: ''
+                date1: '',
+                date2: '',
+                chartData: {
+                    labels: ['A','B','C'],
+                    datasets: [
+                        {
+                            data: [300, 50, 100],
+                            backgroundColor: ["#42A5F5","#66BB6A","#FFA726"],
+                            hoverBackgroundColor: ["#64B5F6","#81C784","#FFB74D"]
+                        }
+                    ]
+                },
+                lightOptions: {
+                    plugins: {
+                        legend: {
+                            labels: {
+                                color: '#495057'
+                            }
+                        }
+                    }
+                }
             };
         },
         computed: {
             ...mapState(["errors", "config"]),
         },
         mounted() {
-
             this.getNow();
         },
-        
         methods: {
             ...mapActions([]),
-            ...mapMutations([]),
+            ...mapMutations(["changeViewStatusReports"]),
             //Consultar fecha actual
             getNow() {
                 const today = new Date();
@@ -172,11 +640,6 @@
                 this.date_from = date;
                 this.date_to = date;
             },
-           
         }
     };
 </script>
-
-<style>
-
-</style>

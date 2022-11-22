@@ -17,7 +17,7 @@ import TableComponent from "./TableComponent.vue";
 
 
 export default {
-    name: "Option1ContentComponen",
+    name: "Option2ContentComponen",
     components: {
         AddButtonComponent,
         TableComponent

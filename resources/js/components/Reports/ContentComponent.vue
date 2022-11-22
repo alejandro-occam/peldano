@@ -5,7 +5,7 @@
                 <h1 class="color-blue my-auto">Informes</h1>
                 <div class="subheader-separator subheader-separator-ver my-auto mx-6" style="background-color: #c1c1cd;" v-if="reports.status_view != 1"></div>
                 <span class="my-auto font-weight-bold color-dark-gray" v-if="reports.status_view == 2">Informes de contratación por canal ( Digital / Print / Experiencias ) y producto.</span>
-                <span class="my-auto font-weight-bold color-dark-gray" v-if="reports.status_view == 4">Informe comisiones consultores.</span>
+                <span class="my-auto font-weight-bold color-dark-gray" v-if="reports.status_view == 4">Informes de comisiones del consultor.</span>
                 <span class="my-auto font-weight-bold color-dark-gray" v-if="reports.status_view == 6">Informe de facturas impagadas.</span>
                 <span class="my-auto font-weight-bold color-dark-gray" v-if="reports.status_view == 8">Informe publicado.</span>
                 <span class="my-auto font-weight-bold color-dark-gray" v-if="reports.status_view == 3">Informes de margen de tipo manual ( Inserciones ).</span>
@@ -56,6 +56,8 @@
                 </div>
             </div>
             <Option1 v-if="reports.status_view == 2"></Option1>
+            <Option2 v-if="reports.status_view == 3"></Option2>
+            <Option3 v-if="reports.status_view == 4"></Option3>
         </div>
     </div>
 </template>
@@ -64,12 +66,15 @@
 import { mapMutations, mapState } from "vuex";
 
 import Option1 from "./Options/Options1/ContentComponent.vue";
-
+import Option2 from "./Options/Options2/ContentComponent.vue";
+import Option3 from "./Options/Options3/ContentComponent.vue";
 
 export default {
     name: "ContentComponent",
     components: {
-        Option1
+        Option1,
+        Option2,
+        Option3
     },
     data() {
         return {

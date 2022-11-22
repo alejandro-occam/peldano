@@ -80,10 +80,12 @@ class ProposalsController extends Controller
             }
 
             if($request->get('date_from') != ''){
+                error_log(4);
                 $array_proposals = $array_proposals->where('proposals.date_proyect', '>=', $request->get('date_from'));
             }
 
             if($request->get('date_to') != ''){
+                error_log(5);
                 $array_proposals = $array_proposals->where('proposals.date_proyect', '<=', $request->get('date_to'));
             }
         }
@@ -92,6 +94,7 @@ class ProposalsController extends Controller
                                             ->skip($start)
                                             ->take($skip)
                                             ->get();
+
 
         foreach($array_proposals as $proposal){
             //Consultamos el nombre del contacto
@@ -114,7 +117,8 @@ class ProposalsController extends Controller
             $proposal['total_amount'] = $total;
         }
 
-        $total_proposals = Proposal::count();
+        $total_proposals = $array_proposals->groupBy('proposals.id')
+                                            ->count();
 
         //Devolución de la llamada con la paginación
         $meta['page'] = $pagination['page'];
