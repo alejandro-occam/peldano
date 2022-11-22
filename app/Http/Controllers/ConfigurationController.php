@@ -342,10 +342,10 @@ class ConfigurationController extends Controller
         $select_calendar_filter = $request->get('select_calendar_filter');
 
         if(empty($select_calendar_filter)){
-            $array_calendars = CalendarMagazine::select('calendars_magazines.*', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->skip($start)->take($skip)->get();
+            $array_calendars = CalendarMagazine::select('calendars_magazines.*', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->orderBy('calendars_magazines.id', 'DESC')->skip($start)->take($skip)->get();
             $total_calendars = CalendarMagazine::count();
         }else{
-            $array_calendars = CalendarMagazine::select('calendars_magazines.*', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->where('calendars_magazines.id_calendar', $select_calendar_filter)->skip($start)->take($skip)->get();
+            $array_calendars = CalendarMagazine::select('calendars_magazines.*', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->where('calendars_magazines.id_calendar', $select_calendar_filter)->orderBy('calendars_magazines.id', 'DESC')->skip($start)->take($skip)->get();
             $total_calendars = CalendarMagazine::where('id_calendar', $select_calendar_filter)->count();
         }
 
@@ -476,9 +476,9 @@ class ConfigurationController extends Controller
         $select_calendar_filter = $request->get('select_calendar_filter');
 
         if(empty($select_calendar_filter)){
-            $array_calendars = CalendarMagazine::select('calendars_magazines.*', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->get();
+            $array_calendars = CalendarMagazine::select('calendars_magazines.*', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->orderBy('calendars_magazines.id', 'DESC')->get();
         }else{
-            $array_calendars = CalendarMagazine::select('calendars_magazines.*', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->where('calendars_magazines.id_calendar', $select_calendar_filter)->get();
+            $array_calendars = CalendarMagazine::select('calendars_magazines.*', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->where('calendars_magazines.id_calendar', $select_calendar_filter)->orderBy('calendars_magazines.id', 'DESC')->get();
         }
         
         $html = '';
@@ -554,10 +554,10 @@ class ConfigurationController extends Controller
         //Consultamos los usuarios
         if(empty($select_calendar_filter)){
             $array_calendars = CalendarMagazine::select('calendars_magazines.number', 'calendars_magazines.title', 'calendars_magazines.drafting', 'calendars_magazines.commercial', 'calendars_magazines.output', 'calendars_magazines.billing',
-                                                    'calendars_magazines.front_page', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->get();
+                                                    'calendars_magazines.front_page', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->orderBy('calendars_magazines.id', 'DESC')->get();
         }else{
             $array_calendars = CalendarMagazine::select('calendars_magazines.number', 'calendars_magazines.title', 'calendars_magazines.drafting', 'calendars_magazines.commercial', 'calendars_magazines.output', 'calendars_magazines.billing',
-                                                    'calendars_magazines.front_page', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->where('calendars_magazines.id_calendar', $select_calendar_filter)->get();
+                                                    'calendars_magazines.front_page', 'calendars.name as calendar_name')->leftJoin('calendars', 'calendars.id', '=', 'calendars_magazines.id_calendar')->orderBy('calendars_magazines.id', 'DESC')->where('calendars_magazines.id_calendar', $select_calendar_filter)->get();
         }
         
 

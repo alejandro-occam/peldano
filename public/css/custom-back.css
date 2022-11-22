@@ -836,3 +836,33 @@ a.text-hover-primary:hover, .text-hover-primary:hover{
 .p-divider.p-divider-horizontal:before{
     border-top-style: solid !important;
 }
+
+.input-custom-calendar-reports>input{
+    color: #6c6d82 !important;
+    border-width: 0px;
+    padding-left: 13px;
+    padding-right: 13px;
+    padding-top: 8.45px;
+    padding-bottom: 8.45px;
+    border-radius: 5.46px;
+    height: calc(1.5em + 1.3rem + 2px);
+    background-size: 15px 15px;
+    background-origin: content-box;
+    border-color: #2e49ff;
+    border-width: 1px;
+    border-style: solid;
+    text-align: center;
+    font-size: 14px;
+}
+
+.bg-light-blue-table{
+    background-color: #dbf1ff;
+}
+
+.bg-light-blue-diference-table{
+    background-color: #f7fbff;
+}
+
+.bg-purple{
+    background-color: #96a1ff;
+}

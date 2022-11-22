@@ -56,6 +56,7 @@
                 </div>
             </div>
             <Option1 v-if="reports.status_view == 2"></Option1>
+            <Option2 v-if="reports.status_view == 3"></Option2>
         </div>
     </div>
 </template>
@@ -64,12 +65,13 @@
 import { mapMutations, mapState } from "vuex";
 
 import Option1 from "./Options/Options1/ContentComponent.vue";
-
+import Option2 from "./Options/Options2/ContentComponent.vue";
 
 export default {
     name: "ContentComponent",
     components: {
-        Option1
+        Option1,
+        Option2
     },
     data() {
         return {
