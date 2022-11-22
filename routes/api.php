@@ -23,4 +23,4 @@ Route::post('/save_companies_from_hubspot', [App\Http\Controllers\ExternalReques
 //Guardar o actualizar contacto desde Hubspot
 Route::post('/save_contacts_from_hubspot', [App\Http\Controllers\ExternalRequestController::class, 'saveContactsFromHubspot'])->name('save_contacts_from_hubspot');
 //Enviar pdf de la propuesto a hubspot
-Route::post('/send_pdf_proposal_hubspot', [App\Http\Controllers\ExternalRequestController::class, 'saveContactsFromHubspot'])->name('send_pdf_proposal_hubspot');
+Route::post('/save_deal_hubspot', [App\Http\Controllers\ExternalRequestController::class, 'saveDealFromHubspot'])->name('save_deal_hubspot');
