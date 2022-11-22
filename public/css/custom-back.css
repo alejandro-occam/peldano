@@ -866,3 +866,17 @@ a.text-hover-primary:hover, .text-hover-primary:hover{
 .bg-purple{
     background-color: #96a1ff;
 }
+
+.dropdown.in{
+    border-color: #96a1ff;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+}
+
+
+.dropdown.out{
+    background-color: #96a1ff;
+    color: white;
+    border-radius: 5px;
+}

@@ -71,6 +71,9 @@ class OrdersController extends Controller
                                             ->take($skip)
                                             ->get();
 
+        $total_orders = $array_orders->groupBy('proposals.id')
+                                        ->count();
+
         foreach($array_orders as $order){
             //Consultamos el nombre del contacto
             $contact = Contact::find($order->id_contact);
@@ -90,8 +93,6 @@ class OrdersController extends Controller
            
             $order['total_amount'] = $total;
         }
-
-        $total_orders = Order::count();
 
         //Devolución de la llamada con la paginación
         $meta['page'] = $pagination['page'];
