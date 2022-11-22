@@ -6,7 +6,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Models\Company;
 use App\Models\Contact;
-
+use App\Models\DealHubspot;
 
 class ExternalRequestController extends Controller
 {
@@ -80,5 +80,44 @@ class ExternalRequestController extends Controller
         }
 
         
+    }
+
+    //Guardar negocio de un contacto
+    function saveDealFromHubspot(Request $request){
+        $hub_id = $request->get('hub_id');
+        //Comprobamos si existe la empresa
+        $deal = DealHubspot::where('id_hubspot', $hub_id)->first();
+        if(!$deal){
+            //Consultamos la empresa de hubspot asociada al negocio y miramos nuestra empresa
+            $url_deals_association_company = 'https://api.hubapi.com/crm/v4/objects/deal/'.$hub_id.'/associations/company';
+            $company_hubspot = json_decode($requ_curls->getCurl($url_deals_association_company, 1)['response'], true);
+            $hub_id_company = $company_hubspot['results'][0]['toObjectId'];
+            //Buscamos una empresa con este id de hub en nuestra bd
+            $company = Company::where('id_hubspot', $hub_id_company)->first();
+            if(!$company){
+                //No existe
+                return;
+            }
+
+            //Consultamos el contacto de hubspot asociada al negocio y miramos nuestro contacto
+            $url_deals_association_contact = 'https://api.hubapi.com/crm/v4/objects/deal/'.$hub_id.'/associations/contact';
+            $contact_hubspot = json_decode($requ_curls->getCurl($url_deals_association_contact, 1)['response'], true);
+            $hub_id_contact = $contact_hubspot['results'][0]['toObjectId'];
+            //Buscamos una empresa con este id de hub en nuestra bd
+            $contact = Contact::where('id_hubspot', $hub_id_company)->first();
+            if(!$contact){
+                //No existe
+                return;
+            }
+
+            //Creamos el negocio
+            Deal::create([
+                'name' => $request->get('name'),
+                'id_hubspot' => $request->get('hub_id'),
+                'id_contact' => $contact->id,
+                'id_company' => $company->id,
+            ]);
+            
+        }
     }
 }
