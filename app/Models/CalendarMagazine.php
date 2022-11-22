@@ -29,7 +29,7 @@ class CalendarMagazine extends Model
      * @var array
      */
     protected $casts = [
-        'number' => 'integer',
+        'number' => 'string',
         'title' => 'string',
         'topics' => 'string',
         'drafting' => 'string',

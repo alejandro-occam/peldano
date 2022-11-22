@@ -12,6 +12,7 @@ class Calendar extends Model
     public $table = 'calendars';
 
     public $fillable = [
+        'id',
         'name',
     ];
 
@@ -21,6 +22,7 @@ class Calendar extends Model
      * @var array
      */
     protected $casts = [
+        'id' => 'integer',
         'name' => 'string',
     ];
 
@@ -30,6 +32,7 @@ class Calendar extends Model
      * @var array
      */
     public static $rules = [
+        'id',
         'name',
     ];
 }
