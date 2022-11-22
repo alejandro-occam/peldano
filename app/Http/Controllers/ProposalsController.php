@@ -51,6 +51,22 @@ class ProposalsController extends Controller
                         ->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill');
 
         if($request->get('type') == 1){
+            if($request->get('status_order') != '' && $request->get('status_order') != 3){
+                $array_proposals = Proposal::select('proposals.*', 'sectors.name as sector_name')
+                                            ->leftJoin('sectors', 'sectors.id', 'proposals.id_sector')
+                                            ->leftJoin('proposals_bills', 'proposals.id', 'proposals_bills.id_proposal')
+                                            ->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill')
+                                            ->leftJoin('orders', 'proposals.id', 'orders.id_proposal');
+                                     
+                if($request->get('status_order') == 1){
+                    $array_proposals = $array_proposals->where('orders.id_proposal', '=', null);
+                }
+               
+                if($request->get('status_order') == 2){
+                    $array_proposals = $array_proposals->where('orders.id_proposal', '<>', null);
+                }     
+            }
+
             if($request->get('num_proposal') != ''){
                 $array_proposals = $array_proposals->where('proposals.id_proposal_custom', $request->get('num_proposal'));
             }
@@ -81,6 +97,7 @@ class ProposalsController extends Controller
             //Consultamos el nombre del contacto
             $contact = Contact::find($proposal->id_contact);
             $proposal['name_contact'] = $contact->name.' '.$contact->surnames;
+            $proposal['id_sage_contact'] = $contact->id_sage;
 
             //Consultamos el numero de la propuesta
             $id_proposal_custom_aux = sprintf('%08d', $proposal->id_proposal_custom);

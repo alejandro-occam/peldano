@@ -24,6 +24,7 @@
                 <span class="text-dark font-weight-bold mb-2">Num. propuesta</span>
                 <input v-model="num_proposal" type="text" class="form-control bg-gray mt-3 select-filter text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
             </div>
+            
             <div class="mx-2 col-2">
                 <span class="text-dark font-weight-bold mb-2">Consultor</span>
                 <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_consultant'" :id="'select_consultant'" v-model="select_consultant" data-style="select-lightgreen" @change="getConsultantSelect">
@@ -48,7 +49,7 @@
                 <select class="form-control bg-gray text-dark select-custom select-filter mt-auto" :name="'select_from_consultant'" :id="'select_from_consultant'" v-model="select_from_consultant" data-style="select-lightgreen" @change="getProductsSelect">
                     <option value="1" selected>Del consultor</option>
                     <option value="2">De la cartera asignada al consultor</option>
-                    <option value="3">Responsable de publicaciones</option>
+                    <!--<option value="3">Responsable de publicaciones</option>-->
                 </select>
             </div>
 
@@ -148,6 +149,7 @@
                     me.datatable.setDataSourceParam('num_proposal', me.num_proposal);
                     me.datatable.setDataSourceParam('select_consultant', me.select_consultant);
                     me.datatable.setDataSourceParam('select_sector', me.select_sector);
+                    me.datatable.setDataSourceParam('status_order', me.select_status_order);
                     me.datatable.setDataSourceParam('date_from', me.$utils.customFormDate(date_ms_from));
                     me.datatable.setDataSourceParam('date_to', me.$utils.customFormDate(date_ms_to));
                 }
