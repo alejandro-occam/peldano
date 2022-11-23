@@ -58,6 +58,7 @@
             <Option1 v-if="reports.status_view == 2"></Option1>
             <Option2 v-if="reports.status_view == 3"></Option2>
             <Option3 v-if="reports.status_view == 4"></Option3>
+            <Option4 v-if="reports.status_view == 5"></Option4>
         </div>
     </div>
 </template>
@@ -68,13 +69,15 @@ import { mapMutations, mapState } from "vuex";
 import Option1 from "./Options/Options1/ContentComponent.vue";
 import Option2 from "./Options/Options2/ContentComponent.vue";
 import Option3 from "./Options/Options3/ContentComponent.vue";
+import Option4 from "./Options/Options4/ContentComponent.vue";
 
 export default {
     name: "ContentComponent",
     components: {
         Option1,
         Option2,
-        Option3
+        Option3,
+        Option4
     },
     data() {
         return {
