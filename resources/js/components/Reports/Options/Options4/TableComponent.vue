@@ -34,14 +34,36 @@
         </div>
 
         <div class="mx-2 col-2 mt-5">
-            <span class="text-dark font-weight-bold mb-2">Consultor</span>
+            <span class="text-dark font-weight-bold mb-2">Marca</span>
             <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
                 <option value="" selected>
-                    Filtro por sector
+                    Filtro por marca
                 </option>
                 <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
             </select>
         </div>
+
+        <div class="mx-2 col-2 mt-5">
+            <span class="text-dark font-weight-bold mb-2">Producto</span>
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
+                <option value="" selected>
+                    Filtro por producto
+                </option>
+                <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
+            </select>
+        </div>
+
+        <div class="mx-2 col-2 mt-5">
+            <span class="text-dark font-weight-bold mb-2">Consultor</span>
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
+                <option value="" selected>
+                    Filtro por consultor
+                </option>
+                <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
+            </select>
+        </div>
+
+        <div class="mx-2 col-2 mt-5"></div>
 
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Órdenes</span>
@@ -57,16 +79,6 @@
                 <option :value="2">Con intercambios</option>
                 <option :value="3">Sólo intercambios</option>
             </select>
-        </div>
-
-        <div class="mx-2 col-2 mt-5">
-            <span class="text-dark font-weight-bold mb-2">Limitadas por fechas</span>
-            <span class="switch switch-outline switch-icon switch-success mt-3">
-                <label class="mr-auto">
-                    <input class="switch-exempt" input type="checkbox" checked="checked" name="select"/>
-                    <span></span>
-                </label>
-            </span>
         </div>
 
         <div class="mx-2 col-2 mt-5">
@@ -87,37 +99,12 @@
                 <option :value="3">Responsable de publicaciones</option>
             </select>
         </div>
-
-        <div class="mx-2 col-2 mt-5">
-            <span class="text-dark font-weight-bold mb-2">Comparar con</span>
-            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
-                <option :value="1">Hace 1 año</option>
-                <option :value="2">Hace 2 años</option>
-                <option :value="3">Hace 3 años</option>
-                <option :value="4">Hace 4 años</option>
-                <option :value="5">Hace 5 años</option>
-            </select>
-        </div>
+        
         <div class="mx-2 col-12 d-flex mt-10">
             <button type="submit" class="btn bg-azul color-white px-35 font-weight-bolder">Generar informe</button>
         </div>
     </div>
     <Divider class="my-15" />
-    <div class="col-12 d-flex flex-wrap mt-6">
-        <div class="col-12 flex-wrap justify-content-between mb-10">
-            <h3 class="color-blue my-auto">Resultados</h3>
-            <div class="row mt-10">
-                <div class="field col-4 md:col-4 px-40">
-                    <Calendar inputId="multiple" autocomplete="off" v-model="date1" dateFormat="dd-mm-yy" selectionMode="range" class="w-100 select-filter input-custom-calendar-reports mt-3 text-align-center" :hideOnRangeSelection="true" :manualInput="true" />
-                    <Chart class="mt-3" type="pie" :data="this.chartData" :options="this.lightOptions" />
-                </div>
-                <div class="field col-4 md:col-4 px-40">
-                    <Calendar inputId="multiple" autocomplete="off" v-model="date2" dateFormat="dd-mm-yy" selectionMode="range" class="w-100 select-filter input-custom-calendar-reports mt-3" :hideOnRangeSelection="true" :manualInput="true" />
-                    <Chart class="mt-3" type="pie" :data="this.chartData" :options="this.lightOptions" />
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="col-12 mt-15">
         <table width="100%" cellpadding="2" cellspacing="1">
             <thead class="custom-columns-datatable">
@@ -574,7 +561,7 @@
     import Chart from 'primevue/chart';
 
     export default {
-        name: "TableComponentOption1",
+        name: "TableComponentOption4",
         components: {
             AddButtonComponent,
             Calendar,
@@ -594,25 +581,6 @@
                 datatable: null,
                 date1: '',
                 date2: '',
-                chartData: {
-                    labels: ['A','B','C'],
-                    datasets: [
-                        {
-                            data: [300, 50, 100],
-                            backgroundColor: ["#42A5F5","#66BB6A","#FFA726"],
-                            hoverBackgroundColor: ["#64B5F6","#81C784","#FFB74D"]
-                        }
-                    ]
-                },
-                lightOptions: {
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: '#495057'
-                            }
-                        }
-                    }
-                }
             };
         },
         computed: {
