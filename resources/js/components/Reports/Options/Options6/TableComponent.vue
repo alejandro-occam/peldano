@@ -34,13 +34,43 @@
         </div>
 
         <div class="mx-2 col-2 mt-5">
-            <span class="text-dark font-weight-bold mb-2">Consultor</span>
+            <span class="text-dark font-weight-bold mb-2">Marca</span>
             <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
                 <option value="" selected>
-                    Filtro por sector
+                    Filtro por marca
                 </option>
                 <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
             </select>
+        </div>
+
+        <div class="mx-2 col-2 mt-5">
+            <span class="text-dark font-weight-bold mb-2">Producto</span>
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
+                <option value="" selected>
+                    Filtro por producto
+                </option>
+                <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
+            </select>
+        </div>
+
+        <div class="mx-2 col-2 mt-5">
+            <span class="text-dark font-weight-bold mb-2">Consultor</span>
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
+                <option value="" selected>
+                    Filtro por consultor
+                </option>
+                <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
+            </select>
+        </div>
+
+        <div class="mx-2 col-2 mt-5">
+            <span class="text-dark font-weight-bold mb-2">Productos desactivados</span>
+            <span class="switch switch-outline switch-icon switch-success mt-3">
+                <label class="mr-auto">
+                    <input class="switch-exempt" input type="checkbox" checked="checked" name="select"/>
+                    <span></span>
+                </label>
+            </span>
         </div>
 
         <div class="mx-2 col-2 mt-5">
@@ -60,16 +90,6 @@
         </div>
 
         <div class="mx-2 col-2 mt-5">
-            <span class="text-dark font-weight-bold mb-2">Limitadas por fechas</span>
-            <span class="switch switch-outline switch-icon switch-success mt-3">
-                <label class="mr-auto">
-                    <input class="switch-exempt" input type="checkbox" checked="checked" name="select"/>
-                    <span></span>
-                </label>
-            </span>
-        </div>
-
-        <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Fecha desde</span>
             <Calendar class="w-100 select-filter input-custom-calendar mt-3" inputId="date_from" autocomplete="off" dateFormat="dd-mm-yy" />
         </div>
@@ -80,6 +100,16 @@
         </div>
 
         <div class="mx-2 col-2 mt-5">
+            <span class="text-dark font-weight-bold mb-2">Limitadas por fechas</span>
+            <span class="switch switch-outline switch-icon switch-success mt-3">
+                <label class="mr-auto">
+                    <input class="switch-exempt" input type="checkbox" checked="checked" name="select"/>
+                    <span></span>
+                </label>
+            </span>
+        </div>
+
+        <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Datos a usar</span>
             <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
                 <option :value="1">Del consultor</option>
@@ -87,43 +117,19 @@
                 <option :value="3">Responsable de publicaciones</option>
             </select>
         </div>
-
-        <div class="mx-2 col-2 mt-5">
-            <span class="text-dark font-weight-bold mb-2">Comparar con</span>
-            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
-                <option :value="1">Hace 1 año</option>
-                <option :value="2">Hace 2 años</option>
-                <option :value="3">Hace 3 años</option>
-                <option :value="4">Hace 4 años</option>
-                <option :value="5">Hace 5 años</option>
-            </select>
-        </div>
+        
         <div class="mx-2 col-12 d-flex mt-10">
             <button type="submit" class="btn bg-azul color-white px-35 font-weight-bolder">Generar informe</button>
         </div>
     </div>
     <Divider class="my-15" />
-    <div class="col-12 d-flex flex-wrap mt-6">
-        <div class="col-12 flex-wrap justify-content-between mb-10">
-            <h3 class="color-blue my-auto">Resultados</h3>
-            <div class="row mt-10">
-                <div class="field col-4 md:col-4 px-40">
-                    <Calendar inputId="multiple" autocomplete="off" v-model="date1" dateFormat="dd-mm-yy" selectionMode="range" class="w-100 select-filter input-custom-calendar-reports mt-3 text-align-center" :hideOnRangeSelection="true" :manualInput="true" />
-                    <Chart class="mt-3" type="pie" :data="this.chartData" :options="this.lightOptions" />
-                </div>
-                <div class="field col-4 md:col-4 px-40">
-                    <Calendar inputId="multiple" autocomplete="off" v-model="date2" dateFormat="dd-mm-yy" selectionMode="range" class="w-100 select-filter input-custom-calendar-reports mt-3" :hideOnRangeSelection="true" :manualInput="true" />
-                    <Chart class="mt-3" type="pie" :data="this.chartData" :options="this.lightOptions" />
-                </div>
-            </div>
-        </div>
-    </div>
     <div class="col-12 mt-15">
         <table width="100%" cellpadding="2" cellspacing="1">
             <thead class="custom-columns-datatable">
                 <tr>
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 50px;"><span>SEC</span></th>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 50px;"><span>TIPO</span></th>
+                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 50px;"><span>MARCA</span></th>
+                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 50px;"><span>PROD</span></th>
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 125px;"><span>PERIODO</span></th>
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>*Jan-22</span></th>
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Feb-22</span></th>
@@ -145,9 +151,10 @@
                 <tr class="row-product text-align-center bg-white">
                     <td class="td-border-right bg-light-blue-table" :rowspan="4">CAR</td>
                     <td class="td-border-right" :rowspan="4">DIGITAL</td>
+                    <td class="td-border-right" :rowspan="4">EMA</td>
                 </tr>
                 <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3">01-01-2020 a 30-12-2020</td>
+                    <td class="td-border-right pl-3">Hace 1 año</td>
                     <td class="text-align-center td-border-right">0</td>
                     <td class="text-align-center td-border-right">0</td>
                     <td class="text-align-center td-border-right">0</td>
@@ -163,7 +170,7 @@
                     <td class="text-align-center td-border-right">0</td>
                 </tr>   
                 <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3 bg-light-blue-table">01-01-2021 a 30-12-2021</td>
+                    <td class="td-border-right pl-3 bg-light-blue-table">Selección</td>
                     <td class="text-align-center td-border-right bg-light-blue-table">0</td>
                     <td class="text-align-center td-border-right bg-light-blue-table">0</td>
                     <td class="text-align-center td-border-right bg-light-blue-table">0</td>
@@ -198,9 +205,10 @@
                 <tr class="row-product text-align-center bg-white">
                     <td class="td-border-right bg-light-blue-table" :rowspan="4">CAR</td>
                     <td class="td-border-right" :rowspan="4">EXPERIENCIA</td>
+                    <td class="td-border-right" :rowspan="4">EMA</td>
                 </tr>
                 <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3">01-01-2020 a 30-12-2020</td>
+                    <td class="td-border-right pl-3">Hace 1 año</td>
                     <td class="text-align-center td-border-right">0</td>
                     <td class="text-align-center td-border-right">0</td>
                     <td class="text-align-center td-border-right">0</td>
@@ -216,7 +224,7 @@
                     <td class="text-align-center td-border-right">0</td>
                 </tr>   
                 <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3 bg-light-blue-table">01-01-2021 a 30-12-2021</td>
+                    <td class="td-border-right pl-3 bg-light-blue-table">Selección</td>
                     <td class="text-align-center td-border-right bg-light-blue-table">0</td>
                     <td class="text-align-center td-border-right bg-light-blue-table">0</td>
                     <td class="text-align-center td-border-right bg-light-blue-table">0</td>
@@ -251,9 +259,10 @@
                 <tr class="row-product text-align-center bg-white">
                     <td class="td-border-right bg-light-blue-table" :rowspan="4">CAR</td>
                     <td class="td-border-right" :rowspan="4">OTROS</td>
+                    <td class="td-border-right" :rowspan="4">EMA</td>
                 </tr>
                 <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3">01-01-2020 a 30-12-2020</td>
+                    <td class="td-border-right pl-3">Hace 1 año</td>
                     <td class="text-align-center td-border-right">0</td>
                     <td class="text-align-center td-border-right">0</td>
                     <td class="text-align-center td-border-right">0</td>
@@ -269,7 +278,7 @@
                     <td class="text-align-center td-border-right">0</td>
                 </tr>   
                 <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3 bg-light-blue-table">01-01-2021 a 30-12-2021</td>
+                    <td class="td-border-right pl-3 bg-light-blue-table">Selección</td>
                     <td class="text-align-center td-border-right bg-light-blue-table">0</td>
                     <td class="text-align-center td-border-right bg-light-blue-table">0</td>
                     <td class="text-align-center td-border-right bg-light-blue-table">0</td>
@@ -302,10 +311,10 @@
                 </tr>   
                 <!--CARAVANING-->
                 <tr class="row-product bg-white">
-                    <td class="td-border-right bg-light-blue-table pl-5" :rowspan="4" colspan="2">CARAVANING</td>
+                    <td class="td-border-right bg-light-blue-table pl-5" :rowspan="4" colspan="3">CARAVANING</td>
                 </tr>
                 <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3">01-01-2020 a 30-12-2020</td>
+                    <td class="td-border-right pl-3">Hace 1 año</td>
                     <td class="text-align-center td-border-right">0</td>
                     <td class="text-align-center td-border-right">0</td>
                     <td class="text-align-center td-border-right">0</td>
@@ -321,7 +330,7 @@
                     <td class="text-align-center td-border-right">0</td>
                 </tr>   
                 <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3 bg-light-blue-table">01-01-2021 a 30-12-2021</td>
+                    <td class="td-border-right pl-3 bg-light-blue-table">Selección</td>
                     <td class="text-align-center td-border-right bg-light-blue-table">0</td>
                     <td class="text-align-center td-border-right bg-light-blue-table">0</td>
                     <td class="text-align-center td-border-right bg-light-blue-table">0</td>
@@ -351,169 +360,13 @@
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                </tr>   
-                <!--OTROS-->
-                <tr class="row-product bg-white">
-                    <td class="td-border-right bg-light-blue-diference-table pl-5" :rowspan="4" colspan="2">OTROS</td>
-                </tr>
-                <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3">01-01-2020 a 30-12-2020</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                </tr>   
-                <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3 bg-light-blue-table">01-01-2021 a 30-12-2021</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                </tr>   
-                <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3 bg-purple color-white">Diferencia%</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                </tr>   
-                <!--EXPERIENCIA-->
-                <tr class="row-product bg-white">
-                    <td class="td-border-right bg-light-blue-diference-table pl-5" :rowspan="4" colspan="2">EXPERIENCIA</td>
-                </tr>
-                <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3">01-01-2020 a 30-12-2020</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                </tr>   
-                <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3 bg-light-blue-table">01-01-2021 a 30-12-2021</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                </tr>   
-                <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3 bg-purple color-white">Diferencia%</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                </tr>   
-                <!--DIGITAL-->
-                <tr class="row-product bg-white">
-                    <td class="td-border-right bg-light-blue-diference-table pl-5" :rowspan="4" colspan="2">DIGITAL</td>
-                </tr>
-                <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3">01-01-2020 a 30-12-2020</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                </tr>   
-                <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3 bg-light-blue-table">01-01-2021 a 30-12-2021</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                </tr>   
-                <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3 bg-purple color-white">Diferencia%</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                </tr>   
+                </tr>    
                 <!--TOTAL-->
                 <tr class="row-product bg-white">
-                    <td class="td-border-right bg-light-blue-table pl-5" :rowspan="4" colspan="2">TOTAL</td>
+                    <td class="td-border-right bg-light-blue-table pl-5" :rowspan="4" colspan="3">TOTAL</td>
                 </tr>
                 <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3">01-01-2020 a 30-12-2020</td>
+                    <td class="td-border-right pl-3">Hace 1 año</td>
                     <td class="text-align-center td-border-right">0</td>
                     <td class="text-align-center td-border-right">0</td>
                     <td class="text-align-center td-border-right">0</td>
@@ -529,7 +382,7 @@
                     <td class="text-align-center td-border-right">0</td>
                 </tr>   
                 <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3 bg-light-blue-table">01-01-2021 a 30-12-2021</td>
+                    <td class="td-border-right pl-3 bg-light-blue-table">Selección</td>
                     <td class="text-align-center td-border-right bg-light-blue-table">0</td>
                     <td class="text-align-center td-border-right bg-light-blue-table">0</td>
                     <td class="text-align-center td-border-right bg-light-blue-table">0</td>
@@ -574,7 +427,7 @@
     import Chart from 'primevue/chart';
 
     export default {
-        name: "TableComponentOption1",
+        name: "TableComponentOption6",
         components: {
             AddButtonComponent,
             Calendar,
@@ -594,25 +447,6 @@
                 datatable: null,
                 date1: '',
                 date2: '',
-                chartData: {
-                    labels: ['A','B','C'],
-                    datasets: [
-                        {
-                            data: [300, 50, 100],
-                            backgroundColor: ["#42A5F5","#66BB6A","#FFA726"],
-                            hoverBackgroundColor: ["#64B5F6","#81C784","#FFB74D"]
-                        }
-                    ]
-                },
-                lightOptions: {
-                    plugins: {
-                        legend: {
-                            labels: {
-                                color: '#495057'
-                            }
-                        }
-                    }
-                }
             };
         },
         computed: {

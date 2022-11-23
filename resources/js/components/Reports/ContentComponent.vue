@@ -60,6 +60,7 @@
             <Option3 v-if="reports.status_view == 4"></Option3>
             <Option4 v-if="reports.status_view == 5"></Option4>
             <Option5 v-if="reports.status_view == 6"></Option5>
+            <Option6 v-if="reports.status_view == 7"></Option6>
         </div>
     </div>
 </template>
@@ -72,6 +73,7 @@ import Option2 from "./Options/Options2/ContentComponent.vue";
 import Option3 from "./Options/Options3/ContentComponent.vue";
 import Option4 from "./Options/Options4/ContentComponent.vue";
 import Option5 from "./Options/Options5/ContentComponent.vue";
+import Option6 from "./Options/Options6/ContentComponent.vue";
 
 export default {
     name: "ContentComponent",
@@ -80,7 +82,8 @@ export default {
         Option2,
         Option3,
         Option4,
-        Option5
+        Option5,
+        Option6
     },
     data() {
         return {
