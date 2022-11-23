@@ -143,6 +143,8 @@ const mutations = {
                             article_arr.dates_prices_aux.map(function(date_price, key) {
                                 article.dates.map(function(date, key) {
                                     if(date_price.date  == changeFormatDate(date)){
+                                    //if(date_price.date == date){
+                                    //if(changeFormatDate(date_price.date) == changeFormatDate(date)){
                                         date_price.arr_pvp_date.map(function(pvp_date, key) {
                                             if(pvp_date.date == date){
                                                 pvp_date.arr_pvp.push(article.article_obj.pvp);
@@ -153,9 +155,9 @@ const mutations = {
                                 });
                             });
                             if(!exist2){
-                                article.dates.map(function(date, key) {
+                                article.dates.map(function(date_obj, key) {
                                     var date = {
-                                        'date': date,
+                                        'date': date_obj,
                                         'pvp': article.article_obj.pvp
                                     }
                                     article.dates_prices_aux.push(date);
@@ -164,9 +166,9 @@ const mutations = {
                         }
                     });
                     if(!exist){
-                        article.dates.map(function(date, key) {
+                        article.dates.map(function(date_obj, key) {
                             var date = {
-                                'date': date,
+                                'date': date_obj,
                                 'pvp': article.article_obj.pvp
                             }
                             article.dates_prices_aux.push(date);

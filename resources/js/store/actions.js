@@ -734,6 +734,7 @@ function createObjectsStore({ state }, response, type){
                             sector_obj: proposal.sector
                         }
                         product.articles.push(article);
+                        product.articles_aux.push(article);
                     }
                 }
             });
@@ -756,6 +757,7 @@ function createObjectsStore({ state }, response, type){
                 array_products.push({
                     id_product: service.article.id_product,
                     articles: [article],
+                    articles_aux: [article],
                     product_obj: service.product
                 });
             }

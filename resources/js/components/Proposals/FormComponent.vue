@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="col-12 d-flex flex-wrap justify-content-between">
-            <template v-if="(proposals.status_view == 2 && proposals.proposal_bd_obj != null && !this.create_order && !this.is_updating)">
+            <template v-if="(proposals.status_view == 2 && proposals.proposal_bd_obj != null && !this.create_order && !this.is_updating && !this.is_copy)">
                 <AddButtonComponent
                     :columns="'ml-auto mr-7'"
                     :text="'Volver'"
@@ -19,6 +19,15 @@
                     :width="16"
                     :height="16"
                     @click.native="createOrderView()"
+                />
+                <AddButtonComponent
+                    :columns="'mr-7'"
+                    :text="'Copiar'"
+                    :id="'btn_copy_order'"
+                    :src="'/media/custom-imgs/icono_btn_crear_orden.svg'"
+                    :width="16"
+                    :height="16"
+                    @click.native="copyOrderView()"
                 />
                 <AddButtonComponent
                     :columns="'mr-7'"
@@ -92,7 +101,7 @@
                 </div>
                 <div>
                     <div class="ml-10">
-                        <div v-if="proposals.status_view == 2 && proposals.proposal_bd_obj != null"><h2 class="text-dark">Propuesta {{ proposals.proposal_bd_obj.id_proposal_custom_aux }}</h2></div>
+                        <div v-if="proposals.status_view == 2 && proposals.proposal_bd_obj != null && !this.is_copy"><h2 class="text-dark">Propuesta {{ proposals.proposal_bd_obj.id_proposal_custom_aux }}</h2></div>
                         <div class="f-20">
                             <span class="text-dark font-weight-bold">Cliente: <span class="color-dark-gray font-weight-bold">{{ name_company }}</span></span>
                         </div>
@@ -694,7 +703,7 @@
                             </tbody>
                         </table>
                     </template>
-                    <div class="mt-10">
+                    <div class="mt-10" v-if="this.is_updating == 1">
                         <button v-on:click="this.generatePdf()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Guardar y generar PDF</button>
                     </div>
                 </div>
@@ -799,7 +808,8 @@ export default {
             is_change_get_info: 0,
             is_updating: false,
             create_order: false,
-            date_now: ''
+            date_now: '',
+            is_copy: false,
         };
     },
     computed: {
@@ -1119,12 +1129,26 @@ export default {
             me.proposal_submission_settings.sales_possibilities = 6;
             me.proposal_submission_settings.discount = 0;
         },
+        //Copiar propuesta
+        copyOrderView(){
+            this.generate_proposal = false;
+            this.finish_proposal = false;
+            this.is_copy = true;
+            this.is_updating = false;
+            this.create_order = false;
+            this.proposals.bill_obj.array_bills = [];
+            this.proposals.bill_obj.total_bill = 0;
+            this.proposals.proposal_bd_obj = null;
+            this.is_show_buttons_bill = false;
+
+        },
         //Modificar propuesta
         updateProposalFront(){
             this.generate_proposal = false;
             this.finish_proposal = false;
             this.is_updating = true;
             this.create_order = false;
+            this.is_copy = false;
         },
         //Eliminar propuesta
         deleteProposalAction(){
@@ -1152,6 +1176,7 @@ export default {
             this.finish_proposal = false;
             this.is_updating = false;
             this.create_order = true;
+            this.is_copy = false;
         },
         //Crear orden
         createOrderBtn(){
