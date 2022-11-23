@@ -1,0 +1,236 @@
+<template>
+    <div class="col-12 d-flex flex-wrap mt-6">
+        <div class="col-12 d-flex flex-wrap justify-content-between mb-10">
+            <h3 class="color-blue my-auto">Opciones de informe</h3>
+            <div class="d-flex">
+                <AddButtonComponent
+                    :columns="'px-4 ml-auto mr-7'"
+                    :text="'Exportar'"
+                    :id="'btn_export'"
+                    :src="'/media/custom-imgs/icono_btn_exportar.svg'"
+                    :width="16"
+                    :height="16"
+                    @click.native="changeViewStatusProposals(3)"
+                />
+                <AddButtonComponent
+                    :columns="'ml-auto mr-7'"
+                    :text="'Volver'"
+                    :id="'btn_return'"
+                    :src="'/media/custom-imgs/flecha_btn_volver.svg'"
+                    :width="16"
+                    :height="16"
+                    @click.native="changeViewStatusReports(1)"
+                />
+            </div>
+        </div>
+        <div class="mx-2 col-2 mt-5">
+            <span class="text-dark font-weight-bold mb-2">Consultor</span>
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
+                <option value="" selected>
+                    Selecciona un consultor
+                </option>
+                <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
+            </select>
+        </div>
+
+        <div class="mx-2 col-2 mt-auto">
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-auto" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
+                <option value="" selected>
+                    Filtro por sector
+                </option>
+                <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
+            </select>
+        </div>
+
+        <div class="mx-2 col-2 mt-5">
+            <span class="text-dark font-weight-bold mb-2">Vencimiento del</span>
+            <Calendar class="w-100 select-filter input-custom-calendar mt-3" inputId="date_from" autocomplete="off" dateFormat="dd-mm-yy" />
+        </div>
+
+        <div class="mx-2 col-2 mt-5">
+            <span class="text-dark font-weight-bold mb-2">Vencimiento hasta</span>
+            <Calendar class="w-100 select-filter input-custom-calendar mt-3" inputId="date_to" autocomplete="off" dateFormat="dd-mm-yy"  />
+        </div>
+
+        <div class="mx-2 col-2 mt-5"></div>
+
+        <div class="mx-2 col-2">
+            <span class="text-dark font-weight-bold mb-2">Número de orden</span>
+            <input type="text" class="form-control bg-gray mt-3 select-filter text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
+        </div>
+
+        <div class="mx-2 col-2  mt-5">
+            <span class="text-dark font-weight-bold mb-2">ID de contacto</span>
+            <input type="text" class="form-control bg-gray mt-3 select-filter text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
+        </div>
+
+        <div class="mx-2 col-2  mt-5">
+            <span class="text-dark font-weight-bold mb-2">ID cliente (SAGE)</span>
+            <input type="text" class="form-control bg-gray mt-3 select-filter text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
+        </div>
+
+        <div class="mx-2 col-2 mt-5">
+            <span class="text-dark font-weight-bold mb-2">Estado de la factura</span>
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
+                <option value="" selected>
+                    Filtro por producto
+                </option>
+                <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
+            </select>
+        </div>
+
+        <div class="mx-2 mt-auto col-2 d-grid">
+            <div v-if="this.show_all == 0">
+                <button class="purple-border btn mr-4 font-weight-bold d-flex py-4" @click="this.changeStatusShowAll(1)">
+                    <div class="purple-circle mr-auto my-auto">
+                        <div class="white-circle-purple"></div>
+                    </div>
+                    <span class="px-10">Mostrar todo</span>
+                </button>
+            </div>
+            <div v-else>
+                <button  class="bg-purple btn mr-4 font-weight-bold color-white d-flex py-4" @click="this.changeStatusShowAll(0)">
+                    <div class="white-circle mr-auto my-auto">
+                        <div class="purple-circle-white"></div>
+                    </div>
+                    <span class="px-10">Mostrar todo</span>
+                </button>
+            </div>
+        </div>
+        
+        <div class="mx-2 col-12 d-flex mt-10">
+            <button type="submit" class="btn bg-azul color-white px-35 font-weight-bolder">Generar informe</button>
+        </div>
+    </div>
+    <Divider class="my-15" />
+    <div class="col-12 d-flex flex-wrap mt-6">
+        <div class="col-12 flex-wrap justify-content-between">
+            <h3 class="color-blue my-auto">Resultados</h3>
+        </div>
+    </div>
+    <div class="col-12 mt-15">
+        <table width="100%" cellpadding="2" cellspacing="1">
+            <thead class="custom-columns-datatable">
+                <tr class="">
+                    <th tabindex="0" class="pl-3 pb-3" aria-controls="example" rowspan="4" colspan="1" style="width: 25px;"><span>CONSULTOR</span></th>
+                    <th tabindex="0" class="pl-3 pb-3" aria-controls="example" rowspan="4" colspan="1" style="width: 50px;"><span>ORDEN</span></th>
+                    <th tabindex="0" class="pl-3 pb-3" aria-controls="example" rowspan="1" colspan="1" style="width: 50px;"><span>CÓDIGO</span></th>
+                    <th tabindex="0" class="pl-3 pb-3" aria-controls="example" rowspan="1" colspan="1" style="width: 150px;"><span>CLIENTE</span></th>
+                    <th tabindex="0" class="pl-3 pb-3" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>FACTURA</span></th>
+                    <th tabindex="0" class="pl-3 pb-3" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>RECIBO</span></th>
+                    <th tabindex="0" class="pl-3 pb-3" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>EMISIÓN</span></th>
+                    <th tabindex="0" class="pl-3 pb-3" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>VENCIMIENTO</span></th>
+                    <th tabindex="0" class="pl-3 pb-3" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>FORMA PAGO</span></th>
+                    <th tabindex="0" class="pl-3 pb-3" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>ESTADO</span></th>
+                    <th tabindex="0" class="pl-3 pb-3" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>TOTAL</span></th>
+                </tr>
+            </thead>
+            <tbody>  
+                <tr class="row-product bg-white ">
+                    <td class="pl-3 py-5 text-dark">058</td>
+                    <td class="pl-3 text-gray">39107</td>
+                    <td class="pl-3 text-gray">001137</td>
+                    <td class="pl-3 text-dark">Camping Neptuno Costa Brava S</td>
+                    <td class="pl-3 text-gray">2202760</td>
+                    <td class="pl-3 text-gray">1</td>
+                    <td class="pl-3 text-gray">30-08-2022</td>
+                    <td class="pl-3 text-gray">29-09-2022</td>
+                    <td class="pl-3 text-gray">Recibo a 30 dias</td>
+                    <td class="pl-3 text-gray">No cobrado</td>
+                    <td class="pl-3 text-gray">1.694,00</td>
+                </tr>   
+                <tr class="row-product bg-white ">
+                    <td class="pl-3 py-5 text-dark">058</td>
+                    <td class="pl-3 text-gray">39107</td>
+                    <td class="pl-3 text-gray">001137</td>
+                    <td class="pl-3 text-dark">Camping Neptuno Costa Brava S</td>
+                    <td class="pl-3 text-gray">2202760</td>
+                    <td class="pl-3 text-gray">1</td>
+                    <td class="pl-3 text-gray">30-08-2022</td>
+                    <td class="pl-3 text-gray">29-09-2022</td>
+                    <td class="pl-3 text-gray">Recibo a 30 dias</td>
+                    <td class="pl-3 text-gray">No cobrado</td>
+                    <td class="pl-3 text-gray">1.694,00</td>
+                </tr>   
+                <tr class="row-product bg-white ">
+                    <td class="pl-3 py-5 text-dark">058</td>
+                    <td class="pl-3 text-gray">39107</td>
+                    <td class="pl-3 text-gray">001137</td>
+                    <td class="pl-3 text-dark">Camping Neptuno Costa Brava S</td>
+                    <td class="pl-3 text-gray">2202760</td>
+                    <td class="pl-3 text-gray">1</td>
+                    <td class="pl-3 text-gray">30-08-2022</td>
+                    <td class="pl-3 text-gray">29-09-2022</td>
+                    <td class="pl-3 text-gray">Recibo a 30 dias</td>
+                    <td class="pl-3 text-gray">No cobrado</td>
+                    <td class="pl-3 text-gray">1.694,00</td>
+                </tr>   
+                <tr class="tr-total-datatable ">
+                    <td colspan="10" class="py-6"><span class="ml-5 font-weight-bolder">TOTAL</span></td>
+                    <td  class="text-align-center"><span class="font-weight-bolder">2.895,00€</span></td>
+                </tr>    
+            </tbody>
+        </table>
+    </div>
+</template>
+
+<script>
+    import { mapMutations, mapActions, mapState } from "vuex";
+
+    import AddButtonComponent from "../../../Partials/AddButtonComponent.vue";
+    import Calendar from 'primevue/calendar';
+    import Divider from 'primevue/divider';
+    import Chart from 'primevue/chart';
+
+    export default {
+        name: "TableComponentOption5",
+        components: {
+            AddButtonComponent,
+            Calendar,
+            Divider,
+            Chart
+        },
+        data() {
+            return {
+                publicPath: window.location.origin,
+                num_proposal: '',
+                select_consultant: '',
+                date_from: '',
+                date_to: '',
+                select_from_consultant: '1',
+                select_sector: '',
+                select_status_order: '1',
+                datatable: null,
+                show_all: 0,
+            };
+        },
+        computed: {
+            ...mapState(["errors", "config"]),
+        },
+        mounted() {
+            this.getNow();
+        },
+        methods: {
+            ...mapActions([]),
+            ...mapMutations(["changeViewStatusReports"]),
+            //Consultar fecha actual
+            getNow() {
+                const today = new Date();
+                var day = today.getDate();
+                if(day < 10){
+                    day = '0' + today.getDate();
+                }
+                var month = (today.getMonth()+1);
+                if(month < 10){
+                    month = '0' + (today.getMonth()+1)
+                }
+                const date = day + '-' + month + '-' + today.getFullYear();
+                this.date_from = date;
+                this.date_to = date;
+            },
+            changeStatusShowAll(status){
+                this.show_all = status;
+            }
+        }
+    };
+</script>
