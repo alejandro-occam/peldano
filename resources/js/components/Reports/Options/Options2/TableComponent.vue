@@ -4,6 +4,15 @@
             <h3 class="color-blue my-auto">Opciones de informe</h3>
             <div class="d-flex">
                 <AddButtonComponent
+                    :columns="'ml-auto mr-7'"
+                    :text="'Volver'"
+                    :id="'btn_return'"
+                    :src="'/media/custom-imgs/flecha_btn_volver.svg'"
+                    :width="16"
+                    :height="16"
+                    @click.native="changeViewStatusReports(1)"
+                />
+                <AddButtonComponent
                     :columns="'px-4 ml-auto mr-7'"
                     :text="'Exportar'"
                     :id="'btn_export'"
@@ -13,13 +22,13 @@
                     @click.native="changeViewStatusProposals(3)"
                 />
                 <AddButtonComponent
-                    :columns="'ml-auto mr-7'"
-                    :text="'Volver'"
-                    :id="'btn_return'"
-                    :src="'/media/custom-imgs/flecha_btn_volver.svg'"
-                    :width="16"
-                    :height="16"
-                    @click.native="changeViewStatusReports(1)"
+                    @click.native="printPage()"
+                    :columns="'px-4'"
+                    :text="'Imprimir'"
+                    :id="'btn_print_calendars_page'"
+                    :src="'/media/custom-imgs/icono_btn_annadir_numero.svg'"
+                    :width="25"
+                    :height="25"
                 />
             </div>
         </div>
@@ -116,7 +125,7 @@
             <h3 class="color-blue my-auto">Resultados</h3>
         </div>
     </div>
-    <div class="col-12 mt-15">
+    <div class="col-12 mt-15" id="div_print">
         <table width="100%" cellpadding="2" cellspacing="1">
             <thead class="custom-columns-datatable">
                 <tr class="">
@@ -276,6 +285,36 @@
                     select_articles_products: me.select_product
                 }
                 me.getArticles(params);
+            },
+            printPage(){
+                // Get HTML to print from element
+                const prtHtml = document.getElementById('div_print').innerHTML;
+
+                // Get all stylesheets HTML
+                let stylesHtml = '';
+                for (const node of [...document.querySelectorAll('link[rel="stylesheet"], style')]) {
+                    stylesHtml += node.outerHTML;
+                }
+
+                // Open the print window
+                const WinPrint = window.open('', '', 'left=0,top=0,width=800,height=900,toolbar=0,scrollbars=0,status=0');
+
+                WinPrint.document.write(`<!DOCTYPE html>
+                            <head>
+                                ${stylesHtml}
+                            </head>
+                            <body>
+                                ${prtHtml}
+                            </body>
+                            </html>`);
+
+                setTimeout(() => {
+                            WinPrint.document.close();
+                            WinPrint.focus();
+                            WinPrint.print();
+                            WinPrint.close();
+                            }, 500);
+               
             },
         }
     };
