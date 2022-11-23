@@ -117,7 +117,7 @@
     <div class="col-12 mt-15">
         <table width="100%" cellpadding="2" cellspacing="1">
             <thead class="custom-columns-datatable">
-                <tr class="f-15">
+                <tr class="">
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 25px;"><span></span></th>
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 50px;"><span>ID</span></th>
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 125px;"><span>CLIENTE</span></th>
@@ -131,7 +131,7 @@
                 </tr>
             </thead>
             <tbody>  
-                <tr class="row-product bg-white f-15">
+                <tr class="row-product bg-white ">
                     <td class="pl-3 py-5 text-dark text-align-center">1</td>
                     <td class="text-align-center text-dark">17228</td>
                     <td class="text-align-center text-dark">Arena Media Comunications España, SA</td>
@@ -143,7 +143,7 @@
                     <td class="text-align-center text-gray">1.275,00</td>
                     <td class="text-align-center text-gray">081</td>
                 </tr>   
-                <tr class="row-product bg-white f-15">
+                <tr class="row-product bg-white ">
                     <td class="pl-3 py-5 text-dark text-align-center">1</td>
                     <td class="text-align-center text-dark">17228</td>
                     <td class="text-align-center text-dark">Arena Media Comunications España, SA</td>
@@ -155,7 +155,7 @@
                     <td class="text-align-center text-gray">1.275,00</td>
                     <td class="text-align-center text-gray">081</td>
                 </tr>   
-                <tr class="row-product bg-white f-15">
+                <tr class="row-product bg-white ">
                     <td class="pl-3 py-5 text-dark text-align-center">1</td>
                     <td class="text-align-center text-dark">17228</td>
                     <td class="text-align-center text-dark">Arena Media Comunications España, SA</td>
@@ -167,7 +167,7 @@
                     <td class="text-align-center text-gray">1.275,00</td>
                     <td class="text-align-center text-gray">081</td>
                 </tr>   
-                <tr class="tr-total-datatable f-15">
+                <tr class="tr-total-datatable ">
                     <td colspan="9" class="py-6"><span class="ml-5 font-weight-bolder">TOTAL</span></td>
                     <td  class="text-align-center"><span class="font-weight-bolder">2.895,00€</span></td>
                 </tr>    
