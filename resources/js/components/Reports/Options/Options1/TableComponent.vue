@@ -23,9 +23,10 @@
                 />
             </div>
         </div>
+
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Sector</span>
-            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_sector" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
                 <option value="" selected>
                     Filtro por sector
                 </option>
@@ -35,24 +36,24 @@
 
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Consultor</span>
-            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_consultant'" :id="'select_consultant'" v-model="select_consultant" data-style="select-lightgreen" @change="getConsultantSelect">
                 <option value="" selected>
-                    Filtro por sector
+                    Selecciona un consultor
                 </option>
-                <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
+                <option :value="user.id" v-for="user in proposals.array_users"  :key="user.id" v-text="user.name + ' ' + user.surname" ></option>
             </select>
         </div>
 
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Órdenes</span>
-            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_order"  :name="'select_order'" :id="'select_order'" data-style="select-lightgreen">
                 <option :value="1">Firmadas</option>
                 <option :value="2">Editando</option>
             </select>
         </div>
 
         <div class="mx-2 col-2 mt-auto">
-            <select class="form-control bg-gray text-dark select-custom select-filter" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
+            <select class="form-control bg-gray text-dark select-custom select-filter" v-model="select_exchange"  :name="'select_exchange'" :id="'select_exchange'" data-style="select-lightgreen">
                 <option :value="1">Sin intercambios</option>
                 <option :value="2">Con intercambios</option>
                 <option :value="3">Sólo intercambios</option>
@@ -63,7 +64,7 @@
             <span class="text-dark font-weight-bold mb-2">Limitadas por fechas</span>
             <span class="switch switch-outline switch-icon switch-success mt-3">
                 <label class="mr-auto">
-                    <input class="switch-exempt" input type="checkbox" checked="checked" name="select"/>
+                    <input class="switch-exempt" input type="checkbox" v-model="switch_limit_date" name="select"/>
                     <span></span>
                 </label>
             </span>
@@ -71,17 +72,17 @@
 
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Fecha desde</span>
-            <Calendar class="w-100 select-filter input-custom-calendar mt-3" inputId="date_from" autocomplete="off" dateFormat="dd-mm-yy" />
+            <Calendar class="w-100 select-filter input-custom-calendar mt-3" v-model="date_from" inputId="date_from" autocomplete="off" dateFormat="dd-mm-yy" />
         </div>
 
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Fecha hasta</span>
-            <Calendar class="w-100 select-filter input-custom-calendar mt-3" inputId="date_to" autocomplete="off" dateFormat="dd-mm-yy"  />
+            <Calendar class="w-100 select-filter input-custom-calendar mt-3" v-model="date_to" inputId="date_to" autocomplete="off" dateFormat="dd-mm-yy"  />
         </div>
 
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Datos a usar</span>
-            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_data_to_use" :name="'select_data_to_use'" :id="'select_data_to_use'" data-style="select-lightgreen">
                 <option :value="1">Del consultor</option>
                 <option :value="2">De la cartera asignada al consultor</option>
                 <option :value="3">Responsable de publicaciones</option>
@@ -90,7 +91,7 @@
 
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Comparar con</span>
-            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_compare" :name="'select_compare'" :id="'select_compare'" data-style="select-lightgreen">
                 <option :value="1">Hace 1 año</option>
                 <option :value="2">Hace 2 años</option>
                 <option :value="3">Hace 3 años</option>
@@ -584,14 +585,15 @@
         data() {
             return {
                 publicPath: window.location.origin,
-                num_proposal: '',
+                select_sector: '',
                 select_consultant: '',
+                select_order: '1',
+                select_exchange: '1',
+                switch_limit_date: 0,
                 date_from: '',
                 date_to: '',
-                select_from_consultant: '1',
-                select_sector: '',
-                select_status_order: '1',
-                datatable: null,
+                select_data_to_use: '1',
+                select_compare: '1',
                 date1: '',
                 date2: '',
                 chartData: {
@@ -616,13 +618,18 @@
             };
         },
         computed: {
-            ...mapState(["errors", "config"]),
+            ...mapState(["errors", "proposals", "config"]),
         },
         mounted() {
+            this.getUsers(1);
             this.getNow();
+            var params = {
+                type: 1
+            }
+            this.getSectors(params);
         },
         methods: {
-            ...mapActions([]),
+            ...mapActions(["getUsers", "getSectors"]),
             ...mapMutations(["changeViewStatusReports"]),
             //Consultar fecha actual
             getNow() {

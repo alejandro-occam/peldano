@@ -25,57 +25,55 @@
         </div>
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Consultor</span>
-            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_consultant" :name="'select_consultant'" :id="'select_consultant'" data-style="select-lightgreen">
                 <option value="" selected>
                     Selecciona un consultor
                 </option>
-                <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
+                <option :value="user.id" v-for="user in proposals.array_users" :key="user.id" v-text="user.name + ' ' + user.surname"></option>
             </select>
         </div>
 
         <div class="mx-2 col-2 mt-auto">
-            <select class="form-control bg-gray text-dark select-custom select-filter mt-auto" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
-                <option value="" selected>
-                    Filtro por sector
-                </option>
-                <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-auto" v-model="select_payment" :name="'select_payment'" :id="'select_payment'" data-style="select-lightgreen">
+                <option :value="1">Con abonos</option>
+                <option :value="2">Sin abonos</option>
             </select>
         </div>
 
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Vencimiento del</span>
-            <Calendar class="w-100 select-filter input-custom-calendar mt-3" inputId="date_from" autocomplete="off" dateFormat="dd-mm-yy" />
+            <Calendar class="w-100 select-filter input-custom-calendar mt-3" v-model="expiration_from" inputId="expiration_from" autocomplete="off" dateFormat="dd-mm-yy" />
         </div>
 
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Vencimiento hasta</span>
-            <Calendar class="w-100 select-filter input-custom-calendar mt-3" inputId="date_to" autocomplete="off" dateFormat="dd-mm-yy"  />
+            <Calendar class="w-100 select-filter input-custom-calendar mt-3" v-model="expiration_to" inputId="expiration_to" autocomplete="off" dateFormat="dd-mm-yy"  />
         </div>
 
         <div class="mx-2 col-2 mt-5"></div>
 
         <div class="mx-2 col-2">
             <span class="text-dark font-weight-bold mb-2">Número de orden</span>
-            <input type="text" class="form-control bg-gray mt-3 select-filter text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
+            <input type="text" class="form-control bg-gray mt-3 select-filter text-dark-gray" v-model="num_order" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
         </div>
 
         <div class="mx-2 col-2  mt-5">
             <span class="text-dark font-weight-bold mb-2">ID de contacto</span>
-            <input type="text" class="form-control bg-gray mt-3 select-filter text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
+            <input type="text" class="form-control bg-gray mt-3 select-filter text-dark-gray" v-model="contact_id" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
         </div>
 
         <div class="mx-2 col-2  mt-5">
             <span class="text-dark font-weight-bold mb-2">ID cliente (SAGE)</span>
-            <input type="text" class="form-control bg-gray mt-3 select-filter text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
+            <input type="text" class="form-control bg-gray mt-3 select-filter text-dark-gray" v-model="client_id_sage" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
         </div>
 
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Estado de la factura</span>
-            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
-                <option value="" selected>
-                    Filtro por producto
-                </option>
-                <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_satus_bill" :name="'select_satus_bill'" :id="'select_satus_bill'" data-style="select-lightgreen">
+                <option :value="1">No cobradas o devueltos</option>
+                <option :value="2">Ni cobrado ni devuelto</option>
+                <option :value="3">Cobrado</option>
+                <option :value="4">Devuelto</option>
             </select>
         </div>
 
@@ -103,11 +101,13 @@
         </div>
     </div>
     <Divider class="my-15" />
+
     <div class="col-12 d-flex flex-wrap mt-6">
         <div class="col-12 flex-wrap justify-content-between">
             <h3 class="color-blue my-auto">Resultados</h3>
         </div>
     </div>
+
     <div class="col-12 mt-15">
         <table width="100%" cellpadding="2" cellspacing="1">
             <thead class="custom-columns-datatable">
@@ -193,25 +193,26 @@
         data() {
             return {
                 publicPath: window.location.origin,
-                num_proposal: '',
                 select_consultant: '',
-                date_from: '',
-                date_to: '',
-                select_from_consultant: '1',
-                select_sector: '',
-                select_status_order: '1',
-                datatable: null,
+                select_payment: '2',
+                expiration_from: '',
+                expiration_to: '',
+                num_order: '',
+                contact_id: '',
+                client_id_sage: '',
+                select_satus_bill: '1',
                 show_all: 0,
             };
         },
         computed: {
-            ...mapState(["errors", "config"]),
+            ...mapState(["errors", "config", "proposals"]),
         },
         mounted() {
             this.getNow();
+            this.getUsers(1);
         },
         methods: {
-            ...mapActions([]),
+            ...mapActions(["getUsers"]),
             ...mapMutations(["changeViewStatusReports"]),
             //Consultar fecha actual
             getNow() {
@@ -225,8 +226,8 @@
                     month = '0' + (today.getMonth()+1)
                 }
                 const date = day + '-' + month + '-' + today.getFullYear();
-                this.date_from = date;
-                this.date_to = date;
+                this.expiration_from = date;
+                this.expiration_to = date;
             },
             changeStatusShowAll(status){
                 this.show_all = status;

@@ -330,7 +330,12 @@ const actions = {
                 method: 'get'
             });
 
-            state.config.articles.form.array_articles = response.data.array_articles;
+            if(params.type == 1){
+                state.config.articles.filter.array_articles = response.data.array_articles;
+            }else{
+                state.config.articles.form.array_articles = response.data.array_articles;
+            }
+           
 
         } catch (error) {
             console.error(error);
