@@ -25,22 +25,22 @@
         </div>
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Consultor</span>
-            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_consultant" :name="'select_consultant'" :id="'select_consultant'" data-style="select-lightgreen">
                 <option value="" selected>
                     Selecciona un consultor
                 </option>
-                <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
+                <option :value="user.id" v-for="user in proposals.array_users" :key="user.id" v-text="user.name + ' ' + user.surname"></option>
             </select>
         </div>
 
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Fecha desde</span>
-            <Calendar class="w-100 select-filter input-custom-calendar mt-3" inputId="date_from" autocomplete="off" dateFormat="dd-mm-yy" />
+            <Calendar class="w-100 select-filter input-custom-calendar mt-3" v-model="date_from" inputId="date_from" autocomplete="off" dateFormat="dd-mm-yy" />
         </div>
 
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Fecha hasta</span>
-            <Calendar class="w-100 select-filter input-custom-calendar mt-3" inputId="date_to" autocomplete="off" dateFormat="dd-mm-yy"  />
+            <Calendar class="w-100 select-filter input-custom-calendar mt-3" v-model="date_to" inputId="date_to" autocomplete="off" dateFormat="dd-mm-yy"  />
         </div>
 
         <div class="mx-2 col-12 d-flex mt-10">
@@ -275,26 +275,22 @@
         data() {
             return {
                 publicPath: window.location.origin,
-                num_proposal: '',
                 select_consultant: '',
                 date_from: '',
                 date_to: '',
-                select_from_consultant: '1',
-                select_sector: '',
-                select_status_order: '1',
-                datatable: null,
                 desplegable1: 0,
                 desplegable2: 0
             };
         },
         computed: {
-            ...mapState(["errors", "config"]),
+            ...mapState(["errors", "proposals"]),
         },
         mounted() {
+            this.getUsers(1);
             this.getNow();
         },
         methods: {
-            ...mapActions([]),
+            ...mapActions(["getUsers"]),
             ...mapMutations(["changeViewStatusReports"]),
             //Consultar fecha actual
             getNow() {

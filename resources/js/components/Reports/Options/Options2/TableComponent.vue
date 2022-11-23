@@ -23,9 +23,10 @@
                 />
             </div>
         </div>
+
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Sector</span>
-            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_sector" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen" @change="getBrandsSelect">
                 <option value="" selected>
                     Filtro por sector
                 </option>
@@ -35,31 +36,31 @@
 
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Marca</span>
-            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_brand" :name="'select_brand'" :id="'select_brand'" data-style="select-lightgreen" @change="getProductsSelect">
                 <option value="" selected>
                     Filtro por marca
                 </option>
-                <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
+                <option :value="brand.id" v-for="brand in config.articles.filter.array_brands"  :key="brand.id" v-text="brand.name" ></option>
             </select>
         </div>
 
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Producto</span>
-            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_product" :name="'select_product'" :id="'select_product'" data-style="select-lightgreen" @change="getArticlesSelect">
                 <option value="" selected>
                     Filtro por producto
                 </option>
-                <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
+                <option :value="product.id" v-for="product in config.articles.filter.array_products"  :key="product.id" v-text="product.name" ></option>
             </select>
         </div>
 
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Artículo</span>
-            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_article" :name="'select_article'" :id="'select_article'" data-style="select-lightgreen">
                 <option value="" selected>
                     Filtro por artículo
                 </option>
-                <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
+                <option :value="article.id" v-for="article in config.articles.filter.array_articles"  :key="article.id" v-text="article.name" ></option>
             </select>
         </div>
 
@@ -67,27 +68,27 @@
 
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Fecha desde</span>
-            <Calendar class="w-100 select-filter input-custom-calendar mt-3" inputId="date_from" autocomplete="off" dateFormat="dd-mm-yy" />
+            <Calendar class="w-100 select-filter input-custom-calendar mt-3" v-model="date_from" inputId="date_from" autocomplete="off" dateFormat="dd-mm-yy" />
         </div>
 
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Fecha hasta</span>
-            <Calendar class="w-100 select-filter input-custom-calendar mt-3" inputId="date_to" autocomplete="off" dateFormat="dd-mm-yy"  />
+            <Calendar class="w-100 select-filter input-custom-calendar mt-3" v-model="date_to" inputId="date_to" autocomplete="off" dateFormat="dd-mm-yy"  />
         </div>
 
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Consultor</span>
-            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_consultant" :name="'select_consultant'" :id="'select_consultant'" data-style="select-lightgreen">
                 <option value="" selected>
                     Selecciona un consultor
                 </option>
-                <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
+                <option :value="user.id" v-for="user in proposals.array_users" :key="user.id" v-text="user.name + ' ' + user.surname"></option>
             </select>
         </div>
 
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Ordenar por</span>
-            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_sort_by" :name="'select_sort_by'" :id="'select_sort_by'" data-style="select-lightgreen">
                 <option :value="1">Artículo</option>
                 <option :value="2">Provincia</option>
                 <option :value="3">Fecha de insercción</option>
@@ -98,12 +99,13 @@
         </div>
 
         <div class="mx-2 col-2 mt-auto">
-            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_exchange" :name="'select_exchange'" :id="'select_exchange'" data-style="select-lightgreen">
                 <option :value="1">Excluyendo intercambios</option>
                 <option :value="2">Todas</option>
                 <option :value="3">Solo intercambios</option>
             </select>
         </div>
+
         <div class="mx-2 col-12 d-flex mt-10">
             <button type="submit" class="btn bg-azul color-white px-35 font-weight-bolder">Generar informe</button>
         </div>
@@ -195,26 +197,30 @@
         data() {
             return {
                 publicPath: window.location.origin,
-                num_proposal: '',
-                select_consultant: '',
+                select_sector: '',
+                select_brand: '',
+                select_product: '',
+                select_article: '',
                 date_from: '',
                 date_to: '',
-                select_from_consultant: '1',
-                select_sector: '',
-                select_status_order: '1',
-                datatable: null,
-                date1: '',
-                date2: '',
+                select_consultant: '',  
+                select_sort_by: '1',  
+                select_exchange: '2',  
             };
         },
         computed: {
-            ...mapState(["errors", "config"]),
+            ...mapState(["errors", "config", "proposals"]),
         },
         mounted() {
+            this.getUsers(1);
+            var params = {
+                type: 1
+            }
+            this.getSectors(params);
             this.getNow();
         },
         methods: {
-            ...mapActions([]),
+            ...mapActions(["getUsers", "getSectors", "getBrands", "getProducts", "getArticles"]),
             ...mapMutations(["changeViewStatusReports"]),
             //Consultar fecha actual
             getNow() {
@@ -230,6 +236,46 @@
                 const date = day + '-' + month + '-' + today.getFullYear();
                 this.date_from = date;
                 this.date_to = date;
+            },
+            getBrandsSelect(){
+                let me = this;
+
+                me.select_brand = '';
+                me.select_product = '';
+                me.select_article = '';
+                me.amount = '';
+                me.date = [];
+                me.show_amount_dates = false;
+                var params = {
+                    type: 1,
+                    select_articles_sectors: me.select_sector
+                }
+                me.getBrands(params);
+            },
+            getProductsSelect(){
+                this.select__product = '';
+                this.select_article = '';
+                this.amount = '';
+                this.date = [];
+                this.show_amount_dates = false;
+                var params = {
+                    type: 1,
+                    select_articles_brands: this.select_brand
+                }
+                this.getProducts(params);
+            },
+            getArticlesSelect(){
+                let me = this;
+
+                me.select_article = '';
+                me.amount = '';
+                me.date = [];
+                me.show_amount_dates = false;
+                var params = {
+                    type: 1,
+                    select_articles_products: me.select_product
+                }
+                me.getArticles(params);
             },
         }
     };
