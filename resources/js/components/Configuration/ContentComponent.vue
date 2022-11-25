@@ -318,6 +318,21 @@ export default {
                         }
                         this.clearError();
                     }
+                }else if(this.errors.type_error == 'add_batch'){
+                    if(this.errors.code != ''){
+                        if(this.errors.code == 1000){
+                            $("#list_articles").KTDatatable("reload");
+                            swal("", "Lote creado correctamente", "success");
+                            $("#modal_form_article").modal("hide");
+                        }else if(this.errors.code == 1001 || this.errors.code == 1002){
+                            swal("", "Rellena todos los datos", "warning");
+                        }else if(this.errors.code == 1003){
+                            swal("", "El lote no existe", "warning");
+                        }else{
+                            swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
+                        }
+                        this.clearError();
+                    }
                 }
             }
         }

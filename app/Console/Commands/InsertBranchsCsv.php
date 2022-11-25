@@ -8,7 +8,7 @@ use App\Models\Section;
 use App\Models\Channel;
 use App\Models\Project;
 use App\Models\Chapter;
-use App\Models\Branch;
+use App\Models\Batch;
 
 class InsertBranchsCsv extends Command
 {
@@ -96,22 +96,22 @@ class InsertBranchsCsv extends Command
                         $project = Project::where('nomenclature', $words[3])->where('id_channel', $channel->id)->first();
                         if($project){
                             //Consultamos el capitulo
-                            $chapter = Chapter::where('nomenclature', $words[4])->where('id_channel', $project->id)->first();
+                            $chapter = Chapter::where('nomenclature', $words[4])->where('id_project', $project->id)->first();
                             if($chapter){
                                 foreach($array_branchs_custom as $branch_custom){
                                     if($branch_custom['nomenclature'] == $words[4]){
                                         //Consultamos si existe el canal y si no lo creamos
-                                        $branch = Branch::where([
+                                        $branch = Batch::where([
                                             'name' => $branch_custom['name'],
                                             'nomenclature' => $branch_custom['nomenclature'],
-                                            'id_project' => $chapter->id,
+                                            'id_chapter' => $chapter->id,
                                         ])->first();
 
                                         if(!$branch){
-                                            Branch::create([
+                                            Batch::create([
                                                 'name' => $branch_custom['name'],
                                                 'nomenclature' => $branch_custom['nomenclature'],
-                                                'id_project' => $chapter->id,
+                                                'id_chapter' => $chapter->id,
                                             ]);
                                         }
                                     }

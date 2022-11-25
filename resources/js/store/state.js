@@ -25,17 +25,38 @@ const state = {
                 array_products: null,
             },
             form: {
-                array_areas: null,
-                array_sectors: null,
-                array_brands: null,
-                array_products: null,
-                array_articles: null
+                array_departments: null,
+                array_sections: null, 
+                array_channels: null,
+                array_projects: null,
+                array_batchs: null
             },
             is_update: 0,
             article_obj: {
                 name: null
             },
             search_articles: '',
+        },
+        batchs: {
+            show_view_state: 1,
+            filter: {
+                array_departments: null,
+                array_sections: null, 
+                array_channels: null,
+                array_projects: null,
+            },
+            form: {
+                array_departments: null,
+                array_sections: null, 
+                array_channels: null,
+                array_projects: null,
+                array_batchs: null
+            },
+            is_update: 0,
+            batch_obj: {
+                name: null
+            },
+            search_batchs: '',
         }
     },
     proposals: {

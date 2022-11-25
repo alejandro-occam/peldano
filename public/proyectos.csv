@@ -3,28 +3,28 @@ ANUEE;Anuario EE
 ASIS;Evento Asis
 AUTOC;Auto C
 BUNG;Bungalows
-BUSDAT;BUSINESS DATING
+BUNGC;Alta automática
 BUSMET;Business Meeting
 CCASINO;Congreso Casinos
 CCH;Contact Center Hub
-CJS;CONGRESO JEFES DE SEGURIDAD
 CPROF;Camping  Profesional (PAN)
 CSALON;Campingsalon
 CSE;Congreso Seguridad Euskadi
 CSEG;Cuadernos de Seguridad
 DESCC;Desayunos CC
-DESCSEG;Desayunos CS
+DESCSEG;Alta automática
 DESGD;Desayunos Gaceta Dental
 DESMAB;Desayunos Mab
 DESTH;Desayunos TecnoHotel
 DS;Diffusion Sport
 EE;Entre Estudiantes
-ESNAN;ESPACIO NAN
+ESNAN;Espacio NAN
 EVE;Eventos
-EVEDIG;Eventos Digitales
-EVEPRESEN;Eventos Presenciales
-EVEVAR;Eventos a los que acudimos de 3ª
+EVEDIG;Eventos digitales
+EVEPRESEN;Eventos presenciales
+EVEVAR;Alta automática
 EXPOF;Expofood Service
+FINE;Alta automática
 FODST;Food service talks
 GAS;GAS
 GD;Gaceta Dental
@@ -34,8 +34,8 @@ GEN;Generales
 GPROV;Guía de Proveedores
 GUIAC;Guía de Campings
 GUIADS;Guía Diffusion Sport
+GUIAF;Guia de Formación
 GVISIT;GUIA VISITANTE
-HIKV;HIKVISION
 HOT;Hot Concepts
 HSHOW;Hostel Show
 ISEC;INSTALSEC
@@ -50,20 +50,24 @@ PECK;Pecket
 PEL;Peldaño
 PFINE;Premios FINE
 PGD;Premios Gaceta Dental
-PN;Plataforma de Negocio 
+PN;ALTA AUTOMATICA
 PNAN;Premios NAN
 PN-CF;PN - Contact Forum
 PN-DF;PN - Den Forum
+PN-DS;PN-Sport Forum
 PN-FSF;PN - FoodService Forum
 PN-NAN;PN-HDX Forum
 PN-SF;PN - Security Forum
 PN-SPF;PN - Sport Forum
 PN-THF;PN - TecnoHotel Forum
-PV;Parques de Vacaciones(¿repetido?)
 RN;Restauración News
-SEVE;SERVICIOS EVENTOS TERCEROS no
+SEVE;SERVICIOS EVENTOS TERCEROS
 SIC;SIC
 SONLINE;Servicios on line
+TH;TecnoHotel
+THP;TecnoHotel Portugal
+TIENGD;Tienda GD O Venta en Eventos
+UCC;UCC
 TH;TecnoHotel
 THP;TecnoHotel Portugal
 TIENGD;Tienda GD O Venta en Eventos

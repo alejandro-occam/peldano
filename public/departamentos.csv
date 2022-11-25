@@ -1,13 +1,12 @@
-ARQ;Arquitectura;;;;;
-CON;Contact Center;;;;;
-DEN;Dental;;;;;
-DEP;Deporte;;;;;
-EDU;Educación;;;;;
-EVE;Eventos;;;;;
-HOS;Hostelería & Hotel;;;;;
-HOST;Hostelería & Hotel;;;;;
-INT;Intragrupo;;;;;
-KAU;Kauil;;;;;
-PEL;Peldaño;;;;;
-SEG;Seguridad;;;;;
-TUR;Turismo Caravaning;;;;;
+ARQ;Arquitectura
+CON;Contact Center
+DEN;Dental
+DEP;Deporte
+EDU;Educación
+EVE;Eventos
+HOS;Hostelería & Hotel
+INT;Intragrupo
+KAU;Kauil
+PEL;Peldaño
+SEG;Seguridad
+TUR;Turismo Caravaning

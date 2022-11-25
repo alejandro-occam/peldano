@@ -6,6 +6,8 @@ CLUB;Club Socios
 COLAB;Colaboraciones
 COMPR;Compras
 DCH;Derechos
+DCHINS;Dcho Inscrip
+DESAY;Desayunos
 DISTRI;Distribución
 DOM;Dominios
 EJEMPL;Ejemplares
@@ -14,12 +16,13 @@ EMAIL;Emailing
 ENCAR;Encartes
 ENTRAD;Entradas
 ESPAC;ESPACIOS
+EVEVAR;Eventos Varios
 EXPDIG;Expansión Digital
 EXPRRSS;Expansión RRSS
 GEN;Generales
 GESMAIL;Gestion de emailing
 GTOVIA;Gtos viaje
-GVISIT;Guía del visitante(ya está en proyecto
+GVISIT;Guía del visitante
 HOSTING;Hosting
 INBOUND;Proyecto Inboud Commerce
 INTCOM;Intercamios comerciales
@@ -27,14 +30,12 @@ JORDRO;Jornada Drones
 MAIPOS;Mailing postal
 MARDIG;Marketing Dig
 MKT;Marketing
-NCRM;NUEVO CRM
 NEWSL;Newsletter
 OTROS;Otros
 PATRO;Patrocinio
-PECKBS;Alta automática
-PECKEV;Alta automática
+PECKBS;Licencia Business
+PECKEV;Licencia Events
 PRODU;Producción
-PRWEB;PROYECTO WEB
 PUBPAP;Publi Papel
 REMKT;Remarketing
 RRSS;RRSS
@@ -44,9 +45,9 @@ SOFTW;software
 SOPORT;Soporte
 STAND;Stand
 SUSCR;Suscripciones
-TIENGD;Tienda GD Web (mejor en proyecto)
+TIENGD;Tienda GD Web
+TRAPRO;Trabajos Producción
 VARIO;Varios
 VIPSIC;VIP SICUR
 VTAEJE;Venta Ejemplares
-VTAKIO;yo lo quitaria está en vtaeje
 WEB;Web

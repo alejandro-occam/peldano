@@ -20,6 +20,14 @@ use App\Models\Brand;
 use App\Models\Product;
 use App\Models\Article;
 
+//Batchs
+use App\Models\Department;
+use App\Models\Section;
+use App\Models\Channel;
+use App\Models\Project;
+use App\Models\Chapter;
+use App\Models\Batch;
+
 class ConfigurationController extends Controller
 {
     //USUARIOS
@@ -1133,6 +1141,277 @@ class ConfigurationController extends Controller
         $writer->save('php://output');
     }
     //END ARTICULOS
+
+    //LOTES
+    //Consultar departamentos
+    function getDepartments(){
+        $array_departments = Department::get();
+        $response['array_departments'] = $array_departments;
+        return response()->json($response);
+    }
+    
+    //Consultar secciones
+    function getSections($id = 0){
+        if($id == 0){
+            $array_sections = Section::get();
+        }else{
+            $array_sections = Section::where('id_department', $id)->get();
+        }
+        
+        $response['array_sections'] = $array_sections;
+        return response()->json($response);
+    }
+
+    //Consultar canales
+    function getChannels($id = 0){
+        if($id == 0){
+            $array_channels = Channel::get();
+        }else{
+            $array_channels = Channel::where('id_section', $id)->get();
+        }
+        
+        $response['array_channels'] = $array_channels;
+        return response()->json($response);
+    }
+
+    //Consultar proyectos
+    function getProjects($id = 0){
+        if($id == 0){
+            $array_projects = Project::get();
+        }else{
+            $array_projects = Project::where('id_channel', $id)->get();
+        }
+        
+        $response['array_projects'] = $array_projects;
+        return response()->json($response);
+    }
+
+    //Consultar capítulos
+    function getChapters($id = 0){
+        if($id == 0){
+            $array_chapters = Chapter::get();
+        }else{
+            $array_chapters = Chapter::where('id_chapter', $id)->get();
+        }
+        
+        $response['array_chapters'] = $array_chapters;
+        return response()->json($response);
+    }
+
+    //Añadir lote
+    function addBatch(Request $request){
+        if (!$request->has('id_chapter') || !$request->has('name') || !$request->has('name_eng') || !$request->has('price')) {
+            $response['code'] = 1001;
+            $response['msg'] = "Missing or empty parameters";
+            return response()->json($response);
+        }
+
+        $id_chapter = $request->get('id_chapter');
+        $name = $request->get('name');
+        $name_eng = $request->get('name_eng');
+        $nomenclature = $request->get('nomenclature');
+        $price = $request->get('price');
+
+        if (!isset($id_chapter) || empty($id_chapter) || !isset($name) || empty($name) || !isset($name_eng) || empty($name_eng) || !isset($nomenclature) || empty($nomenclature) || !isset($price) || empty($price)) {
+            $response['code'] = 1002;
+            $response['msg'] = "Missing or empty parameters";
+            return response()->json($response);
+        }
+
+        //Consultamos si existe el capítulo
+        $chapter = Chapter::find($id_chapter);
+        if(!$chapter){
+            $response['code'] = 1003;
+            return response()->json($response);
+        }
+
+        //Consultamos el Departamento, Sección, Canal y Proyecto del lote
+        $project = Project::find($chapter->id_project);
+        if(!$project){
+            $response['code'] = 1003;
+            return response()->json($response);
+        }
+
+        $channel = Channel::find($project->id_channel);
+        if(!$channel){
+            $response['code'] = 1003;
+            return response()->json($response);
+        }
+
+        $section = Section::find($channel->id_section);
+        if(!$section){
+            $response['code'] = 1003;
+            return response()->json($response);
+        }
+
+        $department = Department::find($section->id_department);
+        if(!$department){
+            $response['code'] = 1003;
+            return response()->json($response);
+        }
+
+        //Creamos un objeto para el controller curl
+        /*$requ_curls = new CurlController();
+
+        //Consultamos el product family del artículo
+        $company = config('constants.id_company_sage');
+        $url = 'https://sage200.sage.es/api/sales/ProductFamilies?api-version=1.0&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Name%20eq%20%27'.$area->id."-".$sector->id."-".$brand->id."-".$product->id.'%27';
+        $data = json_decode($requ_curls->getSageCurl($url)['response'], true);
+        $product_family_id = '';
+        if(count($data['value']) == 0){
+            //Si no existe creamos un product family
+            $param['CompanyId'] = $company;
+            $param['Name'] = $area->id."-".$sector->id."-".$brand->id."-".$product->id;
+            $url = 'https://sage200.sage.es/api/sales/ProductFamilies?api-version=1.0';
+            $response = json_decode($requ_curls->postSageCurl($url, $param)['response'], true);
+            $product_family_id = $response['Id'];
+        }else{
+            $array_product_family = $data['value'];
+            foreach($array_product_family as $product_family){
+                $product_family_id = $product_family['Id'];
+            }
+        }
+
+        //Consultamos si existe el artículo con este product family y nombre
+        $custom_name = str_replace(' ', '%20', $name);
+        $url = 'https://sage200.sage.es/api/sales/Products?api-version=1.0&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Name%20eq%20%27'.$custom_name.'%27%20and%20FamilyId%20eq%20%27'.$product_family_id.'%27';
+        $data_product = json_decode($requ_curls->getSageCurl($url)['response'], true);
+        if(count($data_product['value']) == 0){
+            //Si no existe creamos un product family
+            $param['CompanyId'] = $company;
+            $param['Name'] = $name;
+            $param['SalesPriceIncludingTaxes'] = false;
+            $param['SalesPrice'] = $price;
+            $param['FamilyId'] = $product_family_id;
+            $url = 'https://sage200.sage.es/api/sales/Products?api-version=1.0';
+            $response = json_decode($requ_curls->postSageCurl($url, $param)['response'], true);
+            $product_id = $response['Id'];
+
+        }else{
+            $response['code'] = 1004;
+            return response()->json($response);
+        }*/
+
+        Batch::create([
+            'name' => $name,
+            'english_name' => $name_eng,
+            'nomenclature' => $nomenclature,
+            'pvp' => $price,
+            'id_chapter' => $id_chapter,
+            'id_sage' => null,
+            'id_family_sage' => null
+        ]);
+
+        $response['code'] = 1000;
+        return response()->json($response);
+    }
+
+    //Listado de lotes
+    function listBatchs(Request $request){
+        //Elementos para la paginación 
+        $pagination = $request->get('pagination');
+        $query = $request->get('query');
+        $start = 0;
+        $skip = $pagination['perpage'];
+        if ($pagination['page'] != 1) {
+            $start = ($pagination['page'] - 1) * $pagination['perpage'];
+            //Consultamos si hay tantos registros como para empezar en el numero de $start
+            $num_batchs = Batch::count();
+            if ($start >= $num_batchs) {
+                $skip = $skip - 1;
+                $start = $start - 10;
+                if ($start < 0) {
+                    $start = 0;
+                }
+            }
+        }
+
+        //Barra de busqueda
+        $search = '';
+        if (isset($query['search_batchs'])) {
+            $search = $query['search_batchs'];
+        }
+
+        $array_batchs = Batch::select('batchs.*', 'chapters.nomenclature as chapters_nomenclature', 
+                                                'projects.nomenclature as projects_nomenclature',
+                                                'channels.nomenclature as channels_name', 
+                                                'sections.nomenclature as sections_nomenclature',
+                                                'departments.nomenclature as departments_nomenclature')
+                                    ->leftJoin('chapters', 'chapters.id', 'batchs.id_chapter')
+                                    ->leftJoin('projects', 'projects.id', 'chapters.id_project')
+                                    ->leftJoin('channels', 'channels.id', 'projects.id_channel')
+                                    ->leftJoin('sections', 'sections.id', 'channels.id_section')
+                                    ->leftJoin('departments', 'departments.id', 'sections.id_department')
+                                    ->where('batchs.name', 'like', '%'.$search.'%');
+
+        //Filtros del listado de artículos
+        //Sectores
+        /*$select_articles_filter_sectors = $request->get('select_articles_filter_sectors');
+        if (isset($select_articles_filter_sectors) && !empty($select_articles_filter_sectors)) {
+            $array_articles = $array_articles->where('sectors.id', $select_articles_filter_sectors);
+        }
+        //Marcas
+        $select_articles_filter_brands = $request->get('select_articles_filter_brands');
+        if (isset($select_articles_filter_brands) && !empty($select_articles_filter_brands)) {
+            $array_articles = $array_articles->where('brands.id', $select_articles_filter_brands);
+        }
+        //Productos
+        $select_articles_filter_products = $request->get('select_articles_filter_products');
+        if (isset($select_articles_filter_products) && !empty($select_articles_filter_products)) {
+            $array_articles = $array_articles->where('products.id', $select_articles_filter_products);
+        }
+
+        $array_articles = $array_articles->orWhere('articles.english_name', 'like', '%'.$search.'%');
+
+        $select_articles_filter_sectors = $request->get('select_articles_filter_sectors');
+        if (isset($select_articles_filter_sectors) && !empty($select_articles_filter_sectors)) {
+            $array_articles = $array_articles->where('sectors.id', $select_articles_filter_sectors);
+        }
+        //Marcas
+        $select_articles_filter_brands = $request->get('select_articles_filter_brands');
+        if (isset($select_articles_filter_brands) && !empty($select_articles_filter_brands)) {
+            $array_articles = $array_articles->where('brands.id', $select_articles_filter_brands);
+        }
+        //Productos
+        $select_articles_filter_products = $request->get('select_articles_filter_products');
+        if (isset($select_articles_filter_products) && !empty($select_articles_filter_products)) {
+            $array_articles = $array_articles->where('products.id', $select_articles_filter_products);
+        }*/
+
+        $total_batchs = count($array_batchs->get());
+        if($request->get('status') == 0){
+            $array_batchs = $array_batchs->skip($start)
+                            ->take($skip);
+        }
+        
+        $array_batchs = $array_batchs->get();
+        
+
+        foreach($array_batchs as $batch){
+            //$batch['publication'] = strtoupper($article->sector_name[0]).strtoupper($article->sector_name[1]).strtoupper($article->sector_name[2]).'-'.$article->brand_name.'-'.strtoupper($article->product_name[0]).strtoupper($article->product_name[1]).strtoupper($article->product_name[2]);
+            $batch['publication'] = strtoupper($batch['chapters_nomenclature']).'-'.strtoupper($batch['sections_nomenclature']).'-'.strtoupper($batch['channels_name']).'-'.strtoupper($batch['projects_nomenclature']).'-'.strtoupper($batch['chapters_nomenclature']);
+        }
+
+        //Devolución de la llamada con la paginación
+        $meta['page'] = $pagination['page'];
+
+        if ($total_batchs < 1) {
+            $meta['page'] = 1;
+        }
+
+        $meta['pages'] = 1;
+        if (isset($pagination['pages'])) {
+            $meta['pages'] = $pagination['pages'];
+        }
+        $meta['perpage'] = $pagination['perpage'];
+        $meta['total'] = $total_batchs;
+        $meta['sort'] = 'asc';
+        $meta['field'] = 'id';
+        $response['meta'] = $meta;
+        $response['data'] = $array_batchs;
+        return response()->json($response);
+    }
+    //END LOTES
 
     //UTILS
     //Cambiar de formato la fecha

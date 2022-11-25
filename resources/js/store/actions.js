@@ -319,6 +319,163 @@ const actions = {
         }
     },
 
+    //Consultar departamentos
+    async getDepartments({ state }){
+        try {
+            const response = await http({
+                url: "/admin/get_departments",
+                method: 'get'
+            });
+
+            state.config.batchs.form.array_departments = response.data.array_departments;
+            state.config.batchs.form.array_sections = null;
+            state.config.batchs.form.array_channels = null;
+            state.config.batchs.form.array_projects = null;
+            state.config.batchs.form.array_chapters = null;
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
+
+    //Consultar secciones
+    async getSections({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/get_sections/" + params.select_batchs_department,
+                method: 'get'
+            });
+
+            if(params.type == 1){
+                state.config.batchs.filter.array_sections = response.data.array_sections;
+                state.config.batchs.filter.array_channels = null;
+                state.config.batchs.filter.array_projects = null;
+                state.config.batchs.filter.array_chapters = null;
+
+
+            }else {
+                if(params.select_batchs_departments != 0 && params.select_batchs_departments != ""){
+                    state.config.batchs.form.array_sections = response.data.array_sections;
+                    state.config.batchs.form.array_channels = null;
+                    state.config.batchs.form.array_projects = null;
+                    state.config.batchs.form.array_chapters = null;
+                    state.config.batchs.form.array_batchs = null;
+    
+                }else{
+                    state.config.batchs.form.array_sections = null;
+                    state.config.batchs.form.array_channels = null;
+                    state.config.batchs.form.array_projects = null;
+                    state.config.batchs.form.array_chapters = null;
+                    state.config.batchs.form.array_batchs = null;
+                }
+            }
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
+
+    //Consultar canales
+    async getChannels({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/get_channels/" + params.select_batchs_section,
+                method: 'get'
+            });
+
+            if(params.type == 1){
+                state.config.batchs.filter.array_channels = response.data.array_channels;
+                state.config.batchs.filter.array_projects = null;
+                state.config.batchs.filter.array_chapters = null;
+                state.config.batchs.filter.array_batchs = null;
+
+            }else{
+                state.config.batchs.form.array_channels = response.data.array_channels;
+                state.config.batchs.form.array_projects = null;
+                state.config.batchs.form.array_chapters = null;
+                state.config.batchs.form.array_batchs = null;
+            }
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
+
+    //Consultar proyectos
+    async getProjects({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/get_projects/" + params.select_batchs_channel,
+                method: 'get'
+            });
+
+            if(params.type == 1){
+                state.config.batchs.filter.array_projects = response.data.array_projects;
+                state.config.batchs.filter.array_chapters = null;
+                state.config.batchs.filter.array_batchs = null;
+
+            }else{
+                state.config.batchs.form.array_projects = response.data.array_projects;
+                state.config.batchs.form.array_chapters = null;
+                state.config.batchs.form.array_batchs = null;
+            }
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
+
+    //Consultar capítulos
+    async getChapters({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/get_chapters",
+                method: 'get'
+            });
+
+            if(params.type == 1){
+                state.config.batchs.filter.array_chapters = response.data.array_chapters;
+                state.config.batchs.filter.array_batchs = null;
+
+            }else{
+                state.config.batchs.form.array_chapters = response.data.array_chapters;
+                state.config.batchs.form.array_batchs = null;
+            }
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
+
+     //Añadir lote
+     async addBatch({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/add_batch",
+                params: params,
+                method: 'post'
+            });
+
+            state.errors.type_error = 'add_batch';
+            state.errors.code = response.data.code;
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
+
     //Consultar artículos
     async getArticles({ state }, params){
         try {

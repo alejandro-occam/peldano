@@ -61,7 +61,7 @@
         <div class="col-12  mt-7">
             <div
                 class="datatable datatable-bordered datatable-head-custom"
-                id="list_articles"
+                id="list_batchs"
                 style="width: 100%"
             ></div>
         </div>
@@ -98,10 +98,10 @@
                 this.controlFormArticles(0)
                 $('#modal_form_article').modal('show');
             },
-            listArticles(type) {
+            listBatchs(type) {
                 let me = this;
-                $("#list_articles").KTDatatable("destroy");
-                $("#list_articles").KTDatatable("init");
+                $("#list_batchs").KTDatatable("destroy");
+                $("#list_batchs").KTDatatable("init");
                 if(type == 1 || type == undefined){
                     if(me.datatable != null){
                         me.datatable.setDataSourceParam('select_articles_filter_sectors', me.select_articles_filter_sectors);
@@ -109,14 +109,14 @@
                         me.datatable.setDataSourceParam('select_articles_filter_products', me.select_articles_filter_products);
                     }
                 }
-                this.datatable = $("#list_articles").KTDatatable({
+                this.datatable = $("#list_batchs").KTDatatable({
                     data: {
                         type: "remote",
                         source: {
                             read: {
                                 url:
                                     this.publicPath +
-                                    "/admin/list_articles",
+                                    "/admin/list_batchs",
                                 headers: {
                                     "X-CSRF-TOKEN": $(
                                         'meta[name="csrf-token"]'
@@ -267,20 +267,20 @@
                     ],
                 });
     
-                $("#list_articles").on("click", ".btn-edit", function () {
+                $("#list_batchs").on("click", ".btn-edit", function () {
                     var id = $(this).data("id");
                     me.controlFormArticles(1);
                     me.getInfoArticle(id);
                     $('#modal_form_article').modal('show');
                 });
 
-                $("#list_articles").on("click", ".btn-delete", function () {
+                $("#list_batchs").on("click", ".btn-delete", function () {
                     var id = $(this).data("id");
                     me.getInfoArticle(id);
                     $("#modal_delete_article").modal("show");           
                 });
 
-                $("#list_articles").on("click", ".switch-exempt", function () {
+                $("#list_batchs").on("click", ".switch-exempt", function () {
                     var id = $(this).data("id");
                     me.changeExempt(id);
                 });
@@ -290,14 +290,14 @@
                 this.datatable.setDataSourceParam('select_articles_filter_brands', this.select_articles_filter_brands);
                 this.datatable.setDataSourceParam('select_articles_filter_products', this.select_articles_filter_products);
                 this.datatable.setDataSourceParam('status', this.status);
-                $('#list_articles').KTDatatable('load');
+                $('#list_batchs').KTDatatable('load');
             },
             reloadList(){
                 this.datatable.setDataSourceParam('select_articles_filter_sectors', this.select_articles_filter_sectors);
                 this.datatable.setDataSourceParam('select_articles_filter_brands', this.select_articles_filter_brands);
                 this.datatable.setDataSourceParam('select_articles_filter_products', this.select_articles_filter_products);
                 this.datatable.setDataSourceParam('status', this.status);
-                $('#list_articles').KTDatatable('load');
+                $('#list_batchs').KTDatatable('load');
             },
             getBrandsSelect(){
                 this.select_articles_filter_brands = '';
@@ -324,7 +324,7 @@
                 this.datatable.setDataSourceParam('select_articles_filter_brands', this.select_articles_filter_brands);
                 this.datatable.setDataSourceParam('select_articles_filter_products', this.select_articles_filter_products);
                 this.datatable.setDataSourceParam('status', this.status);
-                $('#list_articles').KTDatatable('load');
+                $('#list_batchs').KTDatatable('load');
             },
             //Actualizar exento de IVA de un artículo
             changeExempt(id){
@@ -335,7 +335,7 @@
                 axios
                     .post("/admin/change_exempt", params)
                     .then((response) => {
-                        $('#list_articles').KTDatatable('load');
+                        $('#list_batchs').KTDatatable('load');
                     })
                     .catch(function (error) {
                         console.error(error.response);
@@ -352,7 +352,7 @@
                 select_articles_areas: 0
             }
             this.getSectors(params);
-            this.listArticles(1);
+            this.listBatchs(1);
         },
         watch: {
             '$store.state.config.articles.search_articles': function() {

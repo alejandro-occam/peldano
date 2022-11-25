@@ -12,63 +12,79 @@
                         </button>
                     </div>
                     <div class="modal-body">
+
                         <div class="input-group mb-5 d-block" >
                             <div class="mb-1">
-                                <span class="my-auto w-25">Área</span>
+                                <span class="my-auto w-25">Departamento</span>
                             </div>
                             <div class="">
-                                <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_area'" :id="'select_area'" v-model="select_area" data-style="select-lightgreen" @change="getSectorsSelect">
+                                <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_department'" :id="'select_department'" v-model="select_department" data-style="select-lightgreen" @change="getSectionsSelect">
                                     <option value="" selected>
-                                        Elige un área
+                                        Elige un departamento
                                     </option>
-                                    <option :value="area.id" v-for="area in config.articles.form.array_areas" :key="area.id" v-text="area.name" ></option>
+                                    <option :value="department.id" v-for="department in config.batchs.form.array_departments" :key="department.id" v-text="department.nomenclature + '-' + department.name" ></option>
                                 </select>
-                                <small class="text-danger " v-if="select_area_error">El área no es válido</small>
+                                <small class="text-danger " v-if="select_department_error">El departamento no es válido</small>
                             </div>
                         </div>
 
-                        <div class="input-group my-5 d-block" >
+                        <div class="input-group mb-5 d-block" >
                             <div class="mb-1">
-                                <span class="my-auto w-25">Sector</span>
+                                <span class="my-auto w-25">Sección</span>
                             </div>
                             <div class="">
-                                <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_sector'" :id="'select_sector'" v-model="select_sector" data-style="select-lightgreen" @change="getBrandsSelect">
+                                <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_section'" :id="'select_section'" v-model="select_section" data-style="select-lightgreen" @change="getChannelsSelect">
                                     <option value="" selected>
-                                        Elige un sector
+                                        Elige una sección
                                     </option>
-                                    <option :value="sector.id" v-for="sector in config.articles.form.array_sectors" :key="sector.id" v-text="sector.name" ></option>
-                                </select>                                
-                                <small class="text-danger" v-if="select_sector_error">El sector no es válido</small>
+                                    <option :value="section.id" v-for="section in config.batchs.form.array_sections" :key="section.id" v-text="section.nomenclature + '-' +section.name" ></option>
+                                </select>
+                                <small class="text-danger " v-if="select_section_error">La sección no es válida</small>
                             </div>
                         </div>
 
-                        <div class="input-group my-5 d-block" >
+                        <div class="input-group mb-5 d-block" >
                             <div class="mb-1">
-                                <span class="my-auto w-25">Marca</span>
+                                <span class="my-auto w-25">Canal</span>
                             </div>
                             <div class="">
-                                <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_brand'" :id="'select_brand'" v-model="select_brand" data-style="select-lightgreen" @change="getProductsSelect">
+                                <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_channel'" :id="'select_channel'" v-model="select_channel" data-style="select-lightgreen" @change="getProjectsSelect">
                                     <option value="" selected>
-                                        Elige una marca
+                                        Elige un canal
                                     </option>
-                                    <option :value="brand.id" v-for="brand in config.articles.form.array_brands" :key="brand.id" v-text="brand.name" ></option>
+                                    <option :value="channel.id" v-for="channel in config.batchs.form.array_channels" :key="channel.id" v-text="channel.nomenclature + '-' + channel.name" ></option>
                                 </select>
-                                <small class="text-danger " v-if="select_brand_error">La marca no es válida</small>
+                                <small class="text-danger " v-if="select_channel_error">El canal no es válido</small>
                             </div>
                         </div>
 
-                        <div class="input-group my-5 d-block" >
+                        <div class="input-group mb-5 d-block" >
                             <div class="mb-1">
-                                <span class="my-auto w-25">Producto</span>
+                                <span class="my-auto w-25">Proyecto</span>
                             </div>
                             <div class="">
-                                <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_product'" :id="'select_product'" v-model="select_product" data-style="select-lightgreen" >
+                                <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_project'" :id="'select_project'" v-model="select_project" data-style="select-lightgreen" @change="getChaptersSelect">
                                     <option value="" selected>
-                                        Elige un producto
+                                        Elige un proyecto
                                     </option>
-                                    <option :value="product.id" v-for="product in config.articles.form.array_products" :key="product.id" v-text="product.name" ></option>
+                                    <option :value="project.id" v-for="project in config.batchs.form.array_projects" :key="project.id" v-text="project.nomenclature + '-' +project.name" ></option>
                                 </select>
-                                <small class="text-danger " v-if="select_product_error">El producto no es válido</small>
+                                <small class="text-danger " v-if="select_project_error">El proyecto no es válido</small>
+                            </div>
+                        </div>
+
+                        <div class="input-group mb-5 d-block" >
+                            <div class="mb-1">
+                                <span class="my-auto w-25">Capítulo</span>
+                            </div>
+                            <div class="">
+                                <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_chapter'" :id="'select_chapter'" v-model="select_chapter" data-style="select-lightgreen">
+                                    <option value="" selected>
+                                        Elige un capítulo
+                                    </option>
+                                    <option :value="chapter.id" v-for="chapter in config.batchs.form.array_chapters" :key="chapter.id" v-text="chapter.nomenclature + '-' + chapter.name" ></option>
+                                </select>
+                                <small class="text-danger " v-if="select_chapter_error">El capítulo no es válido</small>
                             </div>
                         </div>
 
@@ -136,14 +152,16 @@
         data() {
             return {
                 publicPath: window.location.origin,
-                select_area: '',
-                select_area_error: false,
-                select_sector: '',
-                select_sector_error: false,
-                select_brand: '',
-                select_brand_error: false,
-                select_product: '',
-                select_product_error: false,
+                select_department: '',
+                select_department_error: false,
+                select_section: '',
+                select_section_error: false,
+                select_channel: '',
+                select_channel_error: false,
+                select_project: '',
+                select_project_error: false,
+                select_chapter: '',
+                select_chapter_error: false,
                 name: '',
                 name_error: false,
                 name_eng: '',
@@ -157,40 +175,46 @@
             ...mapState(["config", "errors"]),
         },
         methods: {
-            ...mapActions(["getAreas", "getSectors", "getBrands", "getProducts", "addArticle", "updateArticle"]),
+            ...mapActions(["getDepartments", "getSections", "getChannels", "getProjects", "getChapters", "addBatch", "updateArticle"]),
             closeModal(){
                 $("#modal_form_article").modal("hide");
-                this.getAreas({type: 2});
+                this.getDepartments({type: 2});
                 this.clearForm();
             },
             //Validar datos
             validateForm(type){
                 this.valid = true;
-                this.select_area_error = false;
-                this.select_sector_error = false;
-                this.select_brand_error = false;
-                this.select_product_error = false;
+                this.select_department_error = false;
+                this.select_section_error = false;
+                this.select_channel_error = false;
+                this.select_project_error = false;
+                this.select_chapter_error = false;
                 this.name_error = false;
                 this.name_eng_error = false;
                 this.price_error = false;
 
-                if(this.select_area == "" || this.select_area == null || this.select_area == 0){
-                    this.select_area_error = true;
+                if(this.select_department == "" || this.select_department == null || this.select_department == 0){
+                    this.select_department_error = true;
                     this.valid = false;
                 }
 
-                if(this.select_sector == "" || this.select_sector == null || this.select_sector == 0){
-                    this.select_sector_error = true;
+                if(this.select_section == "" || this.select_section == null || this.select_section == 0){
+                    this.select_section_error = true;
                     this.valid = false;
                 }
 
-                if(this.select_brand == "" || this.select_brand == null || this.select_brand == 0){
-                    this.select_brand_error = true;
+                if(this.select_channel == "" || this.select_channel == null || this.select_channel == 0){
+                    this.select_channel_error = true;
                     this.valid = false;
                 }
 
-                if(this.select_product == "" || this.select_product == null || this.select_product == 0){
-                    this.select_product_error = true;
+                if(this.select_project == "" || this.select_project == null || this.select_project == 0){
+                    this.select_project_error = true;
+                    this.valid = false;
+                }
+
+                if(this.select_chapter == "" || this.select_chapter == null || this.select_chapter == 0){
+                    this.select_chapter_error = true;
                     this.valid = false;
                 }
 
@@ -210,18 +234,18 @@
                 if(this.valid){
                     if(type == 1){
                         var params ={
-                            'id_product': this.select_product,
+                            'id_chapter': this.select_chapter,
                             'name': this.name,
                             'name_eng': this.name_eng,
                             'price': this.price
                         }
-                        this.addArticle(params);
+                        this.addBatch(params);
                     }
 
                     if(type == 2){
                         var params ={
                             'id_article': this.config.articles.article_obj.id,
-                            'id_product': this.select_product,
+                            'id_chapter': this.select_chapter,
                             'name': this.name,
                             'name_eng': this.name_eng,
                             'price': this.price
@@ -235,25 +259,54 @@
                 }
             },
             clearForm(){
-                this.select_area = '';
-                this.select_sector = '';
-                this.select_brand = '';
-                this.select_product = '';
+                this.select_department = '';
+                this.select_section = '';
+                this.select_channel = '';
+                this.select_project = '';
+                this.select_chapter = '';
                 this.name = '';
                 this.name_eng = '';
                 this.price = '';
             },
-            getSectorsSelect(){
-                this.select_sector = '';
-                this.select_brand = '';
-                this.select_product = '';
+            getSectionsSelect(){
+                this.select_section = '';
+                this.select_channel = '';
+                this.select_project = '';
+                this.select_chapter = '';
                 var params = {
                     type: 2,
-                    select_articles_areas: this.select_area
+                    select_batchs_department: this.select_department
                 }
-                this.getSectors(params);
+                this.getSections(params);
             },
-            getBrandsSelect(){
+            getChannelsSelect(){
+                this.select_channel = '';
+                this.select_project = '';
+                this.select_chapter = '';
+                var params = {
+                    type: 2,
+                    select_batchs_section: this.select_section
+                }
+                this.getChannels(params);
+            },
+            getProjectsSelect(){
+                this.select_project = '';
+                this.select_chapter = '';
+                var params = {
+                    type: 2,
+                    select_batchs_channel: this.select_channel
+                }
+                this.getProjects(params);
+            },
+            getChaptersSelect(){
+                this.select_chapter = '';
+                var params = {
+                    type: 2,
+                    select_batchs_project: this.select_project
+                }
+                this.getChapters(params);
+            }
+            /*getBrandsSelect(){
                 this.select_brand = '';
                 this.select_product = '';
                 var params = {
@@ -269,15 +322,15 @@
                     select_articles_brands: this.select_brand
                 }
                 this.getProducts(params);
-            }
+            }*/
         },
         mounted() {
             var params = {
                 type: 2
             }
-            this.getAreas(params);
+            this.getDepartments(params);
             $('#modal_form_article').on('hidden.bs.modal', async function (e) {
-                this.getAreas({type: 2});
+                this.getDepartments({type: 2});
                 this.clearForm();
             });
         },
@@ -295,7 +348,7 @@
             },
             '$store.state.config.articles.is_update': function() {
                 if(this.config.articles.is_update == 0){
-                    this.getAreas({type: 2});
+                    this.getDepartments({type: 2});
                     this.clearForm();
                 }
             }
