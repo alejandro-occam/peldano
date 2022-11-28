@@ -93,9 +93,6 @@ class InsertProjectsCsv extends Command
                         foreach($array_projects_custom as $project_custom){
                             if($project_custom['nomenclature'] == $words[3]){
                                 //Consultamos si existe el canal y si no lo creamos
-                                if($words[0] == 'DEN' && $words[1] = 'DEN' && $words[2] = 'DIG' && $words[3] == 'GD' ){
-                                    error_log('hola');
-                                }
                                 $project = Project::where([
                                     'name' => $project_custom['name'],
                                     'nomenclature' => $project_custom['nomenclature'],

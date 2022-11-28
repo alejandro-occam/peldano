@@ -10,14 +10,14 @@ use App\Models\Project;
 use App\Models\Chapter;
 use App\Models\Batch;
 
-class InsertBranchsCsv extends Command
+class InsertBatchsCsv extends Command
 {
     /**
      * The name and signature of the console command.
      *
      * @var string
      */
-    protected $signature = 'InsertBranchsCsv:cron';
+    protected $signature = 'InsertBatchsCsv:cron';
 
     /**
      * The console command description.
@@ -99,7 +99,7 @@ class InsertBranchsCsv extends Command
                             $chapter = Chapter::where('nomenclature', $words[4])->where('id_project', $project->id)->first();
                             if($chapter){
                                 foreach($array_branchs_custom as $branch_custom){
-                                    if($branch_custom['nomenclature'] == $words[4]){
+                                    if($branch_custom['nomenclature'] == $words[5]){
                                         //Consultamos si existe el canal y si no lo creamos
                                         $branch = Batch::where([
                                             'name' => $branch_custom['name'],
