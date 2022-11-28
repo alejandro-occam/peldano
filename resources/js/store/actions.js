@@ -320,18 +320,39 @@ const actions = {
     },
 
     //Consultar departamentos
-    async getDepartments({ state }){
+    async getDepartments({ state }, params){
         try {
             const response = await http({
                 url: "/admin/get_departments",
                 method: 'get'
             });
 
-            state.config.articles.form.array_departments = response.data.array_departments;
-            state.config.articles.form.array_sections = null;
-            state.config.articles.form.array_channels = null;
-            state.config.articles.form.array_projects = null;
-            state.config.articles.form.array_chapters = null;
+            if(params.type == 1){
+                state.config.articles.filter.array_departments = response.data.array_departments;
+                state.config.articles.filter.array_sections = null;
+                state.config.articles.filter.array_channels = null;
+                state.config.articles.filter.array_projects = null;
+                state.config.articles.filter.array_chapters = null;
+                state.config.articles.filter.array_batchs = null;
+
+            }else {
+                if(params.select_articles_areas != 0 && params.select_articles_areas != ""){
+                    state.config.articles.form.array_departments = response.data.array_departments;
+                    state.config.articles.form.array_sections = null;
+                    state.config.articles.form.array_channels = null;
+                    state.config.articles.form.array_projects = null;
+                    state.config.articles.form.array_chapters = null;
+                    state.config.articles.form.array_batchs = null;
+    
+                }else{
+                    state.config.articles.form.array_departments = null;
+                    state.config.articles.form.array_sections = null;
+                    state.config.articles.form.array_channels = null;
+                    state.config.articles.form.array_projects = null;
+                    state.config.articles.form.array_chapters = null;
+                    state.config.articles.form.array_batchs = null;
+                }
+            }
 
         } catch (error) {
             console.error(error);
@@ -353,23 +374,14 @@ const actions = {
                 state.config.articles.filter.array_channels = null;
                 state.config.articles.filter.array_projects = null;
                 state.config.articles.filter.array_chapters = null;
-
+                state.config.articles.filter.array_batchs = null;
 
             }else {
-                if(params.select_articles_departments != 0 && params.select_articles_departments != ""){
-                    state.config.articles.form.array_sections = response.data.array_sections;
-                    state.config.articles.form.array_channels = null;
-                    state.config.articles.form.array_projects = null;
-                    state.config.articles.form.array_chapters = null;
-                    state.config.articles.form.array_batchs = null;
-    
-                }else{
-                    state.config.articles.form.array_sections = null;
-                    state.config.articles.form.array_channels = null;
-                    state.config.articles.form.array_projects = null;
-                    state.config.articles.form.array_chapters = null;
-                    state.config.articles.form.array_batchs = null;
-                }
+                state.config.articles.form.array_sections = response.data.array_sections;
+                state.config.articles.form.array_channels = null;
+                state.config.articles.form.array_projects = null;
+                state.config.articles.form.array_chapters = null;
+                state.config.articles.form.array_batchs = null;
             }
 
         } catch (error) {
