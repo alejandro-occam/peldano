@@ -14,13 +14,8 @@ class Batch extends Model
     public $fillable = [
         'id',
         'name',
-        'english_name',
         'nomenclature',
-        'pvp',
-        'is_exempt',
         'id_chapter',
-        'id_sage',
-        'id_family_sage'
     ];
 
     /**
@@ -31,13 +26,8 @@ class Batch extends Model
     protected $casts = [
         'id' => 'integer',
         'name' => 'string',
-        'english_name' => 'string',
         'nomenclature' => 'string',
-        'pvp' => 'double',
-        'is_exempt' => 'boolean',
         'id_chapter' => 'integer',
-        'id_sage' => 'string',
-        'id_family_sage' => 'string'
     ];
 
     /**
@@ -48,12 +38,7 @@ class Batch extends Model
     public static $rules = [
         'id',
         'name',
-        'english_name',
         'nomenclature',
-        'pvp',
-        'is_exempt',
         'id_chapter',
-        'id_sage',
-        'id_family_sage'
     ];
 }

@@ -16,7 +16,7 @@ class Article extends Model
         'name',
         'english_name',
         'pvp',
-        'id_product',
+        'id_batch',
         'is_exempt',
         'id_sage',
         'id_family_sage',
@@ -32,7 +32,7 @@ class Article extends Model
         'name' => 'string',
         'english_name' => 'string',
         'pvp' => 'double',
-        'id_product' => 'integer',
+        'id_batch' => 'integer',
         'is_exempt' => 'boolean',
         'id_sage' => 'string',
         'id_family_sage' => 'string'
@@ -48,7 +48,7 @@ class Article extends Model
         'name',
         'english_name',
         'pvp',
-        'id_product',
+        'id_batch',
         'is_exempt',
         'id_sage',
         'id_family_sage'
