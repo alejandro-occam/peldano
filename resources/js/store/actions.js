@@ -327,11 +327,11 @@ const actions = {
                 method: 'get'
             });
 
-            state.config.batchs.form.array_departments = response.data.array_departments;
-            state.config.batchs.form.array_sections = null;
-            state.config.batchs.form.array_channels = null;
-            state.config.batchs.form.array_projects = null;
-            state.config.batchs.form.array_chapters = null;
+            state.config.articles.form.array_departments = response.data.array_departments;
+            state.config.articles.form.array_sections = null;
+            state.config.articles.form.array_channels = null;
+            state.config.articles.form.array_projects = null;
+            state.config.articles.form.array_chapters = null;
 
         } catch (error) {
             console.error(error);
@@ -344,31 +344,31 @@ const actions = {
     async getSections({ state }, params){
         try {
             const response = await http({
-                url: "/admin/get_sections/" + params.select_batchs_department,
+                url: "/admin/get_sections/" + params.select_articles_department,
                 method: 'get'
             });
 
             if(params.type == 1){
-                state.config.batchs.filter.array_sections = response.data.array_sections;
-                state.config.batchs.filter.array_channels = null;
-                state.config.batchs.filter.array_projects = null;
-                state.config.batchs.filter.array_chapters = null;
+                state.config.articles.filter.array_sections = response.data.array_sections;
+                state.config.articles.filter.array_channels = null;
+                state.config.articles.filter.array_projects = null;
+                state.config.articles.filter.array_chapters = null;
 
 
             }else {
-                if(params.select_batchs_departments != 0 && params.select_batchs_departments != ""){
-                    state.config.batchs.form.array_sections = response.data.array_sections;
-                    state.config.batchs.form.array_channels = null;
-                    state.config.batchs.form.array_projects = null;
-                    state.config.batchs.form.array_chapters = null;
-                    state.config.batchs.form.array_batchs = null;
+                if(params.select_articles_departments != 0 && params.select_articles_departments != ""){
+                    state.config.articles.form.array_sections = response.data.array_sections;
+                    state.config.articles.form.array_channels = null;
+                    state.config.articles.form.array_projects = null;
+                    state.config.articles.form.array_chapters = null;
+                    state.config.articles.form.array_batchs = null;
     
                 }else{
-                    state.config.batchs.form.array_sections = null;
-                    state.config.batchs.form.array_channels = null;
-                    state.config.batchs.form.array_projects = null;
-                    state.config.batchs.form.array_chapters = null;
-                    state.config.batchs.form.array_batchs = null;
+                    state.config.articles.form.array_sections = null;
+                    state.config.articles.form.array_channels = null;
+                    state.config.articles.form.array_projects = null;
+                    state.config.articles.form.array_chapters = null;
+                    state.config.articles.form.array_batchs = null;
                 }
             }
 
@@ -383,21 +383,21 @@ const actions = {
     async getChannels({ state }, params){
         try {
             const response = await http({
-                url: "/admin/get_channels/" + params.select_batchs_section,
+                url: "/admin/get_channels/" + params.select_articles_section,
                 method: 'get'
             });
 
             if(params.type == 1){
-                state.config.batchs.filter.array_channels = response.data.array_channels;
-                state.config.batchs.filter.array_projects = null;
-                state.config.batchs.filter.array_chapters = null;
-                state.config.batchs.filter.array_batchs = null;
+                state.config.articles.filter.array_channels = response.data.array_channels;
+                state.config.articles.filter.array_projects = null;
+                state.config.articles.filter.array_chapters = null;
+                state.config.articles.filter.array_batchs = null;
 
             }else{
-                state.config.batchs.form.array_channels = response.data.array_channels;
-                state.config.batchs.form.array_projects = null;
-                state.config.batchs.form.array_chapters = null;
-                state.config.batchs.form.array_batchs = null;
+                state.config.articles.form.array_channels = response.data.array_channels;
+                state.config.articles.form.array_projects = null;
+                state.config.articles.form.array_chapters = null;
+                state.config.articles.form.array_batchs = null;
             }
 
         } catch (error) {
@@ -411,19 +411,19 @@ const actions = {
     async getProjects({ state }, params){
         try {
             const response = await http({
-                url: "/admin/get_projects/" + params.select_batchs_channel,
+                url: "/admin/get_projects/" + params.select_articles_channel,
                 method: 'get'
             });
 
             if(params.type == 1){
-                state.config.batchs.filter.array_projects = response.data.array_projects;
-                state.config.batchs.filter.array_chapters = null;
-                state.config.batchs.filter.array_batchs = null;
+                state.config.articles.filter.array_projects = response.data.array_projects;
+                state.config.articles.filter.array_chapters = null;
+                state.config.articles.filter.array_batchs = null;
 
             }else{
-                state.config.batchs.form.array_projects = response.data.array_projects;
-                state.config.batchs.form.array_chapters = null;
-                state.config.batchs.form.array_batchs = null;
+                state.config.articles.form.array_projects = response.data.array_projects;
+                state.config.articles.form.array_chapters = null;
+                state.config.articles.form.array_batchs = null;
             }
 
         } catch (error) {
@@ -437,17 +437,39 @@ const actions = {
     async getChapters({ state }, params){
         try {
             const response = await http({
-                url: "/admin/get_chapters",
+                url: "/admin/get_chapters/" + params.select_articles_project,
                 method: 'get'
             });
 
             if(params.type == 1){
-                state.config.batchs.filter.array_chapters = response.data.array_chapters;
-                state.config.batchs.filter.array_batchs = null;
+                state.config.articles.filter.array_chapters = response.data.array_chapters;
+                state.config.articles.filter.array_batchs = null;
 
             }else{
-                state.config.batchs.form.array_chapters = response.data.array_chapters;
-                state.config.batchs.form.array_batchs = null;
+                state.config.articles.form.array_chapters = response.data.array_chapters;
+                state.config.articles.form.array_batchs = null;
+            }
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
+
+    //Consultar lotes
+    async getBatchs({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/get_batchs/" + params.select_articles_chapter,
+                method: 'get'
+            });
+
+            if(params.type == 1){
+                state.config.articles.filter.array_batchs = response.data.array_batchs;
+
+            }else{
+                state.config.articles.form.array_batchs = response.data.array_batchs;
             }
 
         } catch (error) {

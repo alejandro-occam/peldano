@@ -17,7 +17,7 @@ const state = {
             is_update: 0,
             html_calendar: null
         },
-        articles: {
+        /*articles: {
             show_view_state: 1,
             filter: {
                 array_sectors: null,
@@ -36,8 +36,8 @@ const state = {
                 name: null
             },
             search_articles: '',
-        },
-        batchs: {
+        },*/
+        articles: {
             show_view_state: 1,
             filter: {
                 array_departments: null,
@@ -53,10 +53,10 @@ const state = {
                 array_batchs: null
             },
             is_update: 0,
-            batch_obj: {
+            article_obj: {
                 name: null
             },
-            search_batchs: '',
+            search_articles: '',
         }
     },
     proposals: {

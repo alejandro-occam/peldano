@@ -33,7 +33,7 @@ export default {
     },
     methods: {
         listArticles(){
-            this.$refs.table.listBatchs();
+            this.$refs.table.listArticles();
         }
     }
 };

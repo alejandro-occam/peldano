@@ -133,6 +133,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('/get_projects/{id?}', [App\Http\Controllers\ConfigurationController::class, 'getProjects'])->name('get_projects');
     //Listar capítulos
     Route::get('/get_chapters/{id?}', [App\Http\Controllers\ConfigurationController::class, 'getChapters'])->name('get_chapters');
+    //Listar lotes
+    Route::get('/get_batchs/{id?}', [App\Http\Controllers\ConfigurationController::class, 'getBatchs'])->name('get_batchs');
     //Añadir un lote
     Route::post('/add_batch', [App\Http\Controllers\ConfigurationController::class, 'addBatch'])->name('add_batch');
     //Listar lotes

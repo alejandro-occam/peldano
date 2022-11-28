@@ -22,7 +22,7 @@
                                     <option value="" selected>
                                         Elige un departamento
                                     </option>
-                                    <option :value="department.id" v-for="department in config.batchs.form.array_departments" :key="department.id" v-text="department.nomenclature + '-' + department.name" ></option>
+                                    <option :value="department.id" v-for="department in config.articles.form.array_departments" :key="department.id" v-text="department.nomenclature + '-' + department.name" ></option>
                                 </select>
                                 <small class="text-danger " v-if="select_department_error">El departamento no es válido</small>
                             </div>
@@ -37,7 +37,7 @@
                                     <option value="" selected>
                                         Elige una sección
                                     </option>
-                                    <option :value="section.id" v-for="section in config.batchs.form.array_sections" :key="section.id" v-text="section.nomenclature + '-' +section.name" ></option>
+                                    <option :value="section.id" v-for="section in config.articles.form.array_sections" :key="section.id" v-text="section.nomenclature + '-' +section.name" ></option>
                                 </select>
                                 <small class="text-danger " v-if="select_section_error">La sección no es válida</small>
                             </div>
@@ -52,7 +52,7 @@
                                     <option value="" selected>
                                         Elige un canal
                                     </option>
-                                    <option :value="channel.id" v-for="channel in config.batchs.form.array_channels" :key="channel.id" v-text="channel.nomenclature + '-' + channel.name" ></option>
+                                    <option :value="channel.id" v-for="channel in config.articles.form.array_channels" :key="channel.id" v-text="channel.nomenclature + '-' + channel.name" ></option>
                                 </select>
                                 <small class="text-danger " v-if="select_channel_error">El canal no es válido</small>
                             </div>
@@ -67,7 +67,7 @@
                                     <option value="" selected>
                                         Elige un proyecto
                                     </option>
-                                    <option :value="project.id" v-for="project in config.batchs.form.array_projects" :key="project.id" v-text="project.nomenclature + '-' +project.name" ></option>
+                                    <option :value="project.id" v-for="project in config.articles.form.array_projects" :key="project.id" v-text="project.nomenclature + '-' +project.name" ></option>
                                 </select>
                                 <small class="text-danger " v-if="select_project_error">El proyecto no es válido</small>
                             </div>
@@ -78,13 +78,28 @@
                                 <span class="my-auto w-25">Capítulo</span>
                             </div>
                             <div class="">
-                                <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_chapter'" :id="'select_chapter'" v-model="select_chapter" data-style="select-lightgreen">
+                                <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_chapter'" :id="'select_chapter'" v-model="select_chapter" data-style="select-lightgreen" @change="getBatchSelect">
                                     <option value="" selected>
                                         Elige un capítulo
                                     </option>
-                                    <option :value="chapter.id" v-for="chapter in config.batchs.form.array_chapters" :key="chapter.id" v-text="chapter.nomenclature + '-' + chapter.name" ></option>
+                                    <option :value="chapter.id" v-for="chapter in config.articles.form.array_chapters" :key="chapter.id" v-text="chapter.nomenclature + '-' + chapter.name" ></option>
                                 </select>
                                 <small class="text-danger " v-if="select_chapter_error">El capítulo no es válido</small>
+                            </div>
+                        </div>
+
+                        <div class="input-group mb-5 d-block" >
+                            <div class="mb-1">
+                                <span class="my-auto w-25">Lote</span>
+                            </div>
+                            <div class="">
+                                <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_batch'" :id="'select_batch'" v-model="select_batch" data-style="select-lightgreen">
+                                    <option value="" selected>
+                                        Elige un lote
+                                    </option>
+                                    <option :value="batch.id" v-for="batch in config.articles.form.array_batchs" :key="batch.id" v-text="batch.nomenclature + '-' + batch.name" ></option>
+                                </select>
+                                <small class="text-danger " v-if="select_batch_error">El lote no es válido</small>
                             </div>
                         </div>
 
@@ -162,6 +177,8 @@
                 select_project_error: false,
                 select_chapter: '',
                 select_chapter_error: false,
+                select_batch: '',
+                select_batch_error: false,
                 name: '',
                 name_error: false,
                 name_eng: '',
@@ -175,7 +192,7 @@
             ...mapState(["config", "errors"]),
         },
         methods: {
-            ...mapActions(["getDepartments", "getSections", "getChannels", "getProjects", "getChapters", "addBatch", "updateArticle"]),
+            ...mapActions(["getDepartments", "getSections", "getChannels", "getProjects", "getChapters", "getBatchs", "addArticle", "updateArticle"]),
             closeModal(){
                 $("#modal_form_article").modal("hide");
                 this.getDepartments({type: 2});
@@ -189,6 +206,7 @@
                 this.select_channel_error = false;
                 this.select_project_error = false;
                 this.select_chapter_error = false;
+                this.select_batch_error = false;
                 this.name_error = false;
                 this.name_eng_error = false;
                 this.price_error = false;
@@ -218,6 +236,11 @@
                     this.valid = false;
                 }
 
+                if(this.select_batch == "" || this.select_batch == null || this.select_batch == 0){
+                    this.select_batch_error = true;
+                    this.valid = false;
+                }
+
                 if(this.name == "" || this.name == null){
                     this.name_error = true;
                     this.valid = false;
@@ -234,18 +257,18 @@
                 if(this.valid){
                     if(type == 1){
                         var params ={
-                            'id_chapter': this.select_chapter,
+                            'id_batch': this.select_batch,
                             'name': this.name,
                             'name_eng': this.name_eng,
                             'price': this.price
                         }
-                        this.addBatch(params);
+                        this.addArticle(params);
                     }
 
                     if(type == 2){
                         var params ={
                             'id_article': this.config.articles.article_obj.id,
-                            'id_chapter': this.select_chapter,
+                            'id_batch': this.select_batch,
                             'name': this.name,
                             'name_eng': this.name_eng,
                             'price': this.price
@@ -264,6 +287,7 @@
                 this.select_channel = '';
                 this.select_project = '';
                 this.select_chapter = '';
+                this.select_batch = '';
                 this.name = '';
                 this.name_eng = '';
                 this.price = '';
@@ -273,9 +297,10 @@
                 this.select_channel = '';
                 this.select_project = '';
                 this.select_chapter = '';
+                this.select_batch = '';
                 var params = {
                     type: 2,
-                    select_batchs_department: this.select_department
+                    select_articles_department: this.select_department
                 }
                 this.getSections(params);
             },
@@ -283,46 +308,40 @@
                 this.select_channel = '';
                 this.select_project = '';
                 this.select_chapter = '';
+                this.select_batch = '';
                 var params = {
                     type: 2,
-                    select_batchs_section: this.select_section
+                    select_articles_section: this.select_section
                 }
                 this.getChannels(params);
             },
             getProjectsSelect(){
                 this.select_project = '';
                 this.select_chapter = '';
+                this.select_batch = '';
                 var params = {
                     type: 2,
-                    select_batchs_channel: this.select_channel
+                    select_articles_channel: this.select_channel
                 }
                 this.getProjects(params);
             },
             getChaptersSelect(){
                 this.select_chapter = '';
+                this.select_batch = '';
                 var params = {
                     type: 2,
-                    select_batchs_project: this.select_project
+                    select_articles_project: this.select_project
                 }
                 this.getChapters(params);
-            }
-            /*getBrandsSelect(){
-                this.select_brand = '';
-                this.select_product = '';
-                var params = {
-                    type: 2,
-                    select_articles_sectors: this.select_sector
-                }
-                this.getBrands(params);
             },
-            getProductsSelect(){
-                this.select__product = '';
+            getBatchSelect(){
+                this.select_batch = '';
                 var params = {
                     type: 2,
-                    select_articles_brands: this.select_brand
+                    select_articles_chapter: this.select_chapter
                 }
-                this.getProducts(params);
-            }*/
+                this.getBatchs(params);
+            }
         },
         mounted() {
             var params = {
