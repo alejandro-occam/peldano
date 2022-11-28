@@ -64,9 +64,9 @@ const state = {
         array_companies: null,
         status_view: 1,
         proposal_obj: {
-            products:[
+            chapters:[
                 {
-                    product_obj: null,
+                    chapter_obj: null,
                     articles: [],
                     articles_aux: [],
                     total_global: 0,

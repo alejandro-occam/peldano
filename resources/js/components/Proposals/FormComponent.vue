@@ -86,7 +86,7 @@
                     Añadir artículo
                 </button>
             </div>
-            <div class="mb-5 mt-15 col-12 row" v-if="proposals.proposal_obj.products[0].product_obj != null && !this.generate_proposal">
+            <div class="mb-5 mt-15 col-12 row" v-if="proposals.proposal_obj.chapters[0].chapter_obj != null && !this.generate_proposal">
                 <div>
                     <img class="mr-2" width="150" height="150" src="/media/custom-imgs/icono_ficha_ordenes.svg" />
                 </div>
@@ -120,7 +120,7 @@
                                         <span>SECTOR</span>
                                     </div>
                                     <div class="f-15 text-dark">
-                                        <span v-if="proposals.proposal_obj.products[0].articles[0].sector_obj != null">{{ proposals.proposal_obj.products[0].articles[0].sector_obj.name }}</span>
+                                        <!--<span v-if="proposals.proposal_obj.products[0].articles[0].sector_obj != null">{{ proposals.proposal_obj.products[0].articles[0].sector_obj.name }}</span>-->
                                     </div>
                                 </div>
                                 <div class="d-block ml-20">
@@ -256,9 +256,6 @@
                             <tr class="row-product text-align-center">
                                 <td class="td-border-right" rowspan="5">{{ index + 1 }}</td>
                             </tr>
-                            <!--<tr class="tr-total-datatable">
-                                <td class="py-1 pl-5 f-14" colspan="5">BIG DATA Data Email Marketing</td>
-                            </tr>-->
                             <tr class="row-product">
                                 <td class="text-align-center td-border-right" v-if="proposals.num_custom_invoices == 0">{{ proposals.bill_obj.array_bills[index].date }}</td>
                                 <td class="text-align-center td-border-right" v-else>
@@ -922,14 +919,14 @@ export default {
             me.value_form1 = [];
                 
             //Rellenar los modelos de los inputs de la tabla
-            me.proposals.proposal_obj.products.map(function(product, key_product) {
-                product.articles.map(function(article, key_article) {
+            me.proposals.proposal_obj.chapters.map(function(chapter, key_chapter) {
+                chapter.articles.map(function(article, key_article) {
                     me.proposals.proposal_obj.array_dates.map(function(date_obj, key_arr_dates) {
                         article.dates_prices.map(function(date, key_dates) {
                             if(date_obj.date == date.date){
                                 date.arr_pvp_date.map(function(pvp_date, key_pvp_date) {
                                     pvp_date.arr_pvp.map(function(pvp, key_pvp) {
-                                        if(me.value_form1[key_product] == undefined){
+                                        if(me.value_form1[key_chapter] == undefined){
                                             me.value_form1.push({
                                                 article: [{
                                                     dates:[{
@@ -942,11 +939,11 @@ export default {
                                                     }]
                                                 }]
                                             });
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
 
-                                        }else if(me.value_form1[key_product].article[key_article] == undefined){
-                                            me.value_form1[key_product].article.push({
+                                        }else if(me.value_form1[key_chapter].article[key_article] == undefined){
+                                            me.value_form1[key_chapter].article.push({
                                                 dates:[{
                                                     article: article.article_obj,
                                                     date_pvp: [{
@@ -956,32 +953,32 @@ export default {
                                                     }]
                                                 }]
                                             });
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
 
-                                        }else if(me.value_form1[key_product].article[key_article].dates[key_dates] == undefined){
-                                            me.value_form1[key_product].article[key_article].dates.push({
+                                        }else if(me.value_form1[key_chapter].article[key_article].dates[key_dates] == undefined){
+                                            me.value_form1[key_chapter].article[key_article].dates.push({
                                                 article: article.article_obj,
                                                 date_pvp: [{
                                                     date: pvp_date.date,
                                                     pvp: []
                                                 }]
                                             });
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
 
-                                        }else if(me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date] == undefined){
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp.push({
+                                        }else if(me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date] == undefined){
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp.push({
                                                 date: pvp_date.date,
                                                 pvp: []
                                             });
 
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
 
                                         }else{
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
                                         }
                                     });
                                 });

@@ -51,7 +51,7 @@ const mutations = {
         //Creamos el objeto artículo que vamos a guardar
         var article = {
             article_obj: params.article_obj,
-            sector_obj:params.sector_obj,
+            chapter_obj:params.chapter_obj,
             dates: params.dates,
             dates_prices_aux: [],
             dates_prices: [],
@@ -66,37 +66,37 @@ const mutations = {
         }
 
         //Consultamos si tenemos algún producto creado y si no, lo creamos
-        if(custom_state.proposal_obj.products[0].product_obj == null){
-            custom_state.proposal_obj.products[0].product_obj = params.product_obj
+        if(custom_state.proposal_obj.chapters[0].chapter_obj == null){
+            custom_state.proposal_obj.chapters[0].chapter_obj = params.chapter_obj
         }
 
         //Consultamos si existe el producto para nuesto artículo
         var exist_product = false;
         var exist_product_key = 0;
-        custom_state.proposal_obj.products.map(function(articles_obj, key) {
-            if(articles_obj.product_obj.id == params.product_obj.id){
+        custom_state.proposal_obj.chapters.map(function(articles_obj, key) {
+            if(articles_obj.chapter_obj.id == params.chapter_obj.id){
                 exist_product = true;   
                 exist_product_key = key;                 
             }
         });
 
         //Si existe el producto para nuesto artículo lo añadimos y si no creamos el producto
-        if(exist_product && custom_state.proposal_obj.products[exist_product_key].articles_aux != undefined){
-            custom_state.proposal_obj.products[exist_product_key].articles_aux.push(article);
+        if(exist_product && custom_state.proposal_obj.chapters[exist_product_key].articles_aux != undefined){
+            custom_state.proposal_obj.chapters[exist_product_key].articles_aux.push(article);
             
-        }else if(exist_product && custom_state.proposal_obj.products[exist_product_key].articles_aux == undefined){
-            custom_state.proposal_obj.products[exist_product_key].articles_aux = [article];
+        }else if(exist_product && custom_state.proposal_obj.chapters[exist_product_key].articles_aux == undefined){
+            custom_state.proposal_obj.chapters[exist_product_key].articles_aux = [article];
 
         }else{
-            var product = {
-                product_obj: params.product_obj,
+            var chapter = {
+                product_obj: params.chapter_obj,
                 articles_aux: [article]
             }
-            custom_state.proposal_obj.products.push(product);
+            custom_state.proposal_obj.chapters.push(chapter);
         }
 
         //Guardamos las fechas de nuestro artículo en un array e inicializamos variables
-        custom_state.proposal_obj.products.map(function(articles_obj, key) {
+        custom_state.proposal_obj.chapters.map(function(articles_obj, key) {
             articles_obj.articles = [];
             if(articles_obj.articles_aux != undefined){
                 articles_obj.articles_aux.dates_prices_aux = [];
@@ -114,10 +114,10 @@ const mutations = {
         });
 
         //Agrupamos los artículos
-        custom_state.proposal_obj.products.map(function(product_obj, key) {
+        custom_state.proposal_obj.chapters.map(function(chapter_obj, key) {
             var array_articles = [];
             //Recorremos los artículos del producto
-            product_obj.articles_aux.map(function(article, key) {
+            chapter_obj.articles_aux.map(function(article, key) {
                 if(key == 0){
                     article.dates.map(function(date, key) {
                         //Guardamos la fecha junto a su precio actual
@@ -178,7 +178,7 @@ const mutations = {
             
             //Guardamos los artículos creados en nuestro objeto principal
             array_articles.map(function(article_obj, key) {
-                product_obj.articles.push(article_obj);
+                chapter_obj.articles.push(article_obj);
             });
         });
 
@@ -198,7 +198,7 @@ const mutations = {
         });
 
         //Borramos el array de fechas anteriormente cargados
-        custom_state.proposal_obj.products.map(function(articles_obj, key) {
+        custom_state.proposal_obj.chapters.map(function(articles_obj, key) {
             articles_obj.articles.map(function(article_finish, key) {
                 article_finish.dates_prices = [];
             });
@@ -208,7 +208,7 @@ const mutations = {
         //Recorremos las fechas que habiamos guardado para las columnas y agrupamos según esto
         array_dates.map(function(date, key) {
             //Recorremos los productos
-            custom_state.proposal_obj.products.map(function(articles_obj, key) {
+            custom_state.proposal_obj.chapters.map(function(articles_obj, key) {
                 //Recorremos los artículos anteriormente guardados para guardar el precio con la fecha
                 articles_obj.articles.map(function(article_finish, key) {
                     //Recorremos los artículos auxiliares anteriormente guardados
@@ -285,7 +285,7 @@ const mutations = {
         var total_amount_global = 0;
         var total_individual_pvp = 0;
         var total_global_normal = 0;
-        custom_state.proposal_obj.products.map(function(articles_obj, key) {
+        custom_state.proposal_obj.chapters.map(function(articles_obj, key) {
             articles_obj.articles.map(function(article_finish, key) {
                 total_individual_pvp += article_finish.article_obj.pvp;
                 article_finish.amount = 0;
@@ -312,7 +312,7 @@ const mutations = {
         //Cargamos en el array de fechas para las columnas los totales de cada mes
         array_dates.map(function(date, key) {
             var total_date = 0;
-            custom_state.proposal_obj.products.map(function(articles_obj, key) {
+            custom_state.proposal_obj.chapters.map(function(articles_obj, key) {
                 articles_obj.articles.map(function(article_finish, key) {
                     article_finish.dates_prices.map(function(date_aux, key) {
                         if(date_aux.date == date){

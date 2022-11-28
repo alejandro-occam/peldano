@@ -517,7 +517,7 @@ const actions = {
             state.config.articles.form.array_articles = null;  
 
             const response = await http({
-                url: "/admin/get_articles/" + params.select_articles_products,
+                url: "/admin/get_articles/" + params.select_articles_batch,
                 method: 'get'
             });
 

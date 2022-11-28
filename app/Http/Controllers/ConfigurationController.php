@@ -692,7 +692,7 @@ class ConfigurationController extends Controller
 
     //Consultar artículos
     function getArticles($id){
-        $array_articles = Article::where('id_product', $id)->get();
+        $array_articles = Article::where('id_batch', $id)->get();
         $response['array_articles'] = $array_articles;
         return response()->json($response);
     }
