@@ -550,10 +550,12 @@ const actions = {
             });
             
             state.config.articles.article_obj = response.data.article;
-            state.config.articles.form.array_areas = response.data.array_areas;
-            state.config.articles.form.array_sectors = response.data.array_sectors;
-            state.config.articles.form.array_brands = response.data.array_brands;
-            state.config.articles.form.array_products = response.data.array_products;
+            state.config.articles.form.array_departments = response.data.array_departments;
+            state.config.articles.form.array_sections = response.data.array_sections;
+            state.config.articles.form.array_channels = response.data.array_channels;
+            state.config.articles.form.array_projects = response.data.array_projects;
+            state.config.articles.form.array_chapters = response.data.array_chapters;
+            state.config.articles.form.array_batchs = response.data.array_batchs;
 
         } catch (error) {
             console.error(error);

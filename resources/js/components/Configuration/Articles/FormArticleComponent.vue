@@ -356,10 +356,12 @@
         watch: {
             '$store.state.config.articles.article_obj': function() {
                 let article = this.config.articles.article_obj;
-                this.select_area = article.id_area;
-                this.select_sector = article.id_sector;
-                this.select_brand = article.id_brand;
-                this.select_product = article.id_product;
+                this.select_department = article.id_department;
+                this.select_section = article.id_section;
+                this.select_channel = article.id_channel;
+                this.select_project = article.id_project;
+                this.select_chapter = article.id_chapter;
+                this.select_batch = article.id_batch;
                 this.name = article.name;
                 this.name_eng = article.english_name;
                 this.price = article.pvp;

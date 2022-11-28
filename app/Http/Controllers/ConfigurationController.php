@@ -859,27 +859,38 @@ class ConfigurationController extends Controller
 
     //Consultar información de un usuario
     function getInfoArticle($id){
-        $article = Article::select('articles.*', 'products.id as id_product', 'products.name as product_name', 'brands.id as id_brand', 'brands.name as brand_name', 'sectors.id as id_sector', 'sectors.name as sector_name', 'areas.id as id_area', 'areas.name as area_name')
-                            ->leftJoin('products', 'products.id', 'articles.id_product')
-                            ->leftJoin('brands', 'brands.id', 'products.id_brand')
-                            ->leftJoin('sectors', 'brands.id_sector', 'sectors.id')
-                            ->leftJoin('areas', 'sectors.id_area', 'areas.id')
+        $article = Article::select('articles.*', 
+                            'batchs.id as id_batch', 'batchs.name as batch_name', 
+                            'chapters.id as id_chapter', 'chapters.name as chapter_name', 
+                            'projects.id as id_project', 'projects.name as project_name', 
+                            'channels.id as id_channel', 'channels.name as channel_name',
+                            'sections.id as id_section', 'sections.name as section_name',
+                            'departments.id as id_department', 'departments.name as department_name')
+                            ->leftJoin('batchs', 'batchs.id', 'articles.id_batch')
+                            ->leftJoin('chapters', 'chapters.id', 'batchs.id_chapter')
+                            ->leftJoin('projects', 'projects.id', 'chapters.id_project')
+                            ->leftJoin('channels', 'channels.id', 'projects.id_channel')
+                            ->leftJoin('sections', 'sections.id', 'channels.id_section')
+                            ->leftJoin('departments', 'departments.id', 'sections.id_department')
                             ->where('articles.id', $id)
                             ->first();
 
-        $article['publication'] = strtoupper($article->sector_name[0]).strtoupper($article->sector_name[1]).strtoupper($article->sector_name[2]).'-'.$article->brand_name.'-'.strtoupper($article->product_name[0]).strtoupper($article->product_name[1]).strtoupper($article->product_name[2]);
 
         //Consultamos los arrays de cada parametro según el artículo elegido
-        $array_areas = Area::get();
-        $array_sectors = Sector::where('id_area', $article->id_area)->get();
-        $array_brands = Brand::where('id_sector', $article->id_sector)->get();
-        $array_products = Product::where('id_brand', $article->id_brand)->get();
+        $array_departments = Department::get();
+        $array_sections = Section::where('id_department', $article->id_department)->get();
+        $array_channels = Channel::where('id_section', $article->id_section)->get();
+        $array_projects = Project::where('id_channel', $article->id_channel)->get();
+        $array_chapters = Chapter::where('id_project', $article->id_project)->get();
+        $array_batchs = Batch::where('id_chapter', $article->id_chapter)->get();
 
         $response['article'] = $article;
-        $response['array_areas'] = $array_areas;
-        $response['array_sectors'] = $array_sectors;
-        $response['array_brands'] = $array_brands;
-        $response['array_products'] = $array_products;
+        $response['array_departments'] = $array_departments;
+        $response['array_sections'] = $array_sections;
+        $response['array_channels'] = $array_channels;
+        $response['array_projects'] = $array_projects;
+        $response['array_chapters'] = $array_chapters;
+        $response['array_batchs'] = $array_batchs;
         $response['code'] = 1000;
         return response()->json($response);
     }
