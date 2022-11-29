@@ -25,12 +25,12 @@
         </div>
 
         <div class="mx-2 col-2 mt-5">
-            <span class="text-dark font-weight-bold mb-2">Sector</span>
-            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_sector" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen">
+            <span class="text-dark font-weight-bold mb-2">Departamentos</span>
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_department" :name="'select_department'" :id="'select_department'" data-style="select-lightgreen">
                 <option value="" selected>
-                    Filtro por sector
+                    Filtro por departamento
                 </option>
-                <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
+                <option :value="department.id" v-for="department in config.articles.filter.array_departments" :key="department.id" v-text="department.nomenclature + '-' + department.name" ></option>
             </select>
         </div>
 
@@ -585,7 +585,7 @@
         data() {
             return {
                 publicPath: window.location.origin,
-                select_sector: '',
+                select_department: '',
                 select_consultant: '',
                 select_order: '1',
                 select_exchange: '1',
@@ -626,10 +626,10 @@
             var params = {
                 type: 1
             }
-            this.getSectors(params);
+            this.getDepartments(params);
         },
         methods: {
-            ...mapActions(["getUsers", "getSectors"]),
+            ...mapActions(["getUsers", "getDepartments"]),
             ...mapMutations(["changeViewStatusReports"]),
             //Consultar fecha actual
             getNow() {
