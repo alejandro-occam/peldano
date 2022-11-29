@@ -32,36 +32,33 @@ class OrdersController extends Controller
             }
         }
 
-        //Barra de busqueda
-        $search = '';
-        if (isset($query['search_users'])) {
-            $search = $query['search_users'];
-        }
-
-        $array_orders = Order::select('proposals.*', 'sectors.name as sector_name')
+        $array_orders = Order::select('proposals.*', 'departments.name as department_name')
                         ->leftJoin('proposals', 'proposals.id', 'orders.id_proposal')  
-                        ->leftJoin('sectors', 'sectors.id', 'proposals.id_sector')
+                        ->leftJoin('departments', 'departments.id', 'proposals.id_department')
                         ->leftJoin('proposals_bills', 'proposals.id', 'proposals_bills.id_proposal')
                         ->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill');
 
         if($request->get('type') == 1){
             if($request->get('num_order') != ''){
+                error_log('hola1');
                 $array_orders = $array_orders->where('proposals.id_proposal_custom', $request->get('num_order'));
             }
 
             if($request->get('select_consultant') != ''){
+                error_log('hola2');
                 $array_orders = $array_orders->where('proposals.id_user', $request->get('select_consultant'));
             }
 
-            if($request->get('select_sector') != ''){
-                $array_orders = $array_orders->where('proposals.id_sector', $request->get('select_sector'));
+            if($request->get('select_department') != ''){
+                error_log('hola3');
+                $array_orders = $array_orders->where('proposals.id_department', $request->get('select_chapter'));
             }
 
-            if($request->get('date_from') != ''){
+            if($request->get('date_from') != '' && $request->get('date_from') != 'Invalid Date-undefined-undefined'){
                 $array_orders = $array_orders->where('proposals.date_proyect', '>=', $request->get('date_from'));
             }
 
-            if($request->get('date_to') != ''){
+            if($request->get('date_to') != '' && $request->get('date_to') != 'Invalid Date-undefined-undefined'){
                 $array_orders = $array_orders->where('proposals.date_proyect', '<=', $request->get('date_to'));
             }
         }
@@ -118,7 +115,7 @@ class OrdersController extends Controller
     function listOrdersToExport(Request $request){
         $array_orders = Order::select('proposals.*', 'sectors.name as sector_name')
                         ->leftJoin('proposals', 'proposals.id', 'orders.id_proposal')  
-                        ->leftJoin('sectors', 'sectors.id', 'proposals.id_sector')
+                        ->leftJoin('departments', 'departments.id', 'proposals.id_department')
                         ->leftJoin('proposals_bills', 'proposals.id', 'proposals_bills.id_proposal')
                         ->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill');
 
@@ -131,8 +128,8 @@ class OrdersController extends Controller
                 $array_orders = $array_orders->where('proposals.id_user', $request->get('select_consultant'));
             }
 
-            if($request->get('select_sector') != ''){
-                $array_orders = $array_orders->where('proposals.id_sector', $request->get('select_sector'));
+            if($request->get('select_department') != ''){
+                $array_orders = $array_orders->where('proposals.id_department', $request->get('select_department'));
             }
 
             if($request->get('date_from') != ''){

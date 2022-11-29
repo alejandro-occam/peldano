@@ -66,7 +66,7 @@ class ProposalsController extends Controller
                
                 if($request->get('status_order') == 2){
                     $array_proposals = $array_proposals->where('orders.id_proposal', '<>', null);
-                }     
+                }
             }
 
             if($request->get('num_proposal') != ''){
@@ -81,13 +81,11 @@ class ProposalsController extends Controller
                 $array_proposals = $array_proposals->where('proposals.id_department', $request->get('select_department'));
             }
 
-            if($request->get('date_from') != ''){
-                error_log(4);
+            if($request->get('date_from') != '' && $request->get('date_from') != 'Invalid Date-undefined-undefined'){
                 $array_proposals = $array_proposals->where('proposals.date_proyect', '>=', $request->get('date_from'));
             }
 
-            if($request->get('date_to') != ''){
-                error_log(5);
+            if($request->get('date_to') != '' && $request->get('date_to') != 'Invalid Date-undefined-undefined'){
                 $array_proposals = $array_proposals->where('proposals.date_proyect', '<=', $request->get('date_to'));
             }
         }
@@ -817,7 +815,6 @@ class ProposalsController extends Controller
             //Consultamos los articulos de la facturar para ver si tienen IVA o no
             $iva = 0;
             $array_service_bill = Service::select('services.*')->leftJoin('services_bills', 'services.id', 'services_bills.id_service')->where('services_bills.id_bill', $bill->id)->with('article')->get();
-            error_log($array_service_bill);
             foreach($array_service_bill as $service){
                 $article = $service['article'];
                 if(!$article->is_exempt){

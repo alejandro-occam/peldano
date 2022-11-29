@@ -374,15 +374,15 @@
                             },
                         },
                         {
-                            field: "#sector",
-                            title: "Sector",
+                            field: "#department",
+                            title: "Departamento",
                             sortable: !1,
                             textAlign: "center",
                             width: 100,
                             template: function (row, data, index) {
                                 return (
                                     '<span class="text-gray font-weight-bold">' +
-                                    row.sector_name.toUpperCase() +
+                                    row.department_name.toUpperCase() +
                                     "</span>"
                                 );
                             },

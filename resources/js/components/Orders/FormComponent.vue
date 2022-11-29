@@ -77,7 +77,7 @@
                     Añadir artículo
                 </button>
             </div>
-            <div class="mb-5 mt-15 col-12 row" v-if="(orders.proposal_obj.products[0].product_obj != null && !this.generate_proposal) || (orders.proposal_obj.products[0].product_obj != null && this.is_change_get_info == 1)">
+            <div class="mb-5 mt-15 col-12 row" v-if="(orders.proposal_obj.chapters[0].chapter_obj != null && !this.generate_proposal) || (orders.proposal_obj.chapters[0].chapter_obj != null && this.is_change_get_info == 1)">
                 <div>
                     <img class="mr-2" width="150" height="150" src="/media/custom-imgs/icono_ficha_ordenes.svg" />
                 </div>
@@ -107,10 +107,10 @@
                                 </div>
                                 <div class="d-block mx-20">
                                     <div class="f-16 color-dark-gray font-weight-bolder">
-                                        <span>SECTOR</span>
+                                        <span>DEPARTAMENTO</span>
                                     </div>
                                     <div class="f-15 text-dark">
-                                        <span v-if="orders.proposal_obj.products[0].articles[0].sector_obj != null">{{ orders.proposal_obj.products[0].articles[0].sector_obj.name }}</span>
+                                        <span v-if="orders.proposal_obj.chapters[0].articles[0].department_obj != null">{{ orders.proposal_obj.chapters[0].articles[0].department_obj.name }}</span>
                                     </div>
                                 </div>
                                 <div class="d-block ml-20">
@@ -168,7 +168,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12 mt-15 pl-0" v-if="(orders.proposal_obj.products[0].product_obj != null && !this.finish_proposal && !this.generate_proposal) || (orders.proposal_obj.products[0].product_obj != null && this.is_change_get_info == 1)">
+            <div class="col-12 mt-15 pl-0" v-if="(orders.proposal_obj.chapters[0].chapter_obj != null && !this.finish_proposal && !this.generate_proposal) || (orders.proposal_obj.chapters[0].chapter_obj != null && this.is_change_get_info == 1)">
                 <table width="100%" cellpadding="2" cellspacing="1">
                     <thead class="custom-columns-datatable">
 						<tr>
@@ -181,32 +181,32 @@
 					</thead>
                     <tbody>
                         
-                        <div class="d-contents" v-for="index in Number(orders.proposal_obj.products.length)">
+                        <div class="d-contents" v-for="index in Number(orders.proposal_obj.chapters.length)">
                             <tr class="row-product">
                                 <td class="py-2" :colspan="orders.proposal_obj.array_dates.length + 4">
-                                    <span class="ml-5">{{ orders.proposal_obj.products[index - 1].product_obj.name }}</span>
+                                    <span class="ml-5">{{ orders.proposal_obj.chapters[index - 1].chapter_obj.name }}</span>
                                 </td>
                             </tr>
-                            <tr class="row-article" v-for="index_article in Number(orders.proposal_obj.products[index - 1].articles.length)">
-                                <td valign="middle" class="td-border-right"><span class="ml-5">{{ orders.proposal_obj.products[index - 1].articles[index_article - 1].article_obj.name }}</span></td>
-                                <td valign="middle" class="td-border-right text-align-center"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.products[index - 1].articles[index_article - 1].article_obj.pvp)) }}€</span></td>
-                                <td valign="middle" class="td-border-right text-align-center"><span class="">{{ orders.proposal_obj.products[index - 1].articles[index_article - 1].amount }}</span></td>
+                            <tr class="row-article" v-for="index_article in Number(orders.proposal_obj.chapters[index - 1].articles.length)">
+                                <td valign="middle" class="td-border-right"><span class="ml-5">{{ orders.proposal_obj.chapters[index - 1].articles[index_article - 1].article_obj.name }}</span></td>
+                                <td valign="middle" class="td-border-right text-align-center"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].article_obj.pvp)) }}€</span></td>
+                                <td valign="middle" class="td-border-right text-align-center"><span class="">{{ orders.proposal_obj.chapters[index - 1].articles[index_article - 1].amount }}</span></td>
                                 <td v-for="index_arr_date in Number(orders.proposal_obj.array_dates.length)" valign="middle" class="td-border-right">
-                                    <template v-for="index_dates in Number(orders.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices.length)">
-                                        <template v-if="orders.proposal_obj.array_dates[index_arr_date - 1].date == orders.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].date">
+                                    <template v-for="index_dates in Number(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices.length)">
+                                        <template v-if="orders.proposal_obj.array_dates[index_arr_date - 1].date == orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].date">
                                             <div class="d-grid px-5">
-                                                <template v-for="index_pvp_date in Number(orders.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date.length)">
+                                                <template v-for="index_pvp_date in Number(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date.length)">
                                                     <input v-if="this.value_form1.length > 0 && this.is_change_get_info == 0" v-model="this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1]" 
-                                                    v-for="index_pvp in Number(orders.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)" 
+                                                    v-for="index_pvp in Number(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)" 
                                                     @input="changeValuesOffer($event)"
                                                     type="text" class="form-control discount bg-blue-light-white text-align-center not-border my-2" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0"/>
-                                                    <span v-for="index_pvp in Number(orders.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)" v-if="this.value_form1.length > 0 && this.is_change_get_info == 1" class="mx-auto py-3">{{ this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1] }}€</span>
+                                                    <span v-for="index_pvp in Number(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)" v-if="this.value_form1.length > 0 && this.is_change_get_info == 1" class="mx-auto py-3">{{ this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1] }}€</span>
                                                 </template>
                                             </div>
                                         </template>
                                     </template>
                                 </td>
-                                <td valign="middle" class="td-border-right text-align-center"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.products[index - 1].articles[index_article - 1].total)) }}€</span></td>
+                                <td valign="middle" class="td-border-right text-align-center"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].total)) }}€</span></td>
                             </tr>
                         </div>
                         <tr class="tr-total-datatable">
@@ -220,7 +220,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="col-12 pl-0 mt-10" v-if="orders.proposal_obj.products[0].product_obj != null && !this.finish_proposal && !this.generate_proposal">
+            <div class="col-12 pl-0 mt-10" v-if="orders.proposal_obj.chapters[0].chapter_obj != null && !this.finish_proposal && !this.generate_proposal">
                 <span class="text-dark font-weight-bold mb-2">Tipo de propuesta</span>
                 <select class="form-control bg-gray text-dark select-custom select-filter mt-3 col-2" :name="'select_type_proposal'" :id="'select_type_proposal'" v-model="select_type_proposal" data-style="select-lightgreen">
                     <option value="1" selected>Normal</option>
@@ -233,7 +233,7 @@
                     <button type="submit" class="btn bg-azul color-white px-5 font-weight-bolder ml-4" @click.native="openCustomInvoice()">Crear factura personalizada</button>
                 </div>
             </div>
-            <div class="col-12 pl-0 mt-10" v-if="(orders.proposal_obj.products[0].product_obj != null && this.is_show_buttons_bill && !this.finish_proposal && !this.generate_proposal) || (orders.proposal_obj.products[0].product_obj != null && this.is_change_get_info == 1)">
+            <div class="col-12 pl-0 mt-10" v-if="(orders.proposal_obj.chapters[0].chapter_obj != null && this.is_show_buttons_bill && !this.finish_proposal && !this.generate_proposal) || (orders.proposal_obj.chapters[0].chapter_obj != null && this.is_change_get_info == 1)">
                 <table width="100%" cellpadding="2" cellspacing="1">
                     <thead class="custom-columns-datatable">
 						<tr>
@@ -336,7 +336,7 @@
                     <button v-else-if="!this.is_change_get_info" @click.native="this.finishProposal()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Guardar cambios</button>
                 </div>
             </div>
-            <div class="col-12 pl-0 mt-10" v-if="orders.proposal_obj.products[0].product_obj != null && this.is_show_buttons_bill && this.finish_proposal && !this.generate_proposal">
+            <div class="col-12 pl-0 mt-10" v-if="orders.proposal_obj.chapters[0].chapter_obj != null && this.is_show_buttons_bill && this.finish_proposal && !this.generate_proposal">
                 <h3 class="color-blue">Configuración de la presentación de la propuesta</h3>
                 <div class="col-6 pl-0 mt-6">
                     <div class="d-flex input-group mb-5 mt-10" >
@@ -350,7 +350,7 @@
                     <div class="d-flex input-group my-5" >
                         <span class="my-auto w-25">Idioma</span>
                         <div class="w-62">
-                            <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_language'" :id="'select_language'" v-model="proposal_submission_settings.language" data-style="select-lightgreen" @change="getSectorsSelect">
+                            <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_language'" :id="'select_language'" v-model="proposal_submission_settings.language" data-style="select-lightgreen">
                                 <option value="1" selected>Español</option>
                                 <option value="2">Inglés</option>
                             </select>
@@ -361,7 +361,7 @@
                     <div class="d-flex input-group my-5" >
                         <span class="my-auto w-25">Tipo de proyecto</span>
                         <div class="w-62">
-                            <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_type_proyect'" :id="'select_type_proyect'" v-model="proposal_submission_settings.type_proyect" data-style="select-lightgreen" @change="getSectorsSelect">
+                            <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_type_proyect'" :id="'select_type_proyect'" v-model="proposal_submission_settings.type_proyect" data-style="select-lightgreen">
                                 <option value="1" selected>Propuesta</option>
                                 <option value="2">Propuesta de Plan de comunicación</option>
                                 <option value="3">Propuesta de Plan de comunicación digital</option>
@@ -489,7 +489,7 @@
                     <div class="d-flex input-group my-5" >
                         <span class="my-auto w-25">Posibilidades de venta</span>
                         <div class="w-62">
-                            <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_sales_possibilities'" :id="'select_sales_possibilities'" v-model="proposal_submission_settings.sales_possibilities" data-style="select-lightgreen" @change="getSectorsSelect">
+                            <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_sales_possibilities'" :id="'select_sales_possibilities'" v-model="proposal_submission_settings.sales_possibilities" data-style="select-lightgreen">
                                 <option value="1">100% - Venta ganada</option>
                                 <option value="2">90% - Aprobado a falta de firma</option>
                                 <option value="3">60% - Pinta bien</option>
@@ -504,7 +504,7 @@
                     <button @click.native="this.generateProposal()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Generar propuesta</button>
                 </div>
             </div>
-            <div class="col-12 pl-0 mt-10" v-if="orders.proposal_obj.products[0].product_obj != null && this.is_show_buttons_bill && this.finish_proposal && this.generate_proposal && this.is_change_get_info == 0">
+            <div class="col-12 pl-0 mt-10" v-if="orders.proposal_obj.chapters[0].chapter_obj != null && this.is_show_buttons_bill && this.finish_proposal && this.generate_proposal && this.is_change_get_info == 0">
                 <h3 v-if="this.is_change_get_info == 0" class="color-blue"></h3>
                 <div class="mt-7">
                     <template v-if="this.is_change_get_info == 0">
@@ -542,19 +542,19 @@
                             <tbody>
                                 <tr class="row-product-offer-proposal">
                                     <template v-if="this.proposal_submission_settings.show_discounts == 1">
-                                        <td colspan="5" class="f-15 py-2"><span class="ml-5 gray-product-offer-proposal font-weight-bold"><b class="text-dark">Cliente: </b>{{ this.name_company }}</span></td>
+                                        <td colspan="5" class="f-15 py-2"><span class="ml-5 gray-chapter-offer-proposal font-weight-bold"><b class="text-dark">Cliente: </b>{{ this.name_company }}</span></td>
                                     </template>
                                     <template v-else>
-                                        <td colspan="4" class="f-15 py-2"><span class="ml-5 gray-product-offer-proposal font-weight-bold"><b class="text-dark">Cliente: </b>{{ this.name_company }}</span></td>
+                                        <td colspan="4" class="f-15 py-2"><span class="ml-5 gray-chapter-offer-proposal font-weight-bold"><b class="text-dark">Cliente: </b>{{ this.name_company }}</span></td>
                                     </template>
-                                    <td colspan="2" class="py-2 td-border-left text-align-center"><span v-if="orders.proposal_bd_obj != null" class="gray-product-offer-proposal font-weight-bolder">PROPUESTA Nº: </span><span v-if="orders.proposal_bd_obj != null" class="text-dark"> {{ orders.proposal_bd_obj.id_proposal_custom_aux }}</span></td>
+                                    <td colspan="2" class="py-2 td-border-left text-align-center"><span v-if="orders.proposal_bd_obj != null" class="gray-chapter-offer-proposal font-weight-bolder">PROPUESTA Nº: </span><span v-if="orders.proposal_bd_obj != null" class="text-dark"> {{ orders.proposal_bd_obj.id_proposal_custom_aux }}</span></td>
                                 </tr>
                                 <tr class="row-product-offer-proposal">
-                                    <td class="py-2"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">FECHA:</div><div class="ml-5 f-13 text-dark">{{ this.$utils.getNow() }}</div></td>
-                                    <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">CONSULTOR:</div><div class="ml-5 f-13 text-dark">{{ orders.user_obj.name + ' ' + orders.user_obj.surname }}</div></td>
-                                    <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">SECTOR:</div><div class="ml-5 f-13 text-dark">{{ orders.proposal_obj.products[0].articles[0].sector_obj.name }}</div></td>
-                                    <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">ANUNCIANTE:</div><div class="ml-5 f-13 text-dark">{{ this.name_company }}</div></td>
-                                    <td class="py-2 td-border-left" v-if="this.proposal_submission_settings.show_discounts == 1"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">DESCUENTO:</div><div class="ml-5 f-13 text-dark">{{ this.discount }}%</div></td>
+                                    <td class="py-2"><div class="f-13 ml-5 font-weight-bolder gray-chapter-offer-proposal">FECHA:</div><div class="ml-5 f-13 text-dark">{{ this.$utils.getNow() }}</div></td>
+                                    <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-chapter-offer-proposal">CONSULTOR:</div><div class="ml-5 f-13 text-dark">{{ orders.user_obj.name + ' ' + orders.user_obj.surname }}</div></td>
+                                    <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-chapter-offer-proposal">DEPARTAMENTO:</div><div class="ml-5 f-13 text-dark">{{ orders.proposal_obj.chapters[0].articles[0].department_obj.name }}</div></td>
+                                    <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-chapter-offer-proposal">ANUNCIANTE:</div><div class="ml-5 f-13 text-dark">{{ this.name_company }}</div></td>
+                                    <td class="py-2 td-border-left" v-if="this.proposal_submission_settings.show_discounts == 1"><div class="f-13 ml-5 font-weight-bolder gray-chapter-offer-proposal">DESCUENTO:</div><div class="ml-5 f-13 text-dark">{{ this.discount }}%</div></td>
                                     <td class="py-2 td-border-left bg-blue-light-white"><div class="f-13 ml-5 font-weight-bolder color-blue">OFERTA:</div><div class="ml-5 f-13 text-dark">{{ this.offer }}€</div></td>
                                 </tr>
                             </tbody>
@@ -573,30 +573,30 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <div class="d-contents" v-for="index in Number(orders.proposal_obj.products.length)">
+                                <div class="d-contents" v-for="index in Number(orders.proposal_obj.chapters.length)">
                                     <tr class="row-product">
                                         <td class="py-2" :colspan="orders.proposal_obj.array_dates.length + 4">
-                                            <span class="ml-5">{{ orders.proposal_obj.products[index - 1].product_obj.name }}</span>
+                                            <span class="ml-5">{{ orders.proposal_obj.chapters[index - 1].chapter_obj.name }}</span>
                                         </td>
                                     </tr>
-                                    <tr class="row-article" v-for="index_article in Number(orders.proposal_obj.products[index - 1].articles.length)">
-                                        <td valign="middle" class="td-border-right py-5"><span class="ml-5">{{ orders.proposal_obj.products[index - 1].articles[index_article - 1].article_obj.name }}</span></td>
-                                        <td v-if="this.proposal_submission_settings.show_pvp == 1" valign="middle" class="td-border-right text-align-center py-5"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.products[index - 1].articles[index_article - 1].article_obj.pvp)) }}€</span></td>
-                                        <td valign="middle" class="td-border-right text-align-center py-5"><span class="">{{ orders.proposal_obj.products[index - 1].articles[index_article - 1].amount }}</span></td>
+                                    <tr class="row-article" v-for="index_article in Number(orders.proposal_obj.chapters[index - 1].articles.length)">
+                                        <td valign="middle" class="td-border-right py-5"><span class="ml-5">{{ orders.proposal_obj.chapters[index - 1].articles[index_article - 1].article_obj.name }}</span></td>
+                                        <td v-if="this.proposal_submission_settings.show_pvp == 1" valign="middle" class="td-border-right text-align-center py-5"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].article_obj.pvp)) }}€</span></td>
+                                        <td valign="middle" class="td-border-right text-align-center py-5"><span class="">{{ orders.proposal_obj.chapters[index - 1].articles[index_article - 1].amount }}</span></td>
                                         <td v-for="index_arr_date in Number(orders.proposal_obj.array_dates.length)" valign="middle" class="td-border-right py-5">
-                                            <template v-for="index_dates in Number(orders.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices.length)">
-                                                <template v-if="orders.proposal_obj.array_dates[index_arr_date - 1].date == orders.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].date">
+                                            <template v-for="index_dates in Number(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices.length)">
+                                                <template v-if="orders.proposal_obj.array_dates[index_arr_date - 1].date == orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].date">
                                                     <div class="d-grid px-5">
-                                                        <template v-for="index_pvp_date in Number(orders.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date.length)">
-                                                            <img v-if="this.proposal_submission_settings.show_inserts == 1" v-for="index_pvp in Number(orders.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)" class="mx-auto my-2" width="8" src="/media/custom-imgs/circle.png" />
-                                                            <template v-else v-for="index_pvp in Number(orders.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)"><span class="mx-auto">{{ this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1] }}€</span></template>
+                                                        <template v-for="index_pvp_date in Number(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date.length)">
+                                                            <img v-if="this.proposal_submission_settings.show_inserts == 1" v-for="index_pvp in Number(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)" class="mx-auto my-2" width="8" src="/media/custom-imgs/circle.png" />
+                                                            <template v-else v-for="index_pvp in Number(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)"><span class="mx-auto">{{ this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1] }}€</span></template>
                                                         </template>
                                                     </div>
                                                 </template>
                                             </template>
                                         </td>
                                         <td valign="middle" class="td-border-right text-align-center py-5">
-                                            <span v-if="this.proposal_submission_settings.show_pvp == 1" class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.products[index - 1].articles[index_article - 1].total)) }}€</span>
+                                            <span v-if="this.proposal_submission_settings.show_pvp == 1" class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].total)) }}€</span>
                                             <span v-else class="">-</span>
 
                                         </td>
@@ -764,7 +764,7 @@ export default {
                 name_proyect: '',
                 date_proyect: '',
                 objetives: '',
-                proposal: 'Hemos creado una propuesta con diferentes acciones de demostrada eficacia. Es una comunicación 360 grados, de fuerte impacto, de gran repercusión y de calidad, que convencerá a nuestra audiencia de la necesidad de utilizar los productos y servicios de su empresa.\n\nEsta propuesta incluye la inmediatez e impacto directo de las nuevas tecnologías de movilidad, la efectividad del branded content, la utilización selectiva de nuestras bases de datos y el posicionamiento estratégico y de marca de los formatos publicitarios.',
+                proposal: 'Hemos creado una propuesta con diferentes acciones de demostrada eficacia. Es una comunicación 360 grados, de fuerte impacto, de gran repercusión y de calidad, que convencerá a nuestra audiencia de la necesidad de utilizar los chapteros y servicios de su empresa.\n\nEsta propuesta incluye la inmediatez e impacto directo de las nuevas tecnologías de movilidad, la efectividad del branded content, la utilización selectiva de nuestras bases de datos y el posicionamiento estratégico y de marca de los formatos publicitarios.',
                 actions: 'Acciones Print: Acciones de marketing de contenido para conseguir credibilidad de marca, acciones de publicidad corporativa bien posicionadas para reforzar la relevancia, el posicionamiento estratégico y la diferenciación con la competencia.\n\nAcciones digitales: Acciones de gran impacto, como email marketing, banner y contenidos en web y newsletter, buscando la acción directa sobre la audiencia y la efectividad e inmediatez en el resultado. Además, estas acciones se potenciarán a través de nuestras redes sociales.\n\nAcciones Experiencias: Centradas en el patrocinio de un desayuno y en la participación en un evento de referencia sectorial, buscando la relación directa y personal con el cliente para la obtención de leads.',
                 observations: '',
                 show_discounts: 0,
@@ -799,7 +799,7 @@ export default {
                     me.id_company = value.id;
                 }
             });
-            me.proposal_submission_settings.objetives = 'Somos consultores y expertos en comunicación. Nuestra marca y nuestros servicios son líderes en el sector, y tienen el máximo reconocimiento, prestigio e influencia. Sabemos qué quiere nuestra audiencia, lo que nos permite ofrecer a '+ me.name_company +' una propuesta de valor única, diferencial y de éxito.\n\nHemos estudiado el potencial y la proyección de '+ me.name_company +' con el fin de crear una propuesta de comunicación eficaz que permita mejorar sus resultados y objetivos.\n\nLas acciones de comunicación para '+ me.name_company +' que incluimos en esta propuesta crean influencia y potencian la visibilidad y la relevancia de sus productos, impactando positivamente en nuestra audiencia e incitando a la acción.';
+            me.proposal_submission_settings.objetives = 'Somos consultores y expertos en comunicación. Nuestra marca y nuestros servicios son líderes en el sector, y tienen el máximo reconocimiento, prestigio e influencia. Sabemos qué quiere nuestra audiencia, lo que nos permite ofrecer a '+ me.name_company +' una propuesta de valor única, diferencial y de éxito.\n\nHemos estudiado el potencial y la proyección de '+ me.name_company +' con el fin de crear una propuesta de comunicación eficaz que permita mejorar sus resultados y objetivos.\n\nLas acciones de comunicación para '+ me.name_company +' que incluimos en esta propuesta crean influencia y potencian la visibilidad y la relevancia de sus chapteros, impactando positivamente en nuestra audiencia e incitando a la acción.';
 
         },
         changeValueBox(type, status){
@@ -836,8 +836,8 @@ export default {
         rewalkForm1(type, new_value){
             let me = this;
             var value = 0;
-            me.value_form1.map(function(product, key_product) {
-                product.article.map(function(article_obj, key_article) {
+            me.value_form1.map(function(chapter, key_chapter) {
+                chapter.article.map(function(article_obj, key_article) {
                     article_obj.dates.map(function(date, key_dates) {
                         date.date_pvp.map(function(date_pvp, key_date_pvp) {
                             date_pvp.pvp.map(function(pvp_obj, key_pvp) {
@@ -845,8 +845,8 @@ export default {
                                     value += 1;
                                 }else{
                                     //pvp_obj = pvp_obj * (1 - (me.discount  /100));
-                                    //me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = me.$utils.roundAndFix(pvp_obj);
-                                    me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = new_value;
+                                    //me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = me.$utils.roundAndFix(pvp_obj);
+                                    me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = new_value;
                                 }
                             });
                         });
@@ -860,8 +860,8 @@ export default {
         changeValuesOffer(e) {
             let me = this;
             var total = 0;
-            me.value_form1.map(function(product, key_product) {
-                product.article.map(function(article_obj, key_article) {
+            me.value_form1.map(function(chapter, key_chapter) {
+                chapter.article.map(function(article_obj, key_article) {
                     article_obj.dates.map(function(date, key_dates) {
                         date.date_pvp.map(function(date_pvp, key_date_pvp) {
                             date_pvp.pvp.map(function(pvp_obj, key_pvp) {
@@ -894,14 +894,14 @@ export default {
             me.value_form1 = [];
                 
             //Rellenar los modelos de los inputs de la tabla
-            me.orders.proposal_obj.products.map(function(product, key_product) {
-                product.articles.map(function(article, key_article) {
+            me.orders.proposal_obj.chapters.map(function(chapter, key_chapter) {
+                chapter.articles.map(function(article, key_article) {
                     me.orders.proposal_obj.array_dates.map(function(date_obj, key_arr_dates) {
                         article.dates_prices.map(function(date, key_dates) {
                             if(date_obj.date == date.date){
                                 date.arr_pvp_date.map(function(pvp_date, key_pvp_date) {
                                     pvp_date.arr_pvp.map(function(pvp, key_pvp) {
-                                        if(me.value_form1[key_product] == undefined){
+                                        if(me.value_form1[key_chapter] == undefined){
                                             me.value_form1.push({
                                                 article: [{
                                                     dates:[{
@@ -913,10 +913,10 @@ export default {
                                                     }]
                                                 }]
                                             });
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
 
-                                        }else if(me.value_form1[key_product].article[key_article] == undefined){
-                                            me.value_form1[key_product].article.push({
+                                        }else if(me.value_form1[key_chapter].article[key_article] == undefined){
+                                            me.value_form1[key_chapter].article.push({
                                                 dates:[{
                                                     article: article.article_obj,
                                                     date_pvp: [{
@@ -925,28 +925,28 @@ export default {
                                                     }]
                                                 }]
                                             });
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
 
-                                        }else if(me.value_form1[key_product].article[key_article].dates[key_dates] == undefined){
-                                            me.value_form1[key_product].article[key_article].dates.push({
+                                        }else if(me.value_form1[key_chapter].article[key_article].dates[key_dates] == undefined){
+                                            me.value_form1[key_chapter].article[key_article].dates.push({
                                                 article: article.article_obj,
                                                 date_pvp: [{
                                                     date: pvp_date.date,
                                                     pvp: []
                                                 }]
                                             });
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
 
-                                        }else if(me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date] == undefined){
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp.push({
+                                        }else if(me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date] == undefined){
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp.push({
                                                 date: pvp_date.date,
                                                 pvp: []
                                             });
 
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
 
                                         }else{
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
 
                                         }
                                     });
@@ -1039,13 +1039,13 @@ export default {
                 proposal_submission_settings: this.proposal_submission_settings,
                 id_company: this.id_company,
                 bill_obj: this.orders.bill_obj,
-                id_sector: this.orders.proposal_obj.products[0].articles[0].sector_obj.id,
+                id_department: this.orders.proposal_obj.chapters[0].articles[0].department_obj.id,
                 proposal_obj: this.orders.proposal_obj,
                 value_form1: this.value_form1,
                 select_way_to_pay_options: this.select_way_to_pay_options,
                 select_expiration_options: this.select_expiration_options
             }
-            if(this.orders.status_view == 3 && this.orders.proposal_bd_obj != null){
+            if(this.orders.status_view == 2 && this.orders.proposal_bd_obj != null){
                 params.id_proposal = this.orders.proposal_bd_obj.id;
                 this.updateProposal(params);
             }else{
@@ -1075,7 +1075,7 @@ export default {
             me.proposal_submission_settings.name_proyect = '';
             me.proposal_submission_settings.date_proyect = '';
             me.proposal_submission_settings.objetives = '';
-            me.proposal_submission_settings.proposal = 'Hemos creado una propuesta con diferentes acciones de demostrada eficacia. Es una comunicación 360 grados, de fuerte impacto, de gran repercusión y de calidad, que convencerá a nuestra audiencia de la necesidad de utilizar los productos y servicios de su empresa.\n\nEsta propuesta incluye la inmediatez e impacto directo de las nuevas tecnologías de movilidad, la efectividad del branded content, la utilización selectiva de nuestras bases de datos y el posicionamiento estratégico y de marca de los formatos publicitarios.';
+            me.proposal_submission_settings.proposal = 'Hemos creado una propuesta con diferentes acciones de demostrada eficacia. Es una comunicación 360 grados, de fuerte impacto, de gran repercusión y de calidad, que convencerá a nuestra audiencia de la necesidad de utilizar los chapteros y servicios de su empresa.\n\nEsta propuesta incluye la inmediatez e impacto directo de las nuevas tecnologías de movilidad, la efectividad del branded content, la utilización selectiva de nuestras bases de datos y el posicionamiento estratégico y de marca de los formatos publicitarios.';
             me.proposal_submission_settings.actions = 'Acciones Print: Acciones de marketing de contenido para conseguir credibilidad de marca, acciones de publicidad corporativa bien posicionadas para reforzar la relevancia, el posicionamiento estratégico y la diferenciación con la competencia.\n\nAcciones digitales: Acciones de gran impacto, como email marketing, banner y contenidos en web y newsletter, buscando la acción directa sobre la audiencia y la efectividad e inmediatez en el resultado. Además, estas acciones se potenciarán a través de nuestras redes sociales.\n\nAcciones Experiencias: Centradas en el patrocinio de un desayuno y en la participación en un evento de referencia sectorial, buscando la relación directa y personal con el cliente para la obtención de leads.';
             me.proposal_submission_settings.observations = '';
             me.proposal_submission_settings.show_discounts = 0;
