@@ -51,7 +51,8 @@ const mutations = {
         //Creamos el objeto artículo que vamos a guardar
         var article = {
             article_obj: params.article_obj,
-            chapter_obj:params.chapter_obj,
+            department_obj: params.department_obj,
+            chapter_obj: params.chapter_obj,
             dates: params.dates,
             dates_prices_aux: [],
             dates_prices: [],
@@ -725,10 +726,10 @@ const mutations = {
             custom_state = state.orders;
         }
         //Modificamos el objeto con los nuevos datos dados
-        custom_state.proposal_obj.products.map(function(products_obj, key_products_obj) {
-            products_obj.articles.map(function(article_obj, key_article_obj) {
-                params.form.map(function(products, key_products) {
-                    products.article.map(function(article, key) {
+        custom_state.proposal_obj.chapters.map(function(chapter_obj, key_chapters_obj) {
+            chapter_obj.articles.map(function(article_obj, key_article_obj) {
+                params.form.map(function(chapter, key_chapters) {
+                    chapter.article.map(function(article, key) {
                         article.dates.map(function(date, key) {
                             if(article_obj.article_obj.id == date.article.id){
                                 article_obj.dates_prices.map(function(date_price_obj, key_date_price_obj) {
@@ -738,7 +739,7 @@ const mutations = {
                                                 var out = false;
                                                 if(!out){
                                                     date_pvp.pvp.map(function(pvp, key_pvp) {
-                                                        custom_state.proposal_obj.products[key_products_obj].articles[key_article_obj].dates_prices[key_date_price_obj].arr_pvp_date[key_arr_pvp_date].arr_pvp[key_pvp] = pvp;
+                                                        custom_state.proposal_obj.chapters[key_chapters_obj].articles[key_article_obj].dates_prices[key_date_price_obj].arr_pvp_date[key_arr_pvp_date].arr_pvp[key_pvp] = pvp;
                                                         //arr_pvp_obj = pvp;
                                                         out = true;
                                                     });
@@ -759,15 +760,15 @@ const mutations = {
             var array_articles = [];
             
             //Guardamos con un nuevo formato para las facturas los articulos
-            custom_state.proposal_obj.products.map(function(products, key) {
-                products.articles.map(function(article_obj, key) {
+            custom_state.proposal_obj.chapters.map(function(chapters, key) {
+                chapters.articles.map(function(article_obj, key) {
                     article_obj.dates_prices.map(function(dates_prices_obj, key) {
                         dates_prices_obj.arr_pvp_date.map(function(arr_pvp_date_obj, key) {
                             arr_pvp_date_obj.arr_pvp.map(function(arr_pvp_obj, key) {
                                 var article_obj_aux = {
                                     date: arr_pvp_date_obj.date,
                                     article: article_obj,
-                                    id_product: products.product_obj.id,
+                                    id_chapter: chapters.chapter_obj.id,
                                     amount: arr_pvp_obj
                                 }
                                 array_articles.push(article_obj_aux);
@@ -815,7 +816,7 @@ const mutations = {
                         array_finish_bill.map(function(bill_obj, key) {
                             if(!is_break){
                                 if(bill_obj.date == article_obj.date){
-                                    if(bill_obj.article.id_product == article_obj.id_product){
+                                    if(bill_obj.article.id_chapter == article_obj.id_chapter){
                                         amount += Number(article_obj.amount);
                                         total_bill += Number(article_obj.amount);
                                         array_finish_bill[last_key].amount = amount;
@@ -874,8 +875,8 @@ const mutations = {
             var total_amount = 0;
 
             //Guardamos con un nuevo formato para las facturas los articulos
-            custom_state.proposal_obj.products.map(function(products, key) {
-                products.articles.map(function(article_obj, key) {
+            custom_state.proposal_obj.chapters.map(function(chapters, key) {
+                chapters.articles.map(function(article_obj, key) {
                     article_obj.dates_prices.map(function(dates_prices_obj, key) {
                         dates_prices_obj.arr_pvp_date.map(function(arr_pvp_date_obj, key) {
                             arr_pvp_date_obj.arr_pvp.map(function(arr_pvp_obj, key) {

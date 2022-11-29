@@ -170,6 +170,7 @@
                 publicPath: window.location.origin,
                 select_department: '',
                 select_department_error: false,
+                department_obj: null,
                 select_section: '',
                 select_section_error: false,
                 select_channel: '',
@@ -291,20 +292,27 @@
                 this.show_amount_dates = false;
             },
             getSectionSelect(){
-                this.select_section = '';
-                this.select_channel = '';
-                this.select_project = '';
-                this.select_chapter = '';
-                this.select_batch = '';
-                this.select_article = '';
-                this.amount = '';
-                this.date = [];
-                this.show_amount_dates = false;
+                let me = this;
+                //Guardamos el objeto del departamento elegido
+                me.config.articles.form.array_departments.forEach(function callback(value, index, array) {
+                    if(value.id == me.select_department){
+                        me.department_obj = value;
+                    }
+                });
+                me.select_section = '';
+                me.select_channel = '';
+                me.select_project = '';
+                me.select_chapter = '';
+                me.select_batch = '';
+                me.select_article = '';
+                me.amount = '';
+                me.date = [];
+                me.show_amount_dates = false;
                 var params = {
                     type: 2,
-                    select_articles_department: this.select_department
+                    select_articles_department: me.select_department
                 }
-                this.getSections(params);
+                me.getSections(params);
             },
             getChannelSelect(){
                 let me = this;
@@ -407,6 +415,7 @@
             },
             saveProposal() {
                 var params = {
+                    department_obj: this.department_obj,
                     chapter_obj: this.chapter_obj,
                     article_obj: this.article_obj,
                     amount: this.amount,

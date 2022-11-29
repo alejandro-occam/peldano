@@ -68,10 +68,10 @@
             .text-dark {
                 color: #181C32 !important;
             }
-            .gray-product-offer-proposal {
+            .gray-chapter-offer-proposal {
                 color: #707185 !important;
             }
-            .row-product-offer-proposal {
+            .row-chapter-offer-proposal {
                 border-top-width: 1px !important;
                 border-top-style: solid !important;
                 border-bottom-width: 1px !important;
@@ -86,7 +86,7 @@
             .text-align-center {
                 text-align: center !important;
             }
-            .row-product-offer-proposal {
+            .row-chapter-offer-proposal {
                 border-top-width: 1px !important;
                 border-top-style: solid !important;
                 border-bottom-width: 1px !important;
@@ -133,7 +133,7 @@
                 font-size: 14px !important;
                 padding-bottom: 10px;
             }
-            .row-product {
+            .row-chapter {
                 background-color: #F6FBFF;
                 border-top-width: 1px;
                 border-top-style: solid;
@@ -301,30 +301,30 @@
                                             <div class="d-grid mt-10 mb-4">
                                                 <table width="100%" cellpadding="2" cellspacing="1" id="table_1">
                                                     <tbody>
-                                                        <tr class="row-product-offer-proposal">
+                                                        <tr class="row-chapter-offer-proposal">
                                                             <td colspan="4" class="f-15 py-1">
-                                                                <span class=" gray-product-offer-proposal f-10"><b class="text-dark ml-5">Cliente: </b>{!! $proposal->commercial_name !!}</span>
+                                                                <span class=" gray-chapter-offer-proposal f-10"><b class="text-dark ml-5">Cliente: </b>{!! $proposal->commercial_name !!}</span>
                                                             </td>
                                                             <td colspan="2" class="py-1 td-border-left text-align-center">
-                                                                <span class="gray-product-offer-proposal font-weight-bolder f-10">PROPUESTA Nº: </span>
+                                                                <span class="gray-chapter-offer-proposal font-weight-bolder f-10">PROPUESTA Nº: </span>
                                                                 <span class="text-dark f-10">{!! $proposal->id_proposal_custom !!}</span>
                                                             </td>
                                                         </tr>
-                                                        <tr class="row-product-offer-proposal">
+                                                        <tr class="row-chapter-offer-proposal">
                                                             <td class="py-2">
-                                                                <div class="f-10 ml-5 font-weight-bolder gray-product-offer-proposal">FECHA:</div>
+                                                                <div class="f-10 ml-5 font-weight-bolder gray-chapter-offer-proposal">FECHA:</div>
                                                                 <div class="ml-5 f-10 text-dark">{!! $proposal->date_proyect !!}</div>
                                                             </td>
                                                             <td class="py-2 td-border-left">
-                                                                <div class="f-10 ml-5 font-weight-bolder gray-product-offer-proposal">CONSULTOR:</div>
+                                                                <div class="f-10 ml-5 font-weight-bolder gray-chapter-offer-proposal">CONSULTOR:</div>
                                                                 <div class="ml-5 f-10 text-dark">{!! $fullname !!}</div>
                                                             </td>
                                                             <td class="py-2 td-border-left">
-                                                                <div class="f-10 ml-5 font-weight-bolder gray-product-offer-proposal">SECTOR:</div>
-                                                                <div class="ml-5 f-10 text-dark">{!! $sector_name !!}</div>
+                                                                <div class="f-10 ml-5 font-weight-bolder gray-chapter-offer-proposal">DEPARTAMENTO:</div>
+                                                                <div class="ml-5 f-10 text-dark">{!! $department_name !!}</div>
                                                             </td>
                                                             <td class="py-2 td-border-left">
-                                                                <div class="f-10 ml-5 font-weight-bolder gray-product-offer-proposal">ANUNCIANTE:</div>
+                                                                <div class="f-10 ml-5 font-weight-bolder gray-chapter-offer-proposal">ANUNCIANTE:</div>
                                                                 <div class="ml-5 f-10 text-dark">{!! $proposal->commercial_name !!}</div>
                                                             </td><!--v-if-->
                                                             <td colspan="2" class="py-2 td-border-left bg-blue-light-white">
@@ -360,13 +360,13 @@
                                                         </tr>
                                                     </thead>
                                                     <tbody>
-                                                        @foreach($proposal_obj->products as $key_product => $product)
-                                                            <tr class="row-product">
+                                                        @foreach($proposal_obj->chapters as $key_chapter => $chapter)
+                                                            <tr class="row-chapter">
                                                                 <td class="py-1" colspan="{{ count($proposal_obj->array_dates) + 4 }}">
-                                                                    <span class="ml-5 f-10">{{ $product->product_obj->name }}</span>
+                                                                    <span class="ml-5 f-10">{{ $chapter->chapter_obj->name }}</span>
                                                                 </td>
                                                             </tr>
-                                                            @foreach($product->articles as $key_article => $article)
+                                                            @foreach($chapter->articles as $key_article => $article)
                                                                 <tr class="row-article">
                                                                     <td valign="middle" class="td-border-right py-1">
                                                                         <span class="ml-5 f-10">{{ $article->article_obj->name }}</span>

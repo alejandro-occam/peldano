@@ -834,16 +834,16 @@ function createObjectsStore({ state }, response, type){
         custom_state = state.orders;
     }
     var array_services = response.data.array_services;
-    custom_state.proposal_obj.products.articles = [];
-    custom_state.proposal_obj.products.dates_prices_aux = [];
+    custom_state.proposal_obj.chapters.articles = [];
+    custom_state.proposal_obj.chapters.dates_prices_aux = [];
     custom_state.bill_obj.array_bills = [];
     var array_dates_aux = [];
-    var array_products = [];
+    var array_chapters = [];
     var proposal = response.data.proposal
     array_services.forEach(function callback(service, index, array) {
         array_dates_aux.push(service.date);
 
-        if(array_products.length == 0){
+        if(array_chapters.length == 0){
             var article = {
                 amount: 1,
                 article_obj: service.article,
@@ -856,22 +856,23 @@ function createObjectsStore({ state }, response, type){
                     date: changeFormatDate(service.date)
                 }],
                 total: service.pvp,
-                sector_obj: proposal.sector
+                chapter_obj: service.chapter,
+                department_obj: proposal.department_obj
             }
-            array_products.push({
-                id_product: service.article.id_product,
+            array_chapters.push({
+                id_chapter: service.article.id_chapter,
                 articles: [article],
                 articles_aux: [article],
-                product_obj: service.product,
+                chapter_obj: service.chapter,
             });
 
         }else{
             var exist_1 = false;
-            array_products.forEach(function callback(product, index, array) {
-                if(product.id_product == service.article.id_product){
+            array_chapters.forEach(function callback(chapter, index, array) {
+                if(chapter.id_chapter == service.article.id_chapter){
                     exist_1 = true;
                     var exist_2 = false;
-                    product.articles.forEach(function callback(article, index, array) {
+                    chapter.articles.forEach(function callback(article, index, array) {
                         if(article.article_obj.id == service.id_article){
                             exist_2 = true;
                             article.amount += 1;
@@ -924,9 +925,9 @@ function createObjectsStore({ state }, response, type){
                                 date: changeFormatDate(service.date)
                             }],
                             total: service.pvp,
-                            sector_obj: proposal.sector
+                            chapter_obj: service.chapter
                         }
-                        product.articles.push(article);
+                        chapter.articles.push(article);
                     }
                 }
             });
@@ -944,26 +945,26 @@ function createObjectsStore({ state }, response, type){
                         date: changeFormatDate(service.date)
                     }],
                     total: service.pvp,
-                    sector_obj: proposal.sector
+                    chapter_obj: service.chapter
                 }
-                array_products.push({
-                    id_product: service.article.id_product,
+                array_chapters.push({
+                    id_chapter: service.article.id_chapter,
                     articles: [article],
-                    product_obj: service.product
+                    chapter_obj: service.chapter
                 });
             }
         }
         
     });
-    custom_state.proposal_obj.products = array_products;
+    custom_state.proposal_obj.chapters = array_chapters;
 
     //Consultamos los totales
     var total_amount_global = 0;
     var total_individual_pvp = 0;
     var total_global = 0;
     var total_global_default = 0;
-    custom_state.proposal_obj.products.map(function(product, key) {
-        product.articles.map(function(article, key) {
+    custom_state.proposal_obj.chapters.map(function(chapter, key) {
+        chapter.articles.map(function(article, key) {
             total_individual_pvp += article.article_obj.pvp;
             article.dates_prices.map(function(date_price, key) {
                 date_price.arr_pvp_date.map(function(pvp_date, key) {
@@ -1001,7 +1002,7 @@ function createObjectsStore({ state }, response, type){
     var array_dates_prices = [];
     array_dates.map(function(date, key) {
         var total_date = 0;
-        custom_state.proposal_obj.products.map(function(articles_obj, key) {
+        custom_state.proposal_obj.chapters.map(function(articles_obj, key) {
             articles_obj.articles.map(function(article_finish, key) {
                 article_finish.dates_prices.map(function(date_aux, key) {
                     if(date_aux.date == date){
@@ -1046,15 +1047,15 @@ function createObjectsStore({ state }, response, type){
     
     //Guardamos con un nuevo formato para las facturas los articulos
     var array_articles = [];
-    custom_state.proposal_obj.products.map(function(products, key) {
-        products.articles.map(function(article_obj, key) {
+    custom_state.proposal_obj.chapters.map(function(chapters, key) {
+        chapters.articles.map(function(article_obj, key) {
             article_obj.dates_prices.map(function(dates_prices_obj, key) {
                 dates_prices_obj.arr_pvp_date.map(function(arr_pvp_date_obj, key) {
                     arr_pvp_date_obj.arr_pvp.map(function(arr_pvp_obj, key) {
                         var article_obj_aux = {
                             date: arr_pvp_date_obj.date,
                             article: article_obj,
-                            id_product: products.product_obj.id,
+                            id_chapter: chapters.chapter_obj.id,
                             amount: arr_pvp_obj
                         }
                         array_articles.push(article_obj_aux);
@@ -1106,7 +1107,7 @@ function createObjectsStore({ state }, response, type){
                 array_finish_bill.map(function(bill_obj, key) {
                     if(!is_break){
                         if(bill_obj.date == article_obj.date){
-                            if(bill_obj.article.id_product == article_obj.id_product){
+                            if(bill_obj.article.id_chapter == article_obj.id_chapter){
                                 amount += Number(article_obj.amount);
                                 total_bill += Number(article_obj.amount);
                                 array_finish_bill[last_key].amount = amount;

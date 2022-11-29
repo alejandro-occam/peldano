@@ -53,9 +53,4 @@ class Article extends Model
         'id_sage',
         'id_family_sage'
     ];
-
-    public function product()
-    {
-        return $this->belongsTo(Product::class, 'id_product');
-    }
 }
