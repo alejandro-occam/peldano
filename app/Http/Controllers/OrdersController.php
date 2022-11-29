@@ -40,17 +40,14 @@ class OrdersController extends Controller
 
         if($request->get('type') == 1){
             if($request->get('num_order') != ''){
-                error_log('hola1');
                 $array_orders = $array_orders->where('proposals.id_proposal_custom', $request->get('num_order'));
             }
 
             if($request->get('select_consultant') != ''){
-                error_log('hola2');
                 $array_orders = $array_orders->where('proposals.id_user', $request->get('select_consultant'));
             }
 
             if($request->get('select_department') != ''){
-                error_log('hola3');
                 $array_orders = $array_orders->where('proposals.id_department', $request->get('select_chapter'));
             }
 
@@ -113,7 +110,7 @@ class OrdersController extends Controller
 
     //Listar ordenes para exportar
     function listOrdersToExport(Request $request){
-        $array_orders = Order::select('proposals.*', 'sectors.name as sector_name')
+        $array_orders = Order::select('proposals.*', 'departments.name as department_name')
                         ->leftJoin('proposals', 'proposals.id', 'orders.id_proposal')  
                         ->leftJoin('departments', 'departments.id', 'proposals.id_department')
                         ->leftJoin('proposals_bills', 'proposals.id', 'proposals_bills.id_proposal')
@@ -222,9 +219,9 @@ class OrdersController extends Controller
                                 <span class="text-gray font-weight-bold">'.$order->discount.'%</span>
                             </span>
                         </td>
-                        <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#sector_name" aria-label="null">
+                        <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#department_name" aria-label="null">
                             <span class="mx-auto">
-                                <span class="text-gray font-weight-bold">'.strtoupper($order->sector_name).'</span>
+                                <span class="text-gray font-weight-bold">'.strtoupper($order->department_name).'</span>
                             </span>
                         </td>
                         <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#new_recovered" aria-label="null">
@@ -244,7 +241,7 @@ class OrdersController extends Controller
     function downloadListOrdersCsv(Request $request){    
         //Creamos las columnas del fichero
         $array_custom_calendars = array (
-            array('Consult.', 'Propuesta', 'Código', 'Tipo', 'Nombre del cliente', 'Fecha', 'Edición', 'Estado', 'Ctrl', 'Total', 'Dto', 'Sector', 'Nuevo recuperado')
+            array('Consult.', 'Propuesta', 'Código', 'Tipo', 'Nombre del cliente', 'Fecha', 'Edición', 'Estado', 'Ctrl', 'Total', 'Dto', 'Departamento', 'Nuevo recuperado')
         );
 
         $spreadsheet = new Spreadsheet();
@@ -261,13 +258,13 @@ class OrdersController extends Controller
         $sheet->setCellValue('I1', 'Ctrl');
         $sheet->setCellValue('J1', 'Total');
         $sheet->setCellValue('K1', 'Dto');
-        $sheet->setCellValue('L1', 'Sector');
+        $sheet->setCellValue('L1', 'Departamento');
         $sheet->setCellValue('M1', 'Nuevo recuperado');
 
-        //Consultamos los usuarios
-        $array_orders = Order::select('proposals.*', 'sectors.name as sector_name')
+        //Consultamos las ordenes
+        $array_orders = Order::select('proposals.*', 'departments.name as department_name')
                         ->leftJoin('proposals', 'proposals.id', 'orders.id_proposal')  
-                        ->leftJoin('sectors', 'sectors.id', 'proposals.id_sector')
+                        ->leftJoin('departments', 'departments.id', 'proposals.id_department')
                         ->leftJoin('proposals_bills', 'proposals.id', 'proposals_bills.id_proposal')
                         ->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill');
 
