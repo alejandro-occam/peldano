@@ -309,6 +309,9 @@ class ProposalsController extends Controller
         $proposal->pdf_file = 'pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf';
         $proposal->save();
 
+        //Generamos el albarán en Sage
+        
+
         $response['pdf_file'] = $proposal->pdf_file;
         $response['code'] = 1000;
         return response()->json($response);

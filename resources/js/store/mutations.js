@@ -281,6 +281,7 @@ const mutations = {
             });
         });
 
+        console.log(custom_state.proposal_obj.chapters);
         //Consultamos la cantidad de articulos y su total
         var total_global = 0;
         var total_amount_global = 0;
@@ -308,7 +309,6 @@ const mutations = {
         custom_state.proposal_obj.total_global = total_global;
         custom_state.proposal_obj.total_amount_global = total_amount_global;
         custom_state.proposal_obj.total_individual_pvp = total_individual_pvp;
-
 
         //Cargamos en el array de fechas para las columnas los totales de cada mes
         array_dates.map(function(date, key) {
@@ -926,9 +926,9 @@ const mutations = {
     //Limpiamos los objetos utilizados para crear la propuesta
     clearObjectsProposal(state){
         state.proposals.num_custom_invoices = 0;
-        state.proposals.proposal_obj.products = [];
-        state.proposals.proposal_obj.products = [{
-            product_obj: null,
+        state.proposals.proposal_obj.chapters = [];
+        state.proposals.proposal_obj.chapters = [{
+            chapter_obj: null,
             articles: [],
             articles_aux: [],
             total_global: 0,

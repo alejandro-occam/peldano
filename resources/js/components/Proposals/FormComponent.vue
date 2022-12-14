@@ -95,7 +95,7 @@
                     Añadir artículo
                 </button>
             </div>
-            <div class="mb-5 mt-15 col-12 row" v-if="proposals.proposal_obj.chapters[0].chapter_obj != null && !this.generate_proposal">
+            <div class="mb-5 mt-15 col-12 row" v-if="this.proposals.proposal_obj.chapters[0].chapter_obj != null && !this.generate_proposal">
                 <div>
                     <img class="mr-2" width="150" height="150" src="/media/custom-imgs/icono_ficha_ordenes.svg" />
                 </div>
@@ -701,7 +701,7 @@
                             </tbody>
                         </table>
                     </template>
-                    <div class="mt-10" v-if="this.is_updating == 1">
+                    <div class="mt-10" v-if="(this.is_updating == 1 && this.proposals.proposal_bd_obj != null) || (this.generate_proposal && this.proposals.proposal_bd_obj == null)">
                         <button v-on:click="this.generatePdf()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Guardar y generar PDF</button>
                     </div>
                 </div>
@@ -970,13 +970,14 @@ export default {
                                                 article: article.article_obj,
                                                 date_pvp: [{
                                                     date: pvp_date.date,
-                                                    pvp: []
+                                                    pvp: [],
+                                                    pvp_default: []
                                                 }]
                                             });
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
 
-                                        }else if(me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date] == undefined){
+                                        }/*else if(me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date] == undefined){
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp.push({
                                                 date: pvp_date.date,
                                                 pvp: []
@@ -988,7 +989,7 @@ export default {
                                         }else{
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
-                                        }
+                                        }*/
                                     });
                                 });
                             }
