@@ -120,4 +120,20 @@ class ExternalRequestController extends Controller
             
         }
     }
+
+    //Consultar producto de Sage
+    function getProductSage(Request $request){
+        //Creamos un objeto para el controller curl
+        $requ_curls = new CurlController();
+        $company = config('constants.id_company_sage');
+        $url = 'https://sage200.sage.es/api/sales/ProductFamilies?api-version=1.0&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Name%20eq%20%27'.$request->get('name_article').'%27';
+        $response = json_decode($requ_curls->getSageCurl($url)['response'], true);
+        $data_product = json_decode($requ_curls->getSageCurl($url)['response'], true);
+        if(count($data_product['value']) > 0){
+            $array_products = $data['value'];
+            foreach($array_products as $product){
+                return $product_family['Id'];
+            }
+        }
+    }
 }

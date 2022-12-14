@@ -310,7 +310,21 @@ class ProposalsController extends Controller
         $proposal->save();
 
         //Generamos el albarán en Sage
-        
+        //Creamos un objeto para el controller ExternalRequest
+        $requ_external_request = new ExternalRequestController();
+        //Recorremos las facturas creadas
+        foreach($array_bills_aux as $bill){
+            //Consultamos los artículos de la factura
+            $services_bills = ServiceBill::where('id_bill', $bill->id)->get();
+            foreach($services_bills as $service_bill){
+                $service = Service::find($service_bill->id_service);
+                $article = Article::find($service->id_article);
+                //Consultamos el id_sage del artículo
+                $request = new \Illuminate\Http\Request();
+                $request->replace(['name_article' => $article->name]);
+                $id_sage = $requ_external_request->getProductSage($request);
+            }
+        }
 
         $response['pdf_file'] = $proposal->pdf_file;
         $response['code'] = 1000;
