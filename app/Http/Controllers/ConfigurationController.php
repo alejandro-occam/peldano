@@ -904,21 +904,35 @@ class ConfigurationController extends Controller
         $requ_curls = new CurlController();
 
         //Consultamos el product family del artículo
-        /*$company = config('constants.id_company_sage');
-        $url = 'https://sage200.sage.es/api/sales/ProductFamilies?api-version=1.0&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Name%20eq%20%27'.$area->id."-".$sector->id."-".$brand->id."-".$product->id.'%27';
+        $company = config('constants.id_company_sage');
+        $url = 'https://sage200.sage.es/api/sales/ProductFamilies?api-version=1.0&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Name%20eq%20%27'.
+                        $department->nomenclature."-".
+                        $section->nomenclature."-".
+                        $channel->nomenclature."-".
+                        $project->nomenclature."-".
+                        $chapter->nomenclature."-".
+                        $batch->nomenclature.
+                        '%27';
+
         $data = json_decode($requ_curls->getSageCurl($url)['response'], true);
         $product_family_id = '';
+        
         if(count($data['value']) == 0){
             //Si no existe creamos un product family
             $param['CompanyId'] = $company;
-            $param['Name'] = $area->id."-".$sector->id."-".$brand->id."-".$product->id;
+            $param['Name'] = $department->nomenclature."-".$section->nomenclature."-".$channel->nomenclature."-".$project->nomenclature."-".$chapter->nomenclature."-".$batch->nomenclature;
+            $param['Code'] = $department->id.$section->id.$channel->id.$project->id.$chapter->id.$batch->id;
             $url = 'https://sage200.sage.es/api/sales/ProductFamilies?api-version=1.0';
             $response = json_decode($requ_curls->postSageCurl($url, $param)['response'], true);
+            
             $product_family_id = $response['Id'];
+            $product_family_code = $response['Code'];
+
         }else{
             $array_product_family = $data['value'];
             foreach($array_product_family as $product_family){
                 $product_family_id = $product_family['Id'];
+                $product_family_code = $product_family['Code'];
             }
         }
 
@@ -935,20 +949,20 @@ class ConfigurationController extends Controller
             $param['FamilyId'] = $product_family_id;
             $url = 'https://sage200.sage.es/api/sales/Products?api-version=1.0';
             $response = json_decode($requ_curls->postSageCurl($url, $param)['response'], true);
-            $product_id = $response['Id'];
+            $product_code = $response['Code'];
 
         }else{
             $response['code'] = 1004;
             return response()->json($response);
-        }*/
+        }
 
         Article::create([
             'name' => $name,
             'english_name' => $name_eng,
             'pvp' => $price,
             'id_batch' => $id_batch,
-            //'id_sage' => $product_id,
-            //'id_family_sage' => $product_family_id
+            'id_sage' => $product_code,
+            'id_family_sage' => $product_family_code
         ]);
 
         $response['code'] = 1000;
