@@ -126,14 +126,54 @@ class ExternalRequestController extends Controller
         //Creamos un objeto para el controller curl
         $requ_curls = new CurlController();
         $company = config('constants.id_company_sage');
-        $url = 'https://sage200.sage.es/api/sales/ProductFamilies?api-version=1.0&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Name%20eq%20%27'.$request->get('name_article').'%27';
+
+        $url = 'https://sage200.sage.es/api/sales/Products?api-version=1.0&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Code%20eq%20%27'.$request->get('code_sage').'%27';
         $response = json_decode($requ_curls->getSageCurl($url)['response'], true);
-        $data_product = json_decode($requ_curls->getSageCurl($url)['response'], true);
-        if(count($data_product['value']) > 0){
-            $array_products = $data['value'];
+        if(count($response['value']) > 0){
+            $array_products = $response['value'];
             foreach($array_products as $product){
-                return $product_family['Id'];
+                return $product['Id'];
             }
+        }
+    }
+
+    //Generar albarán en Sage
+    function generateDeliveryNoteSage(Request $request){
+        //Creamos un objeto para el controller curl
+        $requ_curls = new CurlController();
+        $company = config('constants.id_company_sage');
+
+        $url = 'https://sage200.sage.es/api/sales/SalesDeliveryNotes?api-version=1.0';
+
+        //Creamos el objeto que vamos a pasar a llamada
+        $delivery_note['CompanyId'] = $company;
+        $delivery_note['CustomerId'] = $request->get('customer_id');
+        $delivery_note['Number'] = Date('y').$request->get('id_bill_order').$request->get('id_order');
+        $delivery_note['Period'] = Date('Y');
+        $delivery_note['Serie'] = 'A';
+        $delivery_note['TotalNet'] = floatval($request->get('amount'));
+        //$delivery_note['TotalTaxes'] = floatval($request->get('amount')) * 0.21;
+        //$delivery_note['Total'] = floatval($request->get('amount')) * 1.21;
+
+        //Creamos el objeto de Lines
+        $array_sage_products = $request->get('array_sage_products');
+        $array_lines = array();
+        foreach($array_sage_products as $sage_product){
+            $line['ProductId'] = $sage_product['id'];
+            $line['Price'] = floatval($sage_product['pvp']);
+            $line['Total'] = floatval($sage_product['pvp']);
+            $line['TotalNet'] = floatval($sage_product['pvp']);
+            $line['Quantity'] = 1;
+            $line['QuantityMeasureUnit'] = 1;
+            $array_lines[] = $line;
+        }
+
+        $delivery_note['Lines'] = $array_lines;
+
+        $url = 'https://sage200.sage.es/api/sales/SalesDeliveryNotes?api-version=1.0';
+        $response = json_decode($requ_curls->postSageCurl($url, $delivery_note)['response'], true);
+        if($response == null){
+
         }
     }
 }

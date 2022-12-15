@@ -309,23 +309,6 @@ class ProposalsController extends Controller
         $proposal->pdf_file = 'pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf';
         $proposal->save();
 
-        //Generamos el albarán en Sage
-        //Creamos un objeto para el controller ExternalRequest
-        $requ_external_request = new ExternalRequestController();
-        //Recorremos las facturas creadas
-        foreach($array_bills_aux as $bill){
-            //Consultamos los artículos de la factura
-            $services_bills = ServiceBill::where('id_bill', $bill->id)->get();
-            foreach($services_bills as $service_bill){
-                $service = Service::find($service_bill->id_service);
-                $article = Article::find($service->id_article);
-                //Consultamos el id_sage del artículo
-                $request = new \Illuminate\Http\Request();
-                $request->replace(['name_article' => $article->name]);
-                $id_sage = $requ_external_request->getProductSage($request);
-            }
-        }
-
         $response['pdf_file'] = $proposal->pdf_file;
         $response['code'] = 1000;
         return response()->json($response);
@@ -818,6 +801,11 @@ class ProposalsController extends Controller
         //Consultamos la empresa a la que pertenece la propuesta
         $company = Company::select('companies.*')->leftJoin('contacts', 'contacts.id_company', 'companies.id')->where('contacts.id', $proposal->id_contact)->first();
 
+        if(empty($company->nif) || empty($company->address) || empty($company->id_hubspot) || $company->id_sage == null){
+            $response['code'] = 1004;
+            return response()->json($response);
+        }
+
         //Creamos las orden
         $order = Order::create([
             'id_company' => $company->id,
@@ -826,6 +814,9 @@ class ProposalsController extends Controller
 
         //Consultamos las facturas de la propuesta
         $array_bills = ProposalBill::select('bills.*')->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill')->where('proposals_bills.id_proposal', $proposal->id)->get();
+
+        //Creamos un array de factuas de ordenes para más tarde crearlas en sage
+        $array_bills_orders = array();
 
         //Recorremos las facturas y creamos las facturas de la orden
         foreach($array_bills as $bill){
@@ -849,6 +840,54 @@ class ProposalsController extends Controller
                 'id_sage' => '',
                 'id_order' => $order->id
             ]);
+
+            $array_bills_orders[] = $bill_order;
+        }
+
+        //Creamos un objeto para el controller ExternalRequest
+        $requ_external_request = new ExternalRequestController();
+
+        //Creamos el objeto request
+        $request = new \Illuminate\Http\Request();
+
+        //Recorremos las facturas creadas
+        foreach($array_bills_orders as $bill_order){
+            //Consultamos la orden
+            $order = Order::find($bill_order->id_order);
+            
+            //Consultamos la propuesta de la orden
+            $proposal = Proposal::find($order->id_proposal);
+
+            //Creamos un array para guardar los id_sage de cada artículo-producto
+            $array_sage_products = array();
+
+            //Consultamos las facturas internas de la propuesta para consultar los artículos-productos
+            $array_proposals_bills = ProposalBill::where('id_proposal', $proposal->id)->get();
+            foreach($array_proposals_bills as $proposal_bill){
+                //Consultamos la fecha de la factura
+                $bill_bd = Bill::find($proposal_bill->id_bill);
+
+                //Comparamos fechas para saber si estamos haciendo las consultas en la factura correcta
+                if($bill_bd->date == $bill_order->date){
+                    //Consultamos los artículos de la factura
+                    $services_bills = ServiceBill::where('id_bill', $proposal_bill->id_bill)->get();
+                    foreach($services_bills as $service_bill){
+                        $service = Service::find($service_bill->id_service);
+                        $article = Article::find($service->id_article);
+
+                        //Consultamos el id_sage del artículo
+                        $request->replace(['code_sage' => $article->id_sage]);
+                        $id_sage = $requ_external_request->getProductSage($request);
+                        $product['id'] = $id_sage;
+                        $product['pvp'] = $service->pvp;
+                        $array_sage_products[] = $product;
+                    }
+                }
+            }
+
+            //Generamos el albarán en Sage
+            $request->replace(['array_sage_products' => $array_sage_products, 'customer_id' => $company->id_sage, 'id_bill_order' => $bill_order->id, 'id_order' => $bill_order->id_order, 'amount' => $bill_order->amount]);
+            $response = $requ_external_request->generateDeliveryNoteSage($request);
         }
 
         $response['code'] = 1000;

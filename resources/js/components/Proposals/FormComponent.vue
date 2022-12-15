@@ -1273,6 +1273,9 @@ export default {
                         this.proposals.status_view = 1;
                         this.clearData();
                         swal("", "Orden creada correctamente", "success");
+                    }else if(this.errors.code == 1004){
+                        swal("", "La empresa asociada a esta propuesta no tiene todos los datos completos", "warning");
+
                     }else{
                         swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
                     }
