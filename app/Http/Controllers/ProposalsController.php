@@ -845,7 +845,7 @@ class ProposalsController extends Controller
         }
 
         //Creamos un objeto para el controller ExternalRequest
-        $requ_external_request = new ExternalRequestController();
+        /*$requ_external_request = new ExternalRequestController();
 
         //Creamos el objeto request
         $request = new \Illuminate\Http\Request();
@@ -886,9 +886,14 @@ class ProposalsController extends Controller
             }
 
             //Generamos el albarán en Sage
-            $request->replace(['array_sage_products' => $array_sage_products, 'customer_id' => $company->id_sage, 'id_bill_order' => $bill_order->id, 'id_order' => $bill_order->id_order, 'amount' => $bill_order->amount]);
+            $number = Date('y').$bill_order->id.$bill_order->id_order;
+            $request->replace(['array_sage_products' => $array_sage_products, 'customer_id' => $company->id_sage, 'id_bill_order' => $bill_order->id, 'id_order' => $bill_order->id_order, 'amount' => $bill_order->amount, 'number' => $number]);
             $response = $requ_external_request->generateDeliveryNoteSage($request);
-        }
+            if($response == null){
+                //Consultamos el albarán creado
+
+            }
+        }*/
 
         $response['code'] = 1000;
         return response()->json($response);
