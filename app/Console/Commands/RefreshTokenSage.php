@@ -48,8 +48,8 @@ class RefreshTokenSage extends Command
         $params['client_id'] = config('constants.client_id_sage');
         $params['client_secret'] = config('constants.client_secret_sage');
         $params['refresh_token'] = config('constants.refresh_token');
-        $data_token_sage = json_decode($requ_curls->postCurl($url, $params, 3)['response'], true);
-        error_log(print_r($data_token_sage, true));
+        $data_token_sage = json_decode($requ_curls->postCurl($url, 3, $params)['response'], true);
+
         if(!isset($data_token_sage['error'])){
             $array = Config::get('constants');
             $array['bearer_sage'] = $data_token_sage['access_token'];
