@@ -54,12 +54,12 @@
             </div>
 
             <div class="mx-2 col-2 mt-5">
-                <span class="text-dark font-weight-bold mb-2">Sector</span>
-                <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" v-model="select_sector" data-style="select-lightgreen" @change="getConsultantSelect">
+                <span class="text-dark font-weight-bold mb-2">Departamento</span>
+                <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_department'" :id="'select_department'" v-model="select_department" data-style="select-lightgreen" @change="getConsultantSelect">
                     <option value="" selected>
-                        Filtro por sector
+                        Filtro por departamento
                     </option>
-                    <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
+                    <option :value="department.id" v-for="department in config.articles.filter.array_departments" :key="department.id" v-text="department.name" ></option>
                 </select>
             </div>
 
@@ -100,7 +100,7 @@
                 date_from: '',
                 date_to: '',
                 select_from_consultant: '1',
-                select_sector: '',
+                select_department: '',
                 select_status_order: '1',
                 datatable: null
             };
@@ -113,13 +113,13 @@
             var params = {
                 type: 1
             }
-            this.getSectors(params);
+            this.getDepartments(params);
             this.getNow();
             this.listProposals(0);
         },
         
         methods: {
-            ...mapActions(["getUsers", "getSectors", "getInfoProposal"]),
+            ...mapActions(["getUsers", "getDepartments", "getInfoProposal"]),
             ...mapMutations(['changeViewStatusProposals']),
             //Consultar fecha actual
             getNow() {
@@ -148,7 +148,7 @@
                     
                     me.datatable.setDataSourceParam('num_proposal', me.num_proposal);
                     me.datatable.setDataSourceParam('select_consultant', me.select_consultant);
-                    me.datatable.setDataSourceParam('select_sector', me.select_sector);
+                    me.datatable.setDataSourceParam('select_department', me.select_department);
                     me.datatable.setDataSourceParam('status_order', me.select_status_order);
                     me.datatable.setDataSourceParam('date_from', me.$utils.customFormDate(date_ms_from));
                     me.datatable.setDataSourceParam('date_to', me.$utils.customFormDate(date_ms_to));
@@ -305,14 +305,14 @@
                             },
                         },
                         {
-                            field: "#sector",
-                            title: "Sector",
+                            field: "#department",
+                            title: "Departamento",
                             sortable: !1,
                             textAlign: "center",
                             template: function (row, data, index) {
                                 return (
                                     '<span class="text-gray font-weight-bold">' +
-                                    row.sector_name.toUpperCase() +
+                                    row.department_name.toUpperCase() +
                                     "</span>"
                                 );
                             },

@@ -286,6 +286,8 @@ export default {
                             swal("", "Rellena todos los datos", "warning");
                         }else if(this.errors.code == 1003){
                             swal("", "El producto no existe", "warning");
+                        }else if(this.errors.code == 1004){
+                            swal("", "Ya hay un artículo con este nombre y estas categorías", "warning");
                         }else{
                             swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
                         }

@@ -27,31 +27,49 @@
                 :placeholder="'Buscar artículo'"
                 :model2="'search_articles'"
             />
-            <select class="form-control bg-gray text-dark select-custom select-filter col-2 mx-2" :name="'select_articles_filter_sectors'" :id="'select_articles_filter_sectors'" v-model="select_articles_filter_sectors" data-style="select-lightgreen" @change="getBrandsSelect">
+            <select class="form-control bg-gray text-dark select-custom select-filter col-2 mx-2" :name="'select_articles_filter_departments'" :id="'select_articles_filter_departments'" v-model="select_articles_filter_departments" data-style="select-lightgreen" @change="getSectionsSelect">
                 <option value="" selected>
-                    Filtro por sector
+                    Filtro por departamento
                 </option>
-                <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
+                <option :value="department.id" v-for="department in config.articles.filter.array_departments" :key="department.id" v-text="department.nomenclature + '-' + department.name" ></option>
             </select>
-            <select class="form-control bg-gray text-dark select-custom select-filter col-2 mx-2" :name="'select_articles_filter_brands'" :id="'select_articles_filter_brands'" v-model="select_articles_filter_brands" data-style="select-lightgreen" @change="getProductsSelect">
+            <select class="form-control bg-gray text-dark select-custom select-filter col-2 mx-2" :name="'select_articles_filter_sections'" :id="'select_articles_filter_sections'" v-model="select_articles_filter_sections" data-style="select-lightgreen" @change="getChannelsSelect">
                 <option value="" selected>
-                    Filtro por marca
+                    Filtro por sección
                 </option>
-                <option :value="brand.id" v-for="brand in config.articles.filter.array_brands"  :key="brand.id" v-text="brand.name" ></option>
+                <option :value="section.id" v-for="section in config.articles.filter.array_sections" :key="section.id" v-text="section.nomenclature + '-' + section.name" ></option>
             </select>
-            <select class="form-control bg-gray text-dark select-custom select-filter col-2 mx-2" :name="'select_articles_filter_products'" :id="'select_articles_filter_products'" v-model="select_articles_filter_products" data-style="select-lightgreen" @change="reloadList">
+            <select class="form-control bg-gray text-dark select-custom select-filter col-2 mx-2" :name="'select_articles_filter_channels'" :id="'select_articles_filter_channels'" v-model="select_articles_filter_channels" data-style="select-lightgreen" @change="getProjectsSelect">
                 <option value="" selected>
-                    Filtro por producto
+                    Filtro por canal
                 </option>
-                <option :value="product.id" v-for="product in config.articles.filter.array_products"  :key="product.id" v-text="product.name" ></option>
+                <option :value="channel.id" v-for="channel in config.articles.filter.array_channels" :key="channel.id" v-text="channel.nomenclature + '-' + channel.name" ></option>
             </select>
-            <button v-if="this.status == 0" class="purple-border btn mr-4 font-weight-bold d-flex py-2 ml-2" @click="this.changeStatus(1)">
+            <select class="form-control bg-gray text-dark select-custom select-filter col-2 mx-2" :name="'select_articles_filter_projects'" :id="'select_articles_filter_projects'" v-model="select_articles_filter_projects" data-style="select-lightgreen" @change="getChaptersSelect">
+                <option value="" selected>
+                    Filtro por proyecto
+                </option>
+                <option :value="project.id" v-for="project in config.articles.filter.array_projects" :key="project.id" v-text="project.nomenclature + '-' + project.name" ></option>
+            </select>
+            <select class="form-control bg-gray text-dark select-custom select-filter col-2 mr-2 mt-4" :name="'select_articles_filter_chapters'" :id="'select_articles_filter_chapters'" v-model="select_articles_filter_chapters" data-style="select-lightgreen" @change="getBatchsSelect">
+                <option value="" selected>
+                    Filtro por capítulo
+                </option>
+                <option :value="chapter.id" v-for="chapter in config.articles.filter.array_chapters" :key="chapter.id" v-text="chapter.nomenclature + '-' + chapter.name" ></option>
+            </select>
+            <select class="form-control bg-gray text-dark select-custom select-filter col-2 mx-2 mt-4" :name="'select_articles_filter_batchs'" :id="'select_articles_filter_batchs'" v-model="select_articles_filter_batchs" data-style="select-lightgreen" @change="reloadList">
+                <option value="" selected>
+                    Filtro por lote
+                </option>
+                <option :value="batch.id" v-for="batch in config.articles.filter.array_batchs" :key="batch.id" v-text="batch.nomenclature + '-' + batch.name" ></option>
+            </select>
+            <button v-if="this.status == 0" class="purple-border btn mr-4 font-weight-bold d-flex py-2 ml-2 mt-4" @click="this.changeStatus(1)">
                 <div class="purple-circle mr-auto my-auto">
                     <div class="white-circle-purple"></div>
                 </div>
                 <span class="px-5 my-auto">Mostrar todo</span>
             </button>
-            <button v-else class="bg-purple btn mr-4 font-weight-bold color-white d-flex py-2 ml-2" @click="this.changeStatus(0)">
+            <button v-else class="bg-purple btn mr-4 font-weight-bold color-white d-flex py-2 ml-2 mt-4" @click="this.changeStatus(0)">
                 <div class="white-circle mr-auto my-auto">
                     <div class="purple-circle-white"></div>
                 </div>
@@ -59,11 +77,7 @@
             </button>
         </div>
         <div class="col-12  mt-7">
-            <div
-                class="datatable datatable-bordered datatable-head-custom"
-                id="list_articles"
-                style="width: 100%"
-            ></div>
+            <div class="datatable datatable-bordered datatable-head-custom" id="list_articles" style="width: 100%"></div>
         </div>
     </div>
 </template>
@@ -83,16 +97,19 @@
         data() {
             return {
                 publicPath: window.location.origin,
-                select_articles_filter_sectors: '',
-                select_articles_filter_brands: '',
-                select_articles_filter_products: '',
+                select_articles_filter_departments: '',
+                select_articles_filter_sections: '',
+                select_articles_filter_channels: '',
+                select_articles_filter_projects: '',
+                select_articles_filter_chapters: '',
+                select_articles_filter_batchs: '',
                 status: 0,
                 search_articles: '',
                 datatable: null
             };
         },
         methods: {
-            ...mapActions(["getSectors", "getBrands", "getProducts", "getInfoArticle"]),
+            ...mapActions(["getDepartments", "getSections", "getChannels", "getProjects", "getChapters", "getBatchs", "getInfoArticle"]),
             ...mapMutations(["controlFormArticles", "changeShowViewArticles"]),
             openFormModal(){
                 this.controlFormArticles(0)
@@ -104,9 +121,12 @@
                 $("#list_articles").KTDatatable("init");
                 if(type == 1 || type == undefined){
                     if(me.datatable != null){
-                        me.datatable.setDataSourceParam('select_articles_filter_sectors', me.select_articles_filter_sectors);
-                        me.datatable.setDataSourceParam('select_articles_filter_brands', me.select_articles_filter_brands);
-                        me.datatable.setDataSourceParam('select_articles_filter_products', me.select_articles_filter_products);
+                        me.datatable.setDataSourceParam('select_articles_filter_departments', me.select_articles_filter_departments);
+                        me.datatable.setDataSourceParam('select_articles_filter_sections', me.select_articles_filter_sections);
+                        me.datatable.setDataSourceParam('select_articles_filter_channels', me.select_articles_filter_channels);
+                        me.datatable.setDataSourceParam('select_articles_filter_projects', me.select_articles_filter_projects);
+                        me.datatable.setDataSourceParam('select_articles_filter_chapters', me.select_articles_filter_chapters);
+                        me.datatable.setDataSourceParam('select_articles_filter_batchs', me.select_articles_filter_batchs);
                     }
                 }
                 this.datatable = $("#list_articles").KTDatatable({
@@ -176,7 +196,7 @@
                             template: function (row, data, index) {
                                 return (
                                         '<span class="text-dark">' +
-                                        row.id +
+                                        row.id_sage +
                                         "</span>"
                                     );
                             },
@@ -293,36 +313,78 @@
                 $('#list_articles').KTDatatable('load');
             },
             reloadList(){
-                this.datatable.setDataSourceParam('select_articles_filter_sectors', this.select_articles_filter_sectors);
-                this.datatable.setDataSourceParam('select_articles_filter_brands', this.select_articles_filter_brands);
-                this.datatable.setDataSourceParam('select_articles_filter_products', this.select_articles_filter_products);
+                this.datatable.setDataSourceParam('select_articles_filter_departments', this.select_articles_filter_departments);
+                this.datatable.setDataSourceParam('select_articles_filter_sections', this.select_articles_filter_sections);
+                this.datatable.setDataSourceParam('select_articles_filter_channels', this.select_articles_filter_channels);
+                this.datatable.setDataSourceParam('select_articles_filter_projects', this.select_articles_filter_projects);
+                this.datatable.setDataSourceParam('select_articles_filter_chapters', this.select_articles_filter_chapters);
+                this.datatable.setDataSourceParam('select_articles_filter_batchs', this.select_articles_filter_batchs);
                 this.datatable.setDataSourceParam('status', this.status);
                 $('#list_articles').KTDatatable('load');
             },
-            getBrandsSelect(){
-                this.select_articles_filter_brands = '';
-                this.select_articles_filter_products = '';
+            getSectionsSelect(){
+                this.select_articles_filter_sections = '';
+                this.select_articles_filter_channels = '';
+                this.select_articles_filter_projects = '';
+                this.select_articles_filter_chapters = '';
+                this.select_articles_filter_batchs = '';
                 var params = {
                     type: 1,
-                    select_articles_sectors: this.select_articles_filter_sectors
+                    select_articles_department: this.select_articles_filter_departments
                 }
-                this.getBrands(params);
+                this.getSections(params);
                 this.reloadList();
             },
-            getProductsSelect(){
-                this.select_articles_filter_products = '';
+            getChannelsSelect(){
+                this.select_articles_filter_channels = '';
+                this.select_articles_filter_projects = '';
+                this.select_articles_filter_chapters = '';
+                this.select_articles_filter_batchs = '';
                 var params = {
                     type: 1,
-                    select_articles_brands: this.select_articles_filter_brands
+                    select_articles_section: this.select_articles_filter_sections
                 }
-                this.getProducts(params);
+                this.getChannels(params);
+                this.reloadList();
+            },
+            getProjectsSelect(){
+                this.select_articles_filter_projects = '';
+                this.select_articles_filter_chapters = '';
+                this.select_articles_filter_batchs = '';
+                var params = {
+                    type: 1,
+                    select_articles_channel: this.select_articles_filter_channels
+                }
+                this.getProjects(params);
+                this.reloadList();
+            },
+            getChaptersSelect(){
+                this.select_articles_filter_chapters = '';
+                this.select_articles_filter_batchs = '';
+                var params = {
+                    type: 1,
+                    select_articles_project: this.select_articles_filter_projects
+                }
+                this.getChapters(params);
+                this.reloadList();
+            },
+            getBatchsSelect(){
+                this.select_articles_filter_batchs = '';
+                var params = {
+                    type: 1,
+                    select_articles_chapter: this.select_articles_filter_chapters
+                }
+                this.getBatchs(params);
                 this.reloadList();
             },
             changeStatus(status){
                 this.status = status;
-                this.datatable.setDataSourceParam('select_articles_filter_sectors', this.select_articles_filter_sectors);
-                this.datatable.setDataSourceParam('select_articles_filter_brands', this.select_articles_filter_brands);
-                this.datatable.setDataSourceParam('select_articles_filter_products', this.select_articles_filter_products);
+                this.datatable.setDataSourceParam('select_articles_filter_departments', this.select_articles_filter_departments);
+                this.datatable.setDataSourceParam('select_articles_filter_sections', this.select_articles_filter_sections);
+                this.datatable.setDataSourceParam('select_articles_filter_channels', this.select_articles_filter_channels);
+                this.datatable.setDataSourceParam('select_articles_filter_projects', this.select_articles_filter_projects);
+                this.datatable.setDataSourceParam('select_articles_filter_chapters', this.select_articles_filter_chapters);
+                this.datatable.setDataSourceParam('select_articles_filter_batchs', this.select_articles_filter_batchs);
                 this.datatable.setDataSourceParam('status', this.status);
                 $('#list_articles').KTDatatable('load');
             },
@@ -349,9 +411,8 @@
         mounted() {
             var params = {
                 type: 1,
-                select_articles_areas: 0
             }
-            this.getSectors(params);
+            this.getDepartments(params);
             this.listArticles(1);
         },
         watch: {

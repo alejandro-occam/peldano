@@ -120,4 +120,91 @@ class ExternalRequestController extends Controller
             
         }
     }
+
+    //Consultar producto de Sage
+    function getProductSage(Request $request){
+        //Creamos un objeto para el controller curl
+        $requ_curls = new CurlController();
+        $company = config('constants.id_company_sage');
+
+        $url = 'https://sage200.sage.es/api/sales/Products?api-version=1.0&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Code%20eq%20%27'.$request->get('code_sage').'%27';
+        $response = json_decode($requ_curls->getSageCurl($url)['response'], true);
+        if(count($response['value']) > 0){
+            $array_products = $response['value'];
+            foreach($array_products as $product){
+                return $product['Id'];
+            }
+        }
+    }
+
+    //Generar albarán en Sage
+    function generateDeliveryNoteSage(Request $request){
+        //Creamos un objeto para el controller curl
+        $requ_curls = new CurlController();
+        $company = config('constants.id_company_sage');
+
+        $url = 'https://sage200.sage.es/api/sales/SalesDeliveryNotes?api-version=1.0';
+
+        //Creamos el objeto que vamos a pasar a llamada
+        $delivery_note['CompanyId'] = $company;
+        $delivery_note['CustomerId'] = $request->get('customer_id');
+        $delivery_note['Number'] = $request->get('number');//Date('y').$request->get('id_bill_order').$request->get('id_order');
+        $delivery_note['Period'] = Date('Y');
+        $delivery_note['Serie'] = 'A';
+        $delivery_note['TotalNet'] = floatval($request->get('amount'));
+        //$delivery_note['TotalTaxes'] = floatval($request->get('amount')) * 0.21;
+        //$delivery_note['Total'] = floatval($request->get('amount')) * 1.21;
+
+        //Creamos el objeto de Lines
+        $array_sage_products = $request->get('array_sage_products');
+        $array_lines = array();
+        foreach($array_sage_products as $sage_product){
+            $line['ProductId'] = $sage_product['id'];
+            $line['Price'] = floatval($sage_product['pvp']);
+            $line['Total'] = floatval($sage_product['pvp']);
+            $line['TotalNet'] = floatval($sage_product['pvp']);
+            $line['Quantity'] = 1;
+            $line['QuantityMeasureUnit'] = 1;
+            $array_lines[] = $line;
+        }
+
+        $delivery_note['Lines'] = $array_lines;
+
+        //error_log(print_r($delivery_note, true));
+
+        $url = 'https://sage200.sage.es/api/sales/SalesDeliveryNotes?api-version=1.0';
+        $response = json_decode($requ_curls->postSageCurl($url, $delivery_note)['response'], true);
+        if($response == null){
+            //Paramos 4 segundos para que aparezca en el listado
+            sleep(4);
+            //Consultamos el albarán creado
+            $response = json_decode($requ_curls->getSageCurl($url.'&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Number%20eq%20'.$request->get('number').'&$expand=*')['response'], true);
+            error_log($url.'&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Number%20eq%20'.$request->get('number'));
+            $delivery_note_obj = $response['value'][0];
+            //Comenzamos a crear la orden
+            $lines = $delivery_note_obj['Lines'];
+            $array_lines_to_order = array();
+            foreach($lines as $line){
+                $line_obj['Id'] = $line['Id'];
+                $line_obj['ProductId'] = $line['ProductId'];
+                $line_obj['Price'] = $line['Price'];
+                $line_obj['Total'] = $line['Total'];
+                $line_obj['TotalNet'] = $line['TotalNet'];
+                $line_obj['Quantity'] = $line['Quantity'];
+                $line_obj['QuantityMeasureUnit'] = $line['QuantityMeasureUnit'];
+                $array_lines_to_order[] = $line_obj;
+            }
+            $order['CompanyId'] = $company;
+            $order['CustomerId'] = $request->get('customer_id');
+            $order['Number'] = $request->get('number');
+            $order['Period'] = Date('Y');
+            $order['Serie'] = 'A';
+            $order['TaxNumberType'] = '1';
+            $order['InvoiceType'] = '1';
+            $order['TotalNet'] = floatval($request->get('amount'));
+            $order['Lines'] = $array_lines_to_order;
+            $url = 'https://sage200.sage.es/api/sales/SalesInvoices?api-version=1.0';
+            $response = json_decode($requ_curls->postSageCurl($url, $order)['response'], true);
+        }
+    }
 }

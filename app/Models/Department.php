@@ -5,21 +5,16 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Article extends Model
+class Department extends Model
 {
     use HasFactory;
 
-    public $table = 'articles';
+    public $table = 'departments';
 
     public $fillable = [
         'id',
         'name',
-        'english_name',
-        'pvp',
-        'id_batch',
-        'is_exempt',
-        'id_sage',
-        'id_family_sage',
+        'nomenclature'
     ];
 
     /**
@@ -30,12 +25,7 @@ class Article extends Model
     protected $casts = [
         'id' => 'integer',
         'name' => 'string',
-        'english_name' => 'string',
-        'pvp' => 'double',
-        'id_batch' => 'integer',
-        'is_exempt' => 'boolean',
-        'id_sage' => 'string',
-        'id_family_sage' => 'string'
+        'nomenclature' => 'string'
     ];
 
     /**
@@ -46,11 +36,6 @@ class Article extends Model
     public static $rules = [
         'id',
         'name',
-        'english_name',
-        'pvp',
-        'id_batch',
-        'is_exempt',
-        'id_sage',
-        'id_family_sage'
+        'nomenclature'
     ];
 }

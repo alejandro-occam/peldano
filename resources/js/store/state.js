@@ -17,7 +17,7 @@ const state = {
             is_update: 0,
             html_calendar: null
         },
-        articles: {
+        /*articles: {
             show_view_state: 1,
             filter: {
                 array_sectors: null,
@@ -25,11 +25,32 @@ const state = {
                 array_products: null,
             },
             form: {
-                array_areas: null,
-                array_sectors: null,
-                array_brands: null,
-                array_products: null,
-                array_articles: null
+                array_departments: null,
+                array_sections: null, 
+                array_channels: null,
+                array_projects: null,
+                array_batchs: null
+            },
+            is_update: 0,
+            article_obj: {
+                name: null
+            },
+            search_articles: '',
+        },*/
+        articles: {
+            show_view_state: 1,
+            filter: {
+                array_departments: null,
+                array_sections: null, 
+                array_channels: null,
+                array_projects: null,
+            },
+            form: {
+                array_departments: null,
+                array_sections: null, 
+                array_channels: null,
+                array_projects: null,
+                array_batchs: null
             },
             is_update: 0,
             article_obj: {
@@ -43,9 +64,9 @@ const state = {
         array_companies: null,
         status_view: 1,
         proposal_obj: {
-            products:[
+            chapters:[
                 {
-                    product_obj: null,
+                    chapter_obj: null,
                     articles: [],
                     articles_aux: [],
                     total_global: 0,
@@ -75,9 +96,9 @@ const state = {
         array_companies: null,
         status_view: 1,
         proposal_obj: {
-            products:[
+            chapters:[
                 {
-                    product_obj: null,
+                    chapter_obj: null,
                     articles: [],
                     articles_aux: [],
                     total_global: 0,

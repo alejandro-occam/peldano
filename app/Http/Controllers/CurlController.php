@@ -32,7 +32,7 @@ class CurlController extends Controller
        
     }
 
-    public function postCurl($url, $arr = null, $type){
+    public function postCurl($url, $type, $arr = null){
         $bearer = '';
         if($type == 1){
             $bearer = config('constants.bearer_hubspot');

@@ -121,6 +121,24 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::post('/list_articles_to_export', [App\Http\Controllers\ConfigurationController::class, 'listArticlesToExport'])->name('list_articles_to_export');
     //Descargar CSV de artículos
     Route::get('/download_list_articles_csv/{filter?}', [App\Http\Controllers\ConfigurationController::class, 'downloadListArticlesCsv'])->name('download_list_articles_csv');
+
+    //LOTES
+    //Listar departamentos
+    Route::get('/get_departments', [App\Http\Controllers\ConfigurationController::class, 'getDepartments'])->name('get_departments');
+    //Listar secciones
+    Route::get('/get_sections/{id?}', [App\Http\Controllers\ConfigurationController::class, 'getSections'])->name('get_sections');
+    //Listar canales
+    Route::get('/get_channels/{id?}', [App\Http\Controllers\ConfigurationController::class, 'getChannels'])->name('get_channels');
+    //Listar proyectos
+    Route::get('/get_projects/{id?}', [App\Http\Controllers\ConfigurationController::class, 'getProjects'])->name('get_projects');
+    //Listar capítulos
+    Route::get('/get_chapters/{id?}', [App\Http\Controllers\ConfigurationController::class, 'getChapters'])->name('get_chapters');
+    //Listar lotes
+    Route::get('/get_batchs/{id?}', [App\Http\Controllers\ConfigurationController::class, 'getBatchs'])->name('get_batchs');
+    //Añadir un lote
+    Route::post('/add_batch', [App\Http\Controllers\ConfigurationController::class, 'addBatch'])->name('add_batch');
+    //Listar lotes
+    Route::post('/list_batchs', [App\Http\Controllers\ConfigurationController::class, 'listBatchs'])->name('list_batchs');
     //END CONFIGURATION
 
     //Ruta para los pdfs

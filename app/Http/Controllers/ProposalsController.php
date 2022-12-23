@@ -13,7 +13,8 @@ use App\Models\ServiceBill;
 use App\Models\Proposal;
 use App\Models\ProposalBill;
 use App\Models\Article;
-use App\Models\Sector;
+use App\Models\Department;
+use App\Models\Chapter;
 use DB;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Storage;
@@ -21,6 +22,7 @@ use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use App\Models\Order;
 use App\Models\BillOrder;
+use App\Models\Batch;
 use App\Http\Controllers\CurlController;
 
 class ProposalsController extends Controller
@@ -45,15 +47,15 @@ class ProposalsController extends Controller
             }
         }
 
-        $array_proposals = Proposal::select('proposals.*', 'sectors.name as sector_name')
-                        ->leftJoin('sectors', 'sectors.id', 'proposals.id_sector')
+        $array_proposals = Proposal::select('proposals.*', 'departments.name as department_name')
+                        ->leftJoin('departments', 'departments.id', 'proposals.id_department')
                         ->leftJoin('proposals_bills', 'proposals.id', 'proposals_bills.id_proposal')
                         ->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill');
 
         if($request->get('type') == 1){
             if($request->get('status_order') != '' && $request->get('status_order') != 3){
-                $array_proposals = Proposal::select('proposals.*', 'sectors.name as sector_name')
-                                            ->leftJoin('sectors', 'sectors.id', 'proposals.id_sector')
+                $array_proposals = Proposal::select('proposals.*', 'departments.name as department_name')
+                                            ->leftJoin('departments', 'departments.id', 'proposals.id_department')
                                             ->leftJoin('proposals_bills', 'proposals.id', 'proposals_bills.id_proposal')
                                             ->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill')
                                             ->leftJoin('orders', 'proposals.id', 'orders.id_proposal');
@@ -64,7 +66,7 @@ class ProposalsController extends Controller
                
                 if($request->get('status_order') == 2){
                     $array_proposals = $array_proposals->where('orders.id_proposal', '<>', null);
-                }     
+                }
             }
 
             if($request->get('num_proposal') != ''){
@@ -75,17 +77,15 @@ class ProposalsController extends Controller
                 $array_proposals = $array_proposals->where('proposals.id_user', $request->get('select_consultant'));
             }
 
-            if($request->get('select_sector') != ''){
-                $array_proposals = $array_proposals->where('proposals.id_sector', $request->get('select_sector'));
+            if($request->get('select_department') != ''){
+                $array_proposals = $array_proposals->where('proposals.id_department', $request->get('select_department'));
             }
 
-            if($request->get('date_from') != ''){
-                error_log(4);
+            if($request->get('date_from') != '' && $request->get('date_from') != 'Invalid Date-undefined-undefined'){
                 $array_proposals = $array_proposals->where('proposals.date_proyect', '>=', $request->get('date_from'));
             }
 
-            if($request->get('date_to') != ''){
-                error_log(5);
+            if($request->get('date_to') != '' && $request->get('date_to') != 'Invalid Date-undefined-undefined'){
                 $array_proposals = $array_proposals->where('proposals.date_proyect', '<=', $request->get('date_to'));
             }
         }
@@ -202,9 +202,20 @@ class ProposalsController extends Controller
 
             //Creamos la relación entre las facturas y los artículos
             foreach($array_services_aux as $service){
-                //Consultamos el producto del servicio
+                //Consultamos el capitulo del servicio
                 $article = Article::find($service->id_article);
-                if($service->date == $bill->date && $bill_obj->article->id_product == $article->id_product){
+                if(!$article){
+                    $response['code'] = 1002;
+                    return response()->json($response);
+                }
+
+                $batch = Batch::find($article->id_batch);
+                if(!$batch){
+                    $response['code'] = 1003;
+                    return response()->json($response);
+                }
+
+                if($service->date == $bill->date && $bill_obj->article->id_chapter == $batch->id_chapter){
                     ServiceBill::create([
                         'id_service' => $service->id,
                         'id_bill' => $bill->id,
@@ -220,7 +231,7 @@ class ProposalsController extends Controller
         $proposal_submission_settings = json_decode($request->get('proposal_submission_settings'));
         //$id_proposal_custom = sprintf('%08d', ($count_proposal + 1));
         $id_proposal_custom = ($count_proposal + 1);
-        $id_sector = $request->get('id_sector');
+        $id_department = $request->get('id_department');
 
         $proposal = Proposal::create([
             'id_proposal_custom' => $id_proposal_custom,
@@ -241,13 +252,13 @@ class ProposalsController extends Controller
             'show_invoices' => $proposal_submission_settings->show_invoices,
             'show_pvp' => $proposal_submission_settings->show_pvp,
             'sales_possibilities' => $proposal_submission_settings->sales_possibilities,
-            'id_sector' => $id_sector
+            'id_department' => $id_department
         ]);
 
         $fullname = Auth::user()->name.' '.Auth::user()->surnames;
 
-        //Consultamos el nombre del sector
-        $sector = Sector::find($proposal->id_sector);
+        //Consultamos el nombre del departamento
+        $department = Department::find($proposal->id_department);
 
         //Creamos las relacion de la propuesta con la factura
         foreach($array_bills_aux as $bill){
@@ -282,7 +293,7 @@ class ProposalsController extends Controller
         //Preparamos los datos a pasar al pdf
         $data['proposal'] = $proposal;
         $data['fullname'] = $fullname;
-        $data['sector_name'] = $sector->name;
+        $data['department_name'] = $department->name;
         $data['proposal_obj'] = json_decode($request->get('proposal_obj'));
         $data['bill_obj'] = $bill_obj2;
         $data['select_way_to_pay_options'] = $request->get('select_way_to_pay_options');
@@ -320,10 +331,11 @@ class ProposalsController extends Controller
         $proposal = Proposal::select('proposals.*', 'contacts.name as contact_name', 'contacts.surnames as contact_surnames', 'contacts.email as contact_email', 'contacts.phone as contact_phone', 'contacts.id_company')
                                 ->leftJoin('contacts', 'contacts.id', 'proposals.id_contact')
                                 ->where('proposals.id', $id)
-                                ->with('sector')
+                                ->with('department')
                                 ->first();
 
         $proposal['id_proposal_custom_aux'] = sprintf('%08d', $proposal->id_proposal_custom);
+        $proposal['department_obj'] = Department::find($proposal->id_department);
 
         if(!$proposal){
             $response['code'] = 1001;
@@ -350,9 +362,21 @@ class ProposalsController extends Controller
                                     ->where('services_bills.id_bill', $bill->id)
                                     ->with('article')
                                     ->get();
-            
             foreach($array_services_obj as $service){
-                $service['product'] = $service->article->product;
+                //Consultamos el capitulo
+                $batch = Batch::find($service->article->id_batch);
+                if(!$batch){
+                    $response['code'] = 1003;
+                    return response()->json($response);
+                }
+                
+                $chapter = Chapter::find($batch->id_chapter);
+                if(!$chapter){
+                    $response['code'] = 1004;
+                    return response()->json($response);
+                }
+
+                $service['chapter'] = $chapter;
                 $array_services[] = $service;
                 $article = Article::find($service->id_article);
                 $array_articles[] = $article;
@@ -473,8 +497,8 @@ class ProposalsController extends Controller
 
         $fullname = Auth::user()->name.' '.Auth::user()->surnames;
 
-        //Consultamos el nombre del sector
-        $sector = Sector::find($proposal->id_sector);
+        //Consultamos el nombre del departamento
+        $department = Department::find($proposal->id_department);
 
         //Creamos las relacion de la propuesta con la factura
         foreach($array_bills_aux as $bill){
@@ -508,7 +532,7 @@ class ProposalsController extends Controller
         //Preparamos los datos a pasar al pdf
         $data['proposal'] = $proposal;
         $data['fullname'] = $fullname;
-        $data['sector_name'] = $sector->name;
+        $data['department_name'] = $department->name;
         $data['proposal_obj'] = json_decode($request->get('proposal_obj'));
         $data['bill_obj'] = $bill_obj2;
         $data['select_way_to_pay_options'] = $request->get('select_way_to_pay_options');
@@ -562,8 +586,8 @@ class ProposalsController extends Controller
 
     //Listar tabla de propuestas para exportar
     function listProposalsToExport(Request $request){
-        $array_proposals = Proposal::select('proposals.*', 'sectors.name as sector_name')
-                        ->leftJoin('sectors', 'sectors.id', 'proposals.id_sector')
+        $array_proposals = Proposal::select('proposals.*', 'departments.name as department_name')
+                        ->leftJoin('departments', 'departments.id', 'proposals.id_department')
                         ->leftJoin('proposals_bills', 'proposals.id', 'proposals_bills.id_proposal')
                         ->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill');
 
@@ -576,8 +600,8 @@ class ProposalsController extends Controller
                 $array_proposals = $array_proposals->where('proposals.id_user', $request->get('select_consultant'));
             }
 
-            if($request->get('select_sector') != ''){
-                $array_proposals = $array_proposals->where('proposals.id_sector', $request->get('select_sector'));
+            if($request->get('select_department') != ''){
+                $array_proposals = $array_proposals->where('proposals.id_department', $request->get('select_department'));
             }
 
             if($request->get('date_from') != ''){
@@ -650,9 +674,9 @@ class ProposalsController extends Controller
                                 <span class="text-gray font-weight-bold">'.$proposal['total_amount'].'</span>
                             </span>
                         </td>
-                        <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#sector_name" aria-label="null">
+                        <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#department_name" aria-label="null">
                             <span class="mx-auto">
-                                <span class="text-gray font-weight-bold">'.strtoupper($proposal->sector_name).'</span>
+                                <span class="text-gray font-weight-bold">'.strtoupper($proposal->department_name).'</span>
                             </span>
                         </td>
                     </tr>';
@@ -680,11 +704,11 @@ class ProposalsController extends Controller
         $sheet->setCellValue('E1', 'Nombre del cliente');
         $sheet->setCellValue('F1', 'Fecha');
         $sheet->setCellValue('G1', 'Total');
-        $sheet->setCellValue('H1', 'Sector');
+        $sheet->setCellValue('H1', 'Departamento');
 
         //Consultamos los usuarios
-        $array_proposals = Proposal::select('proposals.*', 'sectors.name as sector_name')
-                        ->leftJoin('sectors', 'sectors.id', 'proposals.id_sector')
+        $array_proposals = Proposal::select('proposals.*', 'departments.name as department_name')
+                        ->leftJoin('departments', 'departments.id', 'proposals.id_department')
                         ->leftJoin('proposals_bills', 'proposals.id', 'proposals_bills.id_proposal')
                         ->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill');
 
@@ -697,8 +721,8 @@ class ProposalsController extends Controller
                 $array_proposals = $array_proposals->where('proposals.id_user', $request->get('select_consultant'));
             }
 
-            if($request->get('select_sector') != ''){
-                $array_proposals = $array_proposals->where('proposals.id_sector', $request->get('select_sector'));
+            if($request->get('select_department') != ''){
+                $array_proposals = $array_proposals->where('proposals.id_department', $request->get('select_department'));
             }
 
             if($request->get('date_from') != ''){
@@ -742,7 +766,7 @@ class ProposalsController extends Controller
             $sheet->setCellValue('E'.($key+2), $proposal['name_contact']);
             $sheet->setCellValue('F'.($key+2), $proposal->date_proyect);
             $sheet->setCellValue('G'.($key+2), $proposal['total_amount']);
-            $sheet->setCellValue('H'.($key+2), $proposal['sector_name']);
+            $sheet->setCellValue('H'.($key+2), $proposal['department_name']);
         }
 
         $writer = new Xlsx($spreadsheet);
@@ -777,6 +801,11 @@ class ProposalsController extends Controller
         //Consultamos la empresa a la que pertenece la propuesta
         $company = Company::select('companies.*')->leftJoin('contacts', 'contacts.id_company', 'companies.id')->where('contacts.id', $proposal->id_contact)->first();
 
+        if(empty($company->nif) || empty($company->address) || empty($company->id_hubspot) || $company->id_sage == null){
+            $response['code'] = 1004;
+            return response()->json($response);
+        }
+
         //Creamos las orden
         $order = Order::create([
             'id_company' => $company->id,
@@ -786,12 +815,14 @@ class ProposalsController extends Controller
         //Consultamos las facturas de la propuesta
         $array_bills = ProposalBill::select('bills.*')->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill')->where('proposals_bills.id_proposal', $proposal->id)->get();
 
+        //Creamos un array de factuas de ordenes para más tarde crearlas en sage
+        $array_bills_orders = array();
+
         //Recorremos las facturas y creamos las facturas de la orden
         foreach($array_bills as $bill){
             //Consultamos los articulos de la facturar para ver si tienen IVA o no
             $iva = 0;
             $array_service_bill = Service::select('services.*')->leftJoin('services_bills', 'services.id', 'services_bills.id_service')->where('services_bills.id_bill', $bill->id)->with('article')->get();
-            error_log($array_service_bill);
             foreach($array_service_bill as $service){
                 $article = $service['article'];
                 if(!$article->is_exempt){
@@ -809,7 +840,60 @@ class ProposalsController extends Controller
                 'id_sage' => '',
                 'id_order' => $order->id
             ]);
+
+            $array_bills_orders[] = $bill_order;
         }
+
+        //Creamos un objeto para el controller ExternalRequest
+        /*$requ_external_request = new ExternalRequestController();
+
+        //Creamos el objeto request
+        $request = new \Illuminate\Http\Request();
+
+        //Recorremos las facturas creadas
+        foreach($array_bills_orders as $bill_order){
+            //Consultamos la orden
+            $order = Order::find($bill_order->id_order);
+            
+            //Consultamos la propuesta de la orden
+            $proposal = Proposal::find($order->id_proposal);
+
+            //Creamos un array para guardar los id_sage de cada artículo-producto
+            $array_sage_products = array();
+
+            //Consultamos las facturas internas de la propuesta para consultar los artículos-productos
+            $array_proposals_bills = ProposalBill::where('id_proposal', $proposal->id)->get();
+            foreach($array_proposals_bills as $proposal_bill){
+                //Consultamos la fecha de la factura
+                $bill_bd = Bill::find($proposal_bill->id_bill);
+
+                //Comparamos fechas para saber si estamos haciendo las consultas en la factura correcta
+                if($bill_bd->date == $bill_order->date){
+                    //Consultamos los artículos de la factura
+                    $services_bills = ServiceBill::where('id_bill', $proposal_bill->id_bill)->get();
+                    foreach($services_bills as $service_bill){
+                        $service = Service::find($service_bill->id_service);
+                        $article = Article::find($service->id_article);
+
+                        //Consultamos el id_sage del artículo
+                        $request->replace(['code_sage' => $article->id_sage]);
+                        $id_sage = $requ_external_request->getProductSage($request);
+                        $product['id'] = $id_sage;
+                        $product['pvp'] = $service->pvp;
+                        $array_sage_products[] = $product;
+                    }
+                }
+            }
+
+            //Generamos el albarán en Sage
+            $number = Date('y').$bill_order->id.$bill_order->id_order;
+            $request->replace(['array_sage_products' => $array_sage_products, 'customer_id' => $company->id_sage, 'id_bill_order' => $bill_order->id, 'id_order' => $bill_order->id_order, 'amount' => $bill_order->amount, 'number' => $number]);
+            $response = $requ_external_request->generateDeliveryNoteSage($request);
+            if($response == null){
+                //Consultamos el albarán creado
+
+            }
+        }*/
 
         $response['code'] = 1000;
         return response()->json($response);

@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="col-12 d-flex flex-wrap justify-content-between">
-            <template v-if="(proposals.status_view == 2 && proposals.proposal_bd_obj != null && !this.create_order && !this.is_updating)">
+            <template v-if="(proposals.status_view == 2 && proposals.proposal_bd_obj != null && !this.create_order && !this.is_updating && !this.is_copy)">
                 <AddButtonComponent
                     :columns="'ml-auto mr-7'"
                     :text="'Volver'"
@@ -19,6 +19,15 @@
                     :width="16"
                     :height="16"
                     @click.native="createOrderView()"
+                />
+                <AddButtonComponent
+                    :columns="'mr-7'"
+                    :text="'Copiar'"
+                    :id="'btn_copy_order'"
+                    :src="'/media/custom-imgs/icono_btn_crear_orden.svg'"
+                    :width="16"
+                    :height="16"
+                    @click.native="copyOrderView()"
                 />
                 <AddButtonComponent
                     :columns="'mr-7'"
@@ -86,13 +95,13 @@
                     Añadir artículo
                 </button>
             </div>
-            <div class="mb-5 mt-15 col-12 row" v-if="proposals.proposal_obj.products[0].product_obj != null && !this.generate_proposal">
+            <div class="mb-5 mt-15 col-12 row" v-if="this.proposals.proposal_obj.chapters[0].chapter_obj != null && !this.generate_proposal">
                 <div>
                     <img class="mr-2" width="150" height="150" src="/media/custom-imgs/icono_ficha_ordenes.svg" />
                 </div>
                 <div>
                     <div class="ml-10">
-                        <div v-if="proposals.status_view == 2 && proposals.proposal_bd_obj != null"><h2 class="text-dark">Propuesta {{ proposals.proposal_bd_obj.id_proposal_custom_aux }}</h2></div>
+                        <div v-if="proposals.status_view == 2 && proposals.proposal_bd_obj != null && !this.is_copy"><h2 class="text-dark">Propuesta {{ proposals.proposal_bd_obj.id_proposal_custom_aux }}</h2></div>
                         <div class="f-20">
                             <span class="text-dark font-weight-bold">Cliente: <span class="color-dark-gray font-weight-bold">{{ name_company }}</span></span>
                         </div>
@@ -117,10 +126,10 @@
                                 </div>
                                 <div class="d-block mx-20">
                                     <div class="f-16 color-dark-gray font-weight-bolder">
-                                        <span>SECTOR</span>
+                                        <span>DEPARTAMENTO</span>
                                     </div>
                                     <div class="f-15 text-dark">
-                                        <span v-if="proposals.proposal_obj.products[0].articles[0].sector_obj != null">{{ proposals.proposal_obj.products[0].articles[0].sector_obj.name }}</span>
+                                        <span v-if="proposals.proposal_obj.chapters[0].articles[0].department_obj != null">{{ proposals.proposal_obj.chapters[0].articles[0].department_obj.name }}</span>
                                     </div>
                                 </div>
                                 <div class="d-block ml-20">
@@ -174,7 +183,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12 mt-15 pl-0" v-if="proposals.proposal_obj.products[0].product_obj != null && !this.finish_proposal && !this.generate_proposal">
+            <div class="col-12 mt-15 pl-0" v-if="proposals.proposal_obj.chapters[0].chapter_obj != null && !this.finish_proposal && !this.generate_proposal">
                 <table width="100%" cellpadding="2" cellspacing="1">
                     <thead class="custom-columns-datatable">
 						<tr>
@@ -187,32 +196,33 @@
 					</thead>
                     <tbody>
                         
-                        <div class="d-contents" v-for="index in Number(proposals.proposal_obj.products.length)">
+                        <div class="d-contents" v-for="index in Number(proposals.proposal_obj.chapters.length)">
                             <tr class="row-product">
                                 <td class="py-2" :colspan="proposals.proposal_obj.array_dates.length + 4">
-                                    <span class="ml-5">{{ proposals.proposal_obj.products[index - 1].product_obj.name }}</span>
+                                    <span class="ml-5">{{ proposals.proposal_obj.chapters[index - 1].chapter_obj.name }}</span>
                                 </td>
                             </tr>
-                            <tr class="row-article" v-for="index_article in Number(proposals.proposal_obj.products[index - 1].articles.length)">
-                                <td valign="middle" class="td-border-right"><span class="ml-5">{{ proposals.proposal_obj.products[index - 1].articles[index_article - 1].article_obj.name }}</span></td>
-                                <td valign="middle" class="td-border-right text-align-center"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products[index - 1].articles[index_article - 1].article_obj.pvp)) }}€</span></td>
-                                <td valign="middle" class="td-border-right text-align-center"><span class="">{{ proposals.proposal_obj.products[index - 1].articles[index_article - 1].amount }}</span></td>
+                            <tr class="row-article" v-for="index_article in Number(proposals.proposal_obj.chapters[index - 1].articles.length)">
+                                <td valign="middle" class="td-border-right"><span class="ml-5">{{ proposals.proposal_obj.chapters[index - 1].articles[index_article - 1].article_obj.name }}</span></td>
+                                <td valign="middle" class="td-border-right text-align-center"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.chapters[index - 1].articles[index_article - 1].article_obj.pvp)) }}€</span></td>
+                                <td valign="middle" class="td-border-right text-align-center"><span class="">{{ proposals.proposal_obj.chapters[index - 1].articles[index_article - 1].amount }}</span></td>
                                 <td v-for="index_arr_date in Number(proposals.proposal_obj.array_dates.length)" valign="middle" class="td-border-right">
-                                    <template v-for="index_dates in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices.length)">
-                                        <template v-if="proposals.proposal_obj.array_dates[index_arr_date - 1].date == proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].date">
+                                    <template v-for="index_dates in Number(proposals.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices.length)">
+                                        <template v-if="proposals.proposal_obj.array_dates[index_arr_date - 1].date == proposals.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].date">
                                             <div class="d-grid px-5">
-                                                <template v-for="index_pvp_date in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date.length)">
-                                                    <input v-if="this.value_form1.length > 0 && !this.create_order" v-model="this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1]" 
-                                                    v-for="index_pvp in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)" 
+                                                <template v-for="index_pvp_date in Number(proposals.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date.length)">
+                                                    <input v-if="this.value_form1.length > 0 && !this.create_order" 
+                                                    v-model="this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1]" 
+                                                    v-for="index_pvp in Number(proposals.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)" 
                                                     @input="changeValuesOffer($event)"
                                                     type="text" class="form-control discount bg-blue-light-white text-align-center not-border my-2" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0"/>
-                                                    <span v-for="index_pvp in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)"  v-if="this.value_form1.length > 0 && this.create_order" class="mx-auto py-3">{{ this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1] }}€</span>
+                                                    <span v-for="index_pvp in Number(proposals.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)"  v-if="this.value_form1.length > 0 && this.create_order" class="mx-auto py-3">{{ this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1] }}€</span>
                                                 </template>
                                             </div>
                                         </template>
                                     </template>
                                 </td>
-                                <td valign="middle" class="td-border-right text-align-center"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products[index - 1].articles[index_article - 1].total)) }}€</span></td>
+                                <td valign="middle" class="td-border-right text-align-center"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.chapters[index - 1].articles[index_article - 1].total)) }}€</span></td>
                             </tr>
                         </div>
                         <tr class="tr-total-datatable">
@@ -226,7 +236,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && !this.finish_proposal && !this.generate_proposal && !this.create_order">
+            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.chapters[0].chapter_obj != null && !this.finish_proposal && !this.generate_proposal && !this.create_order">
                 <span class="text-dark font-weight-bold mb-2">Tipo de propuesta</span>
                 <select class="form-control bg-gray text-dark select-custom select-filter mt-3 col-2" :name="'select_type_proposal'" :id="'select_type_proposal'" v-model="select_type_proposal" data-style="select-lightgreen">
                     <option value="1" selected>Normal</option>
@@ -239,7 +249,7 @@
                     <button type="submit" class="btn bg-azul color-white px-5 font-weight-bolder ml-4" @click.native="openCustomInvoice()">Crear factura personalizada</button>
                 </div>
             </div>
-            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && this.is_show_buttons_bill && !this.finish_proposal && !this.generate_proposal">
+            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.chapters[0].chapter_obj != null && this.is_show_buttons_bill && !this.finish_proposal && !this.generate_proposal">
                 <table width="100%" cellpadding="2" cellspacing="1">
                     <thead class="custom-columns-datatable">
 						<tr>
@@ -256,9 +266,6 @@
                             <tr class="row-product text-align-center">
                                 <td class="td-border-right" rowspan="5">{{ index + 1 }}</td>
                             </tr>
-                            <!--<tr class="tr-total-datatable">
-                                <td class="py-1 pl-5 f-14" colspan="5">BIG DATA Data Email Marketing</td>
-                            </tr>-->
                             <tr class="row-product">
                                 <td class="text-align-center td-border-right" v-if="proposals.num_custom_invoices == 0">{{ proposals.bill_obj.array_bills[index].date }}</td>
                                 <td class="text-align-center td-border-right" v-else>
@@ -357,7 +364,7 @@
                     <button @click.native="this.createOrderBtn()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Crear orden</button>
                 </div>
             </div>
-            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && this.is_show_buttons_bill && this.finish_proposal && !this.generate_proposal">
+            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.chapters[0].chapter_obj != null && this.is_show_buttons_bill && this.finish_proposal && !this.generate_proposal">
                 <h3 class="color-blue">Configuración de la presentación de la propuesta</h3>
                 <div class="col-6 pl-0 mt-6">
                     <div class="d-flex input-group mb-5 mt-10" >
@@ -371,7 +378,7 @@
                     <div class="d-flex input-group my-5" >
                         <span class="my-auto w-25">Idioma</span>
                         <div class="w-62">
-                            <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_language'" :id="'select_language'" v-model="proposal_submission_settings.language" data-style="select-lightgreen" @change="getSectorsSelect">
+                            <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_language'" :id="'select_language'" v-model="proposal_submission_settings.language" data-style="select-lightgreen">
                                 <option value="1" selected>Español</option>
                                 <option value="2">Inglés</option>
                             </select>
@@ -382,7 +389,7 @@
                     <div class="d-flex input-group my-5" >
                         <span class="my-auto w-25">Tipo de proyecto</span>
                         <div class="w-62">
-                            <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_type_proyect'" :id="'select_type_proyect'" v-model="proposal_submission_settings.type_proyect" data-style="select-lightgreen" @change="getSectorsSelect">
+                            <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_type_proyect'" :id="'select_type_proyect'" v-model="proposal_submission_settings.type_proyect" data-style="select-lightgreen">
                                 <option value="1" selected>Propuesta</option>
                                 <option value="2">Propuesta de Plan de comunicación</option>
                                 <option value="3">Propuesta de Plan de comunicación digital</option>
@@ -510,7 +517,7 @@
                     <div class="d-flex input-group my-5" >
                         <span class="my-auto w-25">Posibilidades de venta</span>
                         <div class="w-62">
-                            <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_sales_possibilities'" :id="'select_sales_possibilities'" v-model="proposal_submission_settings.sales_possibilities" data-style="select-lightgreen" @change="getSectorsSelect">
+                            <select class="form-control w-100 bg-gray text-dark-gray select-custom" :name="'select_sales_possibilities'" :id="'select_sales_possibilities'" v-model="proposal_submission_settings.sales_possibilities" data-style="select-lightgreen">
                                 <option value="1">100% - Venta ganada</option>
                                 <option value="2">90% - Aprobado a falta de firma</option>
                                 <option value="3">60% - Pinta bien</option>
@@ -525,7 +532,7 @@
                     <button @click.native="this.generateProposal()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Generar propuesta</button>
                 </div>
             </div>
-            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.products[0].product_obj != null && this.is_show_buttons_bill && this.finish_proposal && this.generate_proposal">
+            <div class="col-12 pl-0 mt-10" v-if="proposals.proposal_obj.chapters[0].chapter_obj != null && this.is_show_buttons_bill && this.finish_proposal && this.generate_proposal">
                 <h3 v-if="this.is_change_get_info == 0" class="color-blue"></h3>
                 <div class="mt-7">
                     <template v-if="this.is_change_get_info == 0">
@@ -573,7 +580,7 @@
                                 <tr class="row-product-offer-proposal">
                                     <td class="py-2"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">FECHA:</div><div v-if="!this.create_order && !this.is_change_get_info" class="ml-5 f-13 text-dark">{{ this.$utils.getNow() }}</div><div v-else class="ml-5 f-13 text-dark">{{ this.proposal_submission_settings.date_proyect }}</div></td>
                                     <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">CONSULTOR:</div><div class="ml-5 f-13 text-dark">{{ proposals.user_obj.name + ' ' + proposals.user_obj.surname }}</div></td>
-                                    <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">SECTOR:</div><div class="ml-5 f-13 text-dark">{{ proposals.proposal_obj.products[0].articles[0].sector_obj.name }}</div></td>
+                                    <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">DEPARTAMENTO:</div><div class="ml-5 f-13 text-dark">{{ proposals.proposal_obj.chapters[0].articles[0].department_obj.name }}</div></td>
                                     <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">ANUNCIANTE:</div><div class="ml-5 f-13 text-dark">{{ this.name_company }}</div></td>
                                     <td class="py-2 td-border-left" v-if="this.proposal_submission_settings.show_discounts == 1"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">DESCUENTO:</div><div class="ml-5 f-13 text-dark">{{ this.proposal_submission_settings.discount }}%</div></td>
                                     <td class="py-2 td-border-left bg-blue-light-white"><div class="f-13 ml-5 font-weight-bolder color-blue">OFERTA:</div><div class="ml-5 f-13 text-dark">{{ this.offer }}€</div></td>
@@ -594,30 +601,30 @@
                                 </tr>
                             </thead>
                             <tbody>
-                                <div class="d-contents" v-for="index in Number(proposals.proposal_obj.products.length)">
+                                <div class="d-contents" v-for="index in Number(proposals.proposal_obj.chapters.length)">
                                     <tr class="row-product">
                                         <td class="py-2" :colspan="proposals.proposal_obj.array_dates.length + 4">
-                                            <span class="ml-5">{{ proposals.proposal_obj.products[index - 1].product_obj.name }}</span>
+                                            <span class="ml-5">{{ proposals.proposal_obj.chapters[index - 1].chapter_obj.name }}</span>
                                         </td>
                                     </tr>
-                                    <tr class="row-article" v-for="index_article in Number(proposals.proposal_obj.products[index - 1].articles.length)">
-                                        <td valign="middle" class="td-border-right py-5"><span class="ml-5">{{ proposals.proposal_obj.products[index - 1].articles[index_article - 1].article_obj.name }}</span></td>
-                                        <td v-if="this.proposal_submission_settings.show_pvp == 1" valign="middle" class="td-border-right text-align-center py-5"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products[index - 1].articles[index_article - 1].article_obj.pvp)) }}€</span></td>
-                                        <td valign="middle" class="td-border-right text-align-center py-5"><span class="">{{ proposals.proposal_obj.products[index - 1].articles[index_article - 1].amount }}</span></td>
+                                    <tr class="row-article" v-for="index_article in Number(proposals.proposal_obj.chapters[index - 1].articles.length)">
+                                        <td valign="middle" class="td-border-right py-5"><span class="ml-5">{{ proposals.proposal_obj.chapters[index - 1].articles[index_article - 1].article_obj.name }}</span></td>
+                                        <td v-if="this.proposal_submission_settings.show_pvp == 1" valign="middle" class="td-border-right text-align-center py-5"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.chapters[index - 1].articles[index_article - 1].article_obj.pvp)) }}€</span></td>
+                                        <td valign="middle" class="td-border-right text-align-center py-5"><span class="">{{ proposals.proposal_obj.chapters[index - 1].articles[index_article - 1].amount }}</span></td>
                                         <td v-for="index_arr_date in Number(proposals.proposal_obj.array_dates.length)" valign="middle" class="td-border-right py-5">
-                                            <template v-for="index_dates in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices.length)">
-                                                <template v-if="proposals.proposal_obj.array_dates[index_arr_date - 1].date == proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].date">
+                                            <template v-for="index_dates in Number(proposals.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices.length)">
+                                                <template v-if="proposals.proposal_obj.array_dates[index_arr_date - 1].date == proposals.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].date">
                                                     <div class="d-grid px-5">
-                                                        <template v-for="index_pvp_date in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date.length)">
-                                                            <img v-if="this.proposal_submission_settings.show_inserts == 1" v-for="index_pvp in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)" class="mx-auto my-2" width="8" src="/media/custom-imgs/circle.png" />
-                                                            <template v-else v-for="index_pvp in Number(proposals.proposal_obj.products[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)"><span class="mx-auto">{{ this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1] }}€</span></template>
+                                                        <template v-for="index_pvp_date in Number(proposals.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date.length)">
+                                                            <img v-if="this.proposal_submission_settings.show_inserts == 1" v-for="index_pvp in Number(proposals.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)" class="mx-auto my-2" width="8" src="/media/custom-imgs/circle.png" />
+                                                            <template v-else v-for="index_pvp in Number(proposals.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)"><span class="mx-auto">{{ this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1] }}€</span></template>
                                                         </template>
                                                     </div>
                                                 </template>
                                             </template>
                                         </td>
                                         <td valign="middle" class="td-border-right text-align-center py-5">
-                                            <span v-if="this.proposal_submission_settings.show_pvp == 1" class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.products[index - 1].articles[index_article - 1].total)) }}€</span>
+                                            <span v-if="this.proposal_submission_settings.show_pvp == 1" class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.chapters[index - 1].articles[index_article - 1].total)) }}€</span>
                                             <span v-else class="">-</span>
 
                                         </td>
@@ -694,7 +701,7 @@
                             </tbody>
                         </table>
                     </template>
-                    <div class="mt-10">
+                    <div class="mt-10" v-if="(this.is_updating == 1 && this.proposals.proposal_bd_obj != null) || (this.generate_proposal && this.proposals.proposal_bd_obj == null)">
                         <button v-on:click="this.generatePdf()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Guardar y generar PDF</button>
                     </div>
                 </div>
@@ -799,7 +806,8 @@ export default {
             is_change_get_info: 0,
             is_updating: false,
             create_order: false,
-            date_now: ''
+            date_now: '',
+            is_copy: false
         };
     },
     computed: {
@@ -873,8 +881,6 @@ export default {
                                     }else{
                                         me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = me.$utils.roundAndFix(me.value_form1[key_product].article[key_article].dates[key_dates].article.pvp);
                                     }
-                                   
-                                    //me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = new_value;
                                 }
                             });
                         });
@@ -922,14 +928,14 @@ export default {
             me.value_form1 = [];
                 
             //Rellenar los modelos de los inputs de la tabla
-            me.proposals.proposal_obj.products.map(function(product, key_product) {
-                product.articles.map(function(article, key_article) {
+            me.proposals.proposal_obj.chapters.map(function(chapter, key_chapter) {
+                chapter.articles.map(function(article, key_article) {
                     me.proposals.proposal_obj.array_dates.map(function(date_obj, key_arr_dates) {
                         article.dates_prices.map(function(date, key_dates) {
                             if(date_obj.date == date.date){
                                 date.arr_pvp_date.map(function(pvp_date, key_pvp_date) {
                                     pvp_date.arr_pvp.map(function(pvp, key_pvp) {
-                                        if(me.value_form1[key_product] == undefined){
+                                        if(me.value_form1[key_chapter] == undefined){
                                             me.value_form1.push({
                                                 article: [{
                                                     dates:[{
@@ -942,11 +948,11 @@ export default {
                                                     }]
                                                 }]
                                             });
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
 
-                                        }else if(me.value_form1[key_product].article[key_article] == undefined){
-                                            me.value_form1[key_product].article.push({
+                                        }else if(me.value_form1[key_chapter].article[key_article] == undefined){
+                                            me.value_form1[key_chapter].article.push({
                                                 dates:[{
                                                     article: article.article_obj,
                                                     date_pvp: [{
@@ -956,33 +962,34 @@ export default {
                                                     }]
                                                 }]
                                             });
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
 
-                                        }else if(me.value_form1[key_product].article[key_article].dates[key_dates] == undefined){
-                                            me.value_form1[key_product].article[key_article].dates.push({
+                                        }else if(me.value_form1[key_chapter].article[key_article].dates[key_dates] == undefined){
+                                            me.value_form1[key_chapter].article[key_article].dates.push({
                                                 article: article.article_obj,
                                                 date_pvp: [{
                                                     date: pvp_date.date,
-                                                    pvp: []
+                                                    pvp: [],
+                                                    pvp_default: []
                                                 }]
                                             });
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
 
-                                        }else if(me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date] == undefined){
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp.push({
+                                        }/*else if(me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date] == undefined){
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp.push({
                                                 date: pvp_date.date,
                                                 pvp: []
                                             });
 
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
 
                                         }else{
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
-                                            me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
-                                        }
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
+                                        }*/
                                     });
                                 });
                             }
@@ -1074,7 +1081,7 @@ export default {
                 proposal_submission_settings: this.proposal_submission_settings,
                 id_company: this.id_company,
                 bill_obj: this.proposals.bill_obj,
-                id_sector: this.proposals.proposal_obj.products[0].articles[0].sector_obj.id,
+                id_department: this.proposals.proposal_obj.chapters[0].articles[0].department_obj.id,
                 proposal_obj: this.proposals.proposal_obj,
                 value_form1: this.value_form1,
                 select_way_to_pay_options: this.select_way_to_pay_options,
@@ -1119,12 +1126,25 @@ export default {
             me.proposal_submission_settings.sales_possibilities = 6;
             me.proposal_submission_settings.discount = 0;
         },
+        //Copiar propuesta
+        copyOrderView(){
+            this.generate_proposal = false;
+            this.finish_proposal = false;
+            this.is_copy = true;
+            this.is_updating = false;
+            this.create_order = false;
+            this.proposals.bill_obj.array_bills = [];
+            this.proposals.bill_obj.total_bill = 0;
+            this.proposals.proposal_bd_obj = null;
+            this.is_show_buttons_bill = false;
+        },
         //Modificar propuesta
         updateProposalFront(){
             this.generate_proposal = false;
             this.finish_proposal = false;
             this.is_updating = true;
             this.create_order = false;
+            this.is_copy = false;
         },
         //Eliminar propuesta
         deleteProposalAction(){
@@ -1152,6 +1172,7 @@ export default {
             this.finish_proposal = false;
             this.is_updating = false;
             this.create_order = true;
+            this.is_copy = false;
         },
         //Crear orden
         createOrderBtn(){
@@ -1252,6 +1273,9 @@ export default {
                         this.proposals.status_view = 1;
                         this.clearData();
                         swal("", "Orden creada correctamente", "success");
+                    }else if(this.errors.code == 1004){
+                        swal("", "La empresa asociada a esta propuesta no tiene todos los datos completos", "warning");
+
                     }else{
                         swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
                     }

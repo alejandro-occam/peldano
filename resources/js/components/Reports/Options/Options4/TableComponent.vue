@@ -24,32 +24,52 @@
             </div>
         </div>
         <div class="mx-2 col-2 mt-5">
-            <span class="text-dark font-weight-bold mb-2">Sector</span>
-            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_sector" :name="'select_sector'" :id="'select_sector'" data-style="select-lightgreen" @change="getBrandsSelect">
+            <span class="text-dark font-weight-bold mb-2">Departamento</span>
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_department" :name="'select_department'" :id="'select_department'" data-style="select-lightgreen" @change="getSectionSelect">
                 <option value="" selected>
-                    Filtro por sector
+                    Filtro por departamento
                 </option>
-                <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
+                <option :value="department.id" v-for="department in config.articles.filter.array_departments" :key="department.id" v-text="department.nomenclature + '-' + department.name" ></option>
             </select>
         </div>
 
         <div class="mx-2 col-2 mt-5">
-            <span class="text-dark font-weight-bold mb-2">Marca</span>
-            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_brand" :name="'select_brand'" :id="'select_brand'" data-style="select-lightgreen" @change="getProductsSelect">
+            <span class="text-dark font-weight-bold mb-2">Sección</span>
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_section" :name="'select_section'" :id="'select_section'" data-style="select-lightgreen" @change="getChannelSelect">
                 <option value="" selected>
-                    Filtro por marca
+                    Filtro por sección
                 </option>
-                <option :value="brand.id" v-for="brand in config.articles.filter.array_brands" :key="brand.id" v-text="brand.name" ></option>
+                <option :value="section.id" v-for="section in config.articles.filter.array_sections"  :key="section.id" v-text="section.nomenclature + '-' + section.name" ></option>
             </select>
         </div>
 
         <div class="mx-2 col-2 mt-5">
-            <span class="text-dark font-weight-bold mb-2">Producto</span>
-            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_product" :name="'select_product'" :id="'select_product'" data-style="select-lightgreen">
+            <span class="text-dark font-weight-bold mb-2">Canal</span>
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_channel" :name="'select_channel'" :id="'select_channel'" data-style="select-lightgreen" @change="getProjectSelect">
                 <option value="" selected>
-                    Filtro por producto
+                    Filtro por canal
                 </option>
-                <option :value="product.id" v-for="product in config.articles.filter.array_products" :key="product.id" v-text="product.name" ></option>
+                <option :value="channel.id" v-for="channel in config.articles.filter.array_channels" :key="channel.id" v-text="channel.nomenclature + '-' + channel.name" ></option>
+            </select>
+        </div>
+
+        <div class="mx-2 col-2 mt-5">
+            <span class="text-dark font-weight-bold mb-2">Proyecto</span>
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_project" :name="'select_project'" :id="'select_project'" data-style="select-lightgreen" @change="getChaptersSelect">
+                <option value="" selected>
+                    Filtro por proyecto
+                </option>
+                <option :value="project.id" v-for="project in config.articles.filter.array_projects" :key="project.id" v-text="project.nomenclature + '-' + project.name" ></option>
+            </select>
+        </div>
+
+        <div class="mx-2 col-2 mt-5">
+            <span class="text-dark font-weight-bold mb-2">Capítulo</span>
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_chapter" :name="'select_chapter'" :id="'select_chapter'" data-style="select-lightgreen" @change="getBatchsSelect">
+                <option value="" selected>
+                    Filtro por capítulo
+                </option>
+                <option :value="chapter.id" v-for="chapter in config.articles.filter.array_chapters" :key="chapter.id" v-text="chapter.nomenclature + '-' + chapter.name" ></option>
             </select>
         </div>
 
@@ -63,7 +83,7 @@
             </select>
         </div>
 
-        <div class="mx-2 col-2 mt-5"></div>
+        <!--<div class="mx-2 col-2 mt-5"></div>-->
 
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Órdenes</span>
@@ -571,9 +591,11 @@
         data() {
             return {
                 publicPath: window.location.origin,
-                select_sector: '',
-                select_brand: '',
-                select_product: '',
+                select_department: '',
+                select_section: '',
+                select_channel: '',
+                select_project: '',
+                select_chapter: '',
                 select_consultant: '',
                 select_orders: '1',
                 select_exchange: '1',
@@ -591,10 +613,10 @@
             var params = {
                 type: 1
             }
-            this.getSectors(params);
+            this.getDepartments(params);
         },
         methods: {
-            ...mapActions(["getUsers", "getSectors", "getBrands", "getProducts"]),
+            ...mapActions(["getUsers", "getDepartments", "getSections", "getChannels", "getProjects", "getChapters"]),
             ...mapMutations(["changeViewStatusReports"]),
             //Consultar fecha actual
             getNow() {
@@ -611,30 +633,63 @@
                 this.date_from = date;
                 this.date_to = date;
             },
-            getBrandsSelect(){
-                let me = this;
-
-                me.select_brand = '';
-                me.select_product = '';
-                me.amount = '';
-                me.date = [];
-                me.show_amount_dates = false;
-                var params = {
-                    type: 1,
-                    select_articles_sectors: me.select_sector
-                }
-                me.getBrands(params);
-            },
-            getProductsSelect(){
-                this.select__product = '';
+            getSectionSelect(){
+                this.select_section = '',
+                this.select_channel = '',
+                this.select_project = '',
+                this.select_chapter = '',
+                this.select_batch = '',
+                this.select_article = '',
                 this.amount = '';
                 this.date = [];
                 this.show_amount_dates = false;
                 var params = {
                     type: 1,
-                    select_articles_brands: this.select_brand
+                    select_articles_department: this.select_department
                 }
-                this.getProducts(params);
+                this.getSections(params);
+            },
+            getChannelSelect(){
+                this.select_channel = '',
+                this.select_project = '',
+                this.select_chapter = '',
+                this.select_batch = '',
+                this.select_article = '',
+                this.amount = '';
+                this.date = [];
+                this.show_amount_dates = false;
+                var params = {
+                    type: 1,
+                    select_articles_section: this.select_section
+                }
+                this.getChannels(params);
+            },
+            getProjectSelect(){
+                this.select_project = '',
+                this.select_chapter = '',
+                this.select_batch = '',
+                this.select_article = '',
+                this.amount = '';
+                this.date = [];
+                this.show_amount_dates = false;
+                var params = {
+                    type: 1,
+                    select_articles_channel: this.select_channel
+                }
+                this.getProjects(params);
+            },
+            getChaptersSelect(){
+                this.select_chapter = '',
+                this.select_batch = '',
+                this.select_article = '',
+                this.amount = '';
+                this.date = [];
+                this.show_amount_dates = false;
+                var params = {
+                    type: 1,
+                    select_articles_project: this.select_project
+                }
+                this.getChapters(params);
             },
         }
     };
