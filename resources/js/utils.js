@@ -33,5 +33,16 @@ export const func = {
         var new_date4 = new_date3[0].split('/');
         var finish_date = new_date4[0] + '-' + new_date4[1] + '-' + new_date4[2];
         return finish_date;
+    },
+
+    //Devolvemos el el mes en letras de la fecha
+    changeFormatDate(date){
+        var date_aux = date.split('-');
+        var new_date = date_aux[1] + '-' + date_aux[0] + '-' +  date_aux[2];
+        var mydate = new Date(new_date);
+        var month = ["ENE", "FEB", "MAR", "ABR", "MAY", "JUN",
+        "JUL", "AGO", "SEP", "OCT", "NOV", "DEC"][mydate.getMonth()];
+        var str = month + mydate.getYear().toString().substr(-2);
+        return str;
     }
 };

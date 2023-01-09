@@ -210,7 +210,7 @@
                                     <template v-for="index_dates in Number(proposals.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices.length)">
                                         <template v-if="proposals.proposal_obj.array_dates[index_arr_date - 1].date == proposals.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].date">
                                             <div class="d-grid px-5">
-                                                <template v-for="index_pvp_date in Number(proposals.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date.length)">
+                                               <template v-for="index_pvp_date in Number(proposals.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date.length)">
                                                     <input v-if="this.value_form1.length > 0 && !this.create_order" 
                                                     v-model="this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1]" 
                                                     v-for="index_pvp in Number(proposals.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)" 
@@ -222,15 +222,28 @@
                                         </template>
                                     </template>
                                 </td>
-                                <td valign="middle" class="td-border-right text-align-center"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.chapters[index - 1].articles[index_article - 1].total)) }}€</span></td>
+                                <td v-if="this.discount != 0" valign="middle" class="td-border-right text-align-center">
+                                    <span class="">{{ this.value_form1[index - 1].article[index_article - 1].total_aux }}€</span>
+                                </td>
+                                <td v-else valign="middle" class="td-border-right text-align-center"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.chapters[index - 1].articles[index_article - 1].total)) }}€</span></td>
                             </tr>
                         </div>
                         <tr class="tr-total-datatable">
                             <td class="py-6"><span class="ml-5 font-weight-bolder">TOTAL</span></td>
                             <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.total_individual_pvp)) }}€</span></td>
                             <td class="text-align-center"><span class="font-weight-bolder">{{ proposals.proposal_obj.total_amount_global }}</span></td>
-                            <td class="text-align-center" v-for="index in Number(proposals.proposal_obj.array_dates.length)"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.array_dates[index - 1].total)) }}€</span></td>
-                            <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.total_global)) }}€</span></td>
+                            <template v-if="this.discount != 0">
+                                <td class="text-align-center" v-for="index in Number(proposals.proposal_obj.array_dates.length)">
+                                    <span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(this.value_form_discount[index - 1].pvp)) }}€</span>
+                                </td>
+                                <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(this.offer)) }}€</span></td>
+                            </template>
+                            <template v-else>
+                                <td class="text-align-center" v-for="index in Number(proposals.proposal_obj.array_dates.length)">
+                                    <span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.array_dates[index - 1].total)) }}€</span>
+                                </td>
+                                <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.total_global)) }}€</span></td>
+                            </template>
                         </tr>
                         
                     </tbody>
@@ -583,7 +596,7 @@
                                     <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">DEPARTAMENTO:</div><div class="ml-5 f-13 text-dark">{{ proposals.proposal_obj.chapters[0].articles[0].department_obj.name }}</div></td>
                                     <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">ANUNCIANTE:</div><div class="ml-5 f-13 text-dark">{{ this.name_company }}</div></td>
                                     <td class="py-2 td-border-left" v-if="this.proposal_submission_settings.show_discounts == 1"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">DESCUENTO:</div><div class="ml-5 f-13 text-dark">{{ this.proposal_submission_settings.discount }}%</div></td>
-                                    <td class="py-2 td-border-left bg-blue-light-white"><div class="f-13 ml-5 font-weight-bolder color-blue">OFERTA:</div><div class="ml-5 f-13 text-dark">{{ this.offer }}€</div></td>
+                                    <td class="py-2 td-border-left bg-blue-light-white"><div class="f-13 ml-5 font-weight-bolder color-blue">OFERTA:</div><div class="ml-5 f-13 text-dark">{{ $utils.numberWithDotAndComma($utils.roundAndFix(this.offer)) }}€</div></td>
                                 </tr>
                             </tbody>
                         </table>
@@ -624,9 +637,17 @@
                                             </template>
                                         </td>
                                         <td valign="middle" class="td-border-right text-align-center py-5">
-                                            <span v-if="this.proposal_submission_settings.show_pvp == 1" class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.chapters[index - 1].articles[index_article - 1].total)) }}€</span>
-                                            <span v-else class="">-</span>
-
+                                            <template v-if="this.proposal_submission_settings.show_pvp == 1">
+                                                <template v-if="this.discount != 0">
+                                                    <span class="">{{ this.value_form1[index - 1].article[index_article - 1].total_aux }}€</span>
+                                                </template>
+                                                <template v-else>
+                                                    <span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.chapters[index - 1].articles[index_article - 1].total)) }}€</span>
+                                                </template>
+                                            </template>
+                                            <template v-else >
+                                                <span class="">-</span>
+                                            </template>
                                         </td>
                                     </tr>
                                 </div>
@@ -634,10 +655,17 @@
                                     <td class="py-6"><span class="ml-5 font-weight-bolder">TOTAL</span></td>
                                     <td class="text-align-center" v-if="this.proposal_submission_settings.show_pvp == 1"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.total_individual_pvp)) }}€</span></td>
                                     <td class="text-align-center"><span class="font-weight-bolder">{{ proposals.proposal_obj.total_amount_global }}</span></td>
-                                    <td class="text-align-center" v-for="index in Number(proposals.proposal_obj.array_dates.length)"><span class="font-weight-bolder" v-if="this.proposal_submission_settings.show_pvp == 1">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.array_dates[index - 1].total)) }}€</span></td>
-                                    <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.total_global)) }}€</span></td>
+                                    <template v-if="this.discount != 0">
+                                        <td class="text-align-center" v-for="index in Number(proposals.proposal_obj.array_dates.length)">
+                                            <span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(this.value_form_discount[index - 1].pvp)) }}€</span>
+                                        </td>
+                                        <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(this.offer)) }}€</span></td>
+                                    </template>
+                                    <template v-else>
+                                        <td class="text-align-center" v-for="index in Number(proposals.proposal_obj.array_dates.length)"><span class="font-weight-bolder" v-if="this.proposal_submission_settings.show_pvp == 1">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.array_dates[index - 1].total)) }}€</span></td>
+                                        <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(proposals.proposal_obj.total_global)) }}€</span></td>
+                                    </template>
                                 </tr>
-                                
                             </tbody>
                         </table>
                     </div>
@@ -751,6 +779,7 @@ export default {
             fullname: '',
             select_type_proposal: '1',
             value_form1: [], //Formulario presupuesto,
+            value_form_discount: [],
             select_way_to_pay_options: [
                 {value: '',text: 'Forma de pago'},
                 {value: '1',text: 'Recibo bancario'},
@@ -867,8 +896,22 @@ export default {
         rewalkForm1(type, new_value){
             let me = this;
             var value = 0;
+
             me.value_form1.map(function(product, key_product) {
                 product.article.map(function(article_obj, key_article) {
+                    article_obj.dates.map(function(date, key_dates) {
+                        if(me.value_form_discount[key_dates] != undefined){
+                            me.value_form_discount[key_dates].pvp = 0;
+                            me.value_form_discount[key_dates].date = '';
+                        }
+                    });
+                });
+            });
+
+            me.value_form1.map(function(product, key_product) {
+                product.article.map(function(article_obj, key_article) {
+                    //Reseteamos el total
+                    me.value_form1[key_product].article[key_article].total_aux = 0;
                     article_obj.dates.map(function(date, key_dates) {
                         date.date_pvp.map(function(date_pvp, key_date_pvp) {
                             date_pvp.pvp.map(function(pvp_obj, key_pvp) {
@@ -878,6 +921,21 @@ export default {
                                     if(me.discount != 0){
                                         pvp_obj = me.value_form1[key_product].article[key_article].dates[key_dates].article.pvp * (1 - (me.discount  /100));
                                         me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = me.$utils.roundAndFix(pvp_obj);
+                                        me.value_form1[key_product].article[key_article].total_aux += pvp_obj;
+                                        
+                                        if(me.value_form_discount[key_dates] != undefined){
+                                            if(me.value_form_discount[key_dates].date == ''){
+                                                me.value_form_discount[key_dates].pvp = pvp_obj;
+                                                me.value_form_discount[key_dates].date = me.$utils.changeFormatDate(date_pvp.date);
+                                            }else if(me.value_form_discount[key_dates].date == me.$utils.changeFormatDate(date_pvp.date)){
+                                                me.value_form_discount[key_dates].pvp += pvp_obj;
+                                            }
+                                        }else{
+                                            me.value_form_discount[key_dates].pvp = pvp_obj;
+                                            me.value_form_discount[key_dates].date = me.$utils.changeFormatDate(date_pvp.date);
+                                        }
+                                        
+                                        
                                     }else{
                                         me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = me.$utils.roundAndFix(me.value_form1[key_product].article[key_article].dates[key_dates].article.pvp);
                                     }
@@ -885,6 +943,8 @@ export default {
                             });
                         });
                     });
+                    //Formateamos el resultado del total con descuento
+                    me.value_form1[key_product].article[key_article].total_aux = me.$utils.roundAndFix(me.value_form1[key_product].article[key_article].total_aux);
                 });
             });
             if(type == 1){
@@ -977,7 +1037,7 @@ export default {
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
 
-                                        }/*else if(me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date] == undefined){
+                                        }else if(me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date] == undefined){
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp.push({
                                                 date: pvp_date.date,
                                                 pvp: []
@@ -989,11 +1049,23 @@ export default {
                                         }else{
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
-                                        }*/
+                                        }
                                     });
                                 });
                             }
                         });
+                    });
+                });
+            });
+
+            //Ponemos a cero los valores auxiliares
+            me.value_form1.map(function(product, key_product) {
+                product.article.map(function(article_obj, key_article) {
+                    article_obj.dates.map(function(date, key_dates) {
+                        if(me.value_form_discount[key_dates] != undefined){
+                            me.value_form_discount[key_dates].pvp = 0;
+                            me.value_form_discount[key_dates].date = '';
+                        }
                     });
                 });
             });

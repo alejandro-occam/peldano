@@ -90,7 +90,7 @@ const mutations = {
 
         }else{
             var chapter = {
-                product_obj: params.chapter_obj,
+                chapter_obj: params.chapter_obj,
                 articles_aux: [article]
             }
             custom_state.proposal_obj.chapters.push(chapter);
