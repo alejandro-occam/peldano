@@ -110,7 +110,7 @@
                                     <option value="" selected>
                                         Elige un artículo
                                     </option>
-                                    <option :value="article.id" v-for="article in config.articles.form.array_articles" :key="article.id" v-text="article.name" ></option>
+                                    <option :value="article.id" v-for="article in config.articles.form.array_articles" :key="article.id" v-text="article.name + ' (' + $utils.numberWithDotAndComma($utils.roundAndFix(article.pvp)) + '€)'" ></option>
                                 </select>
                                 <small class="text-danger " v-if="select_article_error">El artículo no es válido</small>
                             </div>

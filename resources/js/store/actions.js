@@ -334,6 +334,7 @@ const actions = {
                 state.config.articles.filter.array_projects = null;
                 state.config.articles.filter.array_chapters = null;
                 state.config.articles.filter.array_batchs = null;
+                state.config.articles.filter.array_articles = null;
 
             }else {
                 if(params.select_articles_areas != 0 && params.select_articles_areas != ""){
@@ -343,6 +344,7 @@ const actions = {
                     state.config.articles.form.array_projects = null;
                     state.config.articles.form.array_chapters = null;
                     state.config.articles.form.array_batchs = null;
+                    state.config.articles.form.array_articles = null;
     
                 }else{
                     state.config.articles.form.array_departments = null;
@@ -351,6 +353,7 @@ const actions = {
                     state.config.articles.form.array_projects = null;
                     state.config.articles.form.array_chapters = null;
                     state.config.articles.form.array_batchs = null;
+                    state.config.articles.form.array_articles = null;
                 }
             }
 
@@ -375,6 +378,7 @@ const actions = {
                 state.config.articles.filter.array_projects = null;
                 state.config.articles.filter.array_chapters = null;
                 state.config.articles.filter.array_batchs = null;
+                state.config.articles.filter.array_articles = null;
 
             }else {
                 state.config.articles.form.array_sections = response.data.array_sections;
@@ -382,6 +386,7 @@ const actions = {
                 state.config.articles.form.array_projects = null;
                 state.config.articles.form.array_chapters = null;
                 state.config.articles.form.array_batchs = null;
+                state.config.articles.form.array_articles = null;
             }
 
         } catch (error) {
@@ -404,12 +409,14 @@ const actions = {
                 state.config.articles.filter.array_projects = null;
                 state.config.articles.filter.array_chapters = null;
                 state.config.articles.filter.array_batchs = null;
+                state.config.articles.filter.array_articles = null;
 
             }else{
                 state.config.articles.form.array_channels = response.data.array_channels;
                 state.config.articles.form.array_projects = null;
                 state.config.articles.form.array_chapters = null;
                 state.config.articles.form.array_batchs = null;
+                state.config.articles.form.array_articles = null;
             }
 
         } catch (error) {
@@ -431,11 +438,13 @@ const actions = {
                 state.config.articles.filter.array_projects = response.data.array_projects;
                 state.config.articles.filter.array_chapters = null;
                 state.config.articles.filter.array_batchs = null;
+                state.config.articles.filter.array_articles = null;
 
             }else{
                 state.config.articles.form.array_projects = response.data.array_projects;
                 state.config.articles.form.array_chapters = null;
                 state.config.articles.form.array_batchs = null;
+                state.config.articles.form.array_articles = null;
             }
 
         } catch (error) {
@@ -456,10 +465,12 @@ const actions = {
             if(params.type == 1){
                 state.config.articles.filter.array_chapters = response.data.array_chapters;
                 state.config.articles.filter.array_batchs = null;
+                state.config.articles.filter.array_articles = null;
 
             }else{
                 state.config.articles.form.array_chapters = response.data.array_chapters;
                 state.config.articles.form.array_batchs = null;
+                state.config.articles.form.array_articles = null;
             }
 
         } catch (error) {
@@ -479,9 +490,11 @@ const actions = {
 
             if(params.type == 1){
                 state.config.articles.filter.array_batchs = response.data.array_batchs;
+                state.config.articles.filter.array_articles = null;
 
             }else{
                 state.config.articles.form.array_batchs = response.data.array_batchs;
+                state.config.articles.form.array_articles = null;
             }
 
         } catch (error) {
