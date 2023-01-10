@@ -721,6 +721,8 @@ const actions = {
                 method: 'get'
             });
 
+            console.log(response);
+
             //Rellenar objetos para el store y mostrar la información de las propuestas
             createObjectsStore({ state }, response, 1);
 

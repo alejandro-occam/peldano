@@ -20,6 +20,7 @@ class VerifyJWTToken extends BaseMiddleware
     {
         try {
             $user = JWTAuth::parseToken()->authenticate();
+            
         } catch (Exception $e) {
             return $e;
             if ($e instanceof \Tymon\JWTAuth\Exceptions\TokenInvalidException){

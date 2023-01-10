@@ -163,6 +163,11 @@ class ProposalsController extends Controller
     //Guardar y generar la propuesta
     function saveAndGenerateProposal(Request $request){
         $id_company = $request->get('id_company');
+
+        //COMENTARIO PARA EL OBJETO
+        error_log('id_company: '.$id_company);
+        //END COMENTARIO PARA EL OBJETO
+
         //Consultamos si existe la empresa
         $company = Company::find($id_company);
         if(!$company){
@@ -172,6 +177,10 @@ class ProposalsController extends Controller
 
         //Guardamos el objeto
         $bill_obj = $request->get('bill_obj');
+
+        //COMENTARIO PARA EL OBJETO
+        error_log('bill_obj: '.print_r($bill_obj, true));
+        //END COMENTARIO PARA EL OBJETO
 
         $array_services_aux = array();
         //Consultamos los artículos
@@ -229,9 +238,18 @@ class ProposalsController extends Controller
 
         //Creamos la propuesta 
         $proposal_submission_settings = json_decode($request->get('proposal_submission_settings'));
+
+        //COMENTARIO PARA EL OBJETO
+        error_log('proposal_submission_settings: '.print_r($request->get('proposal_submission_settings'), true));
+        //END COMENTARIO PARA EL OBJETO
+
         //$id_proposal_custom = sprintf('%08d', ($count_proposal + 1));
         $id_proposal_custom = ($count_proposal + 1);
         $id_department = $request->get('id_department');
+
+        //COMENTARIO PARA EL OBJETO
+        error_log('id_department: '.$request->get('id_department'));
+        //END COMENTARIO PARA EL OBJETO
 
         $proposal = Proposal::create([
             'id_proposal_custom' => $id_proposal_custom,
@@ -270,6 +288,11 @@ class ProposalsController extends Controller
 
         //Contabilizamos el colspan de plan de pago
         $bill_obj2 = json_decode($request->get('bill_obj'));
+
+         //COMENTARIO PARA EL OBJETO
+         error_log('bill_obj2: '.$request->get('bill_obj'));
+         //END COMENTARIO PARA EL OBJETO
+
         foreach($bill_obj2->array_bills as $bill){
             $rows = 2;
             if($bill->observations != ''){
