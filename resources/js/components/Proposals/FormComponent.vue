@@ -923,17 +923,38 @@ export default {
                                         me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = me.$utils.roundAndFix(pvp_obj);
                                         me.value_form1[key_product].article[key_article].total_aux += pvp_obj;
                                         
-                                        if(me.value_form_discount[key_dates] != undefined){
-                                            if(me.value_form_discount[key_dates].date == ''){
-                                                me.value_form_discount[key_dates].pvp = pvp_obj;
-                                                me.value_form_discount[key_dates].date = me.$utils.changeFormatDate(date_pvp.date);
-                                            }else if(me.value_form_discount[key_dates].date == me.$utils.changeFormatDate(date_pvp.date)){
-                                                me.value_form_discount[key_dates].pvp += pvp_obj;
+                                        if(key_product == 0){
+                                            if(me.value_form_discount[key_dates] != undefined){
+                                                if(me.value_form_discount[key_dates].date == ''){
+                                                    me.value_form_discount[key_dates].pvp = pvp_obj;
+                                                    me.value_form_discount[key_dates].date = me.$utils.changeFormatDate(date_pvp.date);
+                                                }else if(me.value_form_discount[key_dates].date == me.$utils.changeFormatDate(date_pvp.date)){
+                                                    me.value_form_discount[key_dates].pvp += pvp_obj;
+                                                }
+                                            }else{
+                                                var new_obj = {
+                                                    pvp: pvp_obj,
+                                                    date:  me.$utils.changeFormatDate(date_pvp.date)
+                                                }
+                                                me.value_form_discount.push(new_obj);
                                             }
                                         }else{
-                                            me.value_form_discount[key_dates].pvp = pvp_obj;
-                                            me.value_form_discount[key_dates].date = me.$utils.changeFormatDate(date_pvp.date);
+                                            let is_search = false;
+                                            me.value_form_discount.map(function(form_discount, key_form_discount) {
+                                                if(form_discount.date == me.$utils.changeFormatDate(date_pvp.date)){
+                                                    form_discount.pvp += pvp_obj;
+                                                    is_search = true;
+                                                }
+                                            });
+                                            if(!is_search){
+                                                var new_obj_value_form_discount = {
+                                                    pvp: pvp_obj,
+                                                    date:  me.$utils.changeFormatDate(date_pvp.date)
+                                                }
+                                                me.value_form_discount.push(new_obj_value_form_discount);
+                                            }
                                         }
+                                        
                                         
                                         
                                     }else{
@@ -1364,7 +1385,7 @@ export default {
                 me.offer = me.$utils.roundAndFix(me.proposals.proposal_obj.total_global);
                 me.total = me.$utils.roundAndFix(me.proposals.proposal_obj.total_global);
             }
-
+            //me.offer = 0;
             me.loadFormObj();
         },
         '$store.state.proposals.num_custom_invoices': function() {

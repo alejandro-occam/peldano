@@ -629,10 +629,10 @@ const mutations = {
     //Modificar el objeto propuesta
     changeProposalObj(state, params){
         //Modificamos el objeto con los nuevos datos dados
-        state.proposals.proposal_obj.products.map(function(products_obj, key_products_obj) {
-            products_obj.articles.map(function(article_obj, key_article_obj) {
-                params.form.map(function(products, key_products) {
-                    products.article.map(function(article, key) {
+        state.proposals.proposal_obj.chapters.map(function(chapters_obj, key_chapters_obj) {
+            chapters_obj.articles.map(function(article_obj, key_article_obj) {
+                params.form.map(function(chapters, key_chapters) {
+                    chapters.article.map(function(article, key) {
                         article.dates.map(function(date, key) {
                             if(article_obj.article_obj.id == date.article.id){
                                 article_obj.dates_prices.map(function(date_price_obj, key_date_price_obj) {
@@ -642,7 +642,7 @@ const mutations = {
                                                 var out = false;
                                                 if(!out){
                                                     date_pvp.pvp.map(function(pvp, key_pvp) {
-                                                        state.proposals.proposal_obj.products[key_products_obj].articles[key_article_obj].dates_prices[key_date_price_obj].arr_pvp_date[key_arr_pvp_date].arr_pvp[key_pvp] = pvp;
+                                                        state.proposals.proposal_obj.chapters[key_chapters_obj].articles[key_article_obj].dates_prices[key_date_price_obj].arr_pvp_date[key_arr_pvp_date].arr_pvp[key_pvp] = pvp;
                                                         //arr_pvp_obj = pvp;
                                                         out = true;
                                                     });
@@ -663,7 +663,7 @@ const mutations = {
         var total_global = 0;
         var total_amount_global = 0;
         var total_individual_pvp = 0;
-        state.proposals.proposal_obj.products.map(function(articles_obj, key) {
+        state.proposals.proposal_obj.chapters.map(function(articles_obj, key) {
             articles_obj.articles.map(function(article_finish, key) {
                 total_individual_pvp += Number(article_finish.article_obj.pvp);
                 article_finish.amount = 0;
@@ -691,7 +691,7 @@ const mutations = {
         var array_dates_prices = [];
         state.proposals.proposal_obj.array_dates.map(function(date, key) {
             var total_date = 0;
-            state.proposals.proposal_obj.products.map(function(articles_obj, key) {
+            state.proposals.proposal_obj.chapters.map(function(articles_obj, key) {
                 articles_obj.articles.map(function(article_finish, key) {
                     article_finish.dates_prices.map(function(date_aux, key) {
                         if(date_aux.date == date.date){
