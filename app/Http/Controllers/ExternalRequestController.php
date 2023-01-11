@@ -115,7 +115,7 @@ class ExternalRequestController extends Controller
             }
 
             //Creamos el negocio
-            Deal::create([
+            DealHubspot::create([
                 'name' => $request->get('name'),
                 'id_hubspot' => $request->get('hub_id'),
                 'id_contact' => $contact->id,
