@@ -721,6 +721,8 @@ const actions = {
                 method: 'get'
             });
 
+            console.log(response);
+
             //Rellenar objetos para el store y mostrar la información de las propuestas
             createObjectsStore({ state }, response, 1);
 
@@ -873,16 +875,16 @@ function createObjectsStore({ state }, response, type){
                 department_obj: proposal.department_obj
             }
             array_chapters.push({
-                id_chapter: service.article.id_chapter,
+                id_chapter: service.chapter.id,
                 articles: [article],
                 articles_aux: [article],
                 chapter_obj: service.chapter,
             });
-
+ 
         }else{
             var exist_1 = false;
             array_chapters.forEach(function callback(chapter, index, array) {
-                if(chapter.id_chapter == service.article.id_chapter){
+                if(chapter.id_chapter == service.chapter.id){
                     exist_1 = true;
                     var exist_2 = false;
                     chapter.articles.forEach(function callback(article, index, array) {
@@ -961,7 +963,7 @@ function createObjectsStore({ state }, response, type){
                     chapter_obj: service.chapter
                 }
                 array_chapters.push({
-                    id_chapter: service.article.id_chapter,
+                    id_chapter: service.chapter.id,
                     articles: [article],
                     chapter_obj: service.chapter
                 });

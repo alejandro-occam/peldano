@@ -24,3 +24,10 @@ Route::post('/save_companies_from_hubspot', [App\Http\Controllers\ExternalReques
 Route::post('/save_contacts_from_hubspot', [App\Http\Controllers\ExternalRequestController::class, 'saveContactsFromHubspot'])->name('save_contacts_from_hubspot');
 //Enviar pdf de la propuesto a hubspot
 Route::post('/save_deal_hubspot', [App\Http\Controllers\ExternalRequestController::class, 'saveDealFromHubspot'])->name('save_deal_hubspot');
+
+//Login
+Route::post('login', '\App\Http\Controllers\Auth\LoginController@loginapi');
+
+Route::group(['middleware' => ['jwt.verify']], function() {
+    //Route::post('/create_proposal', [App\Http\Controllers\Api\ProposalsInfoges::class, 'createProposal'])->name('create_proposal');
+});
