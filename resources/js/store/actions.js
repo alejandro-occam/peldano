@@ -880,7 +880,7 @@ function createObjectsStore({ state }, response, type){
                 articles_aux: [article],
                 chapter_obj: service.chapter,
             });
-
+ 
         }else{
             var exist_1 = false;
             array_chapters.forEach(function callback(chapter, index, array) {
