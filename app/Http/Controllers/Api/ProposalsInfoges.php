@@ -80,7 +80,7 @@ class ProposalsInfoges extends Controller
                     return response()->json($response);
                 }
 
-                if($service->date == $bill->date && $bill_obj['article']['id_chapter'] == $batch->id_chapter){
+                if($service->date == $bill->date && $bill_obj['id_chapter'] == $batch->id_chapter){
                     ServiceBill::create([
                         'id_service' => $service->id,
                         'id_bill' => $bill->id,
