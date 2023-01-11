@@ -33,6 +33,7 @@ class ExternalRequestController extends Controller
 
     //Guardar contactos desde Hubspot
     function saveContactsFromHubspot(Request $request){
+        $requ_curls = new CurlController();
         $hub_id = $request->get('hub_id');
         //Comprobamos si existe la empresa
         $contacts = Contact::where('id_hubspot', $hub_id)->first();
@@ -82,6 +83,7 @@ class ExternalRequestController extends Controller
 
     //Guardar negocio de un contacto
     function saveDealFromHubspot(Request $request){
+        $requ_curls = new CurlController();
         $hub_id = $request->get('hub_id');
         //Comprobamos si existe la empresa
         $deal = DealHubspot::where('id_hubspot', $hub_id)->first();
