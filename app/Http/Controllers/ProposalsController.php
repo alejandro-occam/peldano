@@ -501,7 +501,7 @@ class ProposalsController extends Controller
         //Actualizamos la propuesta 
         $proposal_submission_settings = json_decode($request->get('proposal_submission_settings'));
 
-        $proposal->discount = 0;
+        $proposal->discount = $proposal_submission_settings->discount;
         $proposal->language = $proposal_submission_settings->language;
         $proposal->type_proyect = $proposal_submission_settings->type_proyect;
         $proposal->name_proyect = $proposal_submission_settings->name_proyect;
