@@ -36,7 +36,7 @@ class ExternalRequestController extends Controller
         $hub_id = $request->get('hub_id');
         //Comprobamos si existe la empresa
         $contacts = Contact::where('id_hubspot', $hub_id)->first();
-        if($company){
+        if($contacts){
             $contacts->name = $request->get('firstname');
             $contacts->surnames = $request->get('lastname');
             $contacts->email = $request->get('email');
