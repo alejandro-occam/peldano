@@ -81,6 +81,7 @@ class OrdersInfoges extends Controller
             $array_bills_orders[] = $bill_order;
         }
 
+        $response['id_order'] = $order->id;
         $response['code'] = 1000;
         return response()->json($response);
     }
