@@ -87,11 +87,14 @@ class ExternalRequestController extends Controller
         $hub_id = $request->get('hub_id');
         //Comprobamos si existe la empresa
         $deal = DealHubspot::where('id_hubspot', $hub_id)->first();
+        Log::info('$hub_id: ' . $hub_id);
+
         if(!$deal){
             //Consultamos la empresa de hubspot asociada al negocio y miramos nuestra empresa
             $url_deals_association_company = 'https://api.hubapi.com/crm/v4/objects/deal/'.$hub_id.'/associations/company';
             $company_hubspot = json_decode($requ_curls->getCurl($url_deals_association_company, 1)['response'], true);
             $hub_id_company = $company_hubspot['results'][0]['toObjectId'];
+            Log::info('$hub_id_company: ' . $hub_id_company);
             //Buscamos una empresa con este id de hub en nuestra bd
             $company = Company::where('id_hubspot', $hub_id_company)->first();
             if(!$company){
@@ -103,6 +106,7 @@ class ExternalRequestController extends Controller
             $url_deals_association_contact = 'https://api.hubapi.com/crm/v4/objects/deal/'.$hub_id.'/associations/contact';
             $contact_hubspot = json_decode($requ_curls->getCurl($url_deals_association_contact, 1)['response'], true);
             $hub_id_contact = $contact_hubspot['results'][0]['toObjectId'];
+            Log::info('$hub_id_contact: ' . $hub_id_contact);
             //Buscamos una empresa con este id de hub en nuestra bd
             $contact = Contact::where('id_hubspot', $hub_id_company)->first();
             if(!$contact){
