@@ -1006,6 +1006,7 @@ export default {
         },
         loadFormObj(){
             let me = this;
+            console.log(me.proposals.proposal_obj.is_change);
             me.value_form1 = [];
                 
             //Rellenar los modelos de los inputs de la tabla
@@ -1090,6 +1091,59 @@ export default {
                     });
                 });
             });
+
+            if(this.is_change_get_info == 1){
+                me.value_form1.map(function(product, key_product) {
+                    product.article.map(function(article_obj, key_article) {
+                        //Reseteamos el total
+                        me.value_form1[key_product].article[key_article].total_aux = 0;
+                        article_obj.dates.map(function(date, key_dates) {
+                            date.date_pvp.map(function(date_pvp, key_date_pvp) {
+                                date_pvp.pvp.map(function(pvp_obj, key_pvp) {
+                                    if(me.discount != 0){
+                                        pvp_obj = me.value_form1[key_product].article[key_article].dates[key_dates].article.pvp * (1 - (me.discount  /100));
+                                        me.value_form1[key_product].article[key_article].total_aux += pvp_obj;
+                                        
+                                        if(key_product == 0){
+                                            if(me.value_form_discount[key_dates] != undefined){
+                                                if(me.value_form_discount[key_dates].date == ''){
+                                                    me.value_form_discount[key_dates].pvp = pvp_obj;
+                                                    me.value_form_discount[key_dates].date = me.$utils.changeFormatDate(date_pvp.date);
+                                                }else if(me.value_form_discount[key_dates].date == me.$utils.changeFormatDate(date_pvp.date)){
+                                                    me.value_form_discount[key_dates].pvp += pvp_obj;
+                                                }
+                                            }else{
+                                                var new_obj = {
+                                                    pvp: pvp_obj,
+                                                    date:  me.$utils.changeFormatDate(date_pvp.date)
+                                                }
+                                                me.value_form_discount.push(new_obj);
+                                            }
+                                        }else{
+                                            let is_search = false;
+                                            me.value_form_discount.map(function(form_discount, key_form_discount) {
+                                                if(form_discount.date == me.$utils.changeFormatDate(date_pvp.date)){
+                                                    form_discount.pvp += pvp_obj;
+                                                    is_search = true;
+                                                }
+                                            });
+                                            if(!is_search){
+                                                var new_obj_value_form_discount = {
+                                                    pvp: pvp_obj,
+                                                    date:  me.$utils.changeFormatDate(date_pvp.date)
+                                                }
+                                                me.value_form_discount.push(new_obj_value_form_discount);
+                                            }
+                                        }
+                                    }
+                                });
+                            });
+                        });
+                        //Formateamos el resultado del total con descuento
+                        me.value_form1[key_product].article[key_article].total_aux = me.$utils.roundAndFix(me.value_form1[key_product].article[key_article].total_aux);
+                    });
+                });
+            }
         },
         changeOptions(index){
             for(var i=index; i<this.proposals.bill_obj.array_bills.length; i++){
@@ -1385,7 +1439,6 @@ export default {
                 me.offer = me.$utils.roundAndFix(me.proposals.proposal_obj.total_global);
                 me.total = me.$utils.roundAndFix(me.proposals.proposal_obj.total_global);
             }
-            //me.offer = 0;
             me.loadFormObj();
         },
         '$store.state.proposals.num_custom_invoices': function() {
@@ -1418,7 +1471,7 @@ export default {
                 this.proposal_submission_settings.sales_possibilities = this.proposals.proposal_bd_obj.sales_possibilities;
                 this.proposal_submission_settings.discount = this.proposals.proposal_bd_obj.discount;
                 this.discount = this.proposal_submission_settings.discount;
-                this.offer = this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.bill_obj.total_bill));
+                this.offer = this.proposals.bill_obj.total_bill; //this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.bill_obj.total_bill));
                 this.loadFormObj();        
             }
         },  
