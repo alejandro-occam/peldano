@@ -45,6 +45,7 @@ class ExternalRequestController extends Controller
             $contacts->save();
             
         }else{
+            Log::info('$hub_id: ' . $hub_id);
 
             //Consultamos la empresa asociada a este contacto
             $url_contacts_association = 'https://api.hubapi.com/crm/v4/objects/contacts/'.$hub_id.'/associations/companies?limit=10&archived=false';
@@ -52,6 +53,8 @@ class ExternalRequestController extends Controller
             while($stop_companies_association_contacts == 0){
                 $array_companies_association_contacts_hubspot_obj = json_decode($requ_curls->getCurl($url_contacts_association, 1)['response'], true);
                 foreach($array_companies_association_contacts_hubspot_obj["results"] as $company_association_contacts){
+                    Log::info('$company_association_contacts: ' . $company_association_contacts['toObjectId']);
+
                     $id_company = $company_association_contacts['toObjectId'];
                     //Consultamos el contacto en la bd
                     $company = Company::where('id_hubspot', $id_company)->first();
