@@ -108,7 +108,7 @@ class ExternalRequestController extends Controller
             $hub_id_contact = $contact_hubspot['results'][0]['toObjectId'];
             Log::info('$hub_id_contact: ' . $hub_id_contact);
             //Buscamos una empresa con este id de hub en nuestra bd
-            $contact = Contact::where('id_hubspot', $hub_id_company)->first();
+            $contact = Contact::where('id_hubspot', $hub_id_contact)->first();
             if(!$contact){
                 //No existe
                 return;
