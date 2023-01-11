@@ -37,4 +37,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
    
     //Eliminar propuesta
     Route::get('/delete_proposal/{id}', [App\Http\Controllers\Api\ProposalsInfoges::class, 'deleteProposal'])->name('delete_proposal');
+
+    //Crear orden
+    Route::post('/create_order', [App\Http\Controllers\Api\OrdersInfoges::class, 'createOrder'])->name('create_order');
 });
