@@ -78,8 +78,6 @@ class ExternalRequestController extends Controller
                 'id_hubspot' => $hub_id
             ]);
         }
-
-        
     }
 
     //Guardar negocio de un contacto

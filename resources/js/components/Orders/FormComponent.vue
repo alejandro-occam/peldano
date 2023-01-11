@@ -731,14 +731,13 @@ export default {
                 {value: '5',text: 'Pagaré'},
                 {value: '6',text: 'Metálico'},
                 {value: '7',text: 'Especial camping'},
-                {value: '8',text: 'Recibo bancario'},
-                {value: '9',text: 'Confirming'},
-                {value: '10',text: 'Pago certificado'},
-                {value: '11',text: 'Tarjeta'},
-                {value: '12',text: 'Talón conformado'},
-                {value: '13',text: 'Paypal'},
-                {value: '14',text: '* Intercambio de facturas'},
-                {value: '15',text: 'Especial Gaceta'}
+                {value: '8',text: 'Confirming'},
+                {value: '9',text: 'Pago certificado'},
+                {value: '10',text: 'Tarjeta'},
+                {value: '11',text: 'Talón conformado'},
+                {value: '12',text: 'Paypal'},
+                {value: '13',text: '* Intercambio de facturas'},
+                {value: '14',text: 'Especial Gaceta'}
             ],
             select_expiration_options: [
                 {value: '',text: 'Vencimiento'},
