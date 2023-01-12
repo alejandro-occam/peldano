@@ -1331,7 +1331,7 @@ export default {
         returnView(){
             this.changeViewStatusProposals(1);
             this.clearObjectsProposal();
-        }
+        },
     },
     mounted() {
         if(this.proposals.proposal_obj.array_dates != undefined && this.offer == 0 && this.proposals.proposal_obj.array_dates.length > 0 && !this.proposals.is_change_get_info){
@@ -1345,7 +1345,27 @@ export default {
             let me = this;
             $('#select_company').select2({
                 placeholder: "Selecciona una empresa",
-                maximumInputLength: 20
+                matcher: function(params, data) {
+                    console.log(params);
+                    console.log(data);
+                    //return text.toUpperCase().indexOf(term.toUpperCase())>=0 || option.val().toUpperCase().indexOf(term.toUpperCase())>=0;
+                    // If there are no search terms, return all of the data
+                    if ($.trim(params.term) === '') { return null; }
+
+                    // Do not display the item if there is no 'text' property
+                    if (typeof data.text === 'undefined') { return null; }
+
+                    // `params.term` is the user's search term
+                    // `data.id` should be checked against
+                    // `data.text` should be checked against
+                    var q = params.term.toLowerCase();
+                    if (data.text.toLowerCase().indexOf(q) > -1 || data.id.toLowerCase().indexOf(q) > -1) {
+                        return $.extend({}, data, true);
+                    }
+
+                    // Return `null` if the term should not be displayed
+                    return null;
+                }
             });
             $('#select_company_other_values').select2({
                 placeholder: "Selecciona una empresa"
@@ -1485,7 +1505,27 @@ export default {
             $("#select_company").select2("val", "");
             $('#select_company').select2({
                 placeholder: "Selecciona una empresa",
-                maximumInputLength: 20
+                matcher: function(params, data) {
+                    console.log(params);
+                    console.log(data);
+                    //return text.toUpperCase().indexOf(term.toUpperCase())>=0 || option.val().toUpperCase().indexOf(term.toUpperCase())>=0;
+                    // If there are no search terms, return all of the data
+                    if ($.trim(params.term) === '') { return null; }
+
+                    // Do not display the item if there is no 'text' property
+                    if (typeof data.text === 'undefined') { return null; }
+
+                    // `params.term` is the user's search term
+                    // `data.id` should be checked against
+                    // `data.text` should be checked against
+                    var q = params.term.toLowerCase();
+                    if (data.text.toLowerCase().indexOf(q) > -1 || data.id.toLowerCase().indexOf(q) > -1) {
+                        return $.extend({}, data, true);
+                    }
+
+                    // Return `null` if the term should not be displayed
+                    return null;
+                }
             });
             $('#select_company').on("change",function(){
                 me.select_company = $('#select_company').val();
