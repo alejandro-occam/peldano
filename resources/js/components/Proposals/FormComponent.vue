@@ -1358,9 +1358,11 @@ export default {
                     // `params.term` is the user's search term
                     // `data.id` should be checked against
                     // `data.text` should be checked against
-                    var q = params.term.toLowerCase();
-                    if (data.text.toLowerCase().indexOf(q) > -1 || data.id.toLowerCase().indexOf(q) > -1) {
-                        return $.extend({}, data, true);
+                    if ($.trim(params.term.length) > 2){
+                        var q = params.term.toLowerCase();
+                        if (data.text.toLowerCase().indexOf(q) > -1 || data.id.toLowerCase().indexOf(q) > -1) {
+                            return $.extend({}, data, true);
+                        }
                     }
 
                     // Return `null` if the term should not be displayed
@@ -1518,11 +1520,12 @@ export default {
                     // `params.term` is the user's search term
                     // `data.id` should be checked against
                     // `data.text` should be checked against
-                    var q = params.term.toLowerCase();
-                    if (data.text.toLowerCase().indexOf(q) > -1 || data.id.toLowerCase().indexOf(q) > -1) {
-                        return $.extend({}, data, true);
+                    if ($.trim(params.term.length) > 2){
+                        var q = params.term.toLowerCase();
+                        if (data.text.toLowerCase().indexOf(q) > -1 || data.id.toLowerCase().indexOf(q) > -1) {
+                            return $.extend({}, data, true);
+                        }
                     }
-
                     // Return `null` if the term should not be displayed
                     return null;
                 }
