@@ -70,7 +70,7 @@
                         <span class="w-25">Empresa o nombre y apellidos</span>
                         <div class="mt-2 select-filter">
                             <select class="form-control select2 select-filter" id="select_company" v-model="select_company">
-                                <option :data-name="company.name" :value="company.id" v-for="company in proposals.array_companies" :key="company.id" v-text="company.name + ' - ' + company.fullname" ></option>
+                                <option :data-name="company.name" :value="company.id" v-for="company in array_companies" :key="company.id" v-text="company.name + ' - ' + company.fullname" ></option>
                             </select>
                         </div>
                     </div>
@@ -78,7 +78,7 @@
                         <span class="w-25">Otros (localidad, e-mail, cif/nif, tlf, cp)</span>
                         <div class="mt-2 select-filter">
                             <select class="form-control select2 select-filter" id="select_company_other_values" v-model="select_company_other_values">
-                                <option :data-name="company.name" :value="company.id" v-for="company in proposals.array_companies" :key="company.id" v-text="company.email + ' - ' + company.nif" ></option>
+                                <!---<option :data-name="company.name" :value="company.id" v-for="company in proposals.array_companies" :key="company.id" v-text="company.email + ' - ' + company.nif" ></option>-->
                             </select>
                         </div>
                     </div>
@@ -770,6 +770,7 @@ export default {
         return {
             publicPath: window.location.origin,
             select_company: '',
+            array_companies: [],
             select_company_other_values: '',
             name_company: '',
             id_company: 0,
@@ -835,7 +836,8 @@ export default {
             is_updating: false,
             create_order: false,
             date_now: '',
-            is_copy: false
+            is_copy: false,
+            search_company: ''
         };
     },
     computed: {
@@ -852,7 +854,7 @@ export default {
         },
         getNameCompany(id){
             let me = this;
-            me.proposals.array_companies.forEach(function callback(value, index, array) {
+            me.array_companies.forEach(function callback(value, index, array) {
                 if(value.id == id){
                     me.name_company = value.name;
                     me.id_company = value.id;
@@ -1346,8 +1348,6 @@ export default {
             $('#select_company').select2({
                 placeholder: "Selecciona una empresa",
                 matcher: function(params, data) {
-                    console.log(params);
-                    console.log(data);
                     //return text.toUpperCase().indexOf(term.toUpperCase())>=0 || option.val().toUpperCase().indexOf(term.toUpperCase())>=0;
                     // If there are no search terms, return all of the data
                     if ($.trim(params.term) === '') { return null; }
@@ -1358,7 +1358,7 @@ export default {
                     // `params.term` is the user's search term
                     // `data.id` should be checked against
                     // `data.text` should be checked against
-                    if ($.trim(params.term.length) > 2){
+                    if ($.trim(params.term.length) > 5 && params.term.includes(' ')){
                         var q = params.term.toLowerCase();
                         if (data.text.toLowerCase().indexOf(q) > -1 || data.id.toLowerCase().indexOf(q) > -1) {
                             return $.extend({}, data, true);
@@ -1367,12 +1367,34 @@ export default {
 
                     // Return `null` if the term should not be displayed
                     return null;
+                },
+                ajax: {
+                    url: 'http://127.0.0.1:8000/admin/get_companies_search',
+                    dataType: "json",
+                    type: "POST",
+                    delay: 250,
+                    data: function (params) {
+
+                        var queryParameters = {
+                            "term": params.term,
+                            "_token": $('meta[name="csrf-token"]').attr("content"),
+                        }
+                        me.search_company = params.term;
+                        return queryParameters;
+                    },
+                    processResults: function (data) {
+                        if(data.search.length == 5){
+                            me.array_companies = data.array_companies;
+                        }
+                        //$('#select_company').trigger('change.select2');
+                        
+                    }
                 }
             });
             $('#select_company_other_values').select2({
                 placeholder: "Selecciona una empresa"
             });
-            this.getCompanies(1);
+            //this.getCompanies(1);
             $('#select_company').on("change",function(){
                 me.select_company = $('#select_company').val();
                 me.getNameCompany(me.select_company);
@@ -1496,44 +1518,60 @@ export default {
                 this.offer = this.proposals.bill_obj.total_bill; //this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.bill_obj.total_bill));
                 this.loadFormObj();        
             }
-        },  
+        }, 
+        array_companies: {
+            handler(val){
+                if(val.length > 0 && this.search_company.length == 5){
+                    let me = this;
+                    //$('#select_company').select2().trigger('change');
+                    /*$("#select_company").select2("destroy");
+                    $("#select_company").select2();
+                    $('#select_company').select2({
+                        placeholder: "Selecciona una empresa",
+                        data: val,
+                    });*/
+                    /*$('#select_company').bind('change', function(){
+                        var $options = $();
+                        for (var i in data) {
+                            $options = $options.add(
+                                $('<option>').attr('value', val[i].id).html(val[i].text)
+                            );
+                        }
+                        $('#value').html($options).trigger('change');
+                    });*/
+                    var newOption = new Option('Hola', 1, false, false);
+                    $('#select_company').append(newOption).trigger('change');
+                }
+            },
+        } 
     },
     updated() {
         if(this.select_company == ''){
             let me = this;
-            $("#select_company").select2("destroy");
-
-            $("#select_company").select2();
-            $("#select_company").select2("val", "");
-            $('#select_company').select2({
+            /*$('#select_company').select2({
                 placeholder: "Selecciona una empresa",
-                matcher: function(params, data) {
-                    console.log(params);
-                    console.log(data);
-                    //return text.toUpperCase().indexOf(term.toUpperCase())>=0 || option.val().toUpperCase().indexOf(term.toUpperCase())>=0;
-                    // If there are no search terms, return all of the data
-                    if ($.trim(params.term) === '') { return null; }
-
-                    // Do not display the item if there is no 'text' property
-                    if (typeof data.text === 'undefined') { return null; }
-
-                    // `params.term` is the user's search term
-                    // `data.id` should be checked against
-                    // `data.text` should be checked against
-                    if ($.trim(params.term.length) > 2){
-                        var q = params.term.toLowerCase();
-                        if (data.text.toLowerCase().indexOf(q) > -1 || data.id.toLowerCase().indexOf(q) > -1) {
-                            return $.extend({}, data, true);
+                ajax: {
+                    url: 'http://127.0.0.1:8000/admin/get_companies_search',
+                    dataType: "json",
+                    type: "POST",
+                    data: function (params) {
+                        var queryParameters = {
+                            "term": params.term,
+                            "_token": $('meta[name="csrf-token"]').attr("content"),
                         }
+                        return queryParameters;
+                    },
+                    processResults: function (data) {  
+                        $('#select_company').select2({data: data.array_companies})
+                        //me.proposals.array_companies = data.array_companies;
+                        //me.array_companies = data.array_companies;
                     }
-                    // Return `null` if the term should not be displayed
-                    return null;
                 }
             });
             $('#select_company').on("change",function(){
                 me.select_company = $('#select_company').val();
                 me.getNameCompany(me.select_company);
-            });
+            });*/
         }
 
         if(this.select_company_other_values == ''){

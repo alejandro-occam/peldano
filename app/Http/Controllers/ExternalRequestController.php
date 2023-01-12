@@ -30,9 +30,46 @@ class ExternalRequestController extends Controller
             ]);
         }
 
-        /*if($contact->nif != null){
+        //Consultamos el id_sage de la empresa
+        $requ_curls = new CurlController();
+        $company_sage = config('constants.id_company_sage');
+        if($company->nif != null){
+            $url = 'https://sage200.sage.es:443/api/sales/Customers?api-version=1.0&$filter=CompanyId%20eq%20%27'.$company_sage.'%27%20and%20TaxNumber%20eq%20%27'.$company->nif.'%27';
+            $data = json_decode($requ_curls->getSageCurl($url)['response'], true);
+            if(isset($data['diagnosis'][0]['errorCode'])){
+                sleep(30);
+                $url = 'https://sage200.sage.es:443/api/sales/Customers?api-version=1.0&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20TaxNumber%20eq%20%27'.$company->nif.'%27';
+                $data = json_decode($requ_curls->getSageCurl($url)['response'], true);
+                if(isset($data['value'][0]['Id'])){
+                    $company->id_sage = $data['value'][0]['Id'];
+                    $company->save();
+                }
 
-        }*/
+            }else if(isset($data['value'][0]['Id'])){
+                $company->id_sage = $data['value'][0]['Id'];
+                $company->save();
+            }
+        }    
+
+        //Consultamos si se ha añadido el id_sage y si no buscamos por nombre
+        if($company->id_sage == null){
+            $name_without_space = str_replace(" ", "%20", $company->name);
+            $url = 'https://sage200.sage.es:443/api/sales/Customers?api-version=1.0&$filter=CompanyId%20eq%20%27'.$company_sage.'%27%20and%20Name%20eq%20%27'.$name_without_space.'%27';
+            $data = json_decode($requ_curls->getSageCurl($url)['response'], true);
+            if(isset($data['diagnosis'][0]['errorCode'])){
+                sleep(30);
+                $url = 'https://sage200.sage.es:443/api/sales/Customers?api-version=1.0&$filter=CompanyId%20eq%20%27'.$company_sage.'%27%20and%20Name%20eq%20%27'.$name_without_space.'%27';
+                $data = json_decode($requ_curls->getSageCurl($url)['response'], true);
+                if(isset($data['value'][0]['Id'])){
+                    $company->id_sage = $data['value'][0]['Id'];
+                    $company->save();
+                }
+
+            }else if(isset($data['value'][0]['Id'])){
+                $company->id_sage = $data['value'][0]['Id'];
+                $company->save();
+            }
+        }
     }
 
     //Guardar contactos desde Hubspot

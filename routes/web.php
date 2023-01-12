@@ -33,6 +33,9 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('/get_users', [App\Http\Controllers\ProposalsController::class, 'getUsers'])->name('get_users');
     //Listar para el select de empresas
     Route::get('/get_companies', [App\Http\Controllers\ProposalsController::class, 'getCompanies'])->name('get_companies');
+    //Listar para el select de empresas buscador
+    Route::post('/get_companies_search', [App\Http\Controllers\ProposalsController::class, 'getCompaniesSearch'])->name('get_companies_search');
+    
     //Guardar y generar una propuesta 
     Route::post('/save_generate_proposal', [App\Http\Controllers\ProposalsController::class, 'saveAndGenerateProposal'])->name('save_generate_proposal');
     //Generar pdf del presuspuesto TEST
