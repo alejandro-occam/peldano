@@ -1345,7 +1345,7 @@ export default {
             let me = this;
             $('#select_company').select2({
                 placeholder: "Selecciona una empresa",
-                minimumResultsForSearch: 20
+                maximumInputLength: 20
             });
             $('#select_company_other_values').select2({
                 placeholder: "Selecciona una empresa"
@@ -1484,7 +1484,8 @@ export default {
             $("#select_company").select2();
             $("#select_company").select2("val", "");
             $('#select_company').select2({
-                placeholder: "Selecciona una empresa"
+                placeholder: "Selecciona una empresa",
+                maximumInputLength: 20
             });
             $('#select_company').on("change",function(){
                 me.select_company = $('#select_company').val();
