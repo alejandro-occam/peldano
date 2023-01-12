@@ -1331,7 +1331,7 @@ export default {
         returnView(){
             this.changeViewStatusProposals(1);
             this.clearObjectsProposal();
-        },
+        }
     },
     mounted() {
         if(this.proposals.proposal_obj.array_dates != undefined && this.offer == 0 && this.proposals.proposal_obj.array_dates.length > 0 && !this.proposals.is_change_get_info){
@@ -1344,7 +1344,8 @@ export default {
             this.clearError();
             let me = this;
             $('#select_company').select2({
-                placeholder: "Selecciona una empresa"
+                placeholder: "Selecciona una empresa",
+                minimumResultsForSearch: 20
             });
             $('#select_company_other_values').select2({
                 placeholder: "Selecciona una empresa"

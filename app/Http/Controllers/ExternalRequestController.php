@@ -29,6 +29,10 @@ class ExternalRequestController extends Controller
                 'id_hubspot' => $request->get('hub_id')
             ]);
         }
+
+        /*if($contact->nif != null){
+
+        }*/
     }
 
     //Guardar contactos desde Hubspot
