@@ -1347,7 +1347,8 @@ export default {
             let me = this;
             $('#select_company').select2({
                 placeholder: "Selecciona una empresa",
-                matcher: function(params, data) {
+                minimumInputLength: 5,
+                /*matcher: function(params, data) {
                     //return text.toUpperCase().indexOf(term.toUpperCase())>=0 || option.val().toUpperCase().indexOf(term.toUpperCase())>=0;
                     // If there are no search terms, return all of the data
                     if ($.trim(params.term) === '') { return null; }
@@ -1367,14 +1368,13 @@ export default {
 
                     // Return `null` if the term should not be displayed
                     return null;
-                },
+                },*/
                 ajax: {
                     url: 'http://127.0.0.1:8000/admin/get_companies_search',
                     dataType: "json",
                     type: "POST",
                     delay: 250,
                     data: function (params) {
-
                         var queryParameters = {
                             "term": params.term,
                             "_token": $('meta[name="csrf-token"]').attr("content"),
@@ -1383,14 +1383,15 @@ export default {
                         return queryParameters;
                     },
                     processResults: function (data) {
-                        if(data.search.length == 5){
+                        if(data.search.length >= 5){
                             me.array_companies = data.array_companies;
-                        }
-                        //$('#select_company').trigger('change.select2');
-                        
+                        }else if(data.search.length < 5){
+                            me.array_companies = [];
+                        }                        
                     }
                 }
             });
+
             $('#select_company_other_values').select2({
                 placeholder: "Selecciona una empresa"
             });
@@ -1521,33 +1522,175 @@ export default {
         }, 
         array_companies: {
             handler(val){
-                if(val.length > 0 && this.search_company.length == 5){
-                    let me = this;
-                    //$('#select_company').select2().trigger('change');
-                    /*$("#select_company").select2("destroy");
+                let me = this;
+                /*if(val.length > 0 && this.search_company.length >= 5){
+                    
+                    $("#select_company").select2("destroy");
                     $("#select_company").select2();
                     $('#select_company').select2({
                         placeholder: "Selecciona una empresa",
                         data: val,
-                    });*/
-                    /*$('#select_company').bind('change', function(){
-                        var $options = $();
-                        for (var i in data) {
-                            $options = $options.add(
-                                $('<option>').attr('value', val[i].id).html(val[i].text)
-                            );
+                        ajax: {
+                            url: 'http://127.0.0.1:8000/admin/get_companies_search',
+                            dataType: "json",
+                            type: "POST",
+                            delay: 250,
+                            data: function (params) {
+
+                                var queryParameters = {
+                                    "term": params.term,
+                                    "_token": $('meta[name="csrf-token"]').attr("content"),
+                                }
+                                me.search_company = params.term;
+                                return queryParameters;
+                            },
+                            processResults: function (data) {
+                                if(data.search.length == 5){
+                                    me.array_companies = data.array_companies;
+                                }else if(data.search.length < 5){
+                                    me.array_companies = [];
+                                }
+                                //$('#select_company').trigger('change.select2');
+                                
+                            }
                         }
-                        $('#value').html($options).trigger('change');
-                    });*/
-                    var newOption = new Option('Hola', 1, false, false);
-                    $('#select_company').append(newOption).trigger('change');
-                }
+                    });
+                    
+                }else if(val.length > 0 && this.search_company.length < 5){
+                    me.array_companies = []
+                    $("#select_company").select2("destroy");
+                    $("#select_company").select2();
+                    $('#select_company').select2({
+                        placeholder: "Selecciona una empresa",
+                        data: array_companies,
+                        ajax: {
+                            url: 'http://127.0.0.1:8000/admin/get_companies_search',
+                            dataType: "json",
+                            type: "POST",
+                            delay: 250,
+                            data: function (params) {
+
+                                var queryParameters = {
+                                    "term": params.term,
+                                    "_token": $('meta[name="csrf-token"]').attr("content"),
+                                }
+                                me.search_company = params.term;
+                                return queryParameters;
+                            },
+                            processResults: function (data) {
+                                if(data.search.length == 5){
+                                    me.array_companies = data.array_companies;
+                                }else if(data.search.length < 5){
+                                    me.array_companies = [];
+                                }
+                                //$('#select_company').trigger('change.select2');
+                                
+                            }
+                        }
+                    });
+                }else{
+                    this.array_companies = [];
+                    $("#select_company").select2("destroy");
+                    $("#select_company").select2();
+                    $('#select_company').select2({
+                        placeholder: "Selecciona una empresa",
+                        data: val,
+                        ajax: {
+                            url: 'http://127.0.0.1:8000/admin/get_companies_search',
+                            dataType: "json",
+                            type: "POST",
+                            delay: 250,
+                            data: function (params) {
+
+                                var queryParameters = {
+                                    "term": params.term,
+                                    "_token": $('meta[name="csrf-token"]').attr("content"),
+                                }
+                                this.search_company = params.term;
+                                return queryParameters;
+                            },
+                            processResults: function (data) {
+                                //me.array_companies = [];
+                                //$('#select_company').trigger('change.select2');
+                                
+                            }
+                        }
+                    });
+                }*/
+                /*$("#select_company").select2("destroy");
+                $("#select_company").select2();
+                $('#select_company').select2({
+                    placeholder: "Selecciona una empresa",
+                    minimumInputLength: 5,
+                    data: val,
+                    ajax: {
+                        url: 'http://127.0.0.1:8000/admin/get_companies_search',
+                        dataType: "json",
+                        type: "POST",
+                        delay: 250,
+                        data: function (params) {
+                            var queryParameters = {
+                                "term": params.term,
+                                "_token": $('meta[name="csrf-token"]').attr("content"),
+                            }
+                            me.search_company = params.term;
+                            return queryParameters;
+                        },
+                        processResults: function (data) {
+                            if(data.search.length == 5){
+                                me.array_companies = data.array_companies;
+                            }else if(data.search.length < 5){
+                                me.array_companies = [];
+                            }
+                        }
+                    }
+                });
+                $('#select_company').select2('open');*/
+                console.log('jola');
             },
         } 
     },
     updated() {
         if(this.select_company == ''){
             let me = this;
+            if(this.search_company.length >= 5){
+                $("#select_company").select2("destroy");
+                $("#select_company").select2();
+                //$("#select_company").select2("val", "");
+                $('#select_company').select2({
+                    placeholder: "Selecciona una empresa",
+                    data: me.array_companies,
+                });
+                $('.select2-search__field').val(this.search_company);    
+                $('#select_company').select2('open');
+
+            }else{
+                $('#select_company').select2({
+                    placeholder: "Selecciona una empresa",
+                    data: me.array_companies,
+                    ajax: {
+                        url: 'http://127.0.0.1:8000/admin/get_companies_search',
+                        dataType: "json",
+                        type: "POST",
+                        data: function (params) {
+                            var queryParameters = {
+                                "term": params.term,
+                                "_token": $('meta[name="csrf-token"]').attr("content"),
+                            }
+                            this.search_company = params.term;
+                            return queryParameters;
+                        },
+                        processResults: function (data) {  
+                            if(data.search.length == 5){
+                                me.array_companies = data.array_companies;
+                            }else if(data.search.length < 5){
+                                me.array_companies = [];
+                            }
+                        }
+                    }
+                });
+            }
+            
             /*$('#select_company').select2({
                 placeholder: "Selecciona una empresa",
                 ajax: {
@@ -1573,7 +1716,6 @@ export default {
                 me.getNameCompany(me.select_company);
             });*/
         }
-
         if(this.select_company_other_values == ''){
             let me = this;
             $("#select_company_other_values").select2("destroy");

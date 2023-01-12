@@ -166,15 +166,10 @@ class ProposalsController extends Controller
         $array_contacts = array();
         if(isset($search)){
             error_log('search: '.$search);
-            
-            if(strlen($search) == 5){
-                //$array_companies = Company::select('companies.*', DB::raw('CONCAT(contacts.name, " ", contacts.surnames) as fullname', 'contacts.id as id_contact'), 'contacts.email')->leftJoin('contacts', 'contacts.id_company', 'companies.id')->get();
-                $array_contacts = Contact::select('contacts.*', 'companies.name', 'companies.nif', DB::raw('CONCAT(contacts.name, " ", contacts.surnames) as fullname', 'contacts.id as id_contact'), 'contacts.email')
+            $array_contacts = Contact::select('contacts.*', 'companies.name', 'companies.nif', DB::raw('CONCAT(contacts.name, " ", contacts.surnames) as fullname', 'contacts.id as id_contact'), 'contacts.email')
                                     ->leftJoin('companies', 'contacts.id_company', 'companies.id')
                                     ->where('contacts.name', 'like', '%'.$search.'%')
                                     ->get();
-                
-            }
         }
         $response['array_companies'] = $array_contacts;
         $response['search'] = $search;

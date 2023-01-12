@@ -18,7 +18,6 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         $schedule->command('createOrder:cron')->daily();
         $schedule->command('refreshTokenSage:cron')->everyFourHours();
-        $schedule->command('test:cron')->everyMinute();
     }
 
     /**
