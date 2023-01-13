@@ -163,17 +163,23 @@ class ProposalsController extends Controller
      //Consultar empresas
      function getCompaniesSearch(Request $request){
         $search = $request->get('term');
-        $array_contacts = array();
+        $array_companies = array();
+        $array_companies_custom = array();
         if(isset($search)){
             error_log('search: '.$search);
-            $array_contacts = Contact::select('contacts.*', 'companies.name', 'companies.nif', DB::raw('CONCAT(contacts.name, " ", contacts.surnames) as fullname', 'contacts.id as id_contact'), 'contacts.email')
+            $array_companies = Contact::select('contacts.*', 'companies.name', 'companies.nif', DB::raw('CONCAT(contacts.name, " ", contacts.surnames) as fullname', 'contacts.id as id_contact'), 'contacts.email')
                                     ->leftJoin('companies', 'contacts.id_company', 'companies.id')
                                     ->where('contacts.name', 'like', '%'.$search.'%')
                                     ->get();
+            foreach($array_companies as $company){
+                $company_custom['id'] = $company['id'];
+                $company_custom['text'] = $company['name'];
+                $array_companies_custom[] = $company_custom;
+            }
         }
-        $response['array_companies'] = $array_contacts;
+        $response['array_companies'] = $array_companies_custom;
         $response['search'] = $search;
-        return response()->json($response);
+        return response()->json($array_companies_custom);
     }
 
     //Guardar y generar la propuesta

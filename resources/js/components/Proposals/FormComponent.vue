@@ -70,7 +70,7 @@
                         <span class="w-25">Empresa o nombre y apellidos</span>
                         <div class="mt-2 select-filter">
                             <select class="form-control select2 select-filter" id="select_company" v-model="select_company">
-                                <option :data-name="company.name" :value="company.id" v-for="company in array_companies" :key="company.id" v-text="company.name + ' - ' + company.fullname" ></option>
+                                <!--<option :data-name="company.name" :value="company.id" v-for="company in array_companies" :key="company.id" v-text="company.name + ' - ' + company.fullname" ></option>-->
                             </select>
                         </div>
                     </div>
@@ -1371,7 +1371,6 @@ export default {
                 },*/
                 ajax: {
                     url: 'http://127.0.0.1:8000/admin/get_companies_search',
-                    dataType: "json",
                     type: "POST",
                     delay: 250,
                     data: function (params) {
@@ -1383,11 +1382,15 @@ export default {
                         return queryParameters;
                     },
                     processResults: function (data) {
-                        if(data.search.length >= 5){
+                        /*if(data.search.length >= 5){
                             me.array_companies = data.array_companies;
                         }else if(data.search.length < 5){
                             me.array_companies = [];
-                        }                        
+                        } */
+                        return {
+                            results: data.array_companies
+                        };
+                        
                     }
                 }
             });
@@ -1523,129 +1526,7 @@ export default {
         array_companies: {
             handler(val){
                 let me = this;
-                /*if(val.length > 0 && this.search_company.length >= 5){
-                    
-                    $("#select_company").select2("destroy");
-                    $("#select_company").select2();
-                    $('#select_company').select2({
-                        placeholder: "Selecciona una empresa",
-                        data: val,
-                        ajax: {
-                            url: 'http://127.0.0.1:8000/admin/get_companies_search',
-                            dataType: "json",
-                            type: "POST",
-                            delay: 250,
-                            data: function (params) {
-
-                                var queryParameters = {
-                                    "term": params.term,
-                                    "_token": $('meta[name="csrf-token"]').attr("content"),
-                                }
-                                me.search_company = params.term;
-                                return queryParameters;
-                            },
-                            processResults: function (data) {
-                                if(data.search.length == 5){
-                                    me.array_companies = data.array_companies;
-                                }else if(data.search.length < 5){
-                                    me.array_companies = [];
-                                }
-                                //$('#select_company').trigger('change.select2');
-                                
-                            }
-                        }
-                    });
-                    
-                }else if(val.length > 0 && this.search_company.length < 5){
-                    me.array_companies = []
-                    $("#select_company").select2("destroy");
-                    $("#select_company").select2();
-                    $('#select_company').select2({
-                        placeholder: "Selecciona una empresa",
-                        data: array_companies,
-                        ajax: {
-                            url: 'http://127.0.0.1:8000/admin/get_companies_search',
-                            dataType: "json",
-                            type: "POST",
-                            delay: 250,
-                            data: function (params) {
-
-                                var queryParameters = {
-                                    "term": params.term,
-                                    "_token": $('meta[name="csrf-token"]').attr("content"),
-                                }
-                                me.search_company = params.term;
-                                return queryParameters;
-                            },
-                            processResults: function (data) {
-                                if(data.search.length == 5){
-                                    me.array_companies = data.array_companies;
-                                }else if(data.search.length < 5){
-                                    me.array_companies = [];
-                                }
-                                //$('#select_company').trigger('change.select2');
-                                
-                            }
-                        }
-                    });
-                }else{
-                    this.array_companies = [];
-                    $("#select_company").select2("destroy");
-                    $("#select_company").select2();
-                    $('#select_company').select2({
-                        placeholder: "Selecciona una empresa",
-                        data: val,
-                        ajax: {
-                            url: 'http://127.0.0.1:8000/admin/get_companies_search',
-                            dataType: "json",
-                            type: "POST",
-                            delay: 250,
-                            data: function (params) {
-
-                                var queryParameters = {
-                                    "term": params.term,
-                                    "_token": $('meta[name="csrf-token"]').attr("content"),
-                                }
-                                this.search_company = params.term;
-                                return queryParameters;
-                            },
-                            processResults: function (data) {
-                                //me.array_companies = [];
-                                //$('#select_company').trigger('change.select2');
-                                
-                            }
-                        }
-                    });
-                }*/
-                /*$("#select_company").select2("destroy");
-                $("#select_company").select2();
-                $('#select_company').select2({
-                    placeholder: "Selecciona una empresa",
-                    minimumInputLength: 5,
-                    data: val,
-                    ajax: {
-                        url: 'http://127.0.0.1:8000/admin/get_companies_search',
-                        dataType: "json",
-                        type: "POST",
-                        delay: 250,
-                        data: function (params) {
-                            var queryParameters = {
-                                "term": params.term,
-                                "_token": $('meta[name="csrf-token"]').attr("content"),
-                            }
-                            me.search_company = params.term;
-                            return queryParameters;
-                        },
-                        processResults: function (data) {
-                            if(data.search.length == 5){
-                                me.array_companies = data.array_companies;
-                            }else if(data.search.length < 5){
-                                me.array_companies = [];
-                            }
-                        }
-                    }
-                });
-                $('#select_company').select2('open');*/
+                
                 console.log('jola');
             },
         } 
@@ -1656,7 +1537,6 @@ export default {
             if(this.search_company.length >= 5){
                 $("#select_company").select2("destroy");
                 $("#select_company").select2();
-                //$("#select_company").select2("val", "");
                 $('#select_company').select2({
                     placeholder: "Selecciona una empresa",
                     data: me.array_companies,
@@ -1690,31 +1570,6 @@ export default {
                     }
                 });
             }
-            
-            /*$('#select_company').select2({
-                placeholder: "Selecciona una empresa",
-                ajax: {
-                    url: 'http://127.0.0.1:8000/admin/get_companies_search',
-                    dataType: "json",
-                    type: "POST",
-                    data: function (params) {
-                        var queryParameters = {
-                            "term": params.term,
-                            "_token": $('meta[name="csrf-token"]').attr("content"),
-                        }
-                        return queryParameters;
-                    },
-                    processResults: function (data) {  
-                        $('#select_company').select2({data: data.array_companies})
-                        //me.proposals.array_companies = data.array_companies;
-                        //me.array_companies = data.array_companies;
-                    }
-                }
-            });
-            $('#select_company').on("change",function(){
-                me.select_company = $('#select_company').val();
-                me.getNameCompany(me.select_company);
-            });*/
         }
         if(this.select_company_other_values == ''){
             let me = this;
