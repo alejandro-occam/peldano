@@ -163,17 +163,44 @@ class ProposalsController extends Controller
      //Consultar empresas
      function getCompaniesSearch(Request $request){
         $search = $request->get('term');
-        $array_contacts = array();
+        $type_search = $request->get('type_search');
+        $array_companies = array();
+        $array_companies_custom = array();
         if(isset($search)){
-            error_log('search: '.$search);
-            $array_contacts = Contact::select('contacts.*', 'companies.name', 'companies.nif', DB::raw('CONCAT(contacts.name, " ", contacts.surnames) as fullname', 'contacts.id as id_contact'), 'contacts.email')
-                                    ->leftJoin('companies', 'contacts.id_company', 'companies.id')
-                                    ->where('contacts.name', 'like', '%'.$search.'%')
-                                    ->get();
+            $array_companies = Contact::select('contacts.*', 'companies.name', 'companies.nif', DB::raw('CONCAT(contacts.name, " ", contacts.surnames) as fullname', 'contacts.id as id_contact'), 'contacts.email')
+                                    ->leftJoin('companies', 'contacts.id_company', 'companies.id');
+            if($type_search == 1){
+                $array_companies = $array_companies->where('contacts.name', 'like', '%'.$search.'%')
+                                                    ->orWhere('contacts.surnames', 'like', '%'.$search.'%')
+                                                    ->orWhere('companies.name', 'like', '%'.$search.'%')
+                                                    ->get();
+            }
+            if($type_search == 2){
+                $array_companies = $array_companies->where('contacts.email', 'like', '%'.$search.'%')
+                                                    ->orWhere('companies.nif', 'like', '%'.$search.'%')
+                                                    ->orWhere('companies.address', 'like', '%'.$search.'%')
+                                                    ->get();
+            }
+            //$array_companies->get();
+
+            error_log('array_companies_count: '.count($array_companies));
+
+            foreach($array_companies as $company){
+                $company_custom['id'] = $company['id'];
+                if($type_search == 1){
+                    $company_custom['text'] = $company['name'].' - '.$company['fullname'];
+                }
+                if($type_search == 2){
+                    $company_custom['text'] = $company['email'].' - '.$company['nif'];
+                    error_log('company_custom: '.$company_custom['text']);
+                }
+                $company_custom['name'] = $company['name'].' - '.$company['fullname'];
+                $array_companies_custom[] = $company_custom;
+            }
         }
-        $response['array_companies'] = $array_contacts;
+        $response['array_companies'] = $array_companies_custom;
         $response['search'] = $search;
-        return response()->json($response);
+        return response()->json($array_companies_custom);
     }
 
     //Guardar y generar la propuesta
