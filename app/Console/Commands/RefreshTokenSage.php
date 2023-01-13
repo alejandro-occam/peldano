@@ -50,9 +50,12 @@ class RefreshTokenSage extends Command
         $params['refresh_token'] = config('constants.refresh_token');
         $data_token_sage = json_decode($requ_curls->postCurl($url, 3, $params)['response'], true);
 
+        error_log(print_r($data_token_sage, true));
+
         if(!isset($data_token_sage['error'])){
             $array = Config::get('constants');
             $array['bearer_sage'] = $data_token_sage['access_token'];
+            error_log('bearer_sage: '.$array['bearer_sage']);
             $array['refresh_token'] = $data_token_sage['refresh_token'];
             $array['id_token'] = $data_token_sage['id_token'];
             $data = var_export($array, 1);
