@@ -52,7 +52,7 @@
                         <span class="w-25">Empresa o nombre y apellidos</span>
                         <div class="mt-2 select-filter">
                             <select class="form-control select2 select-filter" id="select_company" v-model="select_company">
-                                <option :data-name="company.name" :value="company.id" v-for="company in orders.array_companies" :key="company.id" v-text="company.name + ' - ' + company.fullname" ></option>
+                                <!---<option :data-name="company.name" :value="company.id" v-for="company in orders.array_companies" :key="company.id" v-text="company.name + ' - ' + company.fullname" ></option>-->
                             </select>
                         </div>
                     </div>
@@ -60,7 +60,7 @@
                         <span class="w-25">Otros (localidad, e-mail, cif/nif, tlf, cp)</span>
                         <div class="mt-2 select-filter">
                             <select class="form-control select2 select-filter" id="select_company_other_values" v-model="select_company_other_values">
-                                <option :data-name="company.name" :value="company.id" v-for="company in orders.array_companies" :key="company.id" v-text="company.email + ' - ' + company.nif" ></option>
+                                <!--<option :data-name="company.name" :value="company.id" v-for="company in orders.array_companies" :key="company.id" v-text="company.email + ' - ' + company.nif" ></option>-->
                             </select>
                         </div>
                     </div>
@@ -206,15 +206,29 @@
                                         </template>
                                     </template>
                                 </td>
-                                <td valign="middle" class="td-border-right text-align-center"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].total)) }}€</span></td>
+                                <td v-if="this.discount != 0" valign="middle" class="td-border-right text-align-center">
+                                    <span class="">{{ this.value_form1[index - 1].article[index_article - 1].total_aux }}€</span>
+                                </td>
+                                <td v-else valign="middle" class="td-border-right text-align-center"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].total)) }}€</span></td>
                             </tr>
                         </div>
                         <tr class="tr-total-datatable">
                             <td class="py-6"><span class="ml-5 font-weight-bolder">TOTAL</span></td>
                             <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.total_individual_pvp)) }}€</span></td>
                             <td class="text-align-center"><span class="font-weight-bolder">{{ orders.proposal_obj.total_amount_global }}</span></td>
-                            <td class="text-align-center" v-for="index in Number(orders.proposal_obj.array_dates.length)"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.array_dates[index - 1].total)) }}€</span></td>
-                            <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.total_global)) }}€</span></td>
+                            
+                            <template v-if="this.discount != 0">
+                                <td class="text-align-center" v-for="index in Number(orders.proposal_obj.array_dates.length)">
+                                    <span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(this.value_form_discount[index - 1].pvp)) }}€</span>
+                                </td>
+                                <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(this.offer)) }}€</span></td>
+                            </template>
+                            <template v-else>
+                                <td class="text-align-center" v-for="index in Number(orders.proposal_obj.array_dates.length)">
+                                    <span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.array_dates[index - 1].total)) }}€</span>
+                                </td>
+                                <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.total_global)) }}€</span></td>
+                            </template>
                         </tr>
                         
                     </tbody>
@@ -596,9 +610,17 @@
                                             </template>
                                         </td>
                                         <td valign="middle" class="td-border-right text-align-center py-5">
-                                            <span v-if="this.proposal_submission_settings.show_pvp == 1" class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].total)) }}€</span>
-                                            <span v-else class="">-</span>
-
+                                            <template v-if="this.proposal_submission_settings.show_pvp == 1">
+                                                <template v-if="this.discount != 0">
+                                                    <span class="">{{ this.value_form1[index - 1].article[index_article - 1].total_aux }}€</span>
+                                                </template>
+                                                <template v-else>
+                                                    <span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].total)) }}€</span>
+                                                </template>
+                                            </template>
+                                            <template v-else >
+                                                <span class="">-</span>
+                                            </template>
                                         </td>
                                     </tr>
                                 </div>
@@ -606,8 +628,17 @@
                                     <td class="py-6"><span class="ml-5 font-weight-bolder">TOTAL</span></td>
                                     <td class="text-align-center" v-if="this.proposal_submission_settings.show_pvp == 1"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.total_individual_pvp)) }}€</span></td>
                                     <td class="text-align-center"><span class="font-weight-bolder">{{ orders.proposal_obj.total_amount_global }}</span></td>
-                                    <td class="text-align-center" v-for="index in Number(orders.proposal_obj.array_dates.length)"><span class="font-weight-bolder" v-if="this.proposal_submission_settings.show_pvp == 1">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.array_dates[index - 1].total)) }}€</span></td>
-                                    <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.total_global)) }}€</span></td>
+                                    
+                                    <template v-if="this.discount != 0">
+                                        <td class="text-align-center" v-for="index in Number(orders.proposal_obj.array_dates.length)">
+                                            <span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(this.value_form_discount[index - 1].pvp)) }}€</span>
+                                        </td>
+                                        <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(this.offer)) }}€</span></td>
+                                    </template>
+                                    <template v-else>
+                                        <td class="text-align-center" v-for="index in Number(orders.proposal_obj.array_dates.length)"><span class="font-weight-bolder" v-if="this.proposal_submission_settings.show_pvp == 1">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.array_dates[index - 1].total)) }}€</span></td>
+                                        <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.total_global)) }}€</span></td>
+                                    </template>
                                 </tr>
                                 
                             </tbody>
@@ -713,6 +744,7 @@ export default {
         return {
             publicPath: window.location.origin,
             select_company: '',
+            array_companies: [],
             select_company_other_values: '',
             name_company: '',
             id_company: 0,
@@ -722,6 +754,7 @@ export default {
             fullname: '',
             select_type_proposal: '1',
             value_form1: [], //Formulario presupuesto,
+            value_form_discount: [],
             select_way_to_pay_options: [
                 {value: '',text: 'Forma de pago'},
                 {value: '1',text: 'Recibo bancario'},
@@ -775,7 +808,8 @@ export default {
             },
             is_change_get_info: 0,
             is_updating: 0,
-            date_now: ''
+            date_now: '',
+            search_company: ''
         };
     },
     computed: {
@@ -792,7 +826,7 @@ export default {
         },
         getNameCompany(id){
             let me = this;
-            me.orders.array_companies.forEach(function callback(value, index, array) {
+            me.array_companies.forEach(function callback(value, index, array) {
                 if(value.id == id){
                     me.name_company = value.name;
                     me.id_company = value.id;
@@ -819,7 +853,7 @@ export default {
 
                 var new_value = this.offer / total_inputs;
                 //Modificamos los valores de los inputs
-                this.rewalkForm1(2, new_value);
+                this.rewalkForm1(2, this.discount);
             }
 
             var params = {
@@ -835,21 +869,76 @@ export default {
         rewalkForm1(type, new_value){
             let me = this;
             var value = 0;
-            me.value_form1.map(function(chapter, key_chapter) {
-                chapter.article.map(function(article_obj, key_article) {
+
+            me.value_form1.map(function(product, key_product) {
+                product.article.map(function(article_obj, key_article) {
+                    article_obj.dates.map(function(date, key_dates) {
+                        if(me.value_form_discount[key_dates] != undefined){
+                            me.value_form_discount[key_dates].pvp = 0;
+                            me.value_form_discount[key_dates].date = '';
+                        }
+                    });
+                });
+            });
+
+            me.value_form1.map(function(product, key_product) {
+                product.article.map(function(article_obj, key_article) {
+                    //Reseteamos el total
+                    me.value_form1[key_product].article[key_article].total_aux = 0;
                     article_obj.dates.map(function(date, key_dates) {
                         date.date_pvp.map(function(date_pvp, key_date_pvp) {
                             date_pvp.pvp.map(function(pvp_obj, key_pvp) {
                                 if(type == 1){
                                     value += 1;
                                 }else{
-                                    //pvp_obj = pvp_obj * (1 - (me.discount  /100));
-                                    //me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = me.$utils.roundAndFix(pvp_obj);
-                                    me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = new_value;
+                                    if(me.discount != 0){
+                                        pvp_obj = me.value_form1[key_product].article[key_article].dates[key_dates].article.pvp * (1 - (me.discount  /100));
+                                        me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = me.$utils.roundAndFix(pvp_obj);
+                                        me.value_form1[key_product].article[key_article].total_aux += pvp_obj;
+                                        
+                                        if(key_product == 0){
+                                            if(me.value_form_discount[key_dates] != undefined){
+                                                if(me.value_form_discount[key_dates].date == ''){
+                                                    me.value_form_discount[key_dates].pvp = pvp_obj;
+                                                    me.value_form_discount[key_dates].date = me.$utils.changeFormatDate(date_pvp.date);
+                                                }else if(me.value_form_discount[key_dates].date == me.$utils.changeFormatDate(date_pvp.date)){
+                                                    me.value_form_discount[key_dates].pvp += pvp_obj;
+                                                }
+                                            }else{
+                                                var new_obj = {
+                                                    pvp: pvp_obj,
+                                                    date:  me.$utils.changeFormatDate(date_pvp.date)
+                                                }
+                                                me.value_form_discount.push(new_obj);
+                                            }
+                                        }else{
+                                            let is_search = false;
+                                            me.value_form_discount.map(function(form_discount, key_form_discount) {
+                                                if(form_discount.date == me.$utils.changeFormatDate(date_pvp.date)){
+                                                    form_discount.pvp += pvp_obj;
+                                                    is_search = true;
+                                                }
+                                            });
+                                            if(!is_search){
+                                                var new_obj_value_form_discount = {
+                                                    pvp: pvp_obj,
+                                                    date:  me.$utils.changeFormatDate(date_pvp.date)
+                                                }
+                                                me.value_form_discount.push(new_obj_value_form_discount);
+                                            }
+                                        }
+                                        
+                                        
+                                        
+                                    }else{
+                                        me.value_form1[key_product].article[key_article].dates[key_dates].date_pvp[key_date_pvp].pvp[key_pvp] = me.$utils.roundAndFix(me.value_form1[key_product].article[key_article].dates[key_dates].article.pvp);
+                                    }
                                 }
                             });
                         });
                     });
+                    //Formateamos el resultado del total con descuento
+                    me.value_form1[key_product].article[key_article].total_aux = me.$utils.roundAndFix(me.value_form1[key_product].article[key_article].total_aux);
                 });
             });
             if(type == 1){
@@ -890,6 +979,7 @@ export default {
         },
         loadFormObj(){
             let me = this;
+            console.log(me.orders.proposal_obj.is_change);
             me.value_form1 = [];
                 
             //Rellenar los modelos de los inputs de la tabla
@@ -907,12 +997,14 @@ export default {
                                                         article: article.article_obj,
                                                         date_pvp: [{
                                                             date: pvp_date.date,
-                                                            pvp: []
+                                                            pvp: [],
+                                                            pvp_default: []
                                                         }]
                                                     }]
                                                 }]
                                             });
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
 
                                         }else if(me.value_form1[key_chapter].article[key_article] == undefined){
                                             me.value_form1[key_chapter].article.push({
@@ -920,21 +1012,25 @@ export default {
                                                     article: article.article_obj,
                                                     date_pvp: [{
                                                         date: pvp_date.date,
-                                                        pvp: []
+                                                        pvp: [],
+                                                        pvp_default: []
                                                     }]
                                                 }]
                                             });
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
 
                                         }else if(me.value_form1[key_chapter].article[key_article].dates[key_dates] == undefined){
                                             me.value_form1[key_chapter].article[key_article].dates.push({
                                                 article: article.article_obj,
                                                 date_pvp: [{
                                                     date: pvp_date.date,
-                                                    pvp: []
+                                                    pvp: [],
+                                                    pvp_default: []
                                                 }]
                                             });
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
 
                                         }else if(me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date] == undefined){
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp.push({
@@ -943,10 +1039,11 @@ export default {
                                             });
 
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
 
                                         }else{
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
-
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
                                         }
                                     });
                                 });
@@ -955,6 +1052,71 @@ export default {
                     });
                 });
             });
+
+            //Ponemos a cero los valores auxiliares
+            me.value_form1.map(function(product, key_product) {
+                product.article.map(function(article_obj, key_article) {
+                    article_obj.dates.map(function(date, key_dates) {
+                        if(me.value_form_discount[key_dates] != undefined){
+                            me.value_form_discount[key_dates].pvp = 0;
+                            me.value_form_discount[key_dates].date = '';
+                        }
+                    });
+                });
+            });
+
+            if(this.is_change_get_info == 1){
+                me.value_form1.map(function(product, key_product) {
+                    product.article.map(function(article_obj, key_article) {
+                        //Reseteamos el total
+                        me.value_form1[key_product].article[key_article].total_aux = 0;
+                        article_obj.dates.map(function(date, key_dates) {
+                            date.date_pvp.map(function(date_pvp, key_date_pvp) {
+                                date_pvp.pvp.map(function(pvp_obj, key_pvp) {
+                                    if(me.discount != 0){
+                                        pvp_obj = me.value_form1[key_product].article[key_article].dates[key_dates].article.pvp * (1 - (me.discount  /100));
+                                        me.value_form1[key_product].article[key_article].total_aux += pvp_obj;
+                                        
+                                        if(key_product == 0){
+                                            if(me.value_form_discount[key_dates] != undefined){
+                                                if(me.value_form_discount[key_dates].date == ''){
+                                                    me.value_form_discount[key_dates].pvp = pvp_obj;
+                                                    me.value_form_discount[key_dates].date = me.$utils.changeFormatDate(date_pvp.date);
+                                                }else if(me.value_form_discount[key_dates].date == me.$utils.changeFormatDate(date_pvp.date)){
+                                                    me.value_form_discount[key_dates].pvp += pvp_obj;
+                                                }
+                                            }else{
+                                                var new_obj = {
+                                                    pvp: pvp_obj,
+                                                    date:  me.$utils.changeFormatDate(date_pvp.date)
+                                                }
+                                                me.value_form_discount.push(new_obj);
+                                            }
+                                        }else{
+                                            let is_search = false;
+                                            me.value_form_discount.map(function(form_discount, key_form_discount) {
+                                                if(form_discount.date == me.$utils.changeFormatDate(date_pvp.date)){
+                                                    form_discount.pvp += pvp_obj;
+                                                    is_search = true;
+                                                }
+                                            });
+                                            if(!is_search){
+                                                var new_obj_value_form_discount = {
+                                                    pvp: pvp_obj,
+                                                    date:  me.$utils.changeFormatDate(date_pvp.date)
+                                                }
+                                                me.value_form_discount.push(new_obj_value_form_discount);
+                                            }
+                                        }
+                                    }
+                                });
+                            });
+                        });
+                        //Formateamos el resultado del total con descuento
+                        me.value_form1[key_product].article[key_article].total_aux = me.$utils.roundAndFix(me.value_form1[key_product].article[key_article].total_aux);
+                    });
+                });
+            }
         },
         changeOptions(index){
             for(var i=index; i<this.orders.bill_obj.array_bills.length; i++){
@@ -1123,13 +1285,59 @@ export default {
             this.date_now = this.$utils.getNow();
             this.clearError();
             let me = this;
+            
             $('#select_company').select2({
-                placeholder: "Selecciona una empresa"
+                placeholder: "Selecciona una empresa",
+                minimumInputLength: 5,
+                ajax: {
+                    url: '/admin/get_companies_search',
+                    type: "POST",
+                    delay: 250,
+                    data: function (params) {
+                        var queryParameters = {
+                            "term": params.term,
+                            "type_search": 1,
+                            "_token": $('meta[name="csrf-token"]').attr("content"),
+                        }
+                        me.search_company = params.term;
+                        return queryParameters;
+                    },
+                    processResults: function (data) {
+                        me.array_companies = data;
+                        return {
+                            results: data
+                        };
+                        
+                    }
+                }
             });
+
             $('#select_company_other_values').select2({
-                placeholder: "Selecciona una empresa"
+                placeholder: "Selecciona una empresa",
+                minimumInputLength: 5,
+                ajax: {
+                    url: '/admin/get_companies_search',
+                    type: "POST",
+                    delay: 250,
+                    data: function (params) {
+                        var queryParameters = {
+                            "term": params.term,
+                            "type_search": 2,
+                            "_token": $('meta[name="csrf-token"]').attr("content"),
+                        }
+                        me.search_company = params.term;
+                        return queryParameters;
+                    },
+                    processResults: function (data) {
+                        me.array_companies = data;
+                        return {
+                            results: data
+                        };
+                        
+                    }
+                }
             });
-            this.getCompanies(2);
+
             $('#select_company').on("change",function(){
                 me.select_company = $('#select_company').val();
                 me.getNameCompany(me.select_company);
@@ -1245,32 +1453,82 @@ export default {
     updated() {
         if(this.select_company == ''){
             let me = this;
-            $("#select_company").select2("destroy");
+            if(this.search_company.length >= 5){
+                $("#select_company").select2("destroy");
+                $("#select_company").select2();
+                $('#select_company').select2({
+                    placeholder: "Selecciona una empresa",
+                    data: me.array_companies,
+                });
+                $('.select2-search__field').val(this.search_company);    
+                $('#select_company').select2('open');
 
-            $("#select_company").select2();
-            $("#select_company").select2("val", "");
-            $('#select_company').select2({
-                placeholder: "Selecciona una empresa"
-            });
-            $('#select_company').on("change",function(){
-                me.select_company = $('#select_company').val();
-                me.getNameCompany(me.select_company);
-            });
+            }else{
+                $('#select_company').select2({
+                    placeholder: "Selecciona una empresa",
+                    data: me.array_companies,
+                    ajax: {
+                        url: '/admin/get_companies_search',
+                        dataType: "json",
+                        type: "POST",
+                        data: function (params) {
+                            var queryParameters = {
+                                "term": params.term,
+                                "type_search": 1,
+                                "_token": $('meta[name="csrf-token"]').attr("content"),
+                            }
+                            this.search_company = params.term;
+                            return queryParameters;
+                        },
+                        processResults: function (data) {  
+                            me.array_companies = data;
+                            return {
+                                results: data
+                            };
+                        }
+                    }
+                });
+            }
         }
-
         if(this.select_company_other_values == ''){
             let me = this;
-            $("#select_company_other_values").select2("destroy");
 
-            $("#select_company_other_values").select2();
-            $("#select_company_other_values").select2("val", "");
-            $('#select_company_other_values').select2({
-                placeholder: "Selecciona una empresa"
-            });
-            $('#select_company_other_values').on("change",function(){
-                me.select_company_other_values = $('#select_company_other_values').val();
-                me.getNameCompany(me.select_company_other_values);
-            });
+            if(this.select_company_other_values.length >= 5){
+                $("#select_company_other_values").select2("destroy");
+                $("#select_company_other_values").select2();
+                $('#select_company_other_values').select2({
+                    placeholder: "Selecciona una empresa",
+                    data: me.array_companies,
+                });
+                $('.select2-search__field').val(this.search_company);    
+                $('#select_company_other_values').select2('open');
+
+            }else{
+                $('#select_company_other_values').select2({
+                    placeholder: "Selecciona una empresa",
+                    data: me.array_companies,
+                    ajax: {
+                        url: 'admin/get_companies_search',
+                        dataType: "json",
+                        type: "POST",
+                        data: function (params) {
+                            var queryParameters = {
+                                "term": params.term,
+                                "type_search": 2,
+                                "_token": $('meta[name="csrf-token"]').attr("content"),
+                            }
+                            this.search_company = params.term;
+                            return queryParameters;
+                        },
+                        processResults: function (data) {  
+                            me.array_companies = data;
+                            return {
+                                results: data
+                            };
+                        }
+                    }
+                });
+            }
         }
     }
 };

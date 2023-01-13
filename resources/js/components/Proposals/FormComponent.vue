@@ -1334,6 +1334,35 @@ export default {
             this.changeViewStatusProposals(1);
             this.clearObjectsProposal();
         },
+        //Cargar datos de la propuesta
+        loadViewInfoProposal(){
+            this.finish_proposal = true;
+            this.generate_proposal = true;
+            this.is_change_get_info = this.proposals.is_change_get_info;
+            this.proposals.is_change_get_info = 0;
+            this.id_company = this.proposals.id_company;
+            this.select_company = this.id_company;
+            this.getNameCompany(this.select_company);
+            this.is_show_buttons_bill = true;
+            this.proposal_submission_settings.commercial_name = this.proposals.proposal_bd_obj.commercial_name;
+            this.proposal_submission_settings.language = this.proposals.proposal_bd_obj.language;
+            this.proposal_submission_settings.type_proyect = this.proposals.proposal_bd_obj.type_proyect;
+            this.proposal_submission_settings.name_proyect = this.proposals.proposal_bd_obj.name_proyect;
+            this.proposal_submission_settings.date_proyect = this.proposals.proposal_bd_obj.date_proyect;
+            this.proposal_submission_settings.objetives = this.proposals.proposal_bd_obj.objetives;
+            this.proposal_submission_settings.proposal = this.proposals.proposal_bd_obj.proposal;
+            this.proposal_submission_settings.actions = this.proposals.proposal_bd_obj.actions;
+            this.proposal_submission_settings.observations = this.proposals.proposal_bd_obj.observations;
+            this.proposal_submission_settings.show_discounts = this.proposals.proposal_bd_obj.show_discounts;
+            this.proposal_submission_settings.show_inserts = 0;
+            this.proposal_submission_settings.show_invoices = this.proposals.proposal_bd_obj.show_invoices;
+            this.proposal_submission_settings.show_pvp = this.proposals.proposal_bd_obj.show_pvp;
+            this.proposal_submission_settings.sales_possibilities = this.proposals.proposal_bd_obj.sales_possibilities;
+            this.proposal_submission_settings.discount = this.proposals.proposal_bd_obj.discount;
+            this.discount = this.proposal_submission_settings.discount;
+            this.offer = this.proposals.bill_obj.total_bill; //this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.bill_obj.total_bill));
+            this.loadFormObj(); 
+        }
     },
     mounted() {
         if(this.proposals.proposal_obj.array_dates != undefined && this.offer == 0 && this.proposals.proposal_obj.array_dates.length > 0 && !this.proposals.is_change_get_info){
@@ -1343,13 +1372,16 @@ export default {
         }else{
 
             this.date_now = this.$utils.getNow();
+            if(this.errors.type_error == "get_info_proposal"){
+                this.loadViewInfoProposal();  
+            }
             this.clearError();
             let me = this;
             $('#select_company').select2({
                 placeholder: "Selecciona una empresa",
                 minimumInputLength: 5,
                 ajax: {
-                    url: 'http://127.0.0.1:8000/admin/get_companies_search',
+                    url: '/admin/get_companies_search',
                     type: "POST",
                     delay: 250,
                     data: function (params) {
@@ -1371,15 +1403,11 @@ export default {
                 }
             });
 
-            // $('#select_company_other_values').select2({
-            //     placeholder: "Selecciona una empresa"
-            // });
-            //this.getCompanies(1);
             $('#select_company_other_values').select2({
                 placeholder: "Selecciona una empresa",
                 minimumInputLength: 5,
                 ajax: {
-                    url: 'http://127.0.0.1:8000/admin/get_companies_search',
+                    url: '/admin/get_companies_search',
                     type: "POST",
                     delay: 250,
                     data: function (params) {
@@ -1524,14 +1552,7 @@ export default {
                 this.offer = this.proposals.bill_obj.total_bill; //this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.bill_obj.total_bill));
                 this.loadFormObj();        
             }
-        }, 
-        array_companies: {
-            handler(val){
-                let me = this;
-                
-                console.log('jola');
-            },
-        } 
+        }
     },
     updated() {
         if(this.select_company == ''){
@@ -1551,7 +1572,7 @@ export default {
                     placeholder: "Selecciona una empresa",
                     data: me.array_companies,
                     ajax: {
-                        url: 'http://127.0.0.1:8000/admin/get_companies_search',
+                        url: '/admin/get_companies_search',
                         dataType: "json",
                         type: "POST",
                         data: function (params) {
@@ -1575,17 +1596,6 @@ export default {
         }
         if(this.select_company_other_values == ''){
             let me = this;
-            // $("#select_company_other_values").select2("destroy");
-
-            // $("#select_company_other_values").select2();
-            // $("#select_company_other_values").select2("val", "");
-            // $('#select_company_other_values').select2({
-            //     placeholder: "Selecciona una empresa"
-            // });
-            // $('#select_company_other_values').on("change",function(){
-            //     me.select_company_other_values = $('#select_company_other_values').val();
-            //     me.getNameCompany(me.select_company_other_values);
-            // });
 
             if(this.select_company_other_values.length >= 5){
                 $("#select_company_other_values").select2("destroy");
@@ -1602,7 +1612,7 @@ export default {
                     placeholder: "Selecciona una empresa",
                     data: me.array_companies,
                     ajax: {
-                        url: 'http://127.0.0.1:8000/admin/get_companies_search',
+                        url: 'admin/get_companies_search',
                         dataType: "json",
                         type: "POST",
                         data: function (params) {
