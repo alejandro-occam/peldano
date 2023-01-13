@@ -1387,8 +1387,9 @@ export default {
                         }else if(data.search.length < 5){
                             me.array_companies = [];
                         } */
+                        me.array_companies = data;
                         return {
-                            results: data.array_companies
+                            results: data
                         };
                         
                     }
@@ -1561,11 +1562,15 @@ export default {
                             return queryParameters;
                         },
                         processResults: function (data) {  
-                            if(data.search.length == 5){
+                            /*if(data.search.length == 5){
                                 me.array_companies = data.array_companies;
                             }else if(data.search.length < 5){
                                 me.array_companies = [];
-                            }
+                            }*/
+                            me.array_companies = data;
+                            return {
+                                results: data
+                            };
                         }
                     }
                 });

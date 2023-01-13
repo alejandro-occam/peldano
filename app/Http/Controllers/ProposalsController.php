@@ -173,7 +173,8 @@ class ProposalsController extends Controller
                                     ->get();
             foreach($array_companies as $company){
                 $company_custom['id'] = $company['id'];
-                $company_custom['text'] = $company['name'];
+                $company_custom['text'] = $company['name'].' - '.$company['fullname'];
+                $company_custom['name'] = $company['name'].' - '.$company['fullname'];
                 $array_companies_custom[] = $company_custom;
             }
         }
