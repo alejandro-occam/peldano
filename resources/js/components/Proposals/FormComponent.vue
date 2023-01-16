@@ -1268,7 +1268,8 @@ export default {
                 proposal_obj: this.proposals.proposal_obj,
                 value_form1: this.value_form1,
                 select_way_to_pay_options: this.select_way_to_pay_options,
-                select_expiration_options: this.select_expiration_options
+                select_expiration_options: this.select_expiration_options,
+                nun_custom_invoices: this.proposals.num_custom_invoices
             }
             if(this.proposals.status_view == 2 && this.proposals.proposal_bd_obj != null){
                 params.id_proposal = this.proposals.proposal_bd_obj.id;

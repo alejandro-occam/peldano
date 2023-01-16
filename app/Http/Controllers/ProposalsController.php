@@ -114,7 +114,7 @@ class ProposalsController extends Controller
                 $total += $bill->amount;
             }
            
-            $proposal['total_amount'] = $total;
+            $proposal['total_amount'] = number_format($total, 2);
         }
 
         $total_proposals = $array_proposals->groupBy('proposals.id')
@@ -252,22 +252,39 @@ class ProposalsController extends Controller
 
             $array_bills_aux[] = $bill;
 
-            //Creamos la relación entre las facturas y los artículos
-            foreach($array_services_aux as $service){
-                //Consultamos el capitulo del servicio
-                $article = Article::find($service->id_article);
-                if(!$article){
-                    $response['code'] = 1002;
-                    return response()->json($response);
+            $nun_custom_invoices = $request->get('nun_custom_invoices');
+            $custom_bill = false;
+            if(isset($nun_custom_invoices)){
+                if($nun_custom_invoices > 0){
+                    $custom_bill = true;
                 }
+            }
+            if(!$custom_bill){
+                //Creamos la relación entre las facturas y los artículos
+                foreach($array_services_aux as $service){
+                    //Consultamos el capitulo del servicio
+                    $article = Article::find($service->id_article);
+                    if(!$article){
+                        $response['code'] = 1002;
+                        return response()->json($response);
+                    }
 
-                $batch = Batch::find($article->id_batch);
-                if(!$batch){
-                    $response['code'] = 1003;
-                    return response()->json($response);
+                    $batch = Batch::find($article->id_batch);
+                    if(!$batch){
+                        $response['code'] = 1003;
+                        return response()->json($response);
+                    }
+
+                    if($service->date == $bill->date && $bill_obj->article->id_chapter == $batch->id_chapter){
+                        ServiceBill::create([
+                            'id_service' => $service->id,
+                            'id_bill' => $bill->id,
+                        ]);
+                    }
                 }
-
-                if($service->date == $bill->date && $bill_obj->article->id_chapter == $batch->id_chapter){
+            }
+            if($custom_bill){
+                foreach($array_services_aux as $service){
                     ServiceBill::create([
                         'id_service' => $service->id,
                         'id_bill' => $bill->id,
@@ -332,9 +349,9 @@ class ProposalsController extends Controller
         //Contabilizamos el colspan de plan de pago
         $bill_obj2 = json_decode($request->get('bill_obj'));
 
-         //COMENTARIO PARA EL OBJETO
-         error_log('bill_obj2: '.$request->get('bill_obj'));
-         //END COMENTARIO PARA EL OBJETO
+        //COMENTARIO PARA EL OBJETO
+        error_log('bill_obj2: '.$request->get('bill_obj'));
+        //END COMENTARIO PARA EL OBJETO
 
         foreach($bill_obj2->array_bills as $bill){
             $rows = 2;

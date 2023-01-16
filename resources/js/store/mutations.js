@@ -874,6 +874,29 @@ const mutations = {
             //Variable para saber el total
             var total_amount = 0;
 
+            var array_articles = [];
+            
+            //Guardamos con un nuevo formato para las facturas los articulos
+            custom_state.proposal_obj.chapters.map(function(chapters, key) {
+                chapters.articles.map(function(article_obj, key) {
+                    article_obj.dates_prices.map(function(dates_prices_obj, key) {
+                        dates_prices_obj.arr_pvp_date.map(function(arr_pvp_date_obj, key) {
+                            arr_pvp_date_obj.arr_pvp.map(function(arr_pvp_obj, key) {
+                                var article_obj_aux = {
+                                    date: arr_pvp_date_obj.date,
+                                    article: article_obj,
+                                    id_chapter: chapters.chapter_obj.id,
+                                    amount: arr_pvp_obj
+                                }
+                                array_articles.push(article_obj_aux);
+                            });
+                        });
+                    });
+                });
+            });
+
+            custom_state.bill_obj.articles = array_articles;
+
             //Guardamos con un nuevo formato para las facturas los articulos
             custom_state.proposal_obj.chapters.map(function(chapters, key) {
                 chapters.articles.map(function(article_obj, key) {
