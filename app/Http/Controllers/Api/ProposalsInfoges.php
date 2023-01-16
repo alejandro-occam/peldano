@@ -22,10 +22,10 @@ class ProposalsInfoges extends Controller
     //Crear propuesta
     function createProposal(Request $request){
         $id_company = $request->get('id_company');
-        $id_user = $request->get('id_user');
+        $email = $request->get('email');
     
         //Consultamos el usuario
-        $user = User::find($id_user);
+        $user = User::where('email', $email)->first();
 
         //Consultamos si existe la empresa
         $company = Company::find($id_company);
@@ -159,15 +159,15 @@ class ProposalsInfoges extends Controller
     //Modificar propuesta
     function updateProposal(Request $request){
         //Comprobamos si existe la propuesta
-        if (!$request->has('id_proposal') || !$request->has('id_user')){
+        if (!$request->has('id_proposal') || !$request->has('email')){
             $response['code'] = 1001;
             return response()->json($response);
         }
 
         $id_proposal = $request->get('id_proposal');
-        $id_user = $request->get('id_user');
+        $email = $request->get('email');
 
-        if(empty($id_proposal) || empty($id_user)){
+        if(empty($id_proposal) || empty($email)){
             $response['code'] = 1002;
             return response()->json($response);
         }
@@ -275,7 +275,7 @@ class ProposalsInfoges extends Controller
         $proposal->save();
 
         //Consultamos el usuario
-        $user = User::find($id_user);
+        $user = User::where('email', $email)->first();
         if(!$user){
             $response['code'] = 1006;
             return response()->json($response);
