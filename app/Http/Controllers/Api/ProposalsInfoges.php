@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\User;
 use App\Models\Company;
+use App\Models\Contact;
 use App\Models\Service;
 use App\Models\SerBillvice;
 use App\Models\Article;
@@ -83,11 +84,16 @@ class ProposalsInfoges extends Controller
                     return response()->json($response);
                 }
 
-                if($service->date == $bill->date && $bill_obj['id_chapter'] == $batch->id_chapter){
-                    ServiceBill::create([
-                        'id_service' => $service->id,
-                        'id_bill' => $bill->id,
-                    ]);
+                $exist = false;
+                if($service->date == $bill->date){
+                    foreach($bill_obj['array_id_sage_articles'] as $id_sage_article){
+                        if($id_sage_article == $article->id_sage){
+                            ServiceBill::create([
+                                'id_service' => $service->id,
+                                'id_bill' => $bill->id,
+                            ]);
+                        }
+                    }
                 }
             }
         }
