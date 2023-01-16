@@ -173,7 +173,8 @@
     
     <script>
 
-    import Calendar from 'primevue/calendar';
+    import { throwStatement } from '@babel/types';
+import Calendar from 'primevue/calendar';
 
     import { mapState, mapActions, mapMutations } from "vuex";
 
@@ -470,7 +471,21 @@
                 handler: async function(val) {
                     this.date = [];
                     for(var i=0; i<val; i++){
-                        this.date[i] = new Date();//this.$utils.getNow();
+                        if(this.array_magazines.length == 0){
+                            this.date[i] = new Date();//this.$utils.getNow();
+                        }else{
+                            var date_ms = Date.parse(new Date());
+                            var date_now_string = this.$utils.customFormDate(date_ms);
+                            this.date[i] = '';
+                            for(var j=0; j<this.array_magazines.length; j++){
+                                if(this.$utils.changeFormatDate(date_now_string) == this.$utils.changeFormatDate(this.array_magazines[j].output)){
+                                    this.date[i] = this.array_magazines[j].output;
+                                }
+                            }
+                            if(this.date[i] == ''){
+                                this.date[i] = this.array_magazines[0].output;
+                            }
+                        }
                     }
                 }
             }

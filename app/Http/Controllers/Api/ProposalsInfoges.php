@@ -21,15 +21,16 @@ class ProposalsInfoges extends Controller
 
     //Crear propuesta
     function createProposal(Request $request){
-        $id_company = $request->get('id_company');
+        //$id_company = $request->get('id_company');
+        $email_contact = $request->get('email_contact');
         $email = $request->get('email');
     
         //Consultamos el usuario
         $user = User::where('email', $email)->first();
 
-        //Consultamos si existe la empresa
-        $company = Company::find($id_company);
-        if(!$company){
+        //Consultamos el contact
+        $contact = Contact::where('email', $email_contact)->first();
+        if(!$contact){
             $response['code'] = 1001;
             return response()->json($response);
         }
@@ -103,7 +104,7 @@ class ProposalsInfoges extends Controller
         $proposal = Proposal::create([
             'id_proposal_custom' => $id_proposal_custom,
             'id_user' => $user->id,
-            'id_contact' => $id_company,
+            'id_contact' => $contact->id,
             'discount' => $proposal_submission_settings['discount'],
             'commercial_name' => $proposal_submission_settings['commercial_name'],
             'language' => $proposal_submission_settings['language'],
