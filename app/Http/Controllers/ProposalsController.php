@@ -449,7 +449,18 @@ class ProposalsController extends Controller
             }
             $bill['array_articles'] = $array_articles;
         }
+
+        //Consultamos el usuario que ha creado la propuesta
+        $user = User::find($proposal->id_user);
+
+        //Consultamos la empresa
+        $array_companies = Contact::select('contacts.*', 'companies.name', 'companies.nif', DB::raw('CONCAT(contacts.name, " ", contacts.surnames) as fullname', 'contacts.id as id_contact'), 'contacts.email')
+                             ->leftJoin('companies', 'contacts.id_company', 'companies.id')
+                             ->where('contacts.id', $proposal->id_contact)
+                             ->get();
         
+        $response['company_aux'] = $array_companies;
+        $response['consultant'] = $user;
         $response['array_services'] = $array_services;
         $response['proposal'] = $proposal;
         $response['proposal_bills'] = $proposal_bills;

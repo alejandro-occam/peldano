@@ -128,17 +128,34 @@
                             </div>
                         </div>
 
-                        <div class="input-group my-3 d-block">
-                            <div class="mb-1">
-                                <div class="d-flex px-0 col-12 row">
-                                    <div v-for="index in Number(this.amount)" class="mt-2 col-4">
-                                        <span class="my-auto w-25">Fecha {{ index }}</span>
-                                        <Calendar class="w-100 borders-box text-dark-gray mt-1"  autocomplete="off" v-model="this.date[index - 1]" dateFormat="dd-mm-yy"  />
+                        <template v-if="this.array_magazines.length == 0">
+                            <div class="input-group my-3 d-block">
+                                <div class="mb-1">
+                                    <div class="d-flex px-0 col-12 row">
+                                        <div v-for="index in Number(this.amount)" class="mt-2 col-4">
+                                            <span class="my-auto w-25">Fecha {{ index }}</span>
+                                            <Calendar class="w-100 borders-box text-dark-gray mt-1"  autocomplete="off" v-model="this.date[index - 1]" dateFormat="dd-mm-yy"  />
+                                        </div>
                                     </div>
+                                    <small class="text-danger " v-if="date_error">Debes rellenar las fechas</small>
                                 </div>
-                                <small class="text-danger " v-if="date_error">Debes rellenar las fechas</small>
                             </div>
-                        </div>
+                        </template>
+                        <template v-else>
+                            <div class="input-group my-3 d-block">
+                                <div class="mb-1">
+                                    <div class="d-flex px-0 col-12 row ml-0">
+                                        <div v-for="index in Number(this.amount)" class="mt-2 col-12 pr-0 pl-0">
+                                            <span class="my-auto w-25">Fechas {{ index }}</span>
+                                            <select  class="form-control bg-gray text-dark-gray select-custom mt-1" v-model="this.date[index - 1]" :name="'select_magazine'" :id="'select_magazine'" data-style="select-lightgreen">
+                                                <option :value="magazine.output" v-for="magazine in this.array_magazines" :key="magazine.id" v-text="'Núm. ' + magazine.number + ' : ' + magazine.title + ' Fecha de salida : ' + magazine.output" ></option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <small class="text-danger " v-if="date_error">Debes rellenar las fechas</small>
+                                </div>
+                            </div>
+                        </template>
                     </div>
                     <div class="modal-footer justify-content-between">
                         <button type="button" class="btn btn-close ml-auto px-10 color-blue font-weight-bold bg-blue-light-white" data-dismiss="modal" @click="this.closeModal()">
@@ -189,7 +206,8 @@
                 amount_error: false,
                 date: [],
                 date_error: false,
-                show_amount_dates: false
+                show_amount_dates: false,
+                array_magazines: [],
             };
         },
         props: ["type"],
@@ -260,12 +278,19 @@
                 
                 if(this.date.length > 0){
                     for(var i=0; i<this.date.length; i++){
-                        //Formateamos la fecha dada por el calendario
-                        var date_ms = Date.parse(this.date[i]);
-                        this.date[i] = this.$utils.customFormDate(date_ms);
-                        if(this.date[i] == '' || this.date[i] == null){
-                            this.date_error = true;
-                            this.valid = false;
+                        if(this.array_magazines.length == 0){
+                            //Formateamos la fecha dada por el calendario
+                            var date_ms = Date.parse(this.date[i]);
+                            this.date[i] = this.$utils.customFormDate(date_ms);
+                            if(this.date[i] == '' || this.date[i] == null){
+                                this.date_error = true;
+                                this.valid = false;
+                            }
+                        }else{
+                            if(this.date[i] == '' || this.date[i] == null){
+                                this.date_error = true;
+                                this.valid = false;
+                            }
                         }
                     }
                 }
@@ -397,12 +422,16 @@
             //Seleccionamos un artículo
             selectedArticle() {
                 let me = this;
+                me.array_magazines = [];
                 me.amount = '';
                 me.date = [];
                 //Guardamos el objeto del artículo elegido
                 me.config.articles.form.array_articles.forEach(function callback(value, index, array) {
                     if(value.id == me.select_article){
                         me.article_obj = value;
+                        if(me.article_obj.array_calendars_magazines != undefined){
+                            me.array_magazines = me.article_obj.array_calendars_magazines
+                        }
                     }
                 });
 

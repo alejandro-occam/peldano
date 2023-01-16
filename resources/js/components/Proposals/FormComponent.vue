@@ -1342,6 +1342,7 @@ export default {
             this.proposals.is_change_get_info = 0;
             this.id_company = this.proposals.id_company;
             this.select_company = this.id_company;
+            this.array_companies = this.proposals.company_aux;
             this.getNameCompany(this.select_company);
             this.is_show_buttons_bill = true;
             this.proposal_submission_settings.commercial_name = this.proposals.proposal_bd_obj.commercial_name;

@@ -693,6 +693,23 @@ class ConfigurationController extends Controller
     //Consultar artículos
     function getArticles($id){
         $array_articles = Article::where('id_batch', $id)->get();
+
+        //Consultamos si un artículo está asociado a un calendario
+        foreach($array_articles as $article){
+            $calendar = Calendar::where('id_article', $article->id)->first();
+            if($calendar){
+                $calendars_magazine = CalendarMagazine::where('id_calendar', $calendar->id)->orderBy('id', 'desc')->limit(10)->get();
+                error_log(count($calendars_magazine));
+                $array_calendars_magazines = array();
+                foreach($calendars_magazine as $calendar_magazine){
+                    $calendar_magazine_obj['number'] = $calendar_magazine->number;
+                    $calendar_magazine_obj['title'] = $calendar_magazine->title;
+                    $calendar_magazine_obj['output'] = $calendar_magazine->output;
+                    $array_calendars_magazines[] = $calendar_magazine_obj;
+                }
+                $article['array_calendars_magazines'] = $array_calendars_magazines;
+            }
+        }
         $response['array_articles'] = $array_articles;
         return response()->json($response);
     }

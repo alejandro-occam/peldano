@@ -1274,6 +1274,36 @@ export default {
         returnView(){
             this.changeViewStatusOrders(1);
             this.clearObjectsOrders();
+        },
+        //Cargar datos de la propuesta
+        loadViewInfoProposal(){
+            this.finish_proposal = true;
+            this.generate_proposal = true;
+            this.is_change_get_info = this.orders.is_change_get_info;
+            this.orders.is_change_get_info = 0;
+            this.id_company = this.orders.id_company;
+            this.select_company = this.id_company;
+            this.array_companies = this.orders.company_aux;
+            this.getNameCompany(this.select_company);
+            this.is_show_buttons_bill = true;
+            this.proposal_submission_settings.commercial_name = this.orders.proposal_bd_obj.commercial_name;
+            this.proposal_submission_settings.language = this.orders.proposal_bd_obj.language;
+            this.proposal_submission_settings.type_proyect = this.orders.proposal_bd_obj.type_proyect;
+            this.proposal_submission_settings.name_proyect = this.orders.proposal_bd_obj.name_proyect;
+            this.proposal_submission_settings.date_proyect = this.orders.proposal_bd_obj.date_proyect;
+            this.proposal_submission_settings.objetives = this.orders.proposal_bd_obj.objetives;
+            this.proposal_submission_settings.proposal = this.orders.proposal_bd_obj.proposal;
+            this.proposal_submission_settings.actions = this.orders.proposal_bd_obj.actions;
+            this.proposal_submission_settings.observations = this.orders.proposal_bd_obj.observations;
+            this.proposal_submission_settings.show_discounts = this.orders.proposal_bd_obj.show_discounts;
+            this.proposal_submission_settings.show_inserts = 0;
+            this.proposal_submission_settings.show_invoices = this.orders.proposal_bd_obj.show_invoices;
+            this.proposal_submission_settings.show_pvp = this.orders.proposal_bd_obj.show_pvp;
+            this.proposal_submission_settings.sales_possibilities = this.orders.proposal_bd_obj.sales_possibilities;
+            this.proposal_submission_settings.discount = this.orders.proposal_bd_obj.discount;
+            this.discount = this.proposal_submission_settings.discount;
+            this.offer = this.orders.bill_obj.total_bill; //this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.bill_obj.total_bill));
+            this.loadFormObj(); 
         }
     },
     mounted() {
@@ -1283,6 +1313,10 @@ export default {
 
         }else{
             this.date_now = this.$utils.getNow();
+            if(this.errors.type_error == "get_info_proposal"){
+                this.loadViewInfoProposal();  
+            }
+
             this.clearError();
             let me = this;
             

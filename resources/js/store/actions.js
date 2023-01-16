@@ -1177,6 +1177,12 @@ function createObjectsStore({ state }, response, type){
     custom_state.bill_obj.array_bills = array_finish_bill;
     custom_state.bill_obj.total_bill = total_bill;
 
+    //Nombre completo del consultor
+    custom_state.user_obj = response.data.consultant;
+
+    //Nombre de la empresa
+    custom_state.company_aux = response.data.company_aux;
+
     //Guardamos datos
     custom_state.proposal_bd_obj = proposal_submission_settings;
     custom_state.proposal_obj.array_dates = array_dates_prices;
