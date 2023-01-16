@@ -63,7 +63,7 @@ class GetArticlesCalendar extends Command
             $article = Article::where('id_sage', $words[0])->first();
             if($article){
                 //Consultamos el calendario
-                $calendar = Calendar::where('name', $words[2])->whereNull('id_article')->first();
+                $calendar = Calendar::where('name', $words[2])->where('id_article', 0)->first();
                 if($calendar){
                     $calendar->id_article = $article->id;
                     $calendar->save();
