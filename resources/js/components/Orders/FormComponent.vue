@@ -817,7 +817,7 @@ export default {
     },
     methods: {
         ...mapMutations(["clearError", "changeViewStatusOrders", "changeProposalObj", "changeValueIsChangeArticle", "generateBill", "clearObjectsOrders"]),
-        ...mapActions(["getCompanies", "saveProposal", "updateProposal", "deleteProposal"]),
+        ...mapActions(["getCompanies", "saveProposal", "updateProposal", "deleteProposal", "getUser"]),
         openFormArticle(){
             $('#modal_form_article_proposals').modal('show');
         },
@@ -1307,6 +1307,7 @@ export default {
         }
     },
     mounted() {
+        this.getUser(2);
         if(this.orders.proposal_obj.array_dates != undefined && this.offer == 0 && this.orders.proposal_obj.array_dates.length > 0 && !this.orders.is_change_get_info){
             this.changeViewStatusOrders(1);
             this.clearObjectsOrders();

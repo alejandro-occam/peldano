@@ -19,6 +19,7 @@ use App\Models\Sector;
 use App\Models\Brand;
 use App\Models\Product;
 use App\Models\Article;
+use Auth;
 
 //Batchs
 use App\Models\Department;
@@ -186,6 +187,14 @@ class ConfigurationController extends Controller
         $user['id_rol'] = $role_user->id_role;
         $user['role_name'] = $role_user['role_name'];
         $user['custom_date'] = $this->customDate($user->created_at);
+        $response['user'] = $user;
+        $response['code'] = 1000;
+        return response()->json($response);
+    }
+
+    //Consultar información del usuario
+    function getUser(){
+        $user = User::select('users.*', 'positions.name as name_position')->leftJoin('positions', 'positions.id', 'users.id_position')->where('users.id', Auth::user()->id)->first();
         $response['user'] = $user;
         $response['code'] = 1000;
         return response()->json($response);

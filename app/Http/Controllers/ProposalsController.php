@@ -237,6 +237,7 @@ class ProposalsController extends Controller
         }
 
         $array_bills_aux = array();
+        $custom_bill = false;
         //Consultamos las facturas
         foreach(json_decode($bill_obj)->array_bills as $key => $bill_obj){
             $bill = Bill::create([
@@ -330,7 +331,8 @@ class ProposalsController extends Controller
             'show_invoices' => $proposal_submission_settings->show_invoices,
             'show_pvp' => $proposal_submission_settings->show_pvp,
             'sales_possibilities' => $proposal_submission_settings->sales_possibilities,
-            'id_department' => $id_department
+            'id_department' => $id_department,
+            'is_custom' => $custom_bill
         ]);
 
         $fullname = Auth::user()->name.' '.Auth::user()->surnames;
@@ -438,33 +440,39 @@ class ProposalsController extends Controller
 
         //Consultamos el array de servicios
         $array_services = array();
+        $is_read = 0;
         foreach($proposal_bills as $bill){
-            $array_articles = [];
-            $array_services_obj = Service::select('services.*')
-                                    ->leftJoin('services_bills', 'services.id', 'services_bills.id_service')
-                                    ->where('services_bills.id_bill', $bill->id)
-                                    ->with('article')
-                                    ->get();
-            foreach($array_services_obj as $service){
-                //Consultamos el capitulo
-                $batch = Batch::find($service->article->id_batch);
-                if(!$batch){
-                    $response['code'] = 1003;
-                    return response()->json($response);
-                }
-                
-                $chapter = Chapter::find($batch->id_chapter);
-                if(!$chapter){
-                    $response['code'] = 1004;
-                    return response()->json($response);
-                }
+            if($proposal->is_custom){
+                if(!$is_read){
+                    $array_articles = [];
+                    $array_services_obj = Service::select('services.*')
+                                            ->leftJoin('services_bills', 'services.id', 'services_bills.id_service')
+                                            ->where('services_bills.id_bill', $bill->id)
+                                            ->with('article')
+                                            ->get();
+                    foreach($array_services_obj as $service){
+                        //Consultamos el capitulo
+                        $batch = Batch::find($service->article->id_batch);
+                        if(!$batch){
+                            $response['code'] = 1003;
+                            return response()->json($response);
+                        }
+                        
+                        $chapter = Chapter::find($batch->id_chapter);
+                        if(!$chapter){
+                            $response['code'] = 1004;
+                            return response()->json($response);
+                        }
 
-                $service['chapter'] = $chapter;
-                $array_services[] = $service;
-                $article = Article::find($service->id_article);
-                $array_articles[] = $article;
+                        $service['chapter'] = $chapter;
+                        $array_services[] = $service;
+                        $article = Article::find($service->id_article);
+                        $array_articles[] = $article;
+                    }
+                    $bill['array_articles'] = $array_articles;
+                    $is_read = 1;
+                }
             }
-            $bill['array_articles'] = $array_articles;
         }
 
         //Consultamos el usuario que ha creado la propuesta
@@ -514,12 +522,16 @@ class ProposalsController extends Controller
             $proposal_bill->delete();
         }
         $array_services = array();
+        $is_save = 0;
         foreach($array_bills as $bill){
             $array_services_bills = ServiceBill::where('id_bill', $bill)->get();
             foreach($array_services_bills as $service_bill){
-                $array_services[] = $service_bill->id_service;
+                if(($proposal->is_custom && !$is_save) || (!$proposal->is_custom)){
+                    $array_services[] = $service_bill->id_service;
+                }
                 $service_bill->delete();
             }
+            $is_save = 1;
             Bill::find($bill)->delete();
         }
         foreach($array_services as $service){
@@ -528,6 +540,8 @@ class ProposalsController extends Controller
 
         //Guardamos el objeto
         $bill_obj = $request->get('bill_obj');
+
+        error_log('bill_obj: '.print_r($bill_obj, true));
 
         $array_services_aux = array();
         //Consultamos los artículos
@@ -541,6 +555,7 @@ class ProposalsController extends Controller
         }
 
         $array_bills_aux = array();
+        
         //Consultamos las facturas
         foreach(json_decode($bill_obj)->array_bills as $key => $bill_obj){
             $bill = Bill::create([
@@ -556,11 +571,22 @@ class ProposalsController extends Controller
 
             $array_bills_aux[] = $bill;
 
-            //Creamos la relación entre las facturas y los artículos
-            foreach($array_services_aux as $service){
-                //Consultamos el producto del servicio
-                $article = Article::find($service->id_article);
-                if($service->date == $bill->date && $bill_obj->article->id_product == $article->id_product){
+            if(!$proposal->is_custom){
+                //Creamos la relación entre las facturas y los artículos
+                foreach($array_services_aux as $service){
+                    //Consultamos el producto del servicio
+                    $article = Article::find($service->id_article);
+                    if($service->date == $bill->date && $bill_obj->article->id_product == $article->id_product){
+                        ServiceBill::create([
+                            'id_service' => $service->id,
+                            'id_bill' => $bill->id,
+                        ]);
+                    }
+                }
+            }
+
+            if($proposal->is_custom){
+                foreach($array_services_aux as $service){
                     ServiceBill::create([
                         'id_service' => $service->id,
                         'id_bill' => $bill->id,
@@ -659,14 +685,19 @@ class ProposalsController extends Controller
             $proposal_bill->delete();
         }
         $array_services = array();
+        $is_save = 0;
         foreach($array_bills as $bill){
             $array_services_bills = ServiceBill::where('id_bill', $bill)->get();
             foreach($array_services_bills as $service_bill){
-                $array_services[] = $service_bill->id_service;
+                if(($proposal->is_custom && !$is_save) || (!$proposal->is_custom)){
+                    $array_services[] = $service_bill->id_service;
+                }
                 $service_bill->delete();
             }
+            $is_save = 1;
             Bill::find($bill)->delete();
         }
+
         foreach($array_services as $service){
             Service::find($service)->delete();
         }

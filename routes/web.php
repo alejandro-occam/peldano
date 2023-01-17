@@ -78,6 +78,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::post('/update_user', [App\Http\Controllers\ConfigurationController::class, 'updateUser'])->name('update_user');
     //Eliminar usuario
     Route::get('/delete_user/{id}', [App\Http\Controllers\ConfigurationController::class, 'deleteUser'])->name('delete_user');
+    //Consultar información del usuario
+    Route::get('/get_user', [App\Http\Controllers\ConfigurationController::class, 'getUser'])->name('get_user');
 
     //CALENDARIOS
     //Listar calendarios

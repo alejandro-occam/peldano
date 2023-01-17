@@ -45,6 +45,7 @@ const actions = {
             });
             
             state.config.users.user_obj = response.data.user;
+            state.proposals.user_obj = response.data.user;
 
         } catch (error) {
             console.error(error);
@@ -670,6 +671,29 @@ const actions = {
         }
     },
 
+    //Mostrar infromación del usuario
+    async getUser({ state }, type){
+        try {
+            const response = await http({
+                url: "/admin/get_user",
+                method: 'get'
+            });
+
+            if(type == 1){
+                console.log(response.data.user);
+                state.proposals.user_obj = response.data.user;
+            }else{
+                state.orders.user_obj = response.data.user;
+            }
+            
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
+
     //Listar empresas para el select 
     async getCompanies({ state }, type){
         try {
@@ -1087,7 +1111,10 @@ function createObjectsStore({ state }, response, type){
         return a_aux - b_aux;
     });
 
-    var date_aux = array_articles[0].date;
+    var date_aux = '';
+    if(!response.data.proposal.is_custom){
+        date_aux = array_articles[0].date;
+    }
     var amount = 0;
     var array_finish_bill = [];
     var last_key = 0;
@@ -1098,64 +1125,16 @@ function createObjectsStore({ state }, response, type){
     var array_bills = response.data.proposal_bills;
 
     var count_bill = 0;
-    array_articles.map(function(article_obj, key) {
-        if(key == 0){
-            amount = Number(article_obj.amount);
-            total_bill += Number(article_obj.amount);
-            var bill_month = {
-                date: date_aux,
-                amount: amount,
-                article: article_obj,
-                select_way_to_pay: array_bills[count_bill].way_to_pay,
-                select_expiration: array_bills[count_bill].expiration,
-                observations: array_bills[count_bill].observations,
-                order_number: array_bills[count_bill].num_order,
-                internal_observations: array_bills[count_bill].internal_observations,
-            }
-
-            count_bill ++;
-            array_finish_bill.push(bill_month);
-
-        }else{
-            if(date_aux == article_obj.date){
-                var is_break = false;
-                array_finish_bill.map(function(bill_obj, key) {
-                    if(!is_break){
-                        if(bill_obj.date == article_obj.date){
-                            if(bill_obj.article.id_chapter == article_obj.id_chapter){
-                                amount += Number(article_obj.amount);
-                                total_bill += Number(article_obj.amount);
-                                array_finish_bill[last_key].amount = amount;
-                                is_break = true;
-                            }
-                        }
-                    }
-                });
-
-                if(!is_break){
-                    amount = 0;
-                    date_aux = article_obj.date;
-                    amount += Number(article_obj.amount);
-                    total_bill += Number(article_obj.amount);
-                    var bill_month = {
-                        date: date_aux,
-                        amount: amount,
-                        article: article_obj,
-                        select_way_to_pay: array_bills[count_bill].way_to_pay,
-                        select_expiration: array_bills[count_bill].expiration,
-                        observations: array_bills[count_bill].observations,
-                        order_number: array_bills[count_bill].num_order,
-                        internal_observations: array_bills[count_bill].internal_observations,
-                    }
-                    array_finish_bill.push(bill_month);
-                    count_bill++;
-                    last_key = (array_finish_bill.length - 1);
+    if(!response.data.proposal.is_custom){
+        array_articles.map(function(article_obj, key) {
+            if(key == 0){
+                if(response.data.proposal.is_custom){
+                    amount = array_bills[count_bill].amount;
+                    date_aux = array_bills[count_bill].date;
+                }else{
+                    amount = Number(article_obj.amount);
                 }
-
-            }else{
-                amount = 0;
-                date_aux =  article_obj.date;
-                amount += Number(article_obj.amount);
+                
                 total_bill += Number(article_obj.amount);
                 var bill_month = {
                     date: date_aux,
@@ -1167,12 +1146,108 @@ function createObjectsStore({ state }, response, type){
                     order_number: array_bills[count_bill].num_order,
                     internal_observations: array_bills[count_bill].internal_observations,
                 }
-                count_bill++;
+
+                count_bill ++;
                 array_finish_bill.push(bill_month);
-                last_key = (array_finish_bill.length - 1);
+
+            }else{
+                if(!response.data.proposal.is_custom){
+                    if(date_aux == article_obj.date){
+                        var is_break = false;
+                        array_finish_bill.map(function(bill_obj, key) {
+                            if(!is_break){
+                                if(bill_obj.date == article_obj.date){
+                                    if(bill_obj.article.id_chapter == article_obj.id_chapter){
+                                        amount += Number(article_obj.amount);
+                                        total_bill += Number(article_obj.amount);
+                                        array_finish_bill[last_key].amount = amount;
+                                        is_break = true;
+                                    }
+                                }
+                            }
+                        });
+
+                        if(!is_break){
+                            amount = 0;
+                            date_aux = article_obj.date;
+                            amount += Number(article_obj.amount);
+                            total_bill += Number(article_obj.amount);
+                            var bill_month = {
+                                date: date_aux,
+                                amount: amount,
+                                article: article_obj,
+                                select_way_to_pay: array_bills[count_bill].way_to_pay,
+                                select_expiration: array_bills[count_bill].expiration,
+                                observations: array_bills[count_bill].observations,
+                                order_number: array_bills[count_bill].num_order,
+                                internal_observations: array_bills[count_bill].internal_observations,
+                            }
+                            array_finish_bill.push(bill_month);
+                            count_bill++;
+                            last_key = (array_finish_bill.length - 1);
+                        }
+
+                    }else{
+                        amount = 0;
+                        date_aux =  article_obj.date;
+                        amount += Number(article_obj.amount);
+                        total_bill += Number(article_obj.amount);
+                        var bill_month = {
+                            date: date_aux,
+                            amount: amount,
+                            article: article_obj,
+                            select_way_to_pay: array_bills[count_bill].way_to_pay,
+                            select_expiration: array_bills[count_bill].expiration,
+                            observations: array_bills[count_bill].observations,
+                            order_number: array_bills[count_bill].num_order,
+                            internal_observations: array_bills[count_bill].internal_observations,
+                        }
+                        count_bill++;
+                        array_finish_bill.push(bill_month);
+                        last_key = (array_finish_bill.length - 1);
+                    }
+
+                }else{
+                    amount = array_bills[count_bill].amount;
+                    total_bill += Number(article_obj.amount);
+                    var bill_month = {
+                        date: array_bills[count_bill].date,
+                        amount: amount,
+                        article: article_obj,
+                        select_way_to_pay: array_bills[count_bill].way_to_pay,
+                        select_expiration: array_bills[count_bill].expiration,
+                        observations: array_bills[count_bill].observations,
+                        order_number: array_bills[count_bill].num_order,
+                        internal_observations: array_bills[count_bill].internal_observations,
+                    }
+
+                    count_bill ++;
+                    array_finish_bill.push(bill_month);
+                }
             }
-        }
-    });
+        });
+
+    }else{
+        array_bills.map(function(bill_obj, key) {
+            amount = array_bills[count_bill].amount;
+            date_aux = array_bills[count_bill].date;
+            
+            total_bill += Number(amount);
+            var bill_month = {
+                date: date_aux,
+                amount: amount,
+                article: '',//article_obj,
+                select_way_to_pay: array_bills[count_bill].way_to_pay,
+                select_expiration: array_bills[count_bill].expiration,
+                observations: array_bills[count_bill].observations,
+                order_number: array_bills[count_bill].num_order,
+                internal_observations: array_bills[count_bill].internal_observations,
+            }
+
+            count_bill ++;
+            array_finish_bill.push(bill_month);
+        });
+    }
 
     custom_state.bill_obj.array_bills = array_finish_bill;
     custom_state.bill_obj.total_bill = total_bill;

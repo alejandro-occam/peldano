@@ -32,7 +32,8 @@ class Proposal extends Model
         'show_pvp',
         'sales_possibilities',
         'id_department',
-        'pdf_file'
+        'pdf_file',
+        'is_custom'
     ];
 
     /**
@@ -61,7 +62,8 @@ class Proposal extends Model
         'show_pvp' => 'boolean',
         'sales_possibilities' => 'string',
         'id_department' => 'integer',
-        'pdf_file' => 'string'
+        'pdf_file' => 'string',
+        'is_custom' => 'boolean'
     ];
 
     /**
@@ -90,7 +92,8 @@ class Proposal extends Model
         'show_pvp',
         'sales_possibilities',
         'id_department',
-        'pdf_file'
+        'pdf_file',
+        'is_custom'
     ];
 
     public function department()

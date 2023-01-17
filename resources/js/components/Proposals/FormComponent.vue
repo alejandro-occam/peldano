@@ -842,7 +842,7 @@ export default {
     },
     methods: {
         ...mapMutations(["clearError", "changeViewStatusProposals", "changeProposalObj", "changeValueIsChangeArticle", "generateBill", "clearObjectsProposal"]),
-        ...mapActions(["getCompanies", "saveProposal", "updateProposal", "deleteProposal", "createOrder"]),
+        ...mapActions(["getCompanies", "saveProposal", "updateProposal", "deleteProposal", "createOrder", "getUser"]),
         openFormArticle(){
             $('#modal_form_article_proposals').modal('show');
         },
@@ -1406,11 +1406,12 @@ export default {
             this.proposal_submission_settings.sales_possibilities = this.proposals.proposal_bd_obj.sales_possibilities;
             this.proposal_submission_settings.discount = this.proposals.proposal_bd_obj.discount;
             this.discount = this.proposal_submission_settings.discount;
-            this.offer = this.proposals.bill_obj.total_bill; //this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.bill_obj.total_bill));
+            this.offer = Math.round(Number(this.proposals.bill_obj.total_bill) * 100) / 100; //this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.bill_obj.total_bill));
             this.loadFormObj(); 
         }
     },
     mounted() {
+        this.getUser(1);
         if(this.proposals.proposal_obj.array_dates != undefined && this.offer == 0 && this.proposals.proposal_obj.array_dates.length > 0 && !this.proposals.is_change_get_info){
             this.changeViewStatusProposals(1);
             this.clearObjectsProposal();
@@ -1563,6 +1564,8 @@ export default {
                 me.offer = me.$utils.roundAndFix(me.proposals.proposal_obj.total_global);
                 me.total = me.$utils.roundAndFix(me.proposals.proposal_obj.total_global);
                 me.is_change_get_info = 1;
+            }else{
+                me.is_change_get_info = 0;
             }
             me.loadFormObj();
         },

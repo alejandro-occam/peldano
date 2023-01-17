@@ -886,7 +886,7 @@ const mutations = {
                                     date: arr_pvp_date_obj.date,
                                     article: article_obj,
                                     id_chapter: chapters.chapter_obj.id,
-                                    amount: arr_pvp_obj
+                                    amount: Number(arr_pvp_obj)
                                 }
                                 array_articles.push(article_obj_aux);
                             });
@@ -903,7 +903,7 @@ const mutations = {
                     article_obj.dates_prices.map(function(dates_prices_obj, key) {
                         dates_prices_obj.arr_pvp_date.map(function(arr_pvp_date_obj, key) {
                             arr_pvp_date_obj.arr_pvp.map(function(arr_pvp_obj, key) {
-                                total_amount += arr_pvp_obj;
+                                total_amount += Number(arr_pvp_obj);
                             });
                         });
                     });
