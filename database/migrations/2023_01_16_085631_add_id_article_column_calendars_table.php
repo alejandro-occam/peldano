@@ -15,8 +15,8 @@ class AddIdArticleColumnCalendarsTable extends Migration
     {
         Schema::table('calendars', function (Blueprint $table) {
             //
-            //$table->biginteger('id_article')->unsigned();
-            //$table->foreign('id_article')->references('id')->on('articles')->nullable()->after('name');
+            $table->biginteger('id_article')->unsigned();
+            $table->foreign('id_article')->references('id')->on('articles')->nullable()->after('name');
         });
     }
 

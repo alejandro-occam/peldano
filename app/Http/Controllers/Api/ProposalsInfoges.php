@@ -69,33 +69,53 @@ class ProposalsInfoges extends Controller
 
             $array_bills_aux[] = $bill;
 
-            //Creamos la relación entre las facturas y los artículos
-            foreach($array_services_aux as $service){
-                //Consultamos el capitulo del servicio
-                $article = Article::find($service->id_article);
-                if(!$article){
-                    $response['code'] = 1002;
-                    return response()->json($response);
+            $nun_custom_invoices = $request->get('nun_custom_invoices');
+            $custom_bill = false;
+            if(isset($nun_custom_invoices)){
+                if($nun_custom_invoices > 0){
+                    $custom_bill = true;
                 }
+            }
+            if(!$custom_bill){
+                //Creamos la relación entre las facturas y los artículos
+                foreach($array_services_aux as $service){
+                    //Consultamos el capitulo del servicio
+                    $article = Article::find($service->id_article);
+                    if(!$article){
+                        $response['code'] = 1002;
+                        return response()->json($response);
+                    }
 
-                $batch = Batch::find($article->id_batch);
-                if(!$batch){
-                    $response['code'] = 1003;
-                    return response()->json($response);
-                }
+                    $batch = Batch::find($article->id_batch);
+                    if(!$batch){
+                        $response['code'] = 1003;
+                        return response()->json($response);
+                    }
 
-                $exist = false;
-                if($service->date == $bill->date){
-                    foreach($bill_obj['array_id_sage_articles'] as $id_sage_article){
-                        if($id_sage_article == $article->id_sage){
-                            ServiceBill::create([
-                                'id_service' => $service->id,
-                                'id_bill' => $bill->id,
-                            ]);
+                    $exist = false;
+                    if($service->date == $bill->date){
+                        foreach($bill_obj['array_id_sage_articles'] as $id_sage_article){
+                            if($id_sage_article == $article->id_sage){
+                                $service_bill = ServiceBill::where('id_service', $service->id)->where('id_bill', $bill->id)->first();
+                                if(!$service_bill){
+                                    ServiceBill::create([
+                                        'id_service' => $service->id,
+                                        'id_bill' => $bill->id,
+                                    ]);
+                                }
+                            }
                         }
                     }
                 }
             }
+            if($custom_bill){
+                foreach($array_services_aux as $service){
+                    ServiceBill::create([
+                        'id_service' => $service->id,
+                        'id_bill' => $bill->id,
+                    ]);
+                }
+            }        
         }
 
         //Consultamos el número de propuestas que hay
@@ -126,7 +146,8 @@ class ProposalsInfoges extends Controller
             'show_invoices' => $proposal_submission_settings['show_invoices'],
             'show_pvp' => $proposal_submission_settings['show_pvp'],
             'sales_possibilities' => $proposal_submission_settings['sales_possibilities'],
-            'id_department' => $id_department
+            'id_department' => $id_department,
+            'is_custom' => $custom_bill
         ]);
 
         $fullname = $user->name.' '.$user->surnames;
@@ -193,12 +214,16 @@ class ProposalsInfoges extends Controller
             $proposal_bill->delete();
         }
         $array_services = array();
+        $is_save = 0;
         foreach($array_bills as $bill){
             $array_services_bills = ServiceBill::where('id_bill', $bill)->get();
             foreach($array_services_bills as $service_bill){
-                $array_services[] = $service_bill->id_service;
+                if(($proposal->is_custom && !$is_save) || (!$proposal->is_custom)){
+                    $array_services[] = $service_bill->id_service;
+                }
                 $service_bill->delete();
             }
+            $is_save = 1;
             Bill::find($bill)->delete();
         }
         foreach($array_services as $service){
@@ -238,22 +263,33 @@ class ProposalsInfoges extends Controller
 
             $array_bills_aux[] = $bill;
 
-            //Creamos la relación entre las facturas y los artículos
-            foreach($array_services_aux as $service){
-                //Consultamos el capitulo del servicio
-                $article = Article::find($service->id_article);
-                if(!$article){
-                    $response['code'] = 1004;
-                    return response()->json($response);
-                }
+            if(!$proposal->is_custom){
+                //Creamos la relación entre las facturas y los artículos
+                foreach($array_services_aux as $service){
+                    //Consultamos el capitulo del servicio
+                    $article = Article::find($service->id_article);
+                    if(!$article){
+                        $response['code'] = 1004;
+                        return response()->json($response);
+                    }
 
-                $batch = Batch::find($article->id_batch);
-                if(!$batch){
-                    $response['code'] = 1005;
-                    return response()->json($response);
-                }
+                    $batch = Batch::find($article->id_batch);
+                    if(!$batch){
+                        $response['code'] = 1005;
+                        return response()->json($response);
+                    }
 
-                if($service->date == $bill->date && $bill_obj['id_chapter'] == $batch->id_chapter){
+                    if($service->date == $bill->date && $bill_obj['id_chapter'] == $batch->id_chapter){
+                        ServiceBill::create([
+                            'id_service' => $service->id,
+                            'id_bill' => $bill->id,
+                        ]);
+                    }
+                }
+            }
+
+            if($proposal->is_custom){
+                foreach($array_services_aux as $service){
                     ServiceBill::create([
                         'id_service' => $service->id,
                         'id_bill' => $bill->id,
@@ -337,12 +373,16 @@ class ProposalsInfoges extends Controller
             $proposal_bill->delete();
         }
         $array_services = array();
+        $is_save = 0;
         foreach($array_bills as $bill){
             $array_services_bills = ServiceBill::where('id_bill', $bill)->get();
             foreach($array_services_bills as $service_bill){
-                $array_services[] = $service_bill->id_service;
+                if(($proposal->is_custom && !$is_save) || (!$proposal->is_custom)){
+                    $array_services[] = $service_bill->id_service;
+                }
                 $service_bill->delete();
             }
+            $is_save = 1;
             Bill::find($bill)->delete();
         }
         foreach($array_services as $service){

@@ -472,6 +472,33 @@ class ProposalsController extends Controller
                     $bill['array_articles'] = $array_articles;
                     $is_read = 1;
                 }
+            }else{
+                $array_articles = [];
+                $array_services_obj = Service::select('services.*')
+                                        ->leftJoin('services_bills', 'services.id', 'services_bills.id_service')
+                                        ->where('services_bills.id_bill', $bill->id)
+                                        ->with('article')
+                                        ->get();
+                foreach($array_services_obj as $service){
+                    //Consultamos el capitulo
+                    $batch = Batch::find($service->article->id_batch);
+                    if(!$batch){
+                        $response['code'] = 1003;
+                        return response()->json($response);
+                    }
+                    
+                    $chapter = Chapter::find($batch->id_chapter);
+                    if(!$chapter){
+                        $response['code'] = 1004;
+                        return response()->json($response);
+                    }
+
+                    $service['chapter'] = $chapter;
+                    $array_services[] = $service;
+                    $article = Article::find($service->id_article);
+                    $array_articles[] = $article;
+                }
+                $bill['array_articles'] = $array_articles;
             }
         }
 
@@ -570,13 +597,30 @@ class ProposalsController extends Controller
             ]);
 
             $array_bills_aux[] = $bill;
-
-            if(!$proposal->is_custom){
+            $nun_custom_invoices = $request->get('nun_custom_invoices');
+            $custom_bill = false;
+            if(isset($nun_custom_invoices)){
+                if($nun_custom_invoices > 0){
+                    $custom_bill = true;
+                }
+            }
+            if(!$custom_bill){
                 //Creamos la relación entre las facturas y los artículos
                 foreach($array_services_aux as $service){
-                    //Consultamos el producto del servicio
+                    //Consultamos el capitulo del servicio
                     $article = Article::find($service->id_article);
-                    if($service->date == $bill->date && $bill_obj->article->id_product == $article->id_product){
+                    if(!$article){
+                        $response['code'] = 1002;
+                        return response()->json($response);
+                    }
+
+                    $batch = Batch::find($article->id_batch);
+                    if(!$batch){
+                        $response['code'] = 1003;
+                        return response()->json($response);
+                    }
+
+                    if($service->date == $bill->date && $bill_obj->article->id_chapter == $batch->id_chapter){
                         ServiceBill::create([
                             'id_service' => $service->id,
                             'id_bill' => $bill->id,
@@ -585,7 +629,7 @@ class ProposalsController extends Controller
                 }
             }
 
-            if($proposal->is_custom){
+            if($custom_bill){
                 foreach($array_services_aux as $service){
                     ServiceBill::create([
                         'id_service' => $service->id,
@@ -613,6 +657,7 @@ class ProposalsController extends Controller
         $proposal->show_pvp = $proposal_submission_settings->show_pvp;
         $proposal->sales_possibilities = $proposal_submission_settings->sales_possibilities;
         $proposal->show_invoices = $proposal_submission_settings->show_invoices;
+        $proposal->is_custom = $custom_bill;
         $proposal->save();
 
         $fullname = Auth::user()->name.' '.Auth::user()->surnames;
@@ -658,6 +703,10 @@ class ProposalsController extends Controller
         $data['select_way_to_pay_options'] = $request->get('select_way_to_pay_options');
         $data['select_expiration_options'] = $request->get('select_expiration_options');
         $data['base64'] = $base64;
+
+        //Guardamos el fichero
+        $proposal->pdf_file = 'pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf';
+        $proposal->save();
                 
         //Generamos el pdf
         $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pdf.invoice', $data);
