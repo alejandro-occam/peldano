@@ -957,7 +957,8 @@ export default {
             this.changeValueBox(1);
             var params = {
                 status: 1,
-                form: me.value_form1
+                form: me.value_form1,
+                type: 1
             }
             this.is_change_get_info_input = 1;
             this.changeProposalObj(params);
@@ -986,7 +987,8 @@ export default {
 
             var params = {
                 status: 0,
-                form: this.value_form1
+                form: this.value_form1,
+                type: 1
             }
             
             if(status != undefined){

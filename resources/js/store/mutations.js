@@ -624,12 +624,18 @@ const mutations = {
 
     changeValueIsChangeArticle(state){
         state.proposals.proposal_obj.is_change = false;
+        state.orders.proposal_obj.is_change = false;
     },
 
     //Modificar el objeto propuesta
     changeProposalObj(state, params){
+        var custom_state = state.proposals;
+        if(params.type == 2){
+            custom_state = state.orders;
+        }
+
         //Modificamos el objeto con los nuevos datos dados
-        state.proposals.proposal_obj.chapters.map(function(chapters_obj, key_chapters_obj) {
+        custom_state.proposal_obj.chapters.map(function(chapters_obj, key_chapters_obj) {
             chapters_obj.articles.map(function(article_obj, key_article_obj) {
                 params.form.map(function(chapters, key_chapters) {
                     chapters.article.map(function(article, key) {
@@ -642,7 +648,7 @@ const mutations = {
                                                 var out = false;
                                                 if(!out){
                                                     date_pvp.pvp.map(function(pvp, key_pvp) {
-                                                        state.proposals.proposal_obj.chapters[key_chapters_obj].articles[key_article_obj].dates_prices[key_date_price_obj].arr_pvp_date[key_arr_pvp_date].arr_pvp[key_pvp] = pvp;
+                                                        custom_state.proposal_obj.chapters[key_chapters_obj].articles[key_article_obj].dates_prices[key_date_price_obj].arr_pvp_date[key_arr_pvp_date].arr_pvp[key_pvp] = pvp;
                                                         //arr_pvp_obj = pvp;
                                                         out = true;
                                                     });
@@ -663,7 +669,7 @@ const mutations = {
         var total_global = 0;
         var total_amount_global = 0;
         var total_individual_pvp = 0;
-        state.proposals.proposal_obj.chapters.map(function(articles_obj, key) {
+        custom_state.proposal_obj.chapters.map(function(articles_obj, key) {
             articles_obj.articles.map(function(article_finish, key) {
                 total_individual_pvp += Number(article_finish.article_obj.pvp);
                 article_finish.amount = 0;
@@ -681,17 +687,17 @@ const mutations = {
                 });
             });
         });
-        state.proposals.proposal_obj.total_global_normal = total_global_normal;
-        state.proposals.proposal_obj.total_global = total_global;
-        state.proposals.proposal_obj.total_amount_global = total_amount_global;
-        state.proposals.proposal_obj.total_individual_pvp = total_individual_pvp;
+        custom_state.proposal_obj.total_global_normal = total_global_normal;
+        custom_state.proposal_obj.total_global = total_global;
+        custom_state.proposal_obj.total_amount_global = total_amount_global;
+        custom_state.proposal_obj.total_individual_pvp = total_individual_pvp;
 
 
         //Cargamos en el array de fechas para las columnas los totales de cada mes
         var array_dates_prices = [];
-        state.proposals.proposal_obj.array_dates.map(function(date, key) {
+        custom_state.proposal_obj.array_dates.map(function(date, key) {
             var total_date = 0;
-            state.proposals.proposal_obj.chapters.map(function(articles_obj, key) {
+            custom_state.proposal_obj.chapters.map(function(articles_obj, key) {
                 articles_obj.articles.map(function(article_finish, key) {
                     article_finish.dates_prices.map(function(date_aux, key) {
                         if(date_aux.date == date.date){
@@ -711,9 +717,9 @@ const mutations = {
             array_dates_prices.push(date_obj);
         });
 
-        state.proposals.proposal_obj.array_dates = array_dates_prices;
+        custom_state.proposal_obj.array_dates = array_dates_prices;
         if(params.status == 1){
-            state.proposals.proposal_obj.is_change = true;
+            custom_state.proposal_obj.is_change = true;
         }
         
     },
