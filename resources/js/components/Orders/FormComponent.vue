@@ -807,6 +807,7 @@ export default {
                 discount: 0
             },
             is_change_get_info: 0,
+            is_change_get_info_input: 0,
             is_updating: 0,
             date_now: '',
             search_company: ''
@@ -858,7 +859,8 @@ export default {
 
             var params = {
                 status: 0,
-                form: this.value_form1
+                form: this.value_form1,
+                type: 2
             }
             
             if(status != undefined){
@@ -963,8 +965,10 @@ export default {
             this.changeValueBox(1);
             var params = {
                 status: 1,
-                form: me.value_form1
+                form: me.value_form1,
+                type: 2
             }
+            this.is_change_get_info_input = 1;
             this.changeProposalObj(params);
             me.is_show_buttons_bill = false;
         },
@@ -1074,41 +1078,79 @@ export default {
                             date.date_pvp.map(function(date_pvp, key_date_pvp) {
                                 date_pvp.pvp.map(function(pvp_obj, key_pvp) {
                                     if(me.discount != 0){
-                                        pvp_obj = me.value_form1[key_product].article[key_article].dates[key_dates].article.pvp * (1 - (me.discount  /100));
-                                        me.value_form1[key_product].article[key_article].total_aux += pvp_obj;
-                                        
-                                        if(key_product == 0){
-                                            if(me.value_form_discount[key_dates] != undefined){
-                                                if(me.value_form_discount[key_dates].date == ''){
-                                                    me.value_form_discount[key_dates].pvp = pvp_obj;
-                                                    me.value_form_discount[key_dates].date = me.$utils.changeFormatDate(date_pvp.date);
-                                                }else if(me.value_form_discount[key_dates].date == me.$utils.changeFormatDate(date_pvp.date)){
-                                                    me.value_form_discount[key_dates].pvp += pvp_obj;
+                                        if(me.is_change_get_info_input == 1){
+                                            pvp_obj = Number(pvp_obj);
+                                            me.value_form1[key_product].article[key_article].total_aux += pvp_obj;
+                                            
+                                            if(key_product == 0){
+                                                if(me.value_form_discount[key_dates] != undefined){
+                                                    if(me.value_form_discount[key_dates].date == ''){
+                                                        me.value_form_discount[key_dates].pvp = pvp_obj;
+                                                        me.value_form_discount[key_dates].date = me.$utils.changeFormatDate(date_pvp.date);
+                                                    }else if(me.value_form_discount[key_dates].date == me.$utils.changeFormatDate(date_pvp.date)){
+                                                        me.value_form_discount[key_dates].pvp += pvp_obj;
+                                                    }
+                                                }else{
+                                                    var new_obj = {
+                                                        pvp: pvp_obj,
+                                                        date:  me.$utils.changeFormatDate(date_pvp.date)
+                                                    }
+                                                    me.value_form_discount.push(new_obj);
                                                 }
                                             }else{
-                                                var new_obj = {
-                                                    pvp: pvp_obj,
-                                                    date:  me.$utils.changeFormatDate(date_pvp.date)
+                                                let is_search = false;
+                                                me.value_form_discount.map(function(form_discount, key_form_discount) {
+                                                    if(form_discount.date == me.$utils.changeFormatDate(date_pvp.date)){
+                                                        form_discount.pvp += pvp_obj;
+                                                        is_search = true;
+                                                    }
+                                                });
+                                                if(!is_search){
+                                                    var new_obj_value_form_discount = {
+                                                        pvp: pvp_obj,
+                                                        date:  me.$utils.changeFormatDate(date_pvp.date)
+                                                    }
+                                                    me.value_form_discount.push(new_obj_value_form_discount);
                                                 }
-                                                me.value_form_discount.push(new_obj);
                                             }
-                                        }else{
-                                            let is_search = false;
-                                            me.value_form_discount.map(function(form_discount, key_form_discount) {
-                                                if(form_discount.date == me.$utils.changeFormatDate(date_pvp.date)){
-                                                    form_discount.pvp += pvp_obj;
-                                                    is_search = true;
+                                        }else {
+                                            pvp_obj = me.value_form1[key_product].article[key_article].dates[key_dates].article.pvp * (1 - (me.discount  /100));
+                                            me.value_form1[key_product].article[key_article].total_aux += pvp_obj;
+                                            
+                                            if(key_product == 0){
+                                                if(me.value_form_discount[key_dates] != undefined){
+                                                    if(me.value_form_discount[key_dates].date == ''){
+                                                        me.value_form_discount[key_dates].pvp = pvp_obj;
+                                                        me.value_form_discount[key_dates].date = me.$utils.changeFormatDate(date_pvp.date);
+                                                    }else if(me.value_form_discount[key_dates].date == me.$utils.changeFormatDate(date_pvp.date)){
+                                                        me.value_form_discount[key_dates].pvp += pvp_obj;
+                                                    }
+                                                }else{
+                                                    var new_obj = {
+                                                        pvp: pvp_obj,
+                                                        date:  me.$utils.changeFormatDate(date_pvp.date)
+                                                    }
+                                                    me.value_form_discount.push(new_obj);
                                                 }
-                                            });
-                                            if(!is_search){
-                                                var new_obj_value_form_discount = {
-                                                    pvp: pvp_obj,
-                                                    date:  me.$utils.changeFormatDate(date_pvp.date)
+                                            }else{
+                                                let is_search = false;
+                                                me.value_form_discount.map(function(form_discount, key_form_discount) {
+                                                    if(form_discount.date == me.$utils.changeFormatDate(date_pvp.date)){
+                                                        form_discount.pvp += pvp_obj;
+                                                        is_search = true;
+                                                    }
+                                                });
+                                                if(!is_search){
+                                                    var new_obj_value_form_discount = {
+                                                        pvp: pvp_obj,
+                                                        date:  me.$utils.changeFormatDate(date_pvp.date)
+                                                    }
+                                                    me.value_form_discount.push(new_obj_value_form_discount);
                                                 }
-                                                me.value_form_discount.push(new_obj_value_form_discount);
                                             }
-                                        }
+                                        }   
                                     }
+                                    
                                 });
                             });
                         });
@@ -1204,7 +1246,8 @@ export default {
                 proposal_obj: this.orders.proposal_obj,
                 value_form1: this.value_form1,
                 select_way_to_pay_options: this.select_way_to_pay_options,
-                select_expiration_options: this.select_expiration_options
+                select_expiration_options: this.select_expiration_options,
+                nun_custom_invoices: this.orders.num_custom_invoices
             }
             if(this.orders.status_view == 2 && this.orders.proposal_bd_obj != null){
                 params.id_proposal = this.orders.proposal_bd_obj.id;
@@ -1445,6 +1488,9 @@ export default {
                 me.changeValueIsChangeArticle();
                 me.offer = me.$utils.roundAndFix(me.orders.proposal_obj.total_global);
                 me.total = me.$utils.roundAndFix(me.orders.proposal_obj.total_global);
+                me.is_change_get_info = 1;
+            }else{
+                me.is_change_get_info = 0;
             }
 
             me.loadFormObj();
@@ -1479,7 +1525,7 @@ export default {
                 this.proposal_submission_settings.sales_possibilities = this.orders.proposal_bd_obj.sales_possibilities;
                 this.proposal_submission_settings.discount = this.orders.proposal_bd_obj.discount;
                 this.discount =  this.proposal_submission_settings.discount;
-                this.offer = this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.orders.bill_obj.total_bill));
+                //this.offer = this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.orders.bill_obj.total_bill));
                 this.loadFormObj();        
                 this.offer = this.orders.bill_obj.total_bill;
             }

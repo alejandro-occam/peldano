@@ -52,7 +52,7 @@
             };
         },
         computed: {
-            ...mapState(["proposals"]),
+            ...mapState(["proposals", "orders"]),
         },
         methods: {
             ...mapMutations(["updateCustomInvoiceNum"]),
@@ -72,6 +72,7 @@
                 
                 if(this.valid){ 
                     this.proposals.num_custom_invoices = this.amount;
+                    this.orders.num_custom_invoices = this.amount;
                     this.clearForm();
                     $('#modal_custom_invoice').modal('hide');
 
