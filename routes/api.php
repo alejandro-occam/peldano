@@ -40,4 +40,11 @@ Route::group(['middleware' => ['jwt.verify']], function() {
 
     //Crear orden
     Route::post('/create_order', [App\Http\Controllers\Api\OrdersInfoges::class, 'createOrder'])->name('create_order');
+
+    //Modificar orden
+    Route::post('/update_order', [App\Http\Controllers\Api\OrdersInfoges::class, 'updateOrder'])->name('update_order');
+
+    //Eliminar orden
+    Route::get('/delete_order/{id}', [App\Http\Controllers\Api\OrdersInfoges::class, 'deleteOrder'])->name('delete_order');
+    
 });
