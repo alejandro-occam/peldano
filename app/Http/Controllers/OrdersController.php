@@ -491,7 +491,7 @@ class OrdersController extends Controller
         return response()->json($response);
     }
 
-    //Actualizar ordem
+    //Actualizar orden
     function updateOrder(Request $request){
         //Consultamos si existe la orden
         $id_order = $request->get('id_order');
