@@ -846,6 +846,24 @@ const actions = {
         }
     },
 
+    //Copiar orden
+    async copyOrder({ state }, id){
+        try {
+            const response = await http({
+                url: "/admin/copy_order/"+id,
+                method: 'get'
+            });
+
+            state.errors.type_error = 'copy_order';
+            state.errors.code = response.data.code;
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
+
     //Listar propuestas para exportar 
     async listProposalsToExport({ state }, params){
         try {

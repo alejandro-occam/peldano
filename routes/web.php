@@ -67,6 +67,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::post('/update_order', [App\Http\Controllers\OrdersController::class, 'updateOrder'])->name('update_order');
     //Eliminar orden 
     Route::get('/delete_order/{id}', [App\Http\Controllers\OrdersController::class, 'deleteOrder'])->name('delete_order');
+    //Copiar orden 
+    Route::get('/copy_order/{id}', [App\Http\Controllers\OrdersController::class, 'copyOrder'])->name('copy_order');
     
     //END ORDENES
 
