@@ -797,7 +797,7 @@ const actions = {
     async getInfoOrder({ state }, id){
         try {
             const response = await http({
-                url: "/admin/get_info_proposal/"+id,
+                url: "/admin/get_info_order/"+id,
                 method: 'get'
             });
 
@@ -806,6 +806,42 @@ const actions = {
 
         } catch (error) {
             console.error(error);
+            return error;
+        }
+    },
+
+    //Eliminar orden
+    async deleteOrder({ state }, id){
+        try {
+            const response = await http({
+                url: "/admin/delete_order/"+id,
+                method: 'get'
+            });
+
+            state.errors.type_error = 'delete_order';
+            state.errors.code = response.data.code;
+
+        } catch (error) {
+            console.error(error);
+            return error;
+        }
+    },
+
+    //Actualizar propuesta
+    async updateOrder({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/update_order",
+                params: params,
+                method: 'post'
+            });
+
+            state.errors.type_error = 'update_order';
+            state.errors.code = response.data.code;
+
+        } catch (error) {
+            console.error(error);
+
             return error;
         }
     },
@@ -1145,6 +1181,7 @@ function createObjectsStore({ state }, response, type){
                     observations: array_bills[count_bill].observations,
                     order_number: array_bills[count_bill].num_order,
                     internal_observations: array_bills[count_bill].internal_observations,
+                    will_update: array_bills[count_bill].will_update,
                 }
 
                 count_bill ++;
@@ -1181,6 +1218,7 @@ function createObjectsStore({ state }, response, type){
                                 observations: array_bills[count_bill].observations,
                                 order_number: array_bills[count_bill].num_order,
                                 internal_observations: array_bills[count_bill].internal_observations,
+                                will_update: array_bills[count_bill].will_update,
                             }
                             array_finish_bill.push(bill_month);
                             count_bill++;
@@ -1201,6 +1239,7 @@ function createObjectsStore({ state }, response, type){
                             observations: array_bills[count_bill].observations,
                             order_number: array_bills[count_bill].num_order,
                             internal_observations: array_bills[count_bill].internal_observations,
+                            will_update: array_bills[count_bill].will_update,
                         }
                         count_bill++;
                         array_finish_bill.push(bill_month);
@@ -1219,6 +1258,7 @@ function createObjectsStore({ state }, response, type){
                         observations: array_bills[count_bill].observations,
                         order_number: array_bills[count_bill].num_order,
                         internal_observations: array_bills[count_bill].internal_observations,
+                        will_update: array_bills[count_bill].will_update,
                     }
 
                     count_bill ++;
@@ -1242,6 +1282,7 @@ function createObjectsStore({ state }, response, type){
                 observations: array_bills[count_bill].observations,
                 order_number: array_bills[count_bill].num_order,
                 internal_observations: array_bills[count_bill].internal_observations,
+                will_update: array_bills[count_bill].will_update,
             }
 
             count_bill ++;
@@ -1266,6 +1307,9 @@ function createObjectsStore({ state }, response, type){
     state.errors.code = response.data.code;
     custom_state.is_change_get_info = 1;
     custom_state.id_company = response.data.proposal.id_company;
+    if(type == 2){
+        custom_state.proposal_obj.id_order = response.data.proposal.id_order
+    }
 }
 
 //UTILS

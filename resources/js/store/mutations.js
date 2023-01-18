@@ -979,9 +979,9 @@ const mutations = {
     //Limpiamos los objetos utilizados para crear la orden
     clearObjectsOrders(state){
         state.orders.num_custom_invoices = 0;
-        state.orders.proposal_obj.products = [];
-        state.orders.proposal_obj.products = [{
-            product_obj: null,
+        state.orders.proposal_obj.chapters = [];
+        state.orders.proposal_obj.chapters = [{
+            chapter_obj: null,
             articles: [],
             articles_aux: [],
             total_global: 0,

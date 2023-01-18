@@ -406,7 +406,7 @@
                             textAlign: "center",
                             template: function (row, data, index) {
                                 var html ='<div>';
-                                html += '<button type="button" class="btn p-0 mx-2 btn-show" data-id="' + row.id + '"><img class="edit-hover" src="/media/custom-imgs/icono_tabla_ver.svg" height="30px" width="auto"></button>';
+                                html += '<button type="button" class="btn p-0 mx-2 btn-show" data-id="' + row.id_order + '"><img class="edit-hover" src="/media/custom-imgs/icono_tabla_ver.svg" height="30px" width="auto"></button>';
                                 return html;
                             },
                         },

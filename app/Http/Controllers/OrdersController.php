@@ -7,6 +7,15 @@ use App\Models\Order;
 use App\Models\Proposal;
 use App\Models\Contact;
 use App\Models\ProposalBill;
+use App\Models\BillOrder;
+use App\Models\Department;
+use App\Models\Bill;
+use App\Models\Service;
+use App\Models\Batch;
+use App\Models\Chapter;
+use App\Models\Article;
+use App\Models\User;
+use DB;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 
@@ -85,7 +94,13 @@ class OrdersController extends Controller
                 $total += $bill->amount;
             }
            
-            $order['total_amount'] = $total;
+            $order['total_amount'] = number_format($total, 2);
+
+            //Consultamos el id_order
+            $order_obj = Order::where('id_proposal', $order->id)->first();
+            if($order_obj){
+                $order['id_order'] = $order_obj->id;
+            }
         }
 
         //Devolución de la llamada con la paginación
@@ -335,5 +350,209 @@ class OrdersController extends Controller
         header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         header('Content-Disposition: attachment; filename="'.'ordenes.xlsx');
         $writer->save('php://output');
+    }
+
+    //Mostrar información de la orden
+    function getInfoOrder($id){
+        //Consultamos si existe la orden
+        $order = Order::find($id);
+        if(!$order){
+            $response['code'] = 1001;
+            return response()->json($response);
+        }
+
+        //Consultamos si existe la propuesta
+        $proposal = Proposal::select('proposals.*', 'contacts.name as contact_name', 'contacts.surnames as contact_surnames', 'contacts.email as contact_email', 'contacts.phone as contact_phone', 'contacts.id_company')
+                                ->leftJoin('contacts', 'contacts.id', 'proposals.id_contact')
+                                ->where('proposals.id', $order->id_proposal)
+                                ->with('department')
+                                ->first();
+
+        $proposal['id_proposal_custom_aux'] = sprintf('%08d', $proposal->id_proposal_custom);
+        $proposal['department_obj'] = Department::find($proposal->id_department);
+
+        if(!$proposal){
+            $response['code'] = 1002;
+            return response()->json($response);
+        }
+
+        //Consultamos el array de facturas
+        $proposal_bills = Bill::select('bills.*')
+                            ->leftJoin('proposals_bills', 'proposals_bills.id_bill', 'bills.id')
+                            ->where('proposals_bills.id_proposal', '=', $proposal->id)
+                            ->get();
+
+        if(count($proposal_bills) <= 0){
+            $response['code'] = 1003;
+            return response()->json($response);
+        }
+
+        //Consultamos la facturas de la orden
+
+        //Modificamos las formas de pago y los vencimientos de la factura de la propuesta por los de la orden. Comprobamos también si se pueden modificar
+        $date_now = Date('Y-m-d');
+        foreach($proposal_bills as $bill){
+            $bill_order = BillOrder::where('id_order', $order->id)->where('amount', $bill->amount)->where('number', $bill->id_bill_internal)->first();
+            if($bill_order){
+                $bill->way_to_pay = $bill_order->way_to_pay;
+                $bill->expiration = $bill_order->expiration;
+
+                $array_date_custom_bill = explode("-", $bill_order->date);
+                $date_custom_bill = $array_date_custom_bill[2].'-'.$array_date_custom_bill[1].'-'.$array_date_custom_bill[0];
+                $bill['will_update'] = true;
+                if ($date_custom_bill < $date_now){
+                    $bill['will_update'] = false;
+                }
+            }
+        }
+
+        //Consultamos el array de servicios
+        $array_services = array();
+        $is_read = 0;
+        foreach($proposal_bills as $bill){
+            if($proposal->is_custom){
+                if(!$is_read){
+                    $array_articles = [];
+                    $array_services_obj = Service::select('services.*')
+                                            ->leftJoin('services_bills', 'services.id', 'services_bills.id_service')
+                                            ->where('services_bills.id_bill', $bill->id)
+                                            ->with('article')
+                                            ->get();
+                    foreach($array_services_obj as $service){
+                        //Consultamos el capitulo
+                        $batch = Batch::find($service->article->id_batch);
+                        if(!$batch){
+                            $response['code'] = 1003;
+                            return response()->json($response);
+                        }
+                        
+                        $chapter = Chapter::find($batch->id_chapter);
+                        if(!$chapter){
+                            $response['code'] = 1004;
+                            return response()->json($response);
+                        }
+
+                        $service['chapter'] = $chapter;
+                        $array_services[] = $service;
+                        $article = Article::find($service->id_article);
+                        $array_articles[] = $article;
+                    }
+                    $bill['array_articles'] = $array_articles;
+                    $is_read = 1;
+                }
+            }else{
+                $array_articles = [];
+                $array_services_obj = Service::select('services.*')
+                                        ->leftJoin('services_bills', 'services.id', 'services_bills.id_service')
+                                        ->where('services_bills.id_bill', $bill->id)
+                                        ->with('article')
+                                        ->get();
+                foreach($array_services_obj as $service){
+                    //Consultamos el capitulo
+                    $batch = Batch::find($service->article->id_batch);
+                    if(!$batch){
+                        $response['code'] = 1003;
+                        return response()->json($response);
+                    }
+                    
+                    $chapter = Chapter::find($batch->id_chapter);
+                    if(!$chapter){
+                        $response['code'] = 1004;
+                        return response()->json($response);
+                    }
+
+                    $service['chapter'] = $chapter;
+                    $array_services[] = $service;
+                    $article = Article::find($service->id_article);
+                    $array_articles[] = $article;
+                }
+                $bill['array_articles'] = $array_articles;
+            }
+        }
+
+        //Consultamos el usuario que ha creado la propuesta
+        $user = User::find($proposal->id_user);
+
+        //Consultamos la empresa
+        $array_companies = Contact::select('contacts.*', 'companies.name', 'companies.nif', DB::raw('CONCAT(contacts.name, " ", contacts.surnames) as fullname', 'contacts.id as id_contact'), 'contacts.email')
+                             ->leftJoin('companies', 'contacts.id_company', 'companies.id')
+                             ->where('contacts.id', $proposal->id_contact)
+                             ->get();
+
+        //Adjuntamos el id_order al objeto proposal
+        $proposal['id_order'] = $order->id;
+        
+        $response['company_aux'] = $array_companies;
+        $response['consultant'] = $user;
+        $response['array_services'] = $array_services;
+        $response['proposal'] = $proposal;
+        $response['proposal_bills'] = $proposal_bills;
+        $response['code'] = 1000;
+        return response()->json($response);
+    }
+
+    //Actualizar ordem
+    function updateOrder(Request $request){
+        //Consultamos si existe la orden
+        $id_order = $request->get('id_order');
+        $order = Order::find($id_order);
+        if(!$order){
+            $response['code'] = 1001;
+            return response()->json($response);
+        }
+
+        //Guardamos el objeto
+        $bill_obj = $request->get('bill_obj');
+        foreach(json_decode($bill_obj)->array_bills as $key => $bill_obj){
+            if($bill_obj->will_update){
+                $bill_order = BillOrder::where('id_order', $order->id)->where('amount', $bill_obj->amount)->where('date', $bill_obj->date)->first();
+                if($bill_order){
+                    $bill_order->expiration = $bill_obj->select_expiration;
+                    $bill_order->way_to_pay = $bill_obj->select_way_to_pay;
+                    $bill_order->save();
+                }
+            }
+        }
+
+        $response['code'] = 1000;
+        return response()->json($response);
+    }
+
+    //Eliminar ordern
+    function deleteOrder($id){
+        $order = Order::find($id);
+        if(!$order){
+            $response['code'] = 1001;
+            return response()->json($response);
+        }
+
+        //Consultamos las facturas de la orden y miramos si alguna es anterior a la fecha actual. Si es así, no se puede eliminar.
+        $array_bills_orders = BillOrder::where('id_order', $order->id)->get();
+        $date_now = Date('Y-m-d');
+        $will_delete = true;
+
+        foreach($array_bills_orders as $bill_order){
+            $array_date_custom_bill = explode("-", $bill_order->date);
+            $date_custom_bill = $array_date_custom_bill[2].'-'.$array_date_custom_bill[1].'-'.$array_date_custom_bill[0];
+            if ($date_custom_bill < $date_now){
+                $will_delete = false;
+            }
+        }
+
+        //Según las comprobaciones miramos si podemos eliminar la orden o no
+        //No podemos eliminar la orden
+        if(!$will_delete){
+            $response['code'] = 1002;
+            return response()->json($response);
+        }
+
+        //Podemos eliminar la orden
+        if($will_delete){
+            BillOrder::where('id_order', $order->id)->delete();
+            Order::where('id', $order->id)->delete();
+        }
+
+        $response['code'] = 1000;
+        return response()->json($response);
     }
 }
