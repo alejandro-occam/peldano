@@ -19,7 +19,7 @@
                         :src="'/media/custom-imgs/icono_btn_crear_orden.svg'"
                         :width="16"
                         :height="16"
-                        @click.native="copyOrderView()"
+                        @click.native="copyOrderBtn()"
                     />
                     <AddButtonComponent
                         :columns="'mr-7'"
@@ -838,7 +838,7 @@ export default {
     },
     methods: {
         ...mapMutations(["clearError", "changeViewStatusOrders", "changeProposalObj", "changeValueIsChangeArticle", "generateBill", "clearObjectsOrders"]),
-        ...mapActions(["getCompanies", "saveProposal", "updateOrder", "deleteOrder", "getUser"]),
+        ...mapActions(["getCompanies", "saveProposal", "updateOrder", "deleteOrder", "getUser", "copyOrder"]),
         openFormArticle(){
             $('#modal_form_article_proposals').modal('show');
         },
@@ -1397,6 +1397,9 @@ export default {
                 'bill_obj': this.orders.bill_obj
             }
             this.updateOrder(params);
+        },
+        copyOrderBtn(){
+            this.copyOrder(this.orders.proposal_obj.id_order);
         }
     },
     mounted() {
@@ -1524,6 +1527,25 @@ export default {
                             window.open(url);
                         }
                         swal("", "Orden eliminada correctamente", "success");
+                    }else if(this.errors.code == 1002){
+                        swal("", "No es posible eliminar la orden ya que una de las facturas ha sido emitida", "warning");
+
+                    }else{
+                        swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
+                    }
+                }
+            }else if(this.errors.type_error == 'copy_order'){
+                if(this.errors.code != ''){
+                    if(this.errors.code == 1000){
+                        $("#list_orders").KTDatatable("reload");
+                        this.orders.status_view = 1;
+                        this.clearData();
+                        if(this.errors.msg != ''){
+                            var url = this.errors.msg;
+                            this.errors.msg = '';
+                            window.open(url);
+                        }
+                        swal("", "Orden copiada correctamente", "success");
                     }else if(this.errors.code == 1002){
                         swal("", "No es posible eliminar la orden ya que una de las facturas ha sido emitida", "warning");
 

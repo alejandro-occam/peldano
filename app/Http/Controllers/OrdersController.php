@@ -41,7 +41,7 @@ class OrdersController extends Controller
             }
         }
 
-        $array_orders = Order::select('proposals.*', 'departments.name as department_name')
+        $array_orders = Order::select('orders.id as id_order', 'proposals.*', 'departments.name as department_name')
                         ->leftJoin('proposals', 'proposals.id', 'orders.id_proposal')  
                         ->leftJoin('departments', 'departments.id', 'proposals.id_department')
                         ->leftJoin('proposals_bills', 'proposals.id', 'proposals_bills.id_proposal')
@@ -69,12 +69,14 @@ class OrdersController extends Controller
             }
         }
 
-        $array_orders = $array_orders->groupBy('proposals.id')
+        $array_orders = $array_orders->groupBy('orders.id')
                                             ->skip($start)
                                             ->take($skip)
                                             ->get();
 
-        $total_orders = $array_orders->groupBy('proposals.id')
+                                        error_log($array_orders);
+
+        $total_orders = $array_orders->groupBy('orders.id')
                                         ->count();
 
         foreach($array_orders as $order){
@@ -95,12 +97,6 @@ class OrdersController extends Controller
             }
            
             $order['total_amount'] = number_format($total, 2);
-
-            //Consultamos el id_order
-            $order_obj = Order::where('id_proposal', $order->id)->first();
-            if($order_obj){
-                $order['id_order'] = $order_obj->id;
-            }
         }
 
         //Devolución de la llamada con la paginación
@@ -518,7 +514,7 @@ class OrdersController extends Controller
         return response()->json($response);
     }
 
-    //Eliminar ordern
+    //Eliminar orden
     function deleteOrder($id){
         $order = Order::find($id);
         if(!$order){
@@ -550,6 +546,64 @@ class OrdersController extends Controller
         if($will_delete){
             BillOrder::where('id_order', $order->id)->delete();
             Order::where('id', $order->id)->delete();
+        }
+
+        $response['code'] = 1000;
+        return response()->json($response);
+    }
+
+    //Copiar orden
+    function copyOrder($id){
+        //Consultamos si existe la orden
+        $order_old = Order::find($id);
+        if(!$order_old){
+            $response['code'] = 1001;
+            return response()->json($response);
+        }
+
+        //Creamos la orden
+        $order = Order::create([
+            'id_company' => $order_old->id_company,
+            'id_proposal' => $order_old->id_proposal
+        ]);
+
+        //Consultamos las facturas de la propuesta
+        $array_bills = ProposalBill::select('bills.*')->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill')->where('proposals_bills.id_proposal', $order->id_proposal)->get();
+
+        //Creamos un array de factuas de ordenes para más tarde crearlas en sage
+        $array_bills_orders = array();
+
+        //Recorremos las facturas y creamos las facturas de la orden
+        foreach($array_bills as $bill){
+            //Consultamos los articulos de la facturar para ver si tienen IVA o no
+            $iva = 0;
+            $array_service_bill = Service::select('services.*')->leftJoin('services_bills', 'services.id', 'services_bills.id_service')->where('services_bills.id_bill', $bill->id)->with('article')->get();
+            foreach($array_service_bill as $service){
+                $article = $service['article'];
+                if(!$article->is_exempt){
+                    $iva += $service->pvp * 0.21;
+                }
+            }
+
+            //Consultamos las facturas de la orden
+            $bill_order = BillOrder::where('id_order', $order_old->id)->where('date', $bill->date)->first();
+            $way_to_pay = $bill->way_to_pay;
+            $expiration = $bill->expiration;
+            if($bill_order){
+                $way_to_pay = $bill_order->way_to_pay;
+                $expiration = $bill_order->expiration;
+            }
+
+            $bill_order = BillOrder::create([
+                'number' => $bill_order->number,
+                'date' => $bill_order->date,
+                'way_to_pay' => $way_to_pay,
+                'expiration' => $expiration,
+                'amount' => $bill_order->amount,
+                'iva' => $bill_order->iva,
+                'id_sage' => '',
+                'id_order' => $order->id
+            ]);
         }
 
         $response['code'] = 1000;
