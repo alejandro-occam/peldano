@@ -198,7 +198,7 @@ class ExternalRequestController extends Controller
         $delivery_note['Number'] = $request->get('number');//Date('y').$request->get('id_bill_order').$request->get('id_order');
         $delivery_note['Period'] = Date('Y');
         $delivery_note['Serie'] = 'A';
-        $delivery_note['TotalNet'] = floatval($request->get('amount'));
+        $delivery_note['TotalNet'] = floatval(round($request->get('amount'), 2));
         //$delivery_note['TotalTaxes'] = floatval($request->get('amount')) * 0.21;
         //$delivery_note['Total'] = floatval($request->get('amount')) * 1.21;
 
@@ -214,10 +214,10 @@ class ExternalRequestController extends Controller
             $line['QuantityMeasureUnit'] = 1;
             $array_lines[] = $line;
         }
-
+        
         $delivery_note['Lines'] = $array_lines;
 
-        //error_log(print_r($delivery_note, true));
+        error_log(print_r($delivery_note, true));
 
         $url = 'https://sage200.sage.es/api/sales/SalesDeliveryNotes?api-version=1.0';
         $response = json_decode($requ_curls->postSageCurl($url, $delivery_note)['response'], true);
@@ -227,7 +227,9 @@ class ExternalRequestController extends Controller
             //Consultamos el albarán creado
             $response = json_decode($requ_curls->getSageCurl($url.'&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Number%20eq%20'.$request->get('number').'&$expand=*')['response'], true);
             error_log($url.'&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Number%20eq%20'.$request->get('number'));
+            error_log(print_r($response, true));
             $delivery_note_obj = $response['value'][0];
+            
             //Comenzamos a crear la orden
             $lines = $delivery_note_obj['Lines'];
             $array_lines_to_order = array();
