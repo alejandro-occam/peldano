@@ -1,7 +1,7 @@
 <template>
     <div>
         <div class="col-12 d-flex flex-wrap justify-content-between">
-            <template v-if="(orders.status_view == 3 && orders.proposal_bd_obj != null)">
+            <template v-if="(orders.status_view == 2 && orders.proposal_bd_obj != null)">
                 <AddButtonComponent
                     :columns="'ml-auto mr-7'"
                     :text="'Volver'"
@@ -11,29 +11,40 @@
                     :height="16"
                     @click.native="returnView()"
                 />
-                <AddButtonComponent
-                    :columns="'mr-7'"
-                    :text="'Modificar'"
-                    :id="'btn_update_proposal'"
-                    :src="'/media/custom-imgs/icono_btn_editar.svg'"
-                    :width="16"
-                    :height="16"
-                    @click.native="updateProposalFront()"
-                />
-                <DeleteButtonComponent
-                    :columns="''"
-                    :text="'Eliminar'"
-                    :id="'btn_add_user'"
-                    :src="'/media/custom-imgs/icono_btn_borrar.svg'"
-                    :width="16"
-                    :height="16"
-                    @click.native="deleteProposalAction()"
-                />
+                <template v-if="!this.is_updating_order">
+                    <AddButtonComponent
+                        :columns="'mr-7'"
+                        :text="'Copiar'"
+                        :id="'btn_copy_order'"
+                        :src="'/media/custom-imgs/icono_btn_crear_orden.svg'"
+                        :width="16"
+                        :height="16"
+                        @click.native="copyOrderView()"
+                    />
+                    <AddButtonComponent
+                        :columns="'mr-7'"
+                        :text="'Modificar'"
+                        :id="'btn_update_order'"
+                        :src="'/media/custom-imgs/icono_btn_editar.svg'"
+                        :width="16"
+                        :height="16"
+                        @click.native="updateOrderFront()"
+                    />
+                    <DeleteButtonComponent
+                        :columns="''"
+                        :text="'Eliminar'"
+                        :id="'btn_delete_order'"
+                        :src="'/media/custom-imgs/icono_btn_borrar.svg'"
+                        :width="16"
+                        :height="16"
+                        @click.native="deleteOrderAction()"
+                    />
+                </template>
                 
             </template>
             <template v-else>
                 <AddButtonComponent
-                    :columns="'ml-auto'"
+                    :columns="'ml-auto mr-7'"
                     :text="'Volver'"
                     :id="'btn_return'"
                     :src="'/media/custom-imgs/flecha_btn_volver.svg'"
@@ -41,12 +52,13 @@
                     :height="16"
                     @click.native="returnView()"
                 />
+                
             </template>
             
         </div>
         <div class="col-12 pl-0 mt-15">
-            <h3 class="color-blue" v-if="!this.finish_proposal">Datos del cliente</h3>
-            <div class="my-5 col-12 row" v-if="!this.finish_proposal && !this.generate_proposal">
+            <h3 class="color-blue" v-if="!this.finish_proposal && !this.is_updating_order">Datos del cliente</h3>
+            <div class="my-5 col-12 row" v-if="!this.finish_proposal && !this.generate_proposal && !this.is_updating_order">
                 <div class="input-group px-0 d-flex" v-if="this.select_company == '' && this.select_company_other_values == ''">
                     <div class="w-25">
                         <span class="w-25">Empresa o nombre y apellidos</span>
@@ -71,7 +83,7 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-15" v-if="(this.select_company != '' || this.select_company_other_values != '') && !this.finish_proposal && !this.generate_proposal">
+            <div class="mt-15" v-if="(this.select_company != '' || this.select_company_other_values != '') && !this.finish_proposal && !this.generate_proposal && !this.is_updating_order">
                 <button type="button" class="btn bg-azul color-white px-5 font-weight-bolder" @click="this.openFormArticle()">
                     <img class="mr-2" width="24" height="24" src="/media/custom-imgs/icono_btn_annadir_articulo_blanco.svg" />
                     Añadir artículo
@@ -124,7 +136,7 @@
                             </div>
                             <div style="float:left;">
                                 <div class="border-blue-article mt-8">
-                                    <div class="text-align-center px-5 mt-4" v-if="this.is_change_get_info">
+                                    <div class="text-align-center px-5 mt-4" v-if="this.is_change_get_info && !this.is_updating_order">
                                         <span class="badge badge-light-success py-4 f-16 w-100 fw-bold">FIRMADA #202210EP-00039334</span>
                                     </div>
                                     <div class="d-flex">
@@ -132,7 +144,7 @@
                                             <div class="f-16 color-dark-gray text-align-center">
                                                 <span>OFERTA</span>
                                             </div>
-                                            <span class="p-input-icon-right w-100" v-if="!this.finish_proposal">
+                                            <span class="p-input-icon-right w-100" v-if="!this.finish_proposal && !this.is_updating_order">
                                                 <input v-model="offer" type="text" class="form-control discount bg-blue-light-white font-weight-bolder f-15 color-dark-gray not-border mt-3" style="width:150px;" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" v-on:change="changeValueBox(1, 0)"/>
                                             </span>
                                             <div class="f-15 color-dark-gray font-weight-bolder px-8 py-2 mt-3" v-else>
@@ -144,7 +156,7 @@
                                             <div class="f-16 color-dark-gray text-align-center">
                                                 <span>DESCUENTO</span>
                                             </div>
-                                            <span class="p-input-icon-right w-100" v-if="!this.finish_proposal">
+                                            <span class="p-input-icon-right w-100" v-if="!this.finish_proposal && !this.is_updating_order">
                                                 <input v-model="discount" type="text" class="form-control discount bg-blue-light-white font-weight-bolder f-15 color-dark-gray not-border mt-3" style="width:150px;" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0"  v-on:change="changeValueBox(2, 0)"/>
                                                 <img width="13" class="pi my-auto" src="/media/custom-imgs/icono_porcentaje_input.svg"/>
                                             </span>
@@ -236,7 +248,7 @@
             </div>
             <div class="col-12 pl-0 mt-10" v-if="orders.proposal_obj.chapters[0].chapter_obj != null && !this.finish_proposal && !this.generate_proposal">
                 <span class="text-dark font-weight-bold mb-2">Tipo de propuesta</span>
-                <select class="form-control bg-gray text-dark select-custom select-filter mt-3 col-2" :name="'select_type_proposal'" :id="'select_type_proposal'" v-model="select_type_proposal" data-style="select-lightgreen">
+                <select v-if="!this.is_updating_order" class="form-control bg-gray text-dark select-custom select-filter mt-3 col-2" :name="'select_type_proposal'" :id="'select_type_proposal'" v-model="select_type_proposal" data-style="select-lightgreen">
                     <option value="1" selected>Normal</option>
                     <option value="2">Intercambio con facturas</option>
                     <option value="3">Necesidades Peldaño</option>
@@ -273,13 +285,13 @@
                                     <Calendar class="w-100 borders-box text-dark-gray px-5"  autocomplete="off" v-model="orders.bill_obj.array_bills[index].date" dateFormat="dd-mm-yy"  />
                                 </td>
                                 <td class="text-align-center py-4 px-5 td-border-right" width="20%">
-                                    <select v-if="this.proposal_submission_settings.date_proyect == '' || this.date_now < this.proposal_submission_settings.date_proyect" class="form-control text-dark select-custom select-filter bg-white" :name="'select_way_to_pay'" :id="'select_way_to_pay'" v-model="orders.bill_obj.array_bills[index].select_way_to_pay" data-style="select-lightgreen">
+                                    <select v-if="this.proposal_submission_settings.date_proyect == '' || this.date_now < this.proposal_submission_settings.date_proyect || (orders.bill_obj.array_bills[index].will_update && this.is_updating_order)" class="form-control text-dark select-custom select-filter bg-white" :name="'select_way_to_pay'" :id="'select_way_to_pay'" v-model="orders.bill_obj.array_bills[index].select_way_to_pay" data-style="select-lightgreen">
                                         <option v-for="(item, index) in Number(this.select_way_to_pay_options.length)" :key="index" :value="this.select_way_to_pay_options[index].value">{{ this.select_way_to_pay_options[index].text }}</option>
                                     </select>
                                     <span v-else>{{ this.select_way_to_pay_options[orders.bill_obj.array_bills[index].select_way_to_pay].text }}</span>
                                 </td>
                                 <td class="text-align-center py-4 px-5 td-border-right">
-                                    <select v-if="this.proposal_submission_settings.date_proyect == '' || this.date_now < this.proposal_submission_settings.date_proyect" class="form-control text-dark select-custom select-filter bg-white" :name="'select_expiration'" :id="'select_expiration'" v-model="orders.bill_obj.array_bills[index].select_expiration" data-style="select-lightgreen">
+                                    <select v-if="this.proposal_submission_settings.date_proyect == '' || this.date_now < this.proposal_submission_settings.date_proyect || (orders.bill_obj.array_bills[index].will_update && this.is_updating_order)" class="form-control text-dark select-custom select-filter bg-white" :name="'select_expiration'" :id="'select_expiration'" v-model="orders.bill_obj.array_bills[index].select_expiration" data-style="select-lightgreen">
                                         <option v-for="(item, index) in Number(this.select_expiration_options.length)" :key="index" :value="this.select_expiration_options[index].value">{{ this.select_expiration_options[index].text }}</option>
                                     </select>
                                     <span v-else>{{ this.select_expiration_options[orders.bill_obj.array_bills[index].select_expiration].text }}</span>
@@ -709,6 +721,13 @@
                     </div>
                 </div>
             </div>
+            <div class="col-12 pl-0 mt-10" v-if="this.is_updating_order">
+                <div class="mt-7">
+                    <div class="mt-10">
+                        <button v-on:click="this.updateOrdeBtn()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Modificar</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
     <FormAddArticleComponent :type="2"></FormAddArticleComponent>
@@ -810,7 +829,8 @@ export default {
             is_change_get_info_input: 0,
             is_updating: 0,
             date_now: '',
-            search_company: ''
+            search_company: '',
+            is_updating_order: 0
         };
     },
     computed: {
@@ -818,7 +838,7 @@ export default {
     },
     methods: {
         ...mapMutations(["clearError", "changeViewStatusOrders", "changeProposalObj", "changeValueIsChangeArticle", "generateBill", "clearObjectsOrders"]),
-        ...mapActions(["getCompanies", "saveProposal", "updateProposal", "deleteProposal", "getUser"]),
+        ...mapActions(["getCompanies", "saveProposal", "updateOrder", "deleteOrder", "getUser"]),
         openFormArticle(){
             $('#modal_form_article_proposals').modal('show');
         },
@@ -1288,11 +1308,13 @@ export default {
             me.proposal_submission_settings.show_pvp = 1;
             me.proposal_submission_settings.sales_possibilities = 6;
             me.proposal_submission_settings.discount = 0;
+            me.is_updating_order = 0;
         },
         //Modificar propuesta
-        updateProposalFront(){
+        updateOrderFront(){
             this.generate_proposal = false;
             this.finish_proposal = false;
+            this.is_updating_order = 1;
         },
         //Eliminar propuesta
         deleteProposalAction(){
@@ -1345,8 +1367,36 @@ export default {
             this.proposal_submission_settings.sales_possibilities = this.orders.proposal_bd_obj.sales_possibilities;
             this.proposal_submission_settings.discount = this.orders.proposal_bd_obj.discount;
             this.discount = this.proposal_submission_settings.discount;
-            this.offer = this.orders.bill_obj.total_bill; //this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.bill_obj.total_bill));
+            this.offer = Math.round(Number(this.orders.bill_obj.total_bill) * 100) / 100; //this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.bill_obj.total_bill));
             this.loadFormObj(); 
+        },
+        //Eliminar propuesta
+        deleteOrderAction(){
+            let me = this;
+            let id_order = this.orders.proposal_obj.id_order;
+            swal({
+                title: "¿Eliminar orden?",
+                text: "¿Está seguro? Esta orden se eliminará",
+                type: "warning",
+                showCancelButton: true,
+                confirmButtonColor: "#DD6B55",
+                confirmButtonText: "Eliminar",
+                cancelButtonText: "Cancelar",
+                closeOnCancel: true,
+                closeOnConfirm: false
+            }, function(isConfirm) {
+                if (isConfirm) {
+                    me.deleteOrder(id_order);
+                }
+            });
+        },
+        //Actualizar propuesta
+        updateOrdeBtn(){
+            var params = {
+                'id_order': this.orders.proposal_obj.id_order,
+                'bill_obj': this.orders.bill_obj
+            }
+            this.updateOrder(params);
         }
     },
     mounted() {
@@ -1446,7 +1496,7 @@ export default {
                     }
                 }
 
-            }else if(this.errors.type_error == 'update_proposal'){
+            }else if(this.errors.type_error == 'update_order'){
                 if(this.errors.code != ''){
                     if(this.errors.code == 1000){
                         $("#list_orders").KTDatatable("reload");
@@ -1457,12 +1507,12 @@ export default {
                             this.errors.msg = '';
                             window.open(url);
                         }
-                        swal("", "Propuesta actualizada correctamente", "success");
+                        swal("", "Orden actualizada correctamente", "success");
                     }else{
                         swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
                     }
                 }
-            }else if(this.errors.type_error == 'delete_proposal'){
+            }else if(this.errors.type_error == 'delete_order'){
                 if(this.errors.code != ''){
                     if(this.errors.code == 1000){
                         $("#list_orders").KTDatatable("reload");
@@ -1473,7 +1523,10 @@ export default {
                             this.errors.msg = '';
                             window.open(url);
                         }
-                        swal("", "Propuesta eliminada correctamente", "success");
+                        swal("", "Orden eliminada correctamente", "success");
+                    }else if(this.errors.code == 1002){
+                        swal("", "No es posible eliminar la orden ya que una de las facturas ha sido emitida", "warning");
+
                     }else{
                         swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
                     }
