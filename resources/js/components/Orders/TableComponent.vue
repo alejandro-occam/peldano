@@ -169,17 +169,21 @@
                 let me = this;
                 $("#list_orders").KTDatatable("destroy");
                 $("#list_orders").KTDatatable("init");
-                if(type == 1 || type == undefined){
-                    me.datatable.setDataSourceParam('type', type);
 
-                    var date_ms_from = Date.parse(me.date_from);
-                    var date_ms_to = Date.parse(me.date_to);
+                var date_ms_from = '';
+                var date_ms_to = '';
+
+                if(type == 1 || type == undefined){
+                    //me.datatable.setDataSourceParam('type', type);
+
+                    date_ms_from = Date.parse(me.date_from);
+                    date_ms_to = Date.parse(me.date_to);
                     
-                    me.datatable.setDataSourceParam('select_consultant', me.select_consultant);
+                    /*me.datatable.setDataSourceParam('select_consultant', me.select_consultant);
                     me.datatable.setDataSourceParam('select_department', me.select_department);
                     me.datatable.setDataSourceParam('date_from', me.$utils.customFormDate(date_ms_from));
                     me.datatable.setDataSourceParam('date_to', me.$utils.customFormDate(date_ms_to));
-                    me.datatable.setDataSourceParam('num_order', me.num_order);
+                    me.datatable.setDataSourceParam('num_order', me.num_order);*/
                 }
                 me.datatable = $("#list_orders").KTDatatable({
                     data: {
@@ -196,7 +200,13 @@
                                 },
                                 method: 'POST',
                                 params: {
-                                    type: 0
+                                    //type: 0
+                                    type: type,
+                                    select_consultant: me.select_consultant,
+                                    select_department: me.select_department,
+                                    date_from: me.$utils.customFormDate(date_ms_from),
+                                    date_to: me.$utils.customFormDate(date_ms_to),
+                                    num_order: me.num_order,
                                 }
 
                             },
