@@ -57,7 +57,7 @@ class OrdersController extends Controller
             }
 
             if($request->get('select_department') != ''){
-                $array_orders = $array_orders->where('proposals.id_department', $request->get('select_chapter'));
+                $array_orders = $array_orders->where('proposals.id_department', $request->get('select_department'));
             }
 
             if($request->get('date_from') != '' && $request->get('date_from') != 'Invalid Date-undefined-undefined'){

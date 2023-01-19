@@ -845,12 +845,19 @@ export default {
         openCustomInvoice(){
             $('#modal_custom_invoice').modal('show');
         },
-        getNameCompany(id){
+        getNameCompany(id, type){
             let me = this;
             me.array_companies.forEach(function callback(value, index, array) {
-                if(value.id == id){
-                    me.name_company = value.name;
-                    me.id_company = value.id;
+                if(type == 1){
+                    if(value.id == id){
+                        me.name_company = value.name;
+                        me.id_company = value.id;
+                    }
+                }else{
+                    if(value.id_company == id){
+                        me.name_company = value.name;
+                        me.id_company = value.id;
+                    }
                 }
             });
             me.proposal_submission_settings.objetives = 'Somos consultores y expertos en comunicación. Nuestra marca y nuestros servicios son líderes en el sector, y tienen el máximo reconocimiento, prestigio e influencia. Sabemos qué quiere nuestra audiencia, lo que nos permite ofrecer a '+ me.name_company +' una propuesta de valor única, diferencial y de éxito.\n\nHemos estudiado el potencial y la proyección de '+ me.name_company +' con el fin de crear una propuesta de comunicación eficaz que permita mejorar sus resultados y objetivos.\n\nLas acciones de comunicación para '+ me.name_company +' que incluimos en esta propuesta crean influencia y potencian la visibilidad y la relevancia de sus chapteros, impactando positivamente en nuestra audiencia e incitando a la acción.';
@@ -1349,7 +1356,7 @@ export default {
             this.id_company = this.orders.id_company;
             this.select_company = this.id_company;
             this.array_companies = this.orders.company_aux;
-            this.getNameCompany(this.select_company);
+            this.getNameCompany(this.select_company, 2);
             this.is_show_buttons_bill = true;
             this.proposal_submission_settings.commercial_name = this.orders.proposal_bd_obj.commercial_name;
             this.proposal_submission_settings.language = this.orders.proposal_bd_obj.language;
@@ -1471,11 +1478,11 @@ export default {
 
             $('#select_company').on("change",function(){
                 me.select_company = $('#select_company').val();
-                me.getNameCompany(me.select_company);
+                me.getNameCompany(me.select_company, 1);
             });
             $('#select_company_other_values').on("change",function(){
                 me.select_company_other_values = $('#select_company_other_values').val();
-                me.getNameCompany(me.select_company_other_values);
+                me.getNameCompany(me.select_company_other_values, 1);
             });
 
         }
@@ -1582,7 +1589,7 @@ export default {
                 this.orders.is_change_get_info = 0;
                 this.id_company = this.orders.id_company;
                 this.select_company = this.id_company;
-                this.getNameCompany(this.select_company);
+                this.getNameCompany(this.select_company, 1);
                 this.is_show_buttons_bill = true;
                 this.proposal_submission_settings.commercial_name = this.orders.proposal_bd_obj.commercial_name;
                 this.proposal_submission_settings.language = this.orders.proposal_bd_obj.language;
