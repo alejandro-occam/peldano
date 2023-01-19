@@ -91,13 +91,12 @@ class ProposalsController extends Controller
         }
 
         $total_proposals = $array_proposals->groupBy('proposals.id')
-                                            ->count();
+                                            ->get();
 
         $array_proposals = $array_proposals->groupBy('proposals.id')
                                             ->skip($start)
                                             ->take($skip)
                                             ->get();
-
 
         foreach($array_proposals as $proposal){
             //Consultamos el nombre del contacto
@@ -123,7 +122,7 @@ class ProposalsController extends Controller
         //Devolución de la llamada con la paginación
         $meta['page'] = $pagination['page'];
 
-        if ($total_proposals < 1) {
+        if (count($total_proposals) < 1) {
             $meta['page'] = 1;
         }
 
@@ -132,7 +131,7 @@ class ProposalsController extends Controller
             $meta['pages'] = $pagination['pages'];
         }
         $meta['perpage'] = $pagination['perpage'];
-        $meta['total'] = $total_proposals;
+        $meta['total'] = count($total_proposals);
         $meta['sort'] = 'asc';
         $meta['field'] = 'id';
         $response['meta'] = $meta;
