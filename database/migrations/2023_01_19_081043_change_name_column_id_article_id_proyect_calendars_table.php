@@ -15,7 +15,7 @@ class ChangeNameColumnIdArticleIdProyectCalendarsTable extends Migration
     {
         Schema::table('calendars', function (Blueprint $table) {
             //
-            $table->renameColumn('id_article', 'id_proyect');
+            $table->renameColumn('id_article', 'id_project');
         });
     }
 

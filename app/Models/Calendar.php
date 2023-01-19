@@ -14,7 +14,7 @@ class Calendar extends Model
     public $fillable = [
         'id',
         'name',
-        'id_article'
+        'id_project'
     ];
 
     /**
@@ -25,7 +25,7 @@ class Calendar extends Model
     protected $casts = [
         'id' => 'integer',
         'name' => 'string',
-        'id_article' => 'integer'
+        'id_project' => 'integer'
     ];
 
     /**
@@ -36,6 +36,6 @@ class Calendar extends Model
     public static $rules = [
         'id',
         'name',
-        'id_article'
+        'id_project'
     ];
 }
