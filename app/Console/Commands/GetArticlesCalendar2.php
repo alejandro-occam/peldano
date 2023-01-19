@@ -61,17 +61,19 @@ class GetArticlesCalendar2 extends Command
             $words = explode(";", $line);
 
             //Consultamos el proyecto
-            $proyect = Project::leftJoin('channels', 'channels.id', 'proyects.id_channel')
-                                ->leftJoin('sections', 'sections.id', 'proyects.id_section')
-                                ->leftJoin('departments', 'departments.id', 'proyects.id_department')
-                                ->where('proyects.nomenclature', $words[4])->first();
-            error_log($proyect);
-            return;
-            if($article){
+            $project = Project::select('projects.*')->leftJoin('channels', 'channels.id', 'projects.id_channel')
+                                ->leftJoin('sections', 'sections.id', 'channels.id_section')
+                                ->leftJoin('departments', 'departments.id', 'sections.id_department')
+                                ->where('departments.nomenclature', $words[1])
+                                ->where('sections.nomenclature', $words[2])
+                                ->where('channels.nomenclature', $words[3])
+                                ->where('projects.nomenclature', $words[4])
+                                ->first();
+            if($project){
                 //Consultamos el calendario
-                $calendar = Calendar::where('name', $words[2])->where('id_article', 0)->first();
+                $calendar = Calendar::where('name', $words[0])->where('id_project', 0)->first();
                 if($calendar){
-                    $calendar->id_article = $article->id;
+                    $calendar->id_project = $project->id;
                     $calendar->save();
                 }
             }

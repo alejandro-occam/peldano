@@ -29,6 +29,8 @@ use App\Models\Project;
 use App\Models\Chapter;
 use App\Models\Batch;
 
+use DB;
+
 class ConfigurationController extends Controller
 {
     //USUARIOS
@@ -705,10 +707,12 @@ class ConfigurationController extends Controller
 
         //Consultamos si un artículo está asociado a un calendario
         foreach($array_articles as $article){
-            $calendar = Calendar::where('id_article', $article->id)->first();
+            $calendar = Calendar::select('calendars.*')->leftJoin('projects', 'projects.id', 'calendars.id_project')
+                                ->leftJoin('chapters', 'chapters.id_project', 'projects.id')
+                                ->leftJoin('batchs', 'batchs.id_chapter', 'chapters.id')
+                                ->where('batchs.id', $id)->first();
             if($calendar){
                 $calendars_magazine = CalendarMagazine::where('id_calendar', $calendar->id)->orderBy('id', 'desc')->limit(10)->get();
-                error_log(count($calendars_magazine));
                 $array_calendars_magazines = array();
                 foreach($calendars_magazine as $calendar_magazine){
                     $calendar_magazine_obj['number'] = $calendar_magazine->number;
