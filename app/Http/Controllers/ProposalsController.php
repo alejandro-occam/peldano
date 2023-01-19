@@ -90,6 +90,9 @@ class ProposalsController extends Controller
             }
         }
 
+        $total_proposals = $array_proposals->groupBy('proposals.id')
+                                            ->count();
+
         $array_proposals = $array_proposals->groupBy('proposals.id')
                                             ->skip($start)
                                             ->take($skip)
@@ -116,9 +119,6 @@ class ProposalsController extends Controller
            
             $proposal['total_amount'] = number_format($total, 2);
         }
-
-        $total_proposals = $array_proposals->groupBy('proposals.id')
-                                            ->count();
 
         //Devolución de la llamada con la paginación
         $meta['page'] = $pagination['page'];
