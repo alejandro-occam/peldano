@@ -87,7 +87,7 @@
 		<script src="{{asset('plugins/custom/sweetalert/dist/sweetalert.min.js')}}" type="text/javascript"></script>
 		<script src="{{asset('plugins/custom/ckeditor/build/ckeditor.js')}}"></script>
 
-		<script src="{{ mix('/js/admin.js') }}"></script>
+		<script src="{{ mix('/js/admin.js') }}?v=1"></script>
 		@yield('scripts')
 		<!--end::Page Scripts-->
     </body>
