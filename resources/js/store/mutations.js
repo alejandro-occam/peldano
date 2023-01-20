@@ -102,7 +102,11 @@ const mutations = {
             if(articles_obj.articles_aux != undefined){
                 articles_obj.articles_aux.dates_prices_aux = [];
             }else{
-                articles_obj.articles_aux.dates_prices_aux = null;
+                var articles_aux = {
+                    dates_prices_aux: null
+                }
+                //articles_obj.articles_aux.dates_prices_aux = null;
+                articles_obj.articles_aux = articles_aux;
             }
             
             //Guardamos ya formateado las fechas para las columnas de la tabla
@@ -387,7 +391,11 @@ const mutations = {
             if(articles_obj.articles_aux != undefined){
                 articles_obj.articles_aux.dates_prices_aux = [];
             }else{
-                articles_obj.articles_aux.dates_prices_aux = null;
+                var articles_aux = {
+                    dates_prices_aux: null
+                }
+                //articles_obj.articles_aux.dates_prices_aux = null;
+                articles_obj.articles_aux = articles_aux;
             }
             
             //Guardamos ya formateado las fechas para las columnas de la tabla
