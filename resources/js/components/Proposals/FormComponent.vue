@@ -1033,7 +1033,7 @@ export default {
                                                         date_pvp: [{
                                                             date: pvp_date.date,
                                                             pvp: [],
-                                                            pvp_default: []
+                                                            pvp_default: [] 
                                                         }]
                                                     }]
                                                 }]
@@ -1070,7 +1070,8 @@ export default {
                                         }else if(me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date] == undefined){
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp.push({
                                                 date: pvp_date.date,
-                                                pvp: []
+                                                pvp: [],
+                                                pvp_default: []
                                             });
 
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
