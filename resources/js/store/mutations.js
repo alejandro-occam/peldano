@@ -106,7 +106,7 @@ const mutations = {
                     dates_prices_aux: null
                 }
                 //articles_obj.articles_aux.dates_prices_aux = null;
-                articles_obj.articles_aux = articles_aux;
+                articles_obj.articles_aux.push(articles_aux);
             }
             
             //Guardamos ya formateado las fechas para las columnas de la tabla
