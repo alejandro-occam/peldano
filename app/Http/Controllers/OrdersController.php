@@ -392,6 +392,7 @@ class OrdersController extends Controller
             if($bill_order){
                 $bill->way_to_pay = $bill_order->way_to_pay;
                 $bill->expiration = $bill_order->expiration;
+                $bill->date = $bill_order->date;
 
                 $array_date_custom_bill = explode("-", $bill_order->date);
                 $date_custom_bill = $array_date_custom_bill[2].'-'.$array_date_custom_bill[1].'-'.$array_date_custom_bill[0];
