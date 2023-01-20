@@ -262,7 +262,7 @@ class ExternalRequestController extends Controller
             $invoice_obj = $response['value'][0];
             $id_invoice = $invoice_obj['Id'];
             $invoice_custom['Id'] = $id_invoice;
-            $receipt_order_sage = $invoice_obj['Receipts'][0]['Order'];
+            $receipt_order_sage = $invoice_obj['Receipts'][0]['Id'];
             $invoice_custom['receipt_order_sage'] = $receipt_order_sage;
             return $invoice_custom;
         }
