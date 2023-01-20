@@ -1043,6 +1043,7 @@ function createObjectsStore({ state }, response, type){
                 array_chapters.push({
                     id_chapter: service.chapter.id,
                     articles: [article],
+                    articles_aux: [article],
                     chapter_obj: service.chapter
                 });
             }

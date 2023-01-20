@@ -356,14 +356,14 @@ const mutations = {
         var array_dates = [], array_dates_aux = [], array_dates_prices = [];
 
         //Consultamos si tenemos algún producto creado y si no, lo creamos
-        if(state.orders.proposal_obj.products[0].product_obj == null){
-            state.orders.proposal_obj.products[0].product_obj = params.product_obj
+        if(state.orders.proposal_obj.chapters[0].product_obj == null){
+            state.orders.proposal_obj.chapters[0].product_obj = params.product_obj
         }
 
         //Consultamos si existe el producto para nuesto artículo
         var exist_product = false;
         var exist_product_key = 0;
-        state.orders.proposal_obj.products.map(function(articles_obj, key) {
+        state.orders.proposal_obj.chapters.map(function(articles_obj, key) {
             if(articles_obj.product_obj.id == params.product_obj.id){
                 exist_product = true;   
                 exist_product_key = key;                 
@@ -371,22 +371,22 @@ const mutations = {
         });
 
         //Si existe el producto para nuesto artículo lo añadimos y si no creamos el producto
-        if(exist_product && state.orders.proposal_obj.products[exist_product_key].articles_aux != undefined){
-            state.orders.proposal_obj.products[exist_product_key].articles_aux.push(article);
+        if(exist_product && state.orders.proposal_obj.chapters[exist_product_key].articles_aux != undefined){
+            state.orders.proposal_obj.chapters[exist_product_key].articles_aux.push(article);
             
-        }else if(exist_product && state.orders.proposal_obj.products[exist_product_key].articles_aux == undefined){
-            state.orders.proposal_obj.products[exist_product_key].articles_aux = [article];
+        }else if(exist_product && state.orders.proposal_obj.chapters[exist_product_key].articles_aux == undefined){
+            state.orders.proposal_obj.chapters[exist_product_key].articles_aux = [article];
 
         }else{
             var product = {
                 product_obj: params.product_obj,
                 articles_aux: [article]
             }
-            state.orders.proposal_obj.products.push(product);
+            state.orders.proposal_obj.chapters.push(product);
         }
 
         //Guardamos las fechas de nuestro artículo en un array e inicializamos variables
-        state.orders.proposal_obj.products.map(function(articles_obj, key) {
+        state.orders.proposal_obj.chapters.map(function(articles_obj, key) {
             articles_obj.articles = [];
             if(articles_obj.articles_aux != undefined){
                 articles_obj.articles_aux.dates_prices_aux = [];
@@ -408,7 +408,7 @@ const mutations = {
         });
 
         //Agrupamos los artículos
-        state.orders.proposal_obj.products.map(function(product_obj, key) {
+        state.orders.proposal_obj.chapters.map(function(product_obj, key) {
             var array_articles = [];
             //Recorremos los artículos del producto
             product_obj.articles_aux.map(function(article, key) {
@@ -492,7 +492,7 @@ const mutations = {
         });
 
         //Borramos el array de fechas anteriormente cargados
-        state.orders.proposal_obj.products.map(function(articles_obj, key) {
+        state.orders.proposal_obj.chapters.map(function(articles_obj, key) {
             articles_obj.articles.map(function(article_finish, key) {
                 article_finish.dates_prices = [];
             });
@@ -502,7 +502,7 @@ const mutations = {
         //Recorremos las fechas que habiamos guardado para las columnas y agrupamos según esto
         array_dates.map(function(date, key) {
             //Recorremos los productos
-            state.orders.proposal_obj.products.map(function(articles_obj, key) {
+            state.orders.proposal_obj.chapters.map(function(articles_obj, key) {
                 //Recorremos los artículos anteriormente guardados para guardar el precio con la fecha
                 articles_obj.articles.map(function(article_finish, key) {
                     //Recorremos los artículos auxiliares anteriormente guardados
@@ -579,7 +579,7 @@ const mutations = {
         var total_amount_global = 0;
         var total_individual_pvp = 0;
         var total_global_normal = 0;
-        state.orders.proposal_obj.products.map(function(articles_obj, key) {
+        state.orders.proposal_obj.chapters.map(function(articles_obj, key) {
             articles_obj.articles.map(function(article_finish, key) {
                 total_individual_pvp += article_finish.article_obj.pvp;
                 article_finish.amount = 0;
@@ -606,7 +606,7 @@ const mutations = {
         //Cargamos en el array de fechas para las columnas los totales de cada mes
         array_dates.map(function(date, key) {
             var total_date = 0;
-            state.orders.proposal_obj.products.map(function(articles_obj, key) {
+            state.orders.proposal_obj.chapters.map(function(articles_obj, key) {
                 articles_obj.articles.map(function(article_finish, key) {
                     article_finish.dates_prices.map(function(date_aux, key) {
                         if(date_aux.date == date){
