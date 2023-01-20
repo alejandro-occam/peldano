@@ -256,10 +256,15 @@ class ExternalRequestController extends Controller
             $response = json_decode($requ_curls->postSageCurl($url, $order)['response'], true);
 
             //Consultamos la factura creada creado
-            $response = json_decode($requ_curls->getSageCurl($url.'&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Number%20eq%20'.$request->get('number').'and%20Period%20eq%20'.$delivery_note['Period'])['response'], true);
+            $response = json_decode($requ_curls->getSageCurl($url.'&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Number%20eq%20'.$request->get('number').'and%20Period%20eq%20'.$delivery_note['Period'].'&$expand=*')['response'], true);
+            error_log($url.'&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Number%20eq%20'.$request->get('number').'and%20Period%20eq%20'.$delivery_note['Period'].'&$expand=*');
             error_log('Invoice '.print_r($response, true));
             $invoice_obj = $response['value'][0];
-            return $invoice_obj['Id'];
+            $id_invoice = $invoice_obj['Id'];
+            $invoice_custom['Id'] = $id_invoice;
+            $receipt_order_sage = $invoice_obj['Receipts'][0]['Order'];
+            $invoice_custom['receipt_order_sage'] = $receipt_order_sage;
+            return $invoice_custom;
         }
     }
 }

@@ -99,9 +99,10 @@ class CreateOrder extends Command
             //Generamos el albarán en Sage
             $number = Date('y').$bill_order->id.$bill_order->id_order;
             $request->replace(['array_sage_products' => $array_sage_products, 'customer_id' => $company->id_sage, 'id_bill_order' => $bill_order->id, 'id_order' => $bill_order->id_order, 'amount' => $bill_order->amount, 'number' => $number]);
-            $id_sage = $requ_external_request->generateDeliveryNoteSage($request);
+            $invoice_custom = $requ_external_request->generateDeliveryNoteSage($request);
             if($id_sage != null){
-                $bill_order->id_sage = $id_sage;
+                $bill_order->id_sage = $invoice_custom['Id'];
+                $bill_order->receipt_order_sage = $invoice_custom['receipt_order_sage'];
                 $bill_order->save();
             }
         }

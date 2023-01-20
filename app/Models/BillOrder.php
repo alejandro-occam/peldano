@@ -19,7 +19,8 @@ class BillOrder extends Model
         'amount',
         'iva',
         'id_sage',
-        'id_order'
+        'id_order',
+        'receipt_order_sage'
     ];
 
     /**
@@ -35,7 +36,8 @@ class BillOrder extends Model
         'amount' => 'double',
         'iva' => 'double',
         'id_sage' => 'string',
-        'id_order' => 'integer'
+        'id_order' => 'integer',
+        'receipt_order_sage' => 'string'
     ];
 
     /**
@@ -51,6 +53,7 @@ class BillOrder extends Model
         'amount',
         'iva',
         'id_sage',
-        'id_order'
+        'id_order',
+        'receipt_order_sage'
     ];
 }
