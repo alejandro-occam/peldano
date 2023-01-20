@@ -226,7 +226,7 @@ class ExternalRequestController extends Controller
             sleep(4);
             //Consultamos el albarán creado
             $response = json_decode($requ_curls->getSageCurl($url.'&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Number%20eq%20'.$request->get('number').'and%20Period%20eq%20'.$delivery_note['Period'].'&$expand=*')['response'], true);
-            error_log($url.'&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Number%20eq%20'.$request->get('number'));
+            error_log($url.'&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Number%20eq%20'.$request->get('number').'and%20Period%20eq%20'.$delivery_note['Period']);
             error_log(print_r($response, true));
             $delivery_note_obj = $response['value'][0];
             
@@ -254,7 +254,12 @@ class ExternalRequestController extends Controller
             $order['Lines'] = $array_lines_to_order;
             $url = 'https://sage200.sage.es/api/sales/SalesInvoices?api-version=1.0';
             $response = json_decode($requ_curls->postSageCurl($url, $order)['response'], true);
-            error_log(print_r($response, true));
+
+            //Consultamos la factura creada creado
+            $response = json_decode($requ_curls->getSageCurl($url.'&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Number%20eq%20'.$request->get('number').'and%20Period%20eq%20'.$delivery_note['Period'])['response'], true);
+            error_log('Invoice '.print_r($response, true));
+            $invoice_obj = $response['value'][0];
+            return $invoice_obj['Id'];
         }
     }
 }
