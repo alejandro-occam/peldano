@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Log;
 use App\Models\Company;
 use App\Models\Contact;
 use App\Models\DealHubspot;
+use App\Models\Payment;
 
 class ExternalRequestController extends Controller
 {
@@ -255,6 +256,9 @@ class ExternalRequestController extends Controller
             $url = 'https://sage200.sage.es/api/sales/SalesInvoices?api-version=1.0';
             $response = json_decode($requ_curls->postSageCurl($url, $order)['response'], true);
 
+            //Paramos 4 segundos para que aparezca en el listado
+            sleep(4);
+
             //Consultamos la factura creada creado
             $response = json_decode($requ_curls->getSageCurl($url.'&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Number%20eq%20'.$request->get('number').'and%20Period%20eq%20'.$delivery_note['Period'].'&$expand=*')['response'], true);
             error_log($url.'&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Number%20eq%20'.$request->get('number').'and%20Period%20eq%20'.$delivery_note['Period'].'&$expand=*');
@@ -265,6 +269,38 @@ class ExternalRequestController extends Controller
             $receipt_order_sage = $invoice_obj['Receipts'][0]['Id'];
             $invoice_custom['receipt_order_sage'] = $receipt_order_sage;
             return $invoice_custom;
+        }
+    }
+
+    //Consultamos el estado de un recibo
+    function getReceiptSage(Request $request){
+        error_log($request->get('receipt_order_sage'));
+        //Creamos un objeto para el controller curl
+        $requ_curls = new CurlController();
+        $company = config('constants.id_company_sage');
+
+        $url = 'https://sage200.sage.es/api/sales/SalesReceipts?api-version=1.0';
+        //Consultamos el recibo de la factura
+        error_log($url.'&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Id%20eq%20%27'.$request->get('receipt_order_sage').'%27');
+        $response = json_decode($requ_curls->getSageCurl($url.'&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Id%20eq%20%27'.$request->get('receipt_order_sage').'%27')['response'], true);
+        error_log(print_r($response, true));
+        $receipt_obj = $response['value'][0];
+        
+        if($receipt_obj['Status'] == 'Paid'){
+            //Consultamos la orden de Pago
+            $url = 'https://sage200.sage.es/api/sales/SalesPayments?api-version=1.0&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20ReceiptId%20eq%20%27'.$receipt_obj['Id'].'%27';
+            $response = json_decode($requ_curls->getSageCurl($url)['response'], true);
+            error_log(print_r($response, true));
+            $sale_payment = $response['value'][0];
+            if(count($sale_payment) > 0){
+                $id_sale_payment_sage = $sale_payment['Id'];
+                $amount = $sale_payment['TotalAmount'];
+                Payment::create([
+                    'id_bill_order' => $request->get('id_bill_order'),
+                    'amount' => $amount,
+                    'id_sage' => $id_sale_payment_sage
+                ]);
+            }
         }
     }
 }

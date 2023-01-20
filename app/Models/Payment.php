@@ -13,7 +13,8 @@ class Payment extends Model
 
     public $fillable = [
         'id_bill_order',
-        'amount'
+        'amount',
+        'id_sage'
     ];
 
     /**
@@ -24,6 +25,7 @@ class Payment extends Model
     protected $casts = [
         'id_bill_order' => 'integer',
         'amount' => 'double',
+        'id_sage' => 'string'
     ];
 
     /**
@@ -34,5 +36,6 @@ class Payment extends Model
     public static $rules = [
         'id_bill_order',
         'amount',
+        'id_sage'
     ];
 }
