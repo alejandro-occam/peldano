@@ -254,6 +254,7 @@ class ExternalRequestController extends Controller
             $order['Lines'] = $array_lines_to_order;
             $url = 'https://sage200.sage.es/api/sales/SalesInvoices?api-version=1.0';
             $response = json_decode($requ_curls->postSageCurl($url, $order)['response'], true);
+            error_log(print_r($response, true));
         }
     }
 }
