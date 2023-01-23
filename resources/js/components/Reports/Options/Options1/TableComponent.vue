@@ -12,14 +12,13 @@
                     :height="16"
                     @click.native="changeViewStatusProposals(3)"
                 />
-                <AddButtonComponent
+                <RouterButton
                     :columns="'ml-auto mr-7'"
                     :text="'Volver'"
                     :id="'btn_return'"
                     :src="'/media/custom-imgs/flecha_btn_volver.svg'"
                     :width="16"
                     :height="16"
-                    @click.native="changeViewStatusReports(1)"
                 />
             </div>
         </div>
@@ -27,7 +26,7 @@
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Departamentos</span>
             <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_department" :name="'select_department'" :id="'select_department'" data-style="select-lightgreen">
-                <option value="" selected>
+                <option value="0" selected>
                     Filtro por departamento
                 </option>
                 <option :value="department.id" v-for="department in config.articles.filter.array_departments" :key="department.id" v-text="department.nomenclature + '-' + department.name" ></option>
@@ -37,8 +36,8 @@
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Consultor</span>
             <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_consultant'" :id="'select_consultant'" v-model="select_consultant" data-style="select-lightgreen" @change="getConsultantSelect">
-                <option value="" selected>
-                    Selecciona un consultor
+                <option value="0" selected>
+                    Cualquier consultor
                 </option>
                 <option :value="user.id" v-for="user in proposals.array_users"  :key="user.id" v-text="user.name + ' ' + user.surname" ></option>
             </select>
@@ -100,7 +99,7 @@
             </select>
         </div>
         <div class="mx-2 col-12 d-flex mt-10">
-            <button type="submit" class="btn bg-azul color-white px-35 font-weight-bolder">Generar informe</button>
+            <button type="submit" class="btn bg-azul color-white px-35 font-weight-bolder" @click.native="filteRreportListByChannel()">Generar informe</button>
         </div>
     </div>
     <Divider class="my-15" />
@@ -123,10 +122,10 @@
         <table width="100%" cellpadding="2" cellspacing="1">
             <thead class="custom-columns-datatable">
                 <tr>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 50px;"><span>SEC</span></th>
+                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 50px;"><span>DEP</span></th>
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 50px;"><span>TIPO</span></th>
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 125px;"><span>PERIODO</span></th>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>*Jan-22</span></th>
+                    <!--<th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>*Jan-22</span></th>
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Feb-22</span></th>
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Mar-22</span></th>
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Apr-22</span></th>
@@ -137,13 +136,60 @@
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Sep-22</span></th>
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Oct-22</span></th>
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Nov-22</span></th>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>*Dec-22</span></th>
+                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>*Dec-22</span></th>-->
+                    <template v-for="index_report_date in Number(reports.array_dates.length)">
+                        <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>{{ reports.array_dates[index_report_date - 1].date }}</span></th>
+                    </template>
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>TOTAL</span></th>
                 </tr>
             </thead>
-            <tbody>  
+            <tbody>
+                <template v-for="index_bill_order in Number(reports.array_bills_orders.length)">
+                    <tr class="row-product text-align-center bg-white">
+                        <td class="td-border-right bg-light-blue-table" :rowspan="4">{{ reports.array_bills_orders[index_bill_order - 1].dep }}</td>
+                        <td class="td-border-right" :rowspan="4">{{ reports.array_bills_orders[index_bill_order - 1].type }}</td>
+                    </tr>
+                    <tr class="row-product bg-white">
+                        <td class="td-border-right pl-3">{{ reports.array_bills_orders[index_bill_order - 1].old.period }}</td>
+                        <td class="text-align-center td-border-right">0</td>
+                        <td class="text-align-center td-border-right">0</td>
+                        <td class="text-align-center td-border-right">0</td>
+                        <td class="text-align-center td-border-right">0</td>
+                        <td class="text-align-center td-border-right">0</td>
+                        <td class="text-align-center td-border-right">0</td>
+                        <td class="text-align-center td-border-right">0</td>
+                        <td class="text-align-center td-border-right">0</td>
+                        <td class="text-align-center td-border-right">0</td>
+                        <td class="text-align-center td-border-right">0</td>
+                        <td class="text-align-center td-border-right">0</td>
+                        <td class="text-align-center td-border-right">0</td>
+                        <td class="text-align-center td-border-right">0</td>
+                    </tr>   
+                    <tr class="row-product bg-white">
+                        <td class="td-border-right pl-3 bg-light-blue-table">{{ reports.array_bills_orders[index_bill_order - 1].new.period }}</td>
+                        <template v-for="index_amounts in Number(reports.array_bills_orders[index_bill_order - 1].new.amounts.length)">
+                            <td class="text-align-center td-border-right bg-light-blue-table">{{ reports.array_bills_orders[index_bill_order - 1].new.amounts[index_amounts - 1] }}</td>
+                        </template>
+                    </tr>   
+                    <tr class="row-product bg-white">
+                        <td class="td-border-right pl-3 bg-purple color-white">{{ reports.array_bills_orders[index_bill_order - 1].diference.period }}</td>
+                        <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                        <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                        <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                        <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                        <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                        <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                        <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                        <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                        <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                        <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                        <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                        <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                        <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                    </tr>
+                </template>
                 <!--CAR DIGITAL-->
-                <tr class="row-product text-align-center bg-white">
+                <!--<tr class="row-product text-align-center bg-white">
                     <td class="td-border-right bg-light-blue-table" :rowspan="4">CAR</td>
                     <td class="td-border-right" :rowspan="4">DIGITAL</td>
                 </tr>
@@ -194,9 +240,9 @@
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                </tr>   
+                </tr>-->
                 <!--CAR EXPERIENCIA-->
-                <tr class="row-product text-align-center bg-white">
+                <!--<tr class="row-product text-align-center bg-white">
                     <td class="td-border-right bg-light-blue-table" :rowspan="4">CAR</td>
                     <td class="td-border-right" :rowspan="4">EXPERIENCIA</td>
                 </tr>
@@ -247,9 +293,9 @@
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                </tr>   
+                </tr>-->
                 <!--CAR OTROS-->
-                <tr class="row-product text-align-center bg-white">
+                <!--<tr class="row-product text-align-center bg-white">
                     <td class="td-border-right bg-light-blue-table" :rowspan="4">CAR</td>
                     <td class="td-border-right" :rowspan="4">OTROS</td>
                 </tr>
@@ -300,9 +346,9 @@
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                </tr>   
+                </tr>-->   
                 <!--CARAVANING-->
-                <tr class="row-product bg-white">
+                <!--<tr class="row-product bg-white">
                     <td class="td-border-right bg-light-blue-table pl-5" :rowspan="4" colspan="2">CARAVANING</td>
                 </tr>
                 <tr class="row-product bg-white">
@@ -352,9 +398,9 @@
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                </tr>   
+                </tr>-->   
                 <!--OTROS-->
-                <tr class="row-product bg-white">
+                <!--<tr class="row-product bg-white">
                     <td class="td-border-right bg-light-blue-diference-table pl-5" :rowspan="4" colspan="2">OTROS</td>
                 </tr>
                 <tr class="row-product bg-white">
@@ -404,9 +450,9 @@
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                </tr>   
+                </tr>-->   
                 <!--EXPERIENCIA-->
-                <tr class="row-product bg-white">
+                <!--<tr class="row-product bg-white">
                     <td class="td-border-right bg-light-blue-diference-table pl-5" :rowspan="4" colspan="2">EXPERIENCIA</td>
                 </tr>
                 <tr class="row-product bg-white">
@@ -440,7 +486,7 @@
                     <td class="text-align-center td-border-right bg-light-blue-table">0</td>
                     <td class="text-align-center td-border-right bg-light-blue-table">0</td>
                     <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                </tr>   
+                </tr>
                 <tr class="row-product bg-white">
                     <td class="td-border-right pl-3 bg-purple color-white">Diferencia%</td>
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
@@ -456,9 +502,9 @@
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                </tr>   
+                </tr>-->  
                 <!--DIGITAL-->
-                <tr class="row-product bg-white">
+                <!--<tr class="row-product bg-white">
                     <td class="td-border-right bg-light-blue-diference-table pl-5" :rowspan="4" colspan="2">DIGITAL</td>
                 </tr>
                 <tr class="row-product bg-white">
@@ -492,7 +538,7 @@
                     <td class="text-align-center td-border-right bg-light-blue-table">0</td>
                     <td class="text-align-center td-border-right bg-light-blue-table">0</td>
                     <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                </tr>   
+                </tr>
                 <tr class="row-product bg-white">
                     <td class="td-border-right pl-3 bg-purple color-white">Diferencia%</td>
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
@@ -508,9 +554,9 @@
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                </tr>   
+                </tr>-->   
                 <!--TOTAL-->
-                <tr class="row-product bg-white">
+                <!--<tr class="row-product bg-white">
                     <td class="td-border-right bg-light-blue-table pl-5" :rowspan="4" colspan="2">TOTAL</td>
                 </tr>
                 <tr class="row-product bg-white">
@@ -560,7 +606,7 @@
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
                     <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                </tr>   
+                </tr>-->   
             </tbody>
         </table>
     </div>
@@ -570,6 +616,7 @@
     import { mapMutations, mapActions, mapState } from "vuex";
 
     import AddButtonComponent from "../../../Partials/AddButtonComponent.vue";
+    import RouterButton from "../../../Partials/RouterButton.vue";
     import Calendar from 'primevue/calendar';
     import Divider from 'primevue/divider';
     import Chart from 'primevue/chart';
@@ -580,13 +627,14 @@
             AddButtonComponent,
             Calendar,
             Divider,
-            Chart
+            Chart,
+            RouterButton
         },
         data() {
             return {
                 publicPath: window.location.origin,
-                select_department: '',
-                select_consultant: '',
+                select_department: '0',
+                select_consultant: '0',
                 select_order: '1',
                 select_exchange: '1',
                 switch_limit_date: 0,
@@ -618,7 +666,7 @@
             };
         },
         computed: {
-            ...mapState(["errors", "proposals", "config"]),
+            ...mapState(["errors", "proposals", "config", "reports"]),
         },
         mounted() {
             this.getUsers(1);
@@ -629,7 +677,7 @@
             this.getDepartments(params);
         },
         methods: {
-            ...mapActions(["getUsers", "getDepartments"]),
+            ...mapActions(["getUsers", "getDepartments", "reportListByChannel"]),
             ...mapMutations(["changeViewStatusReports"]),
             //Consultar fecha actual
             getNow() {
@@ -646,6 +694,22 @@
                 this.date_from = date;
                 this.date_to = date;
             },
+            filteRreportListByChannel(){
+                var date_ms_from = Date.parse(this.date_from);
+                var date_from = this.$utils.customFormDate(date_ms_from);
+                var date_ms_to = Date.parse(this.date_to);
+                var date_to = this.$utils.customFormDate(date_ms_to);
+
+                var params = {
+                    select_department: this.select_department,
+                    select_consultant: this.select_consultant,
+                    select_order: this.select_order,
+                    select_compare: this.select_compare,
+                    date_from: date_from,
+                    date_to: date_to
+                }
+                this.reportListByChannel(params);
+            }
         }
     };
 </script>

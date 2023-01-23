@@ -26,6 +26,10 @@ Auth::routes();
 
 Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
 
+    //REPORTS
+    //Listar informes de contratación por canal
+    Route::post('/report_list_by_channel', [App\Http\Controllers\ReportRecruimentByChannel::class, 'reportsList'])->name('report_list_by_channel');
+
     //PROPOSALS
     //Listar propuestas
     Route::post('/list_proposals', [App\Http\Controllers\ProposalsController::class, 'listProposals'])->name('list_proposals');

@@ -4,11 +4,11 @@
     <div id="kt_aside_menu" class="aside-menu my-4 scroll ps ps--active-y bg-white" data-menu-vertical="1" data-menu-scroll="1" data-menu-dropdown-timeout="500" style="height: 350px; overflow: hidden;">
         <!--begin::Menu Nav-->
         <ul class="menu-nav">
-            <li lass="nav-item mb-3 {{ Request::is('/admin/reports') ? 'menu-item-active' : '' }}" data-toggle="tooltip" data-placement="right" data-container="body" data-boundary="window">
+            <li lass="nav-item mb-3 {{ Request::is('/admin/reports*') ? 'menu-item-active' : '' }}" data-toggle="tooltip" data-placement="right" data-container="body" data-boundary="window">
                 <router-link to="/admin/reports" class="menu-link">
                     <div style="padding: 9px 25px;">
                         <span class="svg-icon svg-icon-xl color-gray menu-text" >
-                            <img class="btn-folder mr-2 reports" src="{{ Request::is('/admin/reports') ? '/media/custom-imgs/icono_informes_activo.svg' : '/media/custom-imgs/icono_informes_desactivo.svg' }}" width="35" height="35"/>
+                            <img class="btn-folder mr-2 reports" src="{{ Request::is('/admin/reports*') ? '/media/custom-imgs/icono_informes_activo.svg' : '/media/custom-imgs/icono_informes_desactivo.svg' }}" width="35" height="35"/>
                             <b>Informes</b>
                         </span>
                     </div>

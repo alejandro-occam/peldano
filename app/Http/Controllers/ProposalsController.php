@@ -1010,7 +1010,6 @@ class ProposalsController extends Controller
                 'expiration' => $bill->expiration,
                 'amount' => $bill->amount,
                 'iva' => round($iva, 2),
-                'id_sage' => '',
                 'id_order' => $order->id
             ]);
 

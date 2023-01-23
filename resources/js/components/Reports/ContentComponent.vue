@@ -19,10 +19,10 @@
                             <h3 class="color-blue my-auto">Informes Comercial</h3>
                             <div class="row my-10">
                                 <div class="col-6">
-                                    <div class="p-2 d-flex mb-10 border-radius-10 bg-tarjet-reports bg-tarjet-reports" v-on:click="changeViewStatusReports(2)">
-                                        <span class="my-5 mx-2 f-14">Informes de contratación por canal ( Digital / Print / Experiencias ) y producto.</span>
-                                        <img class="ml-auto mr-6 arrow" width="15" src=""/>
-                                    </div>
+                                    <router-link to="/admin/reports/report_recruiment_channel" class="p-2 d-flex mb-10 border-radius-10 bg-tarjet-reports bg-tarjet-reports">
+                                            <span class="my-5 mx-2 f-14">Informes de contratación por canal ( Digital / Print / Experiencias ) y producto.</span>
+                                            <img class="ml-auto mr-6 arrow" width="15" src=""/>
+                                    </router-link>
                                     <div class="p-2 d-flex my-10 border-radius-10 bg-tarjet-reports" v-on:click="changeViewStatusReports(4)">
                                         <span class="my-5 mx-2 f-14">Informe comisiones consultores.</span>
                                         <img class="ml-auto mr-6 arrow" width="15" src=""/>
