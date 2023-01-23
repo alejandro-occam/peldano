@@ -26,39 +26,19 @@ class ReportRecruimentByChannel extends Controller
 
         $date_from_array = explode("-", $date_from);
         $date_from_custom = $date_from_array[1].'-01-'.$date_from_array[2];
+        $date_from_custom_old_time = strtotime($date_from);
+        $date_from_custom_old = date('d-m-Y', strtotime("-1 year", $date_from_custom_old_time));
+        error_log('date_from_custom: '.$date_from_custom);
+        error_log('date_from_custom_old: '.$date_from_custom_old);
 
         $date_to_array = explode("-", $date_to);
         $date_to_custom = $date_to_array[1].'-01-'.$date_to_array[2];
+        $date_to_custom_old_time = strtotime($date_to);
+        $date_to_custom_old = date('d-m-Y', strtotime("-1 year", $date_to_custom_old_time));
+        error_log('date_to_custom: '.$date_to_custom);
+        error_log('date_to_custom_old: '.$date_to_custom_old);
 
-        for($i=0; $i<=$num_months; $i++){
-            $time = strtotime($date_from_custom);
-            if($i == 0){
-                $newformat = date('M-y',$time);
-                $first_newformat_custom = date('m-d-Y', strtotime("+".$i." months", $time));
-                $last_newformat_custom = date('m-t-Y', strtotime("+".$i." months", $time));
-                $date_obj['date'] = '*'.$newformat;
-                $date_obj['first_date_custom'] = $first_newformat_custom;
-                $date_obj['last_date_custom'] = $last_newformat_custom;
-                $array_dates[] = $date_obj;
-
-            }else if($num_months == $i){
-                $newformat = date('M-y', strtotime("+".$i." months", $time));
-                $first_newformat_custom = date('m-d-Y', strtotime("+".$i." months", $time));
-                $last_newformat_custom = date('m-t-Y', strtotime("+".$i." months", $time));
-                $date_obj['date'] = '*'.$newformat;
-                $date_obj['first_date_custom'] = $first_newformat_custom;
-                $date_obj['last_date_custom'] = $last_newformat_custom;
-                $array_dates[] = $date_obj;
-            }else{
-                $newformat = date('M-y', strtotime("+".$i." months", $time));
-                $first_newformat_custom = date('m-d-Y', strtotime("+".$i." months", $time));
-                $last_newformat_custom = date('m-t-Y', strtotime("+".$i." months", $time));
-                $date_obj['date'] = $newformat;
-                $date_obj['first_date_custom'] = $first_newformat_custom;
-                $date_obj['last_date_custom'] = $last_newformat_custom;
-                $array_dates[] = $date_obj;
-            }
-        }
+        $array_dates = $this->generateDateArray($num_months, $date_from_custom);
 
         //Canales DIG Y PRINT
         $array_bills_orders_dig = BillOrder::select('bills_orders.*', 'departments.nomenclature as department_nomenclature', 'departments.id as id_department', 'proposals.id as id_proposal', 'channels.nomenclature as channel_nomenclature')
@@ -138,7 +118,7 @@ class ReportRecruimentByChannel extends Controller
                                                 ->groupBy('bills_orders.id', 'channels.nomenclature')
                                                 ->get();
         //error_log(count($array_bills_orders_dig));
-        error_log($array_bills_orders_dig);
+        //error_log($array_bills_orders_dig);
 
         //Facturas PRINT
         $array_bills_orders_print = $array_bills_orders_print->where('channels.nomenclature', 'PRINT')
@@ -166,9 +146,9 @@ class ReportRecruimentByChannel extends Controller
                 $custom_obj['id_dep'] = $bill_order_dig->id_department;
                 $custom_obj['type'] = $bill_order_dig->channel_nomenclature;
                 $custom_obj['id_type'] = $bill_order_dig->id_channel;
-                $custom_obj_old['period'] = $date_to.' a '.$date_from;
+                $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
                 $custom_obj_old['amount'] = $bill_order_dig->amount;
-                $custom_obj_new['period'] = $date_to.' a '.$date_from;
+                $custom_obj_new['period'] = $date_from.' a '.$date_to;
                 foreach($array_dates as $key_date => $date){
                     if($date['last_date_custom'] >= $custom_date && $date['first_date_custom'] <= $custom_date){
                         $custom_obj_new['amounts'][] = round($bill_order_dig->amount, 2);
@@ -197,9 +177,9 @@ class ReportRecruimentByChannel extends Controller
                     $custom_obj['id_dep'] = $bill_order_dig->id_department;
                     $custom_obj['type'] = $bill_order_dig->channel_nomenclature;
                     $custom_obj['id_type'] = $bill_order_dig->id_channel;
-                    $custom_obj_old['period'] = $date_to.' a '.$date_from;
+                    $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
                     $custom_obj_old['amount'] = $bill_order_dig->amount;
-                    $custom_obj_new['period'] = $date_to.' a '.$date_from;
+                    $custom_obj_new['period'] = $date_from.' a '.$date_to;
                     foreach($array_dates as $key_date => $date){
                         if($date['last_date_custom'] >= $custom_date && $date['first_date_custom'] <= $custom_date){
                             $custom_obj_new['amounts'][] = round($bill_order_dig->amount, 2);
@@ -262,6 +242,41 @@ class ReportRecruimentByChannel extends Controller
         $response['array_dates'] = $array_dates;
         $response['array_bills_orders_custom'] = $array_bills_orders_custom;
         return response()->json($response);
+    }
+
+    //Generar array de fechas
+    function generateDateArray($num_months, $date_from_custom){
+        $array_dates = array();
+        for($i=0; $i<=$num_months; $i++){
+            $time = strtotime($date_from_custom);
+            if($i == 0){
+                $newformat = date('M-y',$time);
+                $first_newformat_custom = date('m-d-Y', strtotime("+".$i." months", $time));
+                $last_newformat_custom = date('m-t-Y', strtotime("+".$i." months", $time));
+                $date_obj['date'] = '*'.$newformat;
+                $date_obj['first_date_custom'] = $first_newformat_custom;
+                $date_obj['last_date_custom'] = $last_newformat_custom;
+                $array_dates[] = $date_obj;
+
+            }else if($num_months == $i){
+                $newformat = date('M-y', strtotime("+".$i." months", $time));
+                $first_newformat_custom = date('m-d-Y', strtotime("+".$i." months", $time));
+                $last_newformat_custom = date('m-t-Y', strtotime("+".$i." months", $time));
+                $date_obj['date'] = '*'.$newformat;
+                $date_obj['first_date_custom'] = $first_newformat_custom;
+                $date_obj['last_date_custom'] = $last_newformat_custom;
+                $array_dates[] = $date_obj;
+            }else{
+                $newformat = date('M-y', strtotime("+".$i." months", $time));
+                $first_newformat_custom = date('m-d-Y', strtotime("+".$i." months", $time));
+                $last_newformat_custom = date('m-t-Y', strtotime("+".$i." months", $time));
+                $date_obj['date'] = $newformat;
+                $date_obj['first_date_custom'] = $first_newformat_custom;
+                $date_obj['last_date_custom'] = $last_newformat_custom;
+                $array_dates[] = $date_obj;
+            }
+        }
+        return $array_dates;
     }
 
     //Calcular número de meses entre dos fechas
