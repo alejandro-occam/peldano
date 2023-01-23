@@ -918,6 +918,27 @@ const actions = {
             return error;
         }
     },
+
+    //Listar ordenes por canal
+    async reportListByChannel({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/report_list_by_channel",
+                params: params,
+                method: 'post'
+            });
+
+            state.errors.type_error = 'report_list_by_channel';
+            state.errors.code = response.data.code;
+            state.reports.array_dates = response.data.array_dates;
+            state.reports.array_bills_orders = response.data.array_bills_orders_custom;
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
 }
 
 //Rellenar objetos para el store y mostrar la información de las propuestas u ordenes

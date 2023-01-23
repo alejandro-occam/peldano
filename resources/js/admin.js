@@ -13,6 +13,7 @@ import ConfigurationIndex from "./components/Configuration/ContentComponent.vue"
 import OrdersIndex from "./components/Orders/ContentComponent.vue";
 import ProposalsIndex from "./components/Proposals/ContentComponent.vue";
 import ReportsIndex from "./components/Reports/ContentComponent.vue";
+import ReportOption1 from "./components/Reports/Options/Options1/ContentComponent.vue";
 
 const routes = [
     {
@@ -30,6 +31,10 @@ const routes = [
     {
       path: "/admin/configuration",
       component: ConfigurationIndex,
+    },
+    {
+      path: "/admin/reports/report_recruiment_channel",
+      component: ReportOption1,
     },
   ];
   

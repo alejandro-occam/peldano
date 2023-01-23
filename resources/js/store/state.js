@@ -125,6 +125,8 @@ const state = {
     },
     reports: {
         status_view: 1,
+        array_dates: [],
+        array_bills_orders: []
     },
     errors: {
         code: 0,

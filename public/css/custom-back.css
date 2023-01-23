@@ -817,6 +817,7 @@ a.text-hover-primary:hover, .text-hover-primary:hover{
 .bg-tarjet-reports{
     background-color: #f7fbff;
     cursor: pointer;
+    color: #3F4254;
 }
 
 .bg-tarjet-reports.selected, .bg-tarjet-reports:hover{
