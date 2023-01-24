@@ -27,14 +27,14 @@ class ReportRecruimentByChannel extends Controller
         $date_from_array = explode("-", $date_from);
         $date_from_custom = $date_from_array[1].'-01-'.$date_from_array[2];
         $date_from_custom_old_time = strtotime($date_from);
-        $date_from_custom_old = date('d-m-Y', strtotime("-1 year", $date_from_custom_old_time));
+        $date_from_custom_old = date('d-m-Y', strtotime("-".$select_compare." year", $date_from_custom_old_time));
         //error_log('date_from_custom: '.$date_from_custom);
         //error_log('date_from_custom_old: '.$date_from_custom_old);
 
         $date_to_array = explode("-", $date_to);
         $date_to_custom = $date_to_array[1].'-01-'.$date_to_array[2];
         $date_to_custom_old_time = strtotime($date_to);
-        $date_to_custom_old = date('d-m-Y', strtotime("-1 year", $date_to_custom_old_time));
+        $date_to_custom_old = date('d-m-Y', strtotime("-".$select_compare." year", $date_to_custom_old_time));
         //error_log('date_to_custom: '.$date_to_custom);
         //error_log('date_to_custom_old: '.$date_to_custom_old);
 
@@ -97,9 +97,9 @@ class ReportRecruimentByChannel extends Controller
 
         //Filtro consultor
         if($select_consultant != '0'){
-            $array_bills_orders_dig = $array_bills_orders_dig->where('contacts.id', '<>', $select_consultant);
-            $array_bills_orders_print = $array_bills_orders_print->where('contacts.id', '<>', $select_consultant);
-            $array_bills_orders_others = $array_bills_orders_others->where('contacts.id', '<>', $select_consultant);
+            $array_bills_orders_dig = $array_bills_orders_dig->where('contacts.id', $select_consultant);
+            $array_bills_orders_print = $array_bills_orders_print->where('contacts.id', $select_consultant);
+            $array_bills_orders_others = $array_bills_orders_others->where('contacts.id', $select_consultant);
         }
 
         //Filtro firmada o editando
@@ -433,85 +433,195 @@ class ReportRecruimentByChannel extends Controller
 
             if($total_new == 0 || $total_old == 0){
                 $array_bills_orders_custom[$key_array_bills_orders_custom]['diference']['amounts'][] = '-';
+            }else{
+                $diference = round(($total_new * 100) / $total_old, 2) - 100;
+                $array_bills_orders_custom[$key_array_bills_orders_custom]['diference']['amounts'][] = round($diference, 2);
             }
         }
 
         //Ordenamos el array por departamento y calculamos sus totales
         $custom_array_dep_bills_orders_custom = array();
+        $custom_array_type_bills_orders_custom = array();
         $array_bills_orders_custom_aux = array();
-        if($select_department == 0){
-            foreach($array_bills_orders_custom as $key_array_bills_orders_custom => $bill_order_custom){
-                if($key_array_bills_orders_custom == 0){
-                    $custom_array_dep_bills_orders_custom[$bill_order_custom['dep']][] = $bill_order_custom;
-                }else{
-                    $exist = false;
-                    $position = '';
-                    foreach($custom_array_dep_bills_orders_custom as $key => $custom_bill_order_custom){
-                        if($key == $bill_order_custom['dep']){
-                            $exist = true;
-                            $position = $key;
-                        }
-                    }
-
-                    if($exist){
-                        $custom_array_dep_bills_orders_custom[$position][] = $bill_order_custom;
-                    }
-
-                    if(!$exist){
-                        $custom_array_dep_bills_orders_custom[$bill_order_custom['dep']][] = $bill_order_custom;
+        foreach($array_bills_orders_custom as $key_array_bills_orders_custom => $bill_order_custom){
+            if($key_array_bills_orders_custom == 0){
+                $custom_array_dep_bills_orders_custom[$bill_order_custom['dep']][] = $bill_order_custom;
+                $custom_array_type_bills_orders_custom[$bill_order_custom['type']][] = $bill_order_custom;
+            }else{
+                $exist = false;
+                $position = '';
+                foreach($custom_array_dep_bills_orders_custom as $key => $custom_bill_order_custom){
+                    if($key == $bill_order_custom['dep']){
+                        $exist = true;
+                        $position = $key;
                     }
                 }
-            }
 
-            foreach($custom_array_dep_bills_orders_custom as $key => $custom_bill_order_custom){
-                $amounts_new = array();
-                $amounts_old = array();
-                $amounts_diference = array();
-                $cont = 0;
-                foreach($custom_bill_order_custom as $key => $cboc){
-                    if($cont == 0){
-                        foreach($cboc['new']['amounts'] as $amount){
-                            $amounts_new[] = $amount;
-                        }
-                        foreach($cboc['old']['amounts'] as $amount){
-                            $amounts_old[] = $amount;
-                        }
-                    }else{
-                        foreach($amounts_new as $key_amount_new => $amount_new){
-                            $amounts_new[$key_amount_new] += $cboc['new']['amounts'][$key_amount_new];
-                        }
-                        foreach($amounts_old as $key_amounts_old => $amount_old){
-                            $amounts_old[$key_amounts_old] += $cboc['old']['amounts'][$key_amounts_old];
-                        }
+                if($exist){
+                    $custom_array_dep_bills_orders_custom[$position][] = $bill_order_custom;
+                }
+
+                if(!$exist){
+                    $custom_array_dep_bills_orders_custom[$bill_order_custom['dep']][] = $bill_order_custom;
+                }
+
+                $exist = false;
+                $position = '';
+                foreach($custom_array_type_bills_orders_custom as $key => $custom_bill_order_custom){
+                    if($key == $bill_order_custom['type']){
+                        $exist = true;
+                        $position = $key;
                     }
-                    $cboc['type_obj'] = 1;
-                    $array_bills_orders_custom_aux[] = $cboc;
-                    $cont++;
-                    if($cont == count($custom_bill_order_custom)){
-                        $custom_obj['dep'] = $cboc['dep_name'];
-                        $custom_obj['type_obj'] = 2;
-                        $custom_obj['new']['period'] = $cboc['new']['period'];
-                        $custom_obj['new']['amounts'] = $amounts_new;
-                        $custom_obj['old']['period'] = $cboc['old']['period'];
-                        $custom_obj['old']['amounts'] = $amounts_old;
+                }
 
-                        //Calculamos la cantidad de diferencia
-                        $num_registers = count($amounts_new);
-                        for($i=0; $i<$num_registers; $i++){
-                            if($amounts_new[$i] == '0' || $amounts_old[$i] == '0'){
-                                $amounts_diference[] = '-';
-                            }else{
-                                $diference = round((($amounts_new[$i] * 100) / $amounts_old[$i]) - 100, 2);
-                                $amounts_diference[] = $diference;
-                            }
-                        }
+                if($exist){
+                    $custom_array_type_bills_orders_custom[$position][] = $bill_order_custom;
+                }
 
-                        $custom_obj['diference']['amounts'] = $amounts_diference;
-                        $array_bills_orders_custom_aux[] = $custom_obj;
-                    }
-                }  
+                if(!$exist){
+                    $custom_array_type_bills_orders_custom[$bill_order_custom['type']][] = $bill_order_custom;
+                }
             }
         }
+
+        foreach($custom_array_dep_bills_orders_custom as $key => $custom_bill_order_custom){
+            $amounts_new = array();
+            $amounts_old = array();
+            $amounts_diference = array();
+            $cont = 0;
+            foreach($custom_bill_order_custom as $key => $cboc){
+                if($cont == 0){
+                    foreach($cboc['new']['amounts'] as $amount){
+                        $amounts_new[] = $amount;
+                    }
+                    foreach($cboc['old']['amounts'] as $amount){
+                        $amounts_old[] = $amount;
+                    }
+                }else{
+                    foreach($amounts_new as $key_amount_new => $amount_new){
+                        $amounts_new[$key_amount_new] += $cboc['new']['amounts'][$key_amount_new];
+                    }
+                    foreach($amounts_old as $key_amounts_old => $amount_old){
+                        $amounts_old[$key_amounts_old] += $cboc['old']['amounts'][$key_amounts_old];
+                    }
+                }
+                $cboc['type_obj'] = 1;
+                $array_bills_orders_custom_aux[] = $cboc;
+                $cont++;
+                if($cont == count($custom_bill_order_custom)){
+                    $custom_obj['dep'] = $cboc['dep_name'];
+                    $custom_obj['type_obj'] = 2;
+                    $custom_obj['new']['period'] = $cboc['new']['period'];
+                    $custom_obj['new']['amounts'] = $amounts_new;
+                    $custom_obj['old']['period'] = $cboc['old']['period'];
+                    $custom_obj['old']['amounts'] = $amounts_old;
+
+                    //Calculamos la cantidad de diferencia
+                    $num_registers = count($amounts_new);
+                    for($i=0; $i<$num_registers; $i++){
+                        if($amounts_new[$i] == '0' || $amounts_old[$i] == '0'){
+                            $amounts_diference[] = '-';
+                        }else{
+                            $diference = round((($amounts_new[$i] * 100) / $amounts_old[$i]) - 100, 2);
+                            $amounts_diference[] = $diference;
+                        }
+                    }
+
+                    $custom_obj['diference']['amounts'] = $amounts_diference;
+                    $array_bills_orders_custom_aux[] = $custom_obj;
+                }
+            }  
+        }
+
+        $total = 0;
+        $amounts_new_total = array();
+        $amounts_old_total = array();
+        $amounts_diference_total = array();
+        $cont_total = 0;
+        $custom_obj_total;
+        foreach($custom_array_type_bills_orders_custom as $key => $custom_bill_order_custom){
+            $amounts_new = array();
+            $amounts_old = array();
+            $amounts_diference = array();
+            $cont = 0;
+            foreach($custom_bill_order_custom as $key => $cboc){
+                if($cont == 0){
+                    foreach($cboc['new']['amounts'] as $amount){
+                        $amounts_new[] = $amount;
+                    }
+                    foreach($cboc['old']['amounts'] as $amount){
+                        $amounts_old[] = $amount;
+                    }
+                }else{
+                    foreach($amounts_new as $key_amount_new => $amount_new){
+                        $amounts_new[$key_amount_new] += $cboc['new']['amounts'][$key_amount_new];
+                    }
+                    foreach($amounts_old as $key_amounts_old => $amount_old){
+                        $amounts_old[$key_amounts_old] += $cboc['old']['amounts'][$key_amounts_old];
+                    }
+                }
+
+                $cont++;
+                if($cont == count($custom_bill_order_custom)){
+                    $custom_obj['dep'] = $cboc['type'];
+                    $custom_obj['type_obj'] = 3;
+                    $custom_obj['new']['period'] = $cboc['new']['period'];
+                    $custom_obj['new']['amounts'] = $amounts_new;
+                    $custom_obj['old']['period'] = $cboc['old']['period'];
+                    $custom_obj['old']['amounts'] = $amounts_old;
+
+                    //Calculamos la cantidad de diferencia
+                    $num_registers = count($amounts_new);
+                    for($i=0; $i<$num_registers; $i++){
+                        if($amounts_new[$i] == '0' || $amounts_old[$i] == '0'){
+                            $amounts_diference[] = '-';
+                        }else{
+                            $diference = round((($amounts_new[$i] * 100) / $amounts_old[$i]) - 100, 2);
+                            $amounts_diference[] = $diference;
+                        }
+                    }
+
+                    $custom_obj['diference']['amounts'] = $amounts_diference;
+                    $array_bills_orders_custom_aux[] = $custom_obj;
+
+                    if($cont_total == 0){
+                        $custom_obj_total['dep'] = 'TOTAL';
+                        $custom_obj_total['type_obj'] = 4;
+                        $custom_obj_total['new']['period'] = $cboc['new']['period'];
+                        
+                        $custom_obj_total['old']['period'] = $cboc['old']['period'];
+                        
+                        $amounts_new_total = $amounts_new;
+                        $amounts_old_total = $amounts_old;
+                    }else{
+                        //Calculamos la cantidad de diferencia
+                        $num_registers = count($amounts_new_total);
+                        for($i=0; $i<$num_registers; $i++){
+                            $amounts_new_total[$i] += $amounts_new[$i];
+                            $amounts_old_total[$i] += $amounts_old[$i];
+                        }
+                    }
+                }
+            }  
+            $cont_total++;
+        }
+
+        $custom_obj_total['new']['amounts'] = $amounts_new_total;
+        $custom_obj_total['old']['amounts'] = $amounts_old_total;
+       
+        //Calculamos la cantidad de diferencia
+        $num_registers = count($amounts_new_total);
+        for($i=0; $i<$num_registers; $i++){
+            if($amounts_new_total[$i] == '0' || $amounts_old_total[$i] == '0'){
+                $amounts_diference_total[] = '-';
+            }else{
+                $diference = round((($amounts_new_total[$i] * 100) / $amounts_old_total[$i]) - 100, 2);
+                $amounts_diference_total[] = $diference;
+            }
+        }
+        $custom_obj_total['diference']['period'] = 'Diferencia%';
+        $custom_obj_total['diference']['amounts'] = $amounts_diference_total;
+        $array_bills_orders_custom_aux[] = $custom_obj_total;
 
         $response['code'] = 1000;
         $response['array_dates'] = $array_dates;
