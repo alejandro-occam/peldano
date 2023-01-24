@@ -838,7 +838,7 @@ a.text-hover-primary:hover, .text-hover-primary:hover{
     border-top-style: solid !important;
 }
 
-.input-custom-calendar-reports>input{
+.input-custom-calendar-reports>input, .input-custom-calendar-reports>span{
     color: #6c6d82 !important;
     border-width: 0px;
     padding-left: 13px;

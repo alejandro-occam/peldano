@@ -103,22 +103,22 @@
         </div>
     </div>
     <Divider class="my-15" />
-    <div class="col-12 d-flex flex-wrap mt-6">
+    <div class="col-12 d-flex flex-wrap mt-6" v-if="Number(reports.array_bills_orders.length) > 0">
         <div class="col-12 flex-wrap justify-content-between mb-10">
             <h3 class="color-blue my-auto">Resultados</h3>
             <div class="row mt-10">
                 <div class="field col-4 md:col-4 px-40">
-                    <Calendar inputId="multiple" autocomplete="off" v-model="date1" dateFormat="dd-mm-yy" selectionMode="range" class="w-100 select-filter input-custom-calendar-reports mt-3 text-align-center" :hideOnRangeSelection="true" :manualInput="true" />
-                    <Chart class="mt-3" type="pie" :data="this.chartData" :options="this.lightOptions" />
+                    <span class="p-calendar p-component p-inputwrapper w-100 select-filter input-custom-calendar-reports mt-3 text-align-center"><span class="p-inputtext p-component">{{ this.period_new }}</span></span>
+                    <Chart class="mt-3" type="pie" :data="this.chartDataNew" :options="this.lightOptions" />
                 </div>
                 <div class="field col-4 md:col-4 px-40">
-                    <Calendar inputId="multiple" autocomplete="off" v-model="date2" dateFormat="dd-mm-yy" selectionMode="range" class="w-100 select-filter input-custom-calendar-reports mt-3" :hideOnRangeSelection="true" :manualInput="true" />
-                    <Chart class="mt-3" type="pie" :data="this.chartData" :options="this.lightOptions" />
+                    <span class="p-calendar p-component p-inputwrapper w-100 select-filter input-custom-calendar-reports mt-3 text-align-center"><span class="p-inputtext p-component">{{ this.period_old }}</span></span>
+                    <Chart class="mt-3" type="pie" :data="this.chartDataOld" :options="this.lightOptions" />
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-12 mt-15">
+    <div class="col-12 mt-15" v-if="Number(reports.array_bills_orders.length) > 0">
         <table width="100%" cellpadding="2" cellspacing="1">
             <thead class="custom-columns-datatable">
                 <tr>
@@ -138,7 +138,7 @@
                         <td class="td-border-right pl-5" :rowspan="4">{{ reports.array_bills_orders[index_bill_order - 1].type }}</td>
                     </tr>
                     <tr class="row-product bg-white" v-else-if="reports.array_bills_orders[index_bill_order - 1].type_obj == 2">
-                        <td class="td-border-right bg-light-blue-table pl-5" :rowspan="4" colspan="2">{{ reports.array_bills_orders[index_bill_order - 1].dep }}</td>
+                        <td class="td-border-right bg-light-blue-table pl-5 text-align-center" :rowspan="4" colspan="2">{{ reports.array_bills_orders[index_bill_order - 1].dep.toUpperCase() }}</td>
                     </tr>
                     <tr class="row-product bg-white"  v-else-if="reports.array_bills_orders[index_bill_order - 1].type_obj == 3">
                         <td class="td-border-right bg-light-blue-diference-table pl-5" :rowspan="4" colspan="2">{{ reports.array_bills_orders[index_bill_order - 1].dep }}</td>
@@ -617,17 +617,29 @@
                 switch_limit_date: 0,
                 date_from: '',
                 date_to: '',
+                date_from_custom: '',
+                date_to_custom: '',
                 select_data_to_use: '1',
                 select_compare: '1',
-                date1: '',
-                date2: '',
-                chartData: {
-                    labels: ['A','B','C'],
+                period_new: '',
+                period_old: '',
+                chartDataNew: {
+                    labels: [],
                     datasets: [
                         {
-                            data: [300, 50, 100],
-                            backgroundColor: ["#42A5F5","#66BB6A","#FFA726"],
-                            hoverBackgroundColor: ["#64B5F6","#81C784","#FFB74D"]
+                            data: [],
+                            backgroundColor: [],
+                            hoverBackgroundColor: []
+                        }
+                    ]
+                },
+                chartDataOld: {
+                    labels: [],
+                    datasets: [
+                        {
+                            data: [],
+                            backgroundColor: [],
+                            hoverBackgroundColor: []
                         }
                     ]
                 },
@@ -635,7 +647,7 @@
                     plugins: {
                         legend: {
                             labels: {
-                                color: '#495057'
+                                color: '#b5b5c2'
                             }
                         }
                     }
@@ -659,17 +671,11 @@
             //Consultar fecha actual
             getNow() {
                 const today = new Date();
-                var day = today.getDate();
-                if(day < 10){
-                    day = '0' + today.getDate();
-                }
-                var month = (today.getMonth()+1);
-                if(month < 10){
-                    month = '0' + (today.getMonth()+1)
-                }
-                const date = day + '-' + month + '-' + today.getFullYear();
-                this.date_from = date;
-                this.date_to = date;
+                
+                const date_from =  '01-01-' + today.getFullYear();
+                this.date_from = date_from;
+                const date_to =  '31-12-' + today.getFullYear();
+                this.date_to = date_to;
             },
             filteRreportListByChannel(){
                 var date_from = this.date_from;
@@ -677,12 +683,14 @@
                     var date_ms_from = Date.parse(this.date_from);
                     date_from = this.$utils.customFormDate(date_ms_from);
                 }
+                this.date_from_custom = date_from;
                
                 var date_to = this.date_to;
                 if(!this.isValidDate(this.date_to)){
                     var date_ms_to = Date.parse(this.date_to);
                     date_to = this.$utils.customFormDate(date_ms_to);
                 }
+                this.date_to_custom = date_to;
 
                 var params = {
                     select_department: this.select_department,
@@ -707,6 +715,34 @@
                 } catch (error) {
                     return false;
                 }
+            }
+        },
+        watch: {
+            '$store.state.reports.percent_new': function() {
+                this.chartDataNew = {
+                    labels: ['Otros','Experiencias','Digital', 'Print'],
+                    datasets: [
+                        {
+                            data: this.reports.percent_new,
+                            backgroundColor: ["#ff1e60","#00c353","#007dff", "#ffd041"],
+                            hoverBackgroundColor: ["#ff1e60","#00c353","#007dff", "#ffd041"]
+                        }
+                    ]
+                };
+                this.period_new = this.reports.period_new;
+            },
+            '$store.state.reports.percent_old': function() {
+                this.chartDataOld = {
+                    labels: ['Otros','Experiencias','Digital', 'Print'],
+                    datasets: [
+                        {
+                            data: this.reports.percent_old,
+                            backgroundColor: ["#ff1e60","#00c353","#007dff", "#ffd041"],
+                            hoverBackgroundColor: ["#ff1e60","#00c353","#007dff", "#ffd041"]
+                        }
+                    ]
+                };
+                this.period_old = this.reports.period_old;
             }
         }
     };
