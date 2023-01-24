@@ -628,8 +628,8 @@
                     datasets: [
                         {
                             data: [],
-                            backgroundColor: [],
-                            hoverBackgroundColor: []
+                            backgroundColor: ["#ff1e60","#00c353","#007dff", "#ffd041"],
+                            hoverBackgroundColor: ["#ff1e60","#00c353","#007dff", "#ffd041"]
                         }
                     ]
                 },
@@ -638,8 +638,8 @@
                     datasets: [
                         {
                             data: [],
-                            backgroundColor: [],
-                            hoverBackgroundColor: []
+                            backgroundColor: ["#ff1e60","#00c353","#007dff", "#ffd041"],
+                            hoverBackgroundColor: ["#ff1e60","#00c353","#007dff", "#ffd041"]
                         }
                     ]
                 },

@@ -547,17 +547,17 @@ class ReportRecruimentByChannel extends Controller
             foreach($custom_bill_order_custom as $key => $cboc){
                 if($cont == 0){
                     foreach($cboc['new']['amounts'] as $amount){
-                        $amounts_new[] = $amount;
+                        $amounts_new[] = round($amount, 2);
                     }
                     foreach($cboc['old']['amounts'] as $amount){
-                        $amounts_old[] = $amount;
+                        $amounts_old[] = round($amount, 2);
                     }
                 }else{
                     foreach($amounts_new as $key_amount_new => $amount_new){
-                        $amounts_new[$key_amount_new] += $cboc['new']['amounts'][$key_amount_new];
+                        $amounts_new[$key_amount_new] += round($cboc['new']['amounts'][$key_amount_new], 2);
                     }
                     foreach($amounts_old as $key_amounts_old => $amount_old){
-                        $amounts_old[$key_amounts_old] += $cboc['old']['amounts'][$key_amounts_old];
+                        $amounts_old[$key_amounts_old] += round($cboc['old']['amounts'][$key_amounts_old], 2);
                     }
                 }
 
@@ -597,8 +597,8 @@ class ReportRecruimentByChannel extends Controller
                         //Calculamos la cantidad de diferencia
                         $num_registers = count($amounts_new_total);
                         for($i=0; $i<$num_registers; $i++){
-                            $amounts_new_total[$i] += $amounts_new[$i];
-                            $amounts_old_total[$i] += $amounts_old[$i];
+                            $amounts_new_total[$i] += round($amounts_new[$i], 2);
+                            $amounts_old_total[$i] += round($amounts_old[$i], 2);
                         }
                     }
                 }
