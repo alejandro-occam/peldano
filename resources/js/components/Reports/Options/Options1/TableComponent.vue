@@ -137,13 +137,19 @@
                         <td class="td-border-right bg-light-blue-table pl-5" :rowspan="4">{{ reports.array_bills_orders[index_bill_order - 1].dep }}</td>
                         <td class="td-border-right pl-5" :rowspan="4">{{ reports.array_bills_orders[index_bill_order - 1].type }}</td>
                     </tr>
-                    <tr class="row-product bg-white" v-else>
+                    <tr class="row-product bg-white" v-else-if="reports.array_bills_orders[index_bill_order - 1].type_obj == 2">
                         <td class="td-border-right bg-light-blue-table pl-5" :rowspan="4" colspan="2">{{ reports.array_bills_orders[index_bill_order - 1].dep }}</td>
+                    </tr>
+                    <tr class="row-product bg-white"  v-else-if="reports.array_bills_orders[index_bill_order - 1].type_obj == 3">
+                        <td class="td-border-right bg-light-blue-diference-table pl-5" :rowspan="4" colspan="2">{{ reports.array_bills_orders[index_bill_order - 1].dep }}</td>
+                    </tr>
+                    <tr class="row-product bg-white" v-else>
+                        <td class="td-border-right bg-light-blue-table pl-5" :rowspan="4" colspan="2">TOTAL</td>
                     </tr>
                     <tr class="row-product bg-white">
                         <td class="td-border-right pl-3">{{ reports.array_bills_orders[index_bill_order - 1].old.period }}</td>
                         <template v-for="index_amounts in Number(reports.array_bills_orders[index_bill_order - 1].new.amounts.length)">
-                            <td class="text-align-center td-border-right bg-light-blue-table">{{ reports.array_bills_orders[index_bill_order - 1].old.amounts[index_amounts - 1] }}</td>
+                            <td class="text-align-center td-border-right">{{ reports.array_bills_orders[index_bill_order - 1].old.amounts[index_amounts - 1] }}</td>
                         </template>
                     </tr>   
                     <tr class="row-product bg-white">
@@ -155,7 +161,7 @@
                     <tr class="row-product bg-white">
                         <td class="td-border-right pl-3 bg-purple color-white">{{ reports.array_bills_orders[index_bill_order - 1].diference.period }}</td>
                         <template v-for="index_amounts in Number(reports.array_bills_orders[index_bill_order - 1].new.amounts.length)">
-                            <td class="text-align-center td-border-right bg-light-blue-table">{{ reports.array_bills_orders[index_bill_order - 1].diference.amounts[index_amounts - 1] }}</td>
+                            <td class="text-align-center td-border-right bg-light-blue-diference-table">{{ reports.array_bills_orders[index_bill_order - 1].diference.amounts[index_amounts - 1] }}</td>
                         </template>
                     </tr>
                 </template>
