@@ -125,18 +125,6 @@
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 50px;"><span>DEP</span></th>
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 50px;"><span>TIPO</span></th>
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 125px;"><span>PERIODO</span></th>
-                    <!--<th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>*Jan-22</span></th>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Feb-22</span></th>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Mar-22</span></th>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Apr-22</span></th>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>May-22</span></th>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Jun-22</span></th>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Jul-22</span></th>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Aug-22</span></th>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Sep-22</span></th>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Oct-22</span></th>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Nov-22</span></th>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>*Dec-22</span></th>-->
                     <template v-for="index_report_date in Number(reports.array_dates.length)">
                         <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>{{ reports.array_dates[index_report_date - 1].date }}</span></th>
                     </template>
@@ -145,25 +133,18 @@
             </thead>
             <tbody>
                 <template v-for="index_bill_order in Number(reports.array_bills_orders.length)">
-                    <tr class="row-product text-align-center bg-white">
-                        <td class="td-border-right bg-light-blue-table" :rowspan="4">{{ reports.array_bills_orders[index_bill_order - 1].dep }}</td>
-                        <td class="td-border-right" :rowspan="4">{{ reports.array_bills_orders[index_bill_order - 1].type }}</td>
+                    <tr class="row-product bg-white" v-if="reports.array_bills_orders[index_bill_order - 1].type_obj == 1">
+                        <td class="td-border-right bg-light-blue-table pl-5" :rowspan="4">{{ reports.array_bills_orders[index_bill_order - 1].dep }}</td>
+                        <td class="td-border-right pl-5" :rowspan="4">{{ reports.array_bills_orders[index_bill_order - 1].type }}</td>
+                    </tr>
+                    <tr class="row-product bg-white" v-else>
+                        <td class="td-border-right bg-light-blue-table pl-5" :rowspan="4" colspan="2">{{ reports.array_bills_orders[index_bill_order - 1].dep }}</td>
                     </tr>
                     <tr class="row-product bg-white">
                         <td class="td-border-right pl-3">{{ reports.array_bills_orders[index_bill_order - 1].old.period }}</td>
-                        <td class="text-align-center td-border-right">0</td>
-                        <td class="text-align-center td-border-right">0</td>
-                        <td class="text-align-center td-border-right">0</td>
-                        <td class="text-align-center td-border-right">0</td>
-                        <td class="text-align-center td-border-right">0</td>
-                        <td class="text-align-center td-border-right">0</td>
-                        <td class="text-align-center td-border-right">0</td>
-                        <td class="text-align-center td-border-right">0</td>
-                        <td class="text-align-center td-border-right">0</td>
-                        <td class="text-align-center td-border-right">0</td>
-                        <td class="text-align-center td-border-right">0</td>
-                        <td class="text-align-center td-border-right">0</td>
-                        <td class="text-align-center td-border-right">0</td>
+                        <template v-for="index_amounts in Number(reports.array_bills_orders[index_bill_order - 1].new.amounts.length)">
+                            <td class="text-align-center td-border-right bg-light-blue-table">{{ reports.array_bills_orders[index_bill_order - 1].old.amounts[index_amounts - 1] }}</td>
+                        </template>
                     </tr>   
                     <tr class="row-product bg-white">
                         <td class="td-border-right pl-3 bg-light-blue-table">{{ reports.array_bills_orders[index_bill_order - 1].new.period }}</td>
@@ -173,19 +154,9 @@
                     </tr>   
                     <tr class="row-product bg-white">
                         <td class="td-border-right pl-3 bg-purple color-white">{{ reports.array_bills_orders[index_bill_order - 1].diference.period }}</td>
-                        <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                        <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                        <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                        <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                        <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                        <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                        <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                        <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                        <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                        <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                        <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                        <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                        <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
+                        <template v-for="index_amounts in Number(reports.array_bills_orders[index_bill_order - 1].new.amounts.length)">
+                            <td class="text-align-center td-border-right bg-light-blue-table">{{ reports.array_bills_orders[index_bill_order - 1].diference.amounts[index_amounts - 1] }}</td>
+                        </template>
                     </tr>
                 </template>
                 <!--CAR DIGITAL-->
@@ -695,10 +666,17 @@
                 this.date_to = date;
             },
             filteRreportListByChannel(){
-                var date_ms_from = Date.parse(this.date_from);
-                var date_from = this.$utils.customFormDate(date_ms_from);
-                var date_ms_to = Date.parse(this.date_to);
-                var date_to = this.$utils.customFormDate(date_ms_to);
+                var date_from = this.date_from;
+                if(!this.isValidDate(this.date_from)){
+                    var date_ms_from = Date.parse(this.date_from);
+                    date_from = this.$utils.customFormDate(date_ms_from);
+                }
+               
+                var date_to = this.date_to;
+                if(!this.isValidDate(this.date_to)){
+                    var date_ms_to = Date.parse(this.date_to);
+                    date_to = this.$utils.customFormDate(date_ms_to);
+                }
 
                 var params = {
                     select_department: this.select_department,
@@ -709,6 +687,20 @@
                     date_to: date_to
                 }
                 this.reportListByChannel(params);
+            },
+            // Validates that the input string is a valid date formatted as "mm/dd/yyyy"
+            isValidDate(dateString) {
+                var regEx = /^\d{2}-\d{2}-\d{4}$/;
+                // First check for the pattern
+                try {
+                    if(!dateString.match(regEx)){
+                        return false;
+                    }else{
+                        return true;
+                    }
+                } catch (error) {
+                    return false;
+                }
             }
         }
     };
