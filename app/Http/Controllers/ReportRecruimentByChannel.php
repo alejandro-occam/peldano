@@ -656,7 +656,7 @@ class ReportRecruimentByChannel extends Controller
             $percent_dig_old = 0;
             $percent_old = array();
 
-            if($total_total_new > 0){
+            if($total_total_old > 0){
                 $percent_others_old = round((100 * $total_others_old) / $total_total_old, 2);
                 $percent_print_old = round((100 * $total_print_old) / $total_total_old, 2);
                 $percent_dig_old = round((100 * $total_dig_old) / $total_total_old, 2);
