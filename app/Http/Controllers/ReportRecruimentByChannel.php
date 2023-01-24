@@ -153,7 +153,8 @@ class ReportRecruimentByChannel extends Controller
 
                 $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
                 foreach($array_dates_old as $key_date => $date){
-                    if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                    if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
+                    //if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
                         $custom_obj_old['amounts'][] = round($bill_order_dig->amount, 2);
                     }else{
                         $custom_obj_old['amounts'][] = 0;
@@ -161,7 +162,8 @@ class ReportRecruimentByChannel extends Controller
                 }
                 $custom_obj_new['period'] = $date_from.' a '.$date_to;
                 foreach($array_dates as $key_date => $date){
-                    if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                    if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
+                    //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
                         $custom_obj_new['amounts'][] = round($bill_order_dig->amount, 2);
                     }else{
                         $custom_obj_new['amounts'][] = 0;
@@ -190,10 +192,10 @@ class ReportRecruimentByChannel extends Controller
                     $custom_obj['id_dep'] = $bill_order_dig->id_department;
                     $custom_obj['type'] = $bill_order_dig->channel_nomenclature;
                     $custom_obj['id_type'] = $bill_order_dig->id_channel;
-                    $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
 
+                    $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
                     foreach($array_dates_old as $key_date => $date){
-                        if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
                             $custom_obj_old['amounts'][] = round($bill_order_dig->amount, 2);
                         }else{
                             $custom_obj_old['amounts'][] = 0;
@@ -202,7 +204,8 @@ class ReportRecruimentByChannel extends Controller
 
                     $custom_obj_new['period'] = $date_from.' a '.$date_to;
                     foreach($array_dates as $key_date => $date){
-                        if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
+                        //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
                             $custom_obj_new['amounts'][] = round($bill_order_dig->amount, 2);
                         }else{
                             $custom_obj_new['amounts'][] = 0;
@@ -218,12 +221,13 @@ class ReportRecruimentByChannel extends Controller
                 if($exist){
                     //Aquí sumariamos precios de las ordenes
                     foreach($array_dates_old as $key_date => $date){
-                        if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
                             $array_bills_orders_custom[$position]['old']['amounts'][$key_date] += round($bill_order_dig->amount, 2);
                         }
                     }
                     foreach($array_dates as $key_date => $date){
-                        if($date['last_date_custom'] >= $custom_date && $date['first_date_custom'] <= $custom_date){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
+                        //if($date['last_date_custom'] >= $custom_date && $date['first_date_custom'] <= $custom_date){
                             $array_bills_orders_custom[$position]['new']['amounts'][$key_date] += round($bill_order_dig->amount, 2);
                         }
                     }
@@ -249,7 +253,7 @@ class ReportRecruimentByChannel extends Controller
 
                 $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
                 foreach($array_dates_old as $key_date => $date){
-                    if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                    if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_print->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_print->date)){
                         $custom_obj_old['amounts'][] = round($bill_order_print->amount, 2);
                     }else{
                         $custom_obj_old['amounts'][] = 0;
@@ -257,7 +261,7 @@ class ReportRecruimentByChannel extends Controller
                 }
                 $custom_obj_new['period'] = $date_from.' a '.$date_to;
                 foreach($array_dates as $key_date => $date){
-                    if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                    if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_print->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_print->date)){
                         $custom_obj_new['amounts'][] = round($bill_order_print->amount, 2);
                     }else{
                         $custom_obj_new['amounts'][] = 0;
@@ -289,7 +293,8 @@ class ReportRecruimentByChannel extends Controller
                     $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
 
                     foreach($array_dates_old as $key_date => $date){
-                        if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_print->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_print->date)){
+                        //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
                             $custom_obj_old['amounts'][] = round($bill_order_print->amount, 2);
                         }else{
                             $custom_obj_old['amounts'][] = 0;
@@ -298,7 +303,8 @@ class ReportRecruimentByChannel extends Controller
 
                     $custom_obj_new['period'] = $date_from.' a '.$date_to;
                     foreach($array_dates as $key_date => $date){
-                        if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_print->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_print->date)){
+                        //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
                             $custom_obj_new['amounts'][] = round($bill_order_print->amount, 2);
                         }else{
                             $custom_obj_new['amounts'][] = 0;
@@ -314,12 +320,14 @@ class ReportRecruimentByChannel extends Controller
                 if($exist){
                     //Aquí sumariamos precios de las ordenes
                     foreach($array_dates_old as $key_date => $date){
-                        if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_print->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_print->date)){
+                        //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
                             $array_bills_orders_custom[$position]['old']['amounts'][$key_date] += round($bill_order_print->amount, 2);
                         }
                     }
                     foreach($array_dates as $key_date => $date){
-                        if($date['last_date_custom'] >= $custom_date && $date['first_date_custom'] <= $custom_date){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_print->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_print->date)){
+                        //if($date['last_date_custom'] >= $custom_date && $date['first_date_custom'] <= $custom_date){
                             $array_bills_orders_custom[$position]['new']['amounts'][$key_date] += round($bill_order_print->amount, 2);
                         }
                     }
@@ -346,7 +354,8 @@ class ReportRecruimentByChannel extends Controller
 
                 $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
                 foreach($array_dates_old as $key_date => $date){
-                    if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                    if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_others->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_others->date)){
+                    //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
                         $custom_obj_old['amounts'][] = round($bill_order_others->amount, 2);
                     }else{
                         $custom_obj_old['amounts'][] = 0;
@@ -354,7 +363,8 @@ class ReportRecruimentByChannel extends Controller
                 }
                 $custom_obj_new['period'] = $date_from.' a '.$date_to;
                 foreach($array_dates as $key_date => $date){
-                    if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                    if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_others->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_others->date)){
+                    //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
                         $custom_obj_new['amounts'][] = round($bill_order_others->amount, 2);
                     }else{
                         $custom_obj_new['amounts'][] = 0;
@@ -371,12 +381,14 @@ class ReportRecruimentByChannel extends Controller
                 foreach($array_bills_orders_custom as $key_array_bills_orders_custom => $bill_order_custom){
                     //Aquí sumariamos precios de las ordenes
                     foreach($array_dates_old as $key_date => $date){
-                        if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_others->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_others->date)){
+                        //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
                             $array_bills_orders_custom[$key_array_bills_orders_custom]['old']['amounts'][$key_date] += round($bill_order_others->amount, 2);
                         }
                     }
                     foreach($array_dates as $key_date => $date){
-                        if($date['last_date_custom'] >= $custom_date && $date['first_date_custom'] <= $custom_date){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_others->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_others->date)){
+                        //if($date['last_date_custom'] >= $custom_date && $date['first_date_custom'] <= $custom_date){
                             $array_bills_orders_custom[$key_array_bills_orders_custom]['new']['amounts'][$key_date] += round($bill_order_others->amount, 2);
                         }
                     }
@@ -392,6 +404,9 @@ class ReportRecruimentByChannel extends Controller
                     for($i=0; $i<$num_registers; $i++){
                         if($array_bills_orders_custom[$key_array_bills_orders_custom]['new']['amounts'][$i] == 0 || $array_bills_orders_custom[$key_array_bills_orders_custom]['old']['amounts'][$i] == 0){
                             $array_bills_orders_custom[$key_array_bills_orders_custom]['diference']['amounts'][] = '-';
+                        }else{
+                            $diference = round(($array_bills_orders_custom[$key_array_bills_orders_custom]['new']['amounts'][$i] * 100) / $array_bills_orders_custom[$key_array_bills_orders_custom]['old']['amounts'][$i], 2) - 100;
+                            $array_bills_orders_custom[$key_array_bills_orders_custom]['diference']['amounts'][] = round($diference, 2);
                         }
                     }
                 }
@@ -485,6 +500,9 @@ class ReportRecruimentByChannel extends Controller
                         for($i=0; $i<$num_registers; $i++){
                             if($amounts_new[$i] == '0' || $amounts_old[$i] == '0'){
                                 $amounts_diference[] = '-';
+                            }else{
+                                $diference = round((($amounts_new[$i] * 100) / $amounts_old[$i]) - 100, 2);
+                                $amounts_diference[] = $diference;
                             }
                         }
 
@@ -515,26 +533,38 @@ class ReportRecruimentByChannel extends Controller
                 $newformat = date('M-y',$time);
                 $first_newformat_custom = date('m-d-Y', strtotime("+".$i." months", $time));
                 $last_newformat_custom = date('m-t-Y', strtotime("+".$i." months", $time));
+                $first_newformat_custom2 = date('d-m-Y', strtotime("+".$i." months", $time));
+                $last_newformat_custom2 = date('t-m-Y', strtotime("+".$i." months", $time));
                 $date_obj['date'] = '*'.$newformat;
                 $date_obj['first_date_custom'] = $first_newformat_custom;
                 $date_obj['last_date_custom'] = $last_newformat_custom;
+                $date_obj['first_date_custom2'] = $first_newformat_custom2;
+                $date_obj['last_date_custom2'] = $last_newformat_custom2;
                 $array_dates[] = $date_obj;
 
             }else if($num_months == $i){
                 $newformat = date('M-y', strtotime("+".$i." months", $time));
                 $first_newformat_custom = date('m-d-Y', strtotime("+".$i." months", $time));
                 $last_newformat_custom = date('m-t-Y', strtotime("+".$i." months", $time));
+                $first_newformat_custom2 = date('d-m-Y', strtotime("+".$i." months", $time));
+                $last_newformat_custom2 = date('t-m-Y', strtotime("+".$i." months", $time));
                 $date_obj['date'] = '*'.$newformat;
                 $date_obj['first_date_custom'] = $first_newformat_custom;
                 $date_obj['last_date_custom'] = $last_newformat_custom;
+                $date_obj['first_date_custom2'] = $first_newformat_custom2;
+                $date_obj['last_date_custom2'] = $last_newformat_custom2;
                 $array_dates[] = $date_obj;
             }else{
                 $newformat = date('M-y', strtotime("+".$i." months", $time));
                 $first_newformat_custom = date('m-d-Y', strtotime("+".$i." months", $time));
                 $last_newformat_custom = date('m-t-Y', strtotime("+".$i." months", $time));
+                $first_newformat_custom2 = date('d-m-Y', strtotime("+".$i." months", $time));
+                $last_newformat_custom2 = date('t-m-Y', strtotime("+".$i." months", $time));
                 $date_obj['date'] = $newformat;
                 $date_obj['first_date_custom'] = $first_newformat_custom;
                 $date_obj['last_date_custom'] = $last_newformat_custom;
+                $date_obj['first_date_custom2'] = $first_newformat_custom2;
+                $date_obj['last_date_custom2'] = $last_newformat_custom2;
                 $array_dates[] = $date_obj;
             }
         }
