@@ -27,14 +27,14 @@ class ReportRecruimentByChannel extends Controller
         $date_from_array = explode("-", $date_from);
         $date_from_custom = $date_from_array[1].'-01-'.$date_from_array[2];
         $date_from_custom_old_time = strtotime($date_from);
-        $date_from_custom_old = date('d-m-Y', strtotime("-1 year", $date_from_custom_old_time));
+        $date_from_custom_old = date('d-m-Y', strtotime("-".$select_compare." year", $date_from_custom_old_time));
         //error_log('date_from_custom: '.$date_from_custom);
         //error_log('date_from_custom_old: '.$date_from_custom_old);
 
         $date_to_array = explode("-", $date_to);
         $date_to_custom = $date_to_array[1].'-01-'.$date_to_array[2];
         $date_to_custom_old_time = strtotime($date_to);
-        $date_to_custom_old = date('d-m-Y', strtotime("-1 year", $date_to_custom_old_time));
+        $date_to_custom_old = date('d-m-Y', strtotime("-".$select_compare." year", $date_to_custom_old_time));
         //error_log('date_to_custom: '.$date_to_custom);
         //error_log('date_to_custom_old: '.$date_to_custom_old);
 
@@ -97,9 +97,9 @@ class ReportRecruimentByChannel extends Controller
 
         //Filtro consultor
         if($select_consultant != '0'){
-            $array_bills_orders_dig = $array_bills_orders_dig->where('contacts.id', '<>', $select_consultant);
-            $array_bills_orders_print = $array_bills_orders_print->where('contacts.id', '<>', $select_consultant);
-            $array_bills_orders_others = $array_bills_orders_others->where('contacts.id', '<>', $select_consultant);
+            $array_bills_orders_dig = $array_bills_orders_dig->where('contacts.id', $select_consultant);
+            $array_bills_orders_print = $array_bills_orders_print->where('contacts.id', $select_consultant);
+            $array_bills_orders_others = $array_bills_orders_others->where('contacts.id', $select_consultant);
         }
 
         //Filtro firmada o editando
