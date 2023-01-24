@@ -639,15 +639,29 @@ class ReportRecruimentByChannel extends Controller
             $total_dig_new = $array_bills_orders_custom_aux[$num_bills - 4]['new']['amounts'][$num_amounts];
             $total_dig_old = $array_bills_orders_custom_aux[$num_bills - 4]['old']['amounts'][$num_amounts];
 
-            $percent_others_new = round((100 * $total_others_new) / $total_total_new, 2);
-            $percent_print_new = round((100 * $total_print_new) / $total_total_new, 2);
-            $percent_dig_new = round((100 * $total_dig_new) / $total_total_new, 2);
-            $percent_new = [$percent_others_new, 0, $percent_print_new, $percent_dig_new];
+            $percent_others_new = 0;
+            $percent_print_new = 0;
+            $percent_dig_new = 0;
+            $percent_new = array();
 
-            $percent_others_old = round((100 * $total_others_old) / $total_total_old, 2);
-            $percent_print_old = round((100 * $total_print_old) / $total_total_old, 2);
-            $percent_dig_old = round((100 * $total_dig_old) / $total_total_old, 2);
-            $percent_old = [$percent_others_old, 0, $percent_print_old, $percent_dig_old];
+            if($total_total_new > 0){
+                $percent_others_new = round((100 * $total_others_new) / $total_total_new, 2);
+                $percent_print_new = round((100 * $total_print_new) / $total_total_new, 2);
+                $percent_dig_new = round((100 * $total_dig_new) / $total_total_new, 2);
+                $percent_new = [$percent_others_new, 0, $percent_print_new, $percent_dig_new];
+            }
+
+            $percent_others_old = 0;
+            $percent_print_old = 0;
+            $percent_dig_old = 0;
+            $percent_old = array();
+
+            if($total_total_new > 0){
+                $percent_others_old = round((100 * $total_others_old) / $total_total_old, 2);
+                $percent_print_old = round((100 * $total_print_old) / $total_total_old, 2);
+                $percent_dig_old = round((100 * $total_dig_old) / $total_total_old, 2);
+                $percent_old = [$percent_others_old, 0, $percent_print_old, $percent_dig_old];
+            }
 
 
             $response['period_new'] = $array_bills_orders_custom_aux[$num_bills - 1]['new']['period'];
@@ -655,8 +669,6 @@ class ReportRecruimentByChannel extends Controller
             $response['percent_old'] = $percent_old;
             $response['percent_new'] = $percent_new;
         }
-
-        
 
         $response['code'] = 1000;
         $response['array_dates'] = $array_dates;
