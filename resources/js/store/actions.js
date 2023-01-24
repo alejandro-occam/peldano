@@ -680,7 +680,6 @@ const actions = {
             });
 
             if(type == 1){
-                console.log(response.data.user);
                 state.proposals.user_obj = response.data.user;
             }else{
                 state.orders.user_obj = response.data.user;
@@ -744,8 +743,6 @@ const actions = {
                 url: "/admin/get_info_proposal/"+id,
                 method: 'get'
             });
-
-            console.log(response);
 
             //Rellenar objetos para el store y mostrar la información de las propuestas
             createObjectsStore({ state }, response, 1);
