@@ -418,18 +418,18 @@ class ReportRecruimentByChannel extends Controller
             $array_amounts_new = $bill_order_custom['new']['amounts'];
             $total_new = 0;
             foreach($array_amounts_new as $amount_new){
-                $total_new += $amount_new;
+                $total_new += round($amount_new, 2);
             }
             
-            $array_bills_orders_custom[$key_array_bills_orders_custom]['new']['amounts'][] = $total_new;
+            $array_bills_orders_custom[$key_array_bills_orders_custom]['new']['amounts'][] = round($total_new, 2);
 
             $array_amounts_old = $bill_order_custom['old']['amounts'];
             $total_old = 0;
             foreach($array_amounts_old as $amount_old){
-                $total_old += $amount_old;
+                $total_old += round($amount_old, 2);
             }
             
-            $array_bills_orders_custom[$key_array_bills_orders_custom]['old']['amounts'][] = $total_old;
+            $array_bills_orders_custom[$key_array_bills_orders_custom]['old']['amounts'][] = round($total_old, 2);
 
             if($total_new == 0 || $total_old == 0){
                 $array_bills_orders_custom[$key_array_bills_orders_custom]['diference']['amounts'][] = '-';
