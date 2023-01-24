@@ -619,9 +619,44 @@ class ReportRecruimentByChannel extends Controller
                 $amounts_diference_total[] = $diference;
             }
         }
+
+        $percent_old = '';
+        $percent_new = '';
         $custom_obj_total['diference']['period'] = 'Diferencia%';
         $custom_obj_total['diference']['amounts'] = $amounts_diference_total;
-        $array_bills_orders_custom_aux[] = $custom_obj_total;
+        if(count($array_bills_orders_custom_aux) > 0){
+            $array_bills_orders_custom_aux[] = $custom_obj_total;
+
+            //CALCULAMOS PORCENTAJES PARA LA GRÁFICA
+            $num_bills = count($array_bills_orders_custom_aux);
+            $num_amounts = count($array_dates);
+            $total_total_new = $array_bills_orders_custom_aux[$num_bills - 1]['new']['amounts'][$num_amounts];
+            $total_total_old = $array_bills_orders_custom_aux[$num_bills - 1]['old']['amounts'][$num_amounts];
+            $total_others_new = $array_bills_orders_custom_aux[$num_bills - 2]['new']['amounts'][$num_amounts];
+            $total_others_old = $array_bills_orders_custom_aux[$num_bills - 2]['old']['amounts'][$num_amounts];
+            $total_print_new = $array_bills_orders_custom_aux[$num_bills - 3]['new']['amounts'][$num_amounts];
+            $total_print_old = $array_bills_orders_custom_aux[$num_bills - 3]['old']['amounts'][$num_amounts];
+            $total_dig_new = $array_bills_orders_custom_aux[$num_bills - 4]['new']['amounts'][$num_amounts];
+            $total_dig_old = $array_bills_orders_custom_aux[$num_bills - 4]['old']['amounts'][$num_amounts];
+
+            $percent_others_new = round((100 * $total_others_new) / $total_total_new, 2);
+            $percent_print_new = round((100 * $total_print_new) / $total_total_new, 2);
+            $percent_dig_new = round((100 * $total_dig_new) / $total_total_new, 2);
+            $percent_new = [$percent_others_new, 0, $percent_print_new, $percent_dig_new];
+
+            $percent_others_old = round((100 * $total_others_old) / $total_total_old, 2);
+            $percent_print_old = round((100 * $total_print_old) / $total_total_old, 2);
+            $percent_dig_old = round((100 * $total_dig_old) / $total_total_old, 2);
+            $percent_old = [$percent_others_old, 0, $percent_print_old, $percent_dig_old];
+
+
+            $response['period_new'] = $array_bills_orders_custom_aux[$num_bills - 1]['new']['period'];
+            $response['period_old'] = $array_bills_orders_custom_aux[$num_bills - 1]['old']['period'];
+            $response['percent_old'] = $percent_old;
+            $response['percent_new'] = $percent_new;
+        }
+
+        
 
         $response['code'] = 1000;
         $response['array_dates'] = $array_dates;
@@ -635,7 +670,6 @@ class ReportRecruimentByChannel extends Controller
             $date_from_array = explode("-", $date_from_custom);
             $date_from_custom = $date_from_array[1].'-01-'.$date_from_array[2];
         }
-        error_log('date_from_custom: '.$date_from_custom);
         $array_dates = array();
         for($i=0; $i<=$num_months; $i++){
             $time = strtotime($date_from_custom);

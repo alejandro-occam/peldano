@@ -126,7 +126,11 @@ const state = {
     reports: {
         status_view: 1,
         array_dates: [],
-        array_bills_orders: []
+        array_bills_orders: [],
+        percent_new: [],
+        percent_old: [],
+        period_new: '',
+        period_old: ''
     },
     errors: {
         code: 0,
