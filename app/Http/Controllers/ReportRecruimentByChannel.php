@@ -8,7 +8,6 @@ use App\Models\Section;
 use App\Models\Channel; 
 use App\Models\ProposalBill;
 use App\Models\ServiceBill;
-use Illuminate\Support\Facades\Log;
 
 class ReportRecruimentByChannel extends Controller
 {
@@ -122,7 +121,6 @@ class ReportRecruimentByChannel extends Controller
                                                 ->get();
         //error_log(count($array_bills_orders_dig));
         error_log('array_bills_orders_dig: '.$array_bills_orders_dig);
-        Log::info('array_bills_orders_dig: '.$array_bills_orders_dig);
 
 
         //Facturas PRINT
@@ -131,7 +129,6 @@ class ReportRecruimentByChannel extends Controller
                                                 ->get();
         //error_log(count($array_bills_orders_print));
         error_log('array_bills_orders_print: '.$array_bills_orders_print);
-        Log::info('array_bills_orders_print: '.$array_bills_orders_print);
 
         //Facturas OTROS
         $array_bills_orders_others = $array_bills_orders_others->whereNotIn('channels.nomenclature', ['DIG', 'PRINT'])
@@ -139,7 +136,6 @@ class ReportRecruimentByChannel extends Controller
                                                 ->get();
         //error_log(count($array_bills_orders_others));
         error_log('array_bills_orders_others: '.$array_bills_orders_others);
-        Log::info('array_bills_orders_others: '.$array_bills_orders_others);
 
         //Creamos el objeto customizado
         $array_bills_orders_custom = array();
