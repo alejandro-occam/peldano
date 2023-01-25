@@ -120,7 +120,7 @@ class ReportRecruimentByChannel extends Controller
                                                 ->groupBy('bills_orders.id', 'channels.nomenclature')
                                                 ->get();
         //error_log(count($array_bills_orders_dig));
-        error_log('array_bills_orders_dig: '.$array_bills_orders_dig);
+        //error_log('array_bills_orders_dig: '.$array_bills_orders_dig);
 
 
         //Facturas PRINT
@@ -128,14 +128,14 @@ class ReportRecruimentByChannel extends Controller
                                                 ->groupBy('bills_orders.id', 'channels.nomenclature')
                                                 ->get();
         //error_log(count($array_bills_orders_print));
-        error_log('array_bills_orders_print: '.$array_bills_orders_print);
+        //error_log('array_bills_orders_print: '.$array_bills_orders_print);
 
         //Facturas OTROS
         $array_bills_orders_others = $array_bills_orders_others->whereNotIn('channels.nomenclature', ['DIG', 'PRINT'])
                                                 ->groupBy('bills_orders.id', 'channels.nomenclature')
                                                 ->get();
         //error_log(count($array_bills_orders_others));
-        error_log('array_bills_orders_others: '.$array_bills_orders_others);
+        //error_log('array_bills_orders_others: '.$array_bills_orders_others);
 
         //Creamos el objeto customizado
         $array_bills_orders_custom = array();
@@ -144,6 +144,9 @@ class ReportRecruimentByChannel extends Controller
         foreach($array_bills_orders_dig as $key => $bill_order_dig){
             $custom_date_array = explode("-", $bill_order_dig->date);
             $custom_date = $custom_date_array[1].'-'.$custom_date_array[0].'-'.$custom_date_array[2];
+            $custom_obj = null;
+            $custom_obj_new = null;
+            $custom_obj_old = null;
 
             if($key == 0){
                 $custom_obj['dep'] = $bill_order_dig->department_nomenclature;
@@ -201,6 +204,7 @@ class ReportRecruimentByChannel extends Controller
                         }else{
                             $custom_obj_old['amounts'][] = 0;
                         }
+                        error_log(count($custom_obj_old['amounts']));
                     }
 
                     $custom_obj_new['period'] = $date_from.' a '.$date_to;
@@ -235,6 +239,8 @@ class ReportRecruimentByChannel extends Controller
                 }
             }
         }
+
+        //error_log(print_r($array_bills_orders_custom, true));
         
         //Recorremos el objeto PRINT
         foreach($array_bills_orders_print as $key => $bill_order_print){
@@ -396,7 +402,7 @@ class ReportRecruimentByChannel extends Controller
                 }
             }
         }
-        
+
         //Guardamos el objeto diferencia
         if(count($array_bills_orders_custom) > 0){
             if(count($array_bills_orders_custom[0]['new']) > 0){
@@ -484,6 +490,8 @@ class ReportRecruimentByChannel extends Controller
                 }
             }
         }
+
+        //error_log(print_r($custom_array_dep_bills_orders_custom, true));
 
         foreach($custom_array_dep_bills_orders_custom as $key => $custom_bill_order_custom){
             $amounts_new = array();
