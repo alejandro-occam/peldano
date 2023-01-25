@@ -88,6 +88,130 @@ class OrdersInfoges extends Controller
 
     //Actualizar orden
     function updateOrder(Request $request){
+        //Comprobamos si existe la propuesta
+        if (!$request->has('id_order') || !$request->has('discount')){
+            $response['code'] = 1001;
+            return response()->json($response);
+        }
+
+        //Consultamos si existe la orden
+        $id_order = $request->get('id_order');
+        $discount = $request->get('discount');
+
+        $order = Order::find($id_order);
+        if(!$order){
+            $response['code'] = 1001;
+            return response()->json($response);
+        }
+
+        //Limpiamos la bd de los datos anteriores
+        $array_bills = array();
+        $array_orders_bills = BillOrder::where('id_order', $order->id)->get();
+        foreach($array_orders_bills as $order_bill){
+            $array_bills[] = $order_bill->id;
+        }
+
+        $array_services = array();
+        $is_save = 0;
+        foreach($array_bills as $bill){
+            $array_services_bills_orders = ServiceBillOrder::where('id_bill_order', $bill)->get();
+            foreach($array_services_bills_orders as $service_bill_order){
+                if(($order->is_custom && !$is_save) || (!$service_bill_order->is_custom)){
+                    $array_services[] = $service_bill_order->id_service;
+                }
+                $service_bill_order->delete();
+            }
+            $is_save = 1;
+            BillOrder::find($bill)->delete();
+        }
+        //Hay que duplicar los servicios para la ordenes
+        foreach($array_services as $service){
+            Service::find($service)->delete();
+        }
+
+        //Guardamos el objeto
+        $bill_obj = $request->get('bill_obj');
+
+        $array_services_aux = array();
+        //Consultamos los artículos
+        foreach(json_decode($bill_obj)->articles as $article){
+            $service = Service::create([
+                'pvp' => $article->amount,
+                'date' => $article->date,
+                'id_article' => $article->article->article_obj->id
+            ]);
+            $array_services_aux[] = $service;
+        }
+
+        $array_bills_aux = array();
+
+        //Consultamos las facturas
+        foreach(json_decode($bill_obj)->array_bills as $key => $bill_obj){
+            $bill = BillOrder::create([
+                'number' => $key + 1,
+                'amount' => $bill_obj->amount,
+                'date' => $bill_obj->date,
+                'observations' => $bill_obj->observations,
+                'num_order' => $bill_obj->order_number,
+                'internal_observations' => $bill_obj->internal_observations,
+                'way_to_pay' => $bill_obj->select_way_to_pay,
+                'expiration' => $bill_obj->select_expiration,
+                'id_order' => $order->id
+            ]);
+
+            $array_bills_aux[] = $bill;
+            $nun_custom_invoices = $request->get('nun_custom_invoices');
+            $custom_bill = false;
+            if(isset($nun_custom_invoices)){
+                if($nun_custom_invoices > 0){
+                    $custom_bill = true;
+                }
+            }
+            if(!$custom_bill){
+                //Creamos la relación entre las facturas y los artículos
+                foreach($array_services_aux as $service){
+                    //Consultamos el capitulo del servicio
+                    $article = Article::find($service->id_article);
+                    if(!$article){
+                        $response['code'] = 1002;
+                        return response()->json($response);
+                    }
+
+                    $batch = Batch::find($article->id_batch);
+                    if(!$batch){
+                        $response['code'] = 1003;
+                        return response()->json($response);
+                    }
+
+                    if($service->date == $bill->date && $bill_obj->article->id_chapter == $batch->id_chapter){
+                        ServiceBillOrder::create([
+                            'id_service' => $service->id,
+                            'id_bill_order' => $bill->id,
+                        ]);
+                    }
+                }
+            }
+
+            if($custom_bill){
+                foreach($array_services_aux as $service){
+                    ServiceBill::create([
+                        'id_service' => $service->id,
+                        'id_bill_order' => $bill->id,
+                    ]);
+                }
+            }
+        }
+        
+        $order->discount = $discount;
+        $order->status = 0;
+        $order->save();
+
+        $response['code'] = 1000;
+        return response()->json($response);
+    }
+
+    //Actualizar orden old
+    function updateOrderOld(Request $request){
         //Consultamos si existe la orden
         $id_order = $request->get('id_order');
         $order = Order::find($id_order);
