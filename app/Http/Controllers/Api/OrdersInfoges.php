@@ -132,10 +132,6 @@ class OrdersInfoges extends Controller
 
         //Consultamos las facturas de la orden y miramos si alguna es anterior a la fecha actual. Si es así, no se puede eliminar.
         $array_bills_orders = BillOrder::where('id_order', $order->id)->get();
-        if(count($array_bills_orders) == 0){
-            $response['code'] = 1002;
-            return response()->json($response);
-        }
         $date_now = Date('Y-m-d');
         $will_delete = true;
 
@@ -145,12 +141,25 @@ class OrdersInfoges extends Controller
             if ($date_custom_bill < $date_now){
                 $will_delete = false;
             }
+
+            //Consultamos los servicios asociados a esta factura
+            $array_services_bills_orders = ServiceBillOrder::where('id_bill_order', $bill_order->id)->get();
+            $array_services = array();
+            foreach($array_services_bills_orders as $service_bill_order){
+                $array_services[] = $service_bill_order->id_service;
+            }
+            ServiceBillOrder::where('id_bill_order', $bill_order->id)->delete();
+            
+            //Eliminamos los servicios
+            foreach($array_services as $service){
+                Service::find($service)->delete();
+            }
         }
 
         //Según las comprobaciones miramos si podemos eliminar la orden o no
         //No podemos eliminar la orden
         if(!$will_delete){
-            $response['code'] = 1003;
+            $response['code'] = 1002;
             return response()->json($response);
         }
 
@@ -158,10 +167,10 @@ class OrdersInfoges extends Controller
         if($will_delete){
             BillOrder::where('id_order', $order->id)->delete();
 
-            //Cambiamos el estado a la orden
-            //Order::where('id', $order->id)->delete();
+            //Cambiamos el estado a la orden y borramos el descuento
             $order = Order::find($order->id);
             $order->status = 3;
+            $order->discount = '0.00';
             $order->save();
         }
 
