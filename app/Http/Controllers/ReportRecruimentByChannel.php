@@ -639,14 +639,37 @@ class ReportRecruimentByChannel extends Controller
             //CALCULAMOS PORCENTAJES PARA LA GRÁFICA
             $num_bills = count($array_bills_orders_custom_aux);
             $num_amounts = count($array_dates);
-            $total_total_new = $array_bills_orders_custom_aux[$num_bills - 1]['new']['amounts'][$num_amounts];
-            $total_total_old = $array_bills_orders_custom_aux[$num_bills - 1]['old']['amounts'][$num_amounts];
-            $total_others_new = $array_bills_orders_custom_aux[$num_bills - 2]['new']['amounts'][$num_amounts];
-            $total_others_old = $array_bills_orders_custom_aux[$num_bills - 2]['old']['amounts'][$num_amounts];
-            $total_print_new = $array_bills_orders_custom_aux[$num_bills - 3]['new']['amounts'][$num_amounts];
-            $total_print_old = $array_bills_orders_custom_aux[$num_bills - 3]['old']['amounts'][$num_amounts];
-            $total_dig_new = $array_bills_orders_custom_aux[$num_bills - 4]['new']['amounts'][$num_amounts];
-            $total_dig_old = $array_bills_orders_custom_aux[$num_bills - 4]['old']['amounts'][$num_amounts];
+
+            $total_total_new = 0;
+            $total_total_old = 0;
+            $total_others_new = 0;
+            $total_others_old = 0;
+            $total_print_new = 0;
+            $total_print_old = 0;
+            $total_dig_new = 0;
+            $total_dig_old = 0;
+
+            foreach ($array_bills_orders_custom_aux as $key => $order_custom_aux) {
+                if($order_custom_aux['dep'] == 'TOTAL'){
+                    $total_total_new = $order_custom_aux['new']['amounts'][$num_amounts];
+                    $total_total_old = $order_custom_aux['old']['amounts'][$num_amounts];
+                }
+
+                if($order_custom_aux['dep'] == 'OTROS'){
+                    $total_others_new = $order_custom_aux['new']['amounts'][$num_amounts];
+                    $total_others_old = $order_custom_aux['old']['amounts'][$num_amounts];
+                }
+
+                if($order_custom_aux['dep'] == 'PRINT'){
+                    $total_print_new = $order_custom_aux['new']['amounts'][$num_amounts];
+                    $total_print_old = $order_custom_aux['old']['amounts'][$num_amounts];
+                }
+
+                if($order_custom_aux['dep'] == 'DIG'){
+                    $total_dig_new = $order_custom_aux['new']['amounts'][$num_amounts];
+                    $total_dig_old = $order_custom_aux['old']['amounts'][$num_amounts];
+                }
+            }
 
             $percent_others_new = 0;
             $percent_print_new = 0;
@@ -655,9 +678,12 @@ class ReportRecruimentByChannel extends Controller
 
             if($total_total_new > 0){
                 $percent_others_new = round((100 * $total_others_new) / $total_total_new, 2);
+                error_log('percent_others_new: '.$percent_others_new);
                 $percent_print_new = round((100 * $total_print_new) / $total_total_new, 2);
+                error_log('percent_print_new: '.$percent_print_new);
                 $percent_dig_new = round((100 * $total_dig_new) / $total_total_new, 2);
-                $percent_new = [$percent_others_new, 0, $percent_print_new, $percent_dig_new];
+                error_log('percent_dig_new: '.$percent_dig_new);
+                $percent_new = [$percent_others_new, 0, $percent_dig_new, $percent_print_new];
             }
 
             $percent_others_old = 0;
@@ -669,7 +695,7 @@ class ReportRecruimentByChannel extends Controller
                 $percent_others_old = round((100 * $total_others_old) / $total_total_old, 2);
                 $percent_print_old = round((100 * $total_print_old) / $total_total_old, 2);
                 $percent_dig_old = round((100 * $total_dig_old) / $total_total_old, 2);
-                $percent_old = [$percent_others_old, 0, $percent_print_old, $percent_dig_old];
+                $percent_old = [$percent_others_old, 0, $percent_dig_old, $percent_print_old];
             }
 
 
