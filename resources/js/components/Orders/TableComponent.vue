@@ -113,6 +113,7 @@
 
     import AddButtonComponent from "../Partials/AddButtonComponent.vue";
     import Calendar from 'primevue/calendar';
+import { off } from "process";
 
     export default {
         name: "TableComponent",
@@ -342,8 +343,16 @@
                             sortable: !1,
                             textAlign: "center",
                             template: function (row, data, index) {
+                                var html = '';
+                                if(row.status == 3){
+                                    html = '<span class="badge badge-light-delete f-14 fw-bold">ANULADA</span>';
+                                }else if(row.status == 2){
+                                    html = '<span class="badge badge-light-editing f-14 fw-bold">EDITANDO</span>';
+                                }else{
+                                    html = '<span class="badge badge-light-success f-14 fw-bold">FIRMADA</span>';
+                                }
                                 return (
-                                    '<span class="badge badge-light-success f-14 fw-bold">FIRMADA</span>'
+                                    html
                                 );
                             },
                         },
@@ -379,7 +388,7 @@
                             width: 100,
                             template: function (row, data, index) {
                                 return (
-                                    '<span class="text-gray font-weight-bold">'+row.discount+'%</span>'
+                                    '<span class="text-gray font-weight-bold">'+row.discount_order+'%</span>'
                                 );
                             },
                         },

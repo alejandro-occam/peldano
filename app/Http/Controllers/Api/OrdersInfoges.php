@@ -157,7 +157,12 @@ class OrdersInfoges extends Controller
         //Podemos eliminar la orden
         if($will_delete){
             BillOrder::where('id_order', $order->id)->delete();
-            Order::where('id', $order->id)->delete();
+
+            //Cambiamos el estado a la orden
+            //Order::where('id', $order->id)->delete();
+            $order = Order::find($order->id);
+            $order->status = 3;
+            $order->save();
         }
 
         $response['code'] = 1000;

@@ -23,6 +23,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use App\Models\Order;
 use App\Models\BillOrder;
 use App\Models\Batch;
+use App\Models\ServiceBillOrder;
 use App\Http\Controllers\CurlController;
 
 class ProposalsController extends Controller
@@ -982,7 +983,10 @@ class ProposalsController extends Controller
         //Creamos las orden
         $order = Order::create([
             'id_company' => $company->id,
-            'id_proposal' => $proposal->id
+            'id_proposal' => $proposal->id,
+            'is_custom' => $proposal->is_custom,
+            'discount' => $proposal->discount,
+            'status' => 0
         ]);
 
         //Consultamos las facturas de la propuesta
@@ -1014,6 +1018,24 @@ class ProposalsController extends Controller
             ]);
 
             $array_bills_orders[] = $bill_order;
+
+            //Consultamos el servicio de la factura
+            $service = ServiceBill::select('services.*')
+                                    ->leftJoin('services', 'services.id', 'services_bills.id_service')
+                                    ->where('services_bills.id_bill', $bill->id)
+                                    ->first();
+
+            $new_service = Service::create([
+                'pvp' => $service->pvp,
+                'date' => $service->date,
+                'id_article' => $service->id_article
+            ]);
+            
+            //Asociamos el servicio a la factura de la orden
+            $service_order = ServiceBillOrder::create([
+                'id_service' => $new_service->id,
+                'id_bill_order' => $bill_order->id
+            ]);
         }
 
         //Creamos un objeto para el controller ExternalRequest
@@ -1071,7 +1093,7 @@ class ProposalsController extends Controller
         return response()->json($response);
     }
 
-    //Enviar ordern a Sage
+    //Enviar orden a Sage
     function sendOrderToSage($order){
         $requ_curls = new CurlController();
 

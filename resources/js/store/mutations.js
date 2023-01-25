@@ -67,9 +67,17 @@ const mutations = {
         }
 
         //Consultamos si tenemos algún producto creado y si no, lo creamos
-        if(custom_state.proposal_obj.chapters[0].chapter_obj == null){
-            custom_state.proposal_obj.chapters[0].chapter_obj = params.chapter_obj
+        if(custom_state.proposal_obj.chapters.length > 0){
+            if(custom_state.proposal_obj.chapters[0].chapter_obj == null){
+                custom_state.proposal_obj.chapters[0].chapter_obj = params.chapter_obj
+            }
+        }else{
+            custom_state.proposal_obj.chapters.push({
+                chapter_obj: params.chapter_obj
+            })
+            //custom_state.proposal_obj.chapters[0].chapter_obj = params.chapter_obj
         }
+        
 
         //Consultamos si existe el producto para nuesto artículo
         var exist_product = false;
@@ -638,7 +646,7 @@ const mutations = {
     //Modificar el objeto propuesta
     changeProposalObj(state, params){
         var custom_state = state.proposals;
-        if(params.type == 2){
+        if(params.type == 2 || params.type == 3){
             custom_state = state.orders;
         }
 
@@ -729,7 +737,9 @@ const mutations = {
         if(params.status == 1){
             custom_state.proposal_obj.is_change = true;
         }
-        
+        if(params.type == 3){
+            custom_state.proposal_obj.is_change = true;
+        }
     },
 
     //Generar propuesta
