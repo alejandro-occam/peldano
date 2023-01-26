@@ -18,7 +18,7 @@ class Kernel extends ConsoleKernel
         // $schedule->command('inspire')->hourly();
         $schedule->command('createOrder:cron')->daily();
         $schedule->command('knowIfBillIsPay:cron')->daily();
-        $schedule->command('refreshTokenSage:cron')->everyTwoHours();
+        $schedule->command('refreshTokenSage:cron')->everyMinute();
     }
 
     /**
