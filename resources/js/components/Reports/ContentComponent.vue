@@ -20,8 +20,8 @@
                             <div class="row my-10">
                                 <div class="col-6">
                                     <router-link to="/admin/reports/report_recruiment_channel" class="p-2 d-flex mb-10 border-radius-10 bg-tarjet-reports bg-tarjet-reports">
-                                            <span class="my-5 mx-2 f-14">Informes de contratación por canal ( Digital / Print / Experiencias ) y producto.</span>
-                                            <img class="ml-auto mr-6 arrow" width="15" src=""/>
+                                        <span class="my-5 mx-2 f-14">Informes de contratación por canal ( Digital / Print / Experiencias ) y producto.</span>
+                                        <img class="ml-auto mr-6 arrow" width="15" src=""/>
                                     </router-link>
                                     <div class="p-2 d-flex my-10 border-radius-10 bg-tarjet-reports" v-on:click="changeViewStatusReports(4)">
                                         <span class="my-5 mx-2 f-14">Informe comisiones consultores.</span>
@@ -41,10 +41,10 @@
                                         <span class="my-5 mx-2 f-14">Informes de margen de tipo manual ( Inserciones ).</span>
                                         <img class="ml-auto mr-6 arrow" width="15" src=""/>
                                     </div>
-                                    <div class="p-2 d-flex my-10 border-radius-10 bg-tarjet-reports" v-on:click="changeViewStatusReports(5)">
+                                    <router-link to="/admin/reports/report_sales_orders_signed" class="p-2 d-flex mb-10 border-radius-10 bg-tarjet-reports bg-tarjet-reports">
                                         <span class="my-5 mx-2 f-14">Informe de órdenes firmadas y ventas.</span>
                                         <img class="ml-auto mr-6 arrow" width="15" src=""/>
-                                    </div>
+                                    </router-link>
                                     <div class="p-2 d-flex my-10 border-radius-10 bg-tarjet-reports" v-on:click="changeViewStatusReports(7)">
                                         <span class="my-5 mx-2 f-14">Informe facturado.</span>
                                         <img class="ml-auto mr-6 arrow" width="15" src=""/>

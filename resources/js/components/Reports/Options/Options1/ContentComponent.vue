@@ -1,4 +1,9 @@
 <template>
+    <div class="d-flex mb-10 ">
+        <h1 class="color-blue my-auto">Informes</h1>
+        <div class="subheader-separator subheader-separator-ver my-auto mx-6" style="background-color: #c1c1cd;"></div>
+        <span class="my-auto font-weight-bold color-dark-gray">Informes de contratación por canal ( Digital / Print / Experiencias ) y producto.</span>
+    </div>
     <div class="mb-20">
         <div class="justify-content-center">
             <div class="card card-custom shadow-none border-0">
@@ -33,5 +38,8 @@ export default {
     methods: {
         ...mapMutations(["clearError", "changeViewStatusReports"]),
     },
+    mounted() {
+        //reports.status_view = 2;
+    }
 };
 </script>
