@@ -16,7 +16,8 @@ class Order extends Model
         'id_proposal',
         'is_custom',
         'discount',
-        'status'
+        'status',
+        'reason_update'
     ];
 
     /**
@@ -29,7 +30,8 @@ class Order extends Model
         'id_proposal' => 'integer',
         'is_custom' => 'boolean',
         'discount' => 'string',
-        'status' => 'integer'
+        'status' => 'integer',
+        'reason_update' => 'string'
     ];
 
     /**
@@ -42,6 +44,7 @@ class Order extends Model
         'id_proposal',
         'is_custom',
         'discount',
-        'status'
+        'status',
+        'reason_update'
     ];
 }

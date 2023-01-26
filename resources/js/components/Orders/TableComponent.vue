@@ -333,7 +333,7 @@ import { off } from "process";
                             width: 100,
                             template: function (row, data, index) {
                                 return (
-                                    '<span class="text-gray font-weight-bold">--</span>'
+                                    '<span class="text-gray font-weight-bold">'+row.edit_date+'</span>'
                                 );
                             },
                         },
