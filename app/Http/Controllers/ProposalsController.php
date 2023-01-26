@@ -1019,75 +1019,66 @@ class ProposalsController extends Controller
 
             $array_bills_orders[] = $bill_order;
 
-            //Consultamos el servicio de la factura
-            $service = ServiceBill::select('services.*')
-                                    ->leftJoin('services', 'services.id', 'services_bills.id_service')
-                                    ->where('services_bills.id_bill', $bill->id)
-                                    ->first();
-
-            $new_service = Service::create([
-                'pvp' => $service->pvp,
-                'date' => $service->date,
-                'id_article' => $service->id_article
-            ]);
-            
-            //Asociamos el servicio a la factura de la orden
-            $service_order = ServiceBillOrder::create([
-                'id_service' => $new_service->id,
-                'id_bill_order' => $bill_order->id
-            ]);
-        }
-
-        //Creamos un objeto para el controller ExternalRequest
-        /*$requ_external_request = new ExternalRequestController();
-
-        //Creamos el objeto request
-        $request = new \Illuminate\Http\Request();
-
-        //Recorremos las facturas creadas
-        foreach($array_bills_orders as $bill_order){
-            //Consultamos la orden
-            $order = Order::find($bill_order->id_order);
-            
-            //Consultamos la propuesta de la orden
-            $proposal = Proposal::find($order->id_proposal);
-
-            //Creamos un array para guardar los id_sage de cada artículo-producto
-            $array_sage_products = array();
-
-            //Consultamos las facturas internas de la propuesta para consultar los artículos-productos
-            $array_proposals_bills = ProposalBill::where('id_proposal', $proposal->id)->get();
-            foreach($array_proposals_bills as $proposal_bill){
-                //Consultamos la fecha de la factura
-                $bill_bd = Bill::find($proposal_bill->id_bill);
-
-                //Comparamos fechas para saber si estamos haciendo las consultas en la factura correcta
-                if($bill_bd->date == $bill_order->date){
-                    //Consultamos los artículos de la factura
-                    $services_bills = ServiceBill::where('id_bill', $proposal_bill->id_bill)->get();
-                    foreach($services_bills as $service_bill){
-                        $service = Service::find($service_bill->id_service);
-                        $article = Article::find($service->id_article);
-
-                        //Consultamos el id_sage del artículo
-                        $request->replace(['code_sage' => $article->id_sage]);
-                        $id_sage = $requ_external_request->getProductSage($request);
-                        $product['id'] = $id_sage;
-                        $product['pvp'] = $service->pvp;
-                        $array_sage_products[] = $product;
-                    }
+            $nun_custom_invoices = $request->get('nun_custom_invoices');
+            $custom_bill = false;
+            if(isset($nun_custom_invoices)){
+                if($nun_custom_invoices > 0){
+                    $custom_bill = true;
                 }
             }
 
-            //Generamos el albarán en Sage
-            $number = Date('y').$bill_order->id.$bill_order->id_order;
-            $request->replace(['array_sage_products' => $array_sage_products, 'customer_id' => $company->id_sage, 'id_bill_order' => $bill_order->id, 'id_order' => $bill_order->id_order, 'amount' => $bill_order->amount, 'number' => $number]);
-            $response = $requ_external_request->generateDeliveryNoteSage($request);
-            if($response == null){
-                //Consultamos el albarán creado
+            if(!$custom_bill){
+                //Consultamos el servicio de la factura
+                $array_services = ServiceBill::select('services.*')
+                                        ->leftJoin('services', 'services.id', 'services_bills.id_service')
+                                        ->where('services_bills.id_bill', $bill->id)
+                                        ->get();
 
+                foreach($array_services as $service){
+                    $new_service = Service::create([
+                        'pvp' => $service->pvp,
+                        'date' => $service->date,
+                        'id_article' => $service->id_article
+                    ]);
+
+                    //Asociamos el servicio a la factura de la orden
+                    $service_order = ServiceBillOrder::create([
+                        'id_service' => $new_service->id,
+                        'id_bill_order' => $bill_order->id
+                    ]);
+                }
             }
-        }*/
+
+            if($custom_bill){
+                //Consultamos los servicios de la factura
+                $array_services = ServiceBill::select('services.*')
+                                        ->leftJoin('services', 'services.id', 'services_bills.id_service')
+                                        ->where('services_bills.id_bill', $bill->id)
+                                        ->get();
+
+                foreach($array_services as $service){
+                    $new_service = Service::create([
+                        'pvp' => $service->pvp,
+                        'date' => $service->date,
+                        'id_article' => $service->id_article
+                    ]);
+
+                    //Asociamos el servicio a la factura de la orden
+                    $service_order = ServiceBillOrder::create([
+                        'id_service' => $new_service->id,
+                        'id_bill_order' => $bill_order->id
+                    ]);
+
+                }
+
+                /*foreach($array_services_aux as $service){
+                    ServiceBill::create([
+                        'id_service' => $service->id,
+                        'id_bill' => $bill->id,
+                    ]);
+                }*/
+            }  
+        }
 
         $response['code'] = 1000;
         return response()->json($response);
