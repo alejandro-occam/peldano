@@ -75,7 +75,6 @@ class OrdersController extends Controller
                                             ->take($skip)
                                             ->get();
 
-                                        error_log($array_orders);
 
         $total_orders = $array_orders->groupBy('orders.id')
                                         ->count();
@@ -135,7 +134,12 @@ class OrdersController extends Controller
 
     //Listar ordenes para exportar
     function listOrdersToExport(Request $request){
-        $array_orders = Order::select('proposals.*', 'departments.name as department_name')
+        /*$array_orders = Order::select('proposals.*', 'departments.name as department_name')
+                        ->leftJoin('proposals', 'proposals.id', 'orders.id_proposal')  
+                        ->leftJoin('departments', 'departments.id', 'proposals.id_department')
+                        ->leftJoin('proposals_bills', 'proposals.id', 'proposals_bills.id_proposal')
+                        ->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill');*/
+        $array_orders = Order::select('orders.id as id_order', 'orders.status as status', 'orders.discount as discount_order', 'orders.created_at as created_at_order', 'orders.updated_at as updated_at_order', 'proposals.*', 'departments.name as department_name')
                         ->leftJoin('proposals', 'proposals.id', 'orders.id_proposal')  
                         ->leftJoin('departments', 'departments.id', 'proposals.id_department')
                         ->leftJoin('proposals_bills', 'proposals.id', 'proposals_bills.id_proposal')
@@ -163,27 +167,48 @@ class OrdersController extends Controller
             }
         }
 
-        $array_orders = $array_orders->groupBy('proposals.id')
+        $array_orders = $array_orders->groupBy('orders.id')
                                             ->get();
 
-        foreach($array_orders as $proposal){
+        foreach($array_orders as $order){
             //Consultamos el nombre del contacto
-            $contact = Contact::find($proposal->id_contact);
-            $proposal['name_contact'] = $contact->name.' '.$contact->surnames;
+            $contact = Contact::find($order->id_contact);
+            $order['name_contact'] = $contact->name.' '.$contact->surnames;
 
             //Consultamos el numero de la propuesta
-            $id_proposal_custom_aux = sprintf('%08d', $proposal->id_proposal_custom);
-            $date_aux = explode("-", $proposal->date_proyect);
-            $proposal['proposal_custom'] = 'EP'.$date_aux[2].$date_aux[1].'-'.$id_proposal_custom_aux;
+            $id_proposal_custom_aux = sprintf('%08d', $order->id_proposal_custom);
+            $date_aux = explode("-", $order->date_proyect);
+            $order['proposal_custom'] = 'EP'.$date_aux[2].$date_aux[1].'-'.$id_proposal_custom_aux;
 
             //Consultamos el total 
             $total = 0;
-            $proposal_bill = ProposalBill::select('bills.amount')->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill')->where('proposals_bills.id_proposal', $proposal->id)->get();
+            
+            
+            /*$proposal_bill = ProposalBill::select('bills.amount')->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill')->where('proposals_bills.id_proposal', $order->id)->get();
             foreach($proposal_bill as $bill){
                 $total += $bill->amount;
+            }*/
+            $array_bills_orders = BillOrder::where('id_order', $order->id_order)->get();
+            foreach($array_bills_orders as $bill_order){
+                $total += $bill_order->amount;
             }
            
-            $proposal['total_amount'] = $total;
+            $order['total_amount'] = number_format($total, 2);
+
+            $order['edit_date'] = '--';
+            if($order->created_at_order != $order->updated_at_order){
+                $array_updated_at_order_1 = explode(" ", $order->updated_at_order);
+                $array_updated_at_order_2 = explode("-", $array_updated_at_order_1[0]);
+                $order['edit_date'] = $array_updated_at_order_2[2].'-'.$array_updated_at_order_2[1].'-'.$array_updated_at_order_2[0];
+            }
+
+            $status_text = 'FIRMADA';
+            if($order->status == 2){
+                $status_text = 'EDITANDO';
+            }
+            if($order->status == 2){
+                $status_text = 'ANULADA';
+            }
         }
         
         $html = '';
@@ -221,12 +246,12 @@ class OrdersController extends Controller
                         </td>
                         <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#editio" aria-label="null">
                             <span class="mx-auto">
-                                <span class="text-gray font-weight-bold">--</span>
+                                <span class="text-gray font-weight-bold">'.$order['edit_date'].'</span>
                             </span>
                         </td>
                         <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#status" aria-label="null">
                             <span class="mx-auto">
-                                <span class="text-gray font-weight-bold">CERRADA</span>
+                                <span class="text-gray font-weight-bold">'.$status_text.'</span>
                             </span>
                         </td>
                         <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#ctrl" aria-label="null">
@@ -256,6 +281,8 @@ class OrdersController extends Controller
                         </td>
                     </tr>';
         }
+
+        error_log('html: '.$html);
 
         $response['code'] = 1000;
         $response['array_orders'] = $html;
@@ -287,7 +314,13 @@ class OrdersController extends Controller
         $sheet->setCellValue('M1', 'Nuevo recuperado');
 
         //Consultamos las ordenes
-        $array_orders = Order::select('proposals.*', 'departments.name as department_name')
+        /*$array_orders = Order::select('proposals.*', 'departments.name as department_name')
+                        ->leftJoin('proposals', 'proposals.id', 'orders.id_proposal')  
+                        ->leftJoin('departments', 'departments.id', 'proposals.id_department')
+                        ->leftJoin('proposals_bills', 'proposals.id', 'proposals_bills.id_proposal')
+                        ->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill');*/
+
+        $array_orders = Order::select('orders.id as id_order', 'orders.status as status', 'orders.discount as discount_order', 'orders.created_at as created_at_order', 'orders.updated_at as updated_at_order', 'proposals.*', 'departments.name as department_name')
                         ->leftJoin('proposals', 'proposals.id', 'orders.id_proposal')  
                         ->leftJoin('departments', 'departments.id', 'proposals.id_department')
                         ->leftJoin('proposals_bills', 'proposals.id', 'proposals_bills.id_proposal')
@@ -315,7 +348,7 @@ class OrdersController extends Controller
             }
         }
 
-        $array_orders = $array_orders->groupBy('proposals.id')
+        $array_orders = $array_orders->groupBy('orders.id')
                                             ->get();
         
 
@@ -331,12 +364,33 @@ class OrdersController extends Controller
 
             //Consultamos el total 
             $total = 0;
-            $proposal_bill = ProposalBill::select('bills.amount')->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill')->where('proposals_bills.id_proposal', $order->id)->get();
+            
+            
+            /*$proposal_bill = ProposalBill::select('bills.amount')->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill')->where('proposals_bills.id_proposal', $order->id)->get();
             foreach($proposal_bill as $bill){
                 $total += $bill->amount;
+            }*/
+            $array_bills_orders = BillOrder::where('id_order', $order->id_order)->get();
+            foreach($array_bills_orders as $bill_order){
+                $total += $bill_order->amount;
             }
             
-            $order['total_amount'] = $total;
+            $order['total_amount'] = number_format($total, 2);
+
+            $order['edit_date'] = '--';
+            if($order->created_at_order != $order->updated_at_order){
+                $array_updated_at_order_1 = explode(" ", $order->updated_at_order);
+                $array_updated_at_order_2 = explode("-", $array_updated_at_order_1[0]);
+                $order['edit_date'] = $array_updated_at_order_2[2].'-'.$array_updated_at_order_2[1].'-'.$array_updated_at_order_2[0];
+            }
+
+            $status_text = 'FIRMADA';
+            if($order->status == 2){
+                $status_text = 'EDITANDO';
+            }
+            if($order->status == 2){
+                $status_text = 'ANULADA';
+            }
         }
 
         foreach($array_orders as $key => $order){
@@ -346,12 +400,12 @@ class OrdersController extends Controller
             $sheet->setCellValue('D'.($key+2), 'NP');
             $sheet->setCellValue('E'.($key+2), $order['name_contact']);
             $sheet->setCellValue('F'.($key+2), $order->date_proyect);
-            $sheet->setCellValue('G'.($key+2), '--');
-            $sheet->setCellValue('H'.($key+2), 'CERRADA');
+            $sheet->setCellValue('G'.($key+2), $order['edit_date']);
+            $sheet->setCellValue('H'.($key+2), $status_text);
             $sheet->setCellValue('I'.($key+2), 'NO');
             $sheet->setCellValue('J'.($key+2), $order['total_amount']);
             $sheet->setCellValue('K'.($key+2), $order->discount);
-            $sheet->setCellValue('L'.($key+2), strtoupper($order->sector_name));
+            $sheet->setCellValue('L'.($key+2), strtoupper($order->department_name));
             $sheet->setCellValue('M'.($key+2), 'SÍ');
         }
 

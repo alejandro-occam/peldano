@@ -42,12 +42,12 @@
             </div>
 
             <div class="mx-2 col-2">
-                <span class="text-dark font-weight-bold mb-2">Sector</span>
-                <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_sector'" :id="'select_sector'" v-model="select_sector" data-style="select-lightgreen" @change="getConsultantSelect">
+                <span class="text-dark font-weight-bold mb-2">Departamento</span>
+                <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_department'" :id="'select_department'" v-model="select_department" data-style="select-lightgreen" @change="getConsultantSelect">
                     <option value="" selected>
-                        Filtro por sector
+                        Filtro por departamento
                     </option>
-                    <option :value="sector.id" v-for="sector in config.articles.filter.array_sectors"  :key="sector.id" v-text="sector.name" ></option>
+                    <option :value="department.id" v-for="department in config.articles.filter.array_departments" :key="department.id" v-text="department.name" ></option>
                 </select>
             </div>
            
@@ -150,8 +150,8 @@
                                 <th data-field="#dto" style="width: 85px;" class="datatable-cell-center datatable-cell">
                                     <span>Dto</span>
                                 </th>
-                                <th data-field="#sector_name" style="width: 85px;" class="datatable-cell-center datatable-cell">
-                                    <span>Sector</span>
+                                <th data-field="#department_name" style="width: 85px;" class="datatable-cell-center datatable-cell">
+                                    <span>Departamento</span>
                                 </th>
                                 <th data-field="#new_recovered" style="width: 85px;" class="datatable-cell-center datatable-cell">
                                     <span>Nuevo recuperado</span>
@@ -187,7 +187,7 @@
                 date_from: '',
                 date_to: '',
                 select_from_consultant: '1',
-                select_sector: '',
+                select_department: '',
                 select_status_order: '1',
                 datatable: null,
                 show_all: 0
@@ -227,7 +227,7 @@
                 window.open(this.publicPath + "/admin/download_list_orders_csv?type="+this.type
                                                                                 +"&num_order="+this.num_order
                                                                                 +"&select_consultant="+this.select_consultant
-                                                                                +"&select_sector="+this.select_sector
+                                                                                +"&select_department="+this.select_department
                                                                                 +"&date_from="+date_ms_from
                                                                                 +"&date_to="+date_ms_to
                                                                                 ,"_self")
@@ -280,7 +280,7 @@
                         type: type,
                         num_proposal: this.num_proposal,
                         select_consultant: this.select_consultant,
-                        select_sector: this.select_sector,
+                        select_department: this.select_department,
                         date_from: date_ms_from,
                         date_to: date_ms_to
                     }

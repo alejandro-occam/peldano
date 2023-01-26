@@ -8,7 +8,7 @@
                 :src="'/media/custom-imgs/icono_btn_exportar.svg'"
                 :width="16"
                 :height="16"
-                @click.native="changeViewStatusOrders(3)"
+                @click.native="changeViewStatusOrders(4)"
             />
             <AddButtonComponent
                 :columns="'px-4'"
