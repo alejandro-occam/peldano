@@ -330,6 +330,7 @@
         </div>
     </div>
     <FormAddArticleComponent :type="2"></FormAddArticleComponent>
+    <ModalUpdateOrder></ModalUpdateOrder>
 </template>
 
 <script>
@@ -339,6 +340,7 @@ import { mapMutations, mapState, mapActions } from "vuex";
 import AddButtonComponent from "../Partials/AddButtonComponent.vue";
 import DeleteButtonComponent from "../Partials/DeleteButtonComponent.vue"
 import FormAddArticleComponent from "../Proposals/FormAddArticleComponent.vue";
+import ModalUpdateOrder from "./ModalUpdateOrder.vue";
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Textarea from 'primevue/textarea';
@@ -353,7 +355,8 @@ export default {
         Column,
         Textarea,
         Calendar,
-        DeleteButtonComponent
+        DeleteButtonComponent,
+        ModalUpdateOrder
     },
     data() {
         return {
@@ -867,7 +870,8 @@ export default {
         },
         //Modificar orden
         updateOrderFront(){
-            this.is_updating_order = 1;
+            $('#modal_reason_update_order').modal('show');
+            //this.is_updating_order = 1;
         },
         returnView(){
             this.changeViewStatusOrders(1);
@@ -934,7 +938,8 @@ export default {
                 var params = {
                     'id_order': this.orders.proposal_obj.id_order,
                     'bill_obj': this.orders.bill_obj,
-                    'discount': this.discount
+                    'discount': this.discount,
+                    'reason_update': this.orders.reason_update
                 }
                 this.updateOrder(params);
 
@@ -1058,6 +1063,9 @@ export default {
                 this.loadFormObj();        
                 this.offer = this.orders.bill_obj.total_bill;
             }
+        },  
+        '$store.state.orders.reason_update': function() {
+            this.is_updating_order = 1;
         },  
     },
 };

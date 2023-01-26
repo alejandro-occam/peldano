@@ -42,7 +42,7 @@ class OrdersController extends Controller
             }
         }
 
-        $array_orders = Order::select('orders.id as id_order', 'orders.status as status', 'orders.discount as discount_order', 'proposals.*', 'departments.name as department_name')
+        $array_orders = Order::select('orders.id as id_order', 'orders.status as status', 'orders.discount as discount_order', 'orders.created_at as created_at_order', 'orders.updated_at as updated_at_order', 'proposals.*', 'departments.name as department_name')
                         ->leftJoin('proposals', 'proposals.id', 'orders.id_proposal')  
                         ->leftJoin('departments', 'departments.id', 'proposals.id_department')
                         ->leftJoin('proposals_bills', 'proposals.id', 'proposals_bills.id_proposal')
@@ -104,6 +104,13 @@ class OrdersController extends Controller
             }
            
             $order['total_amount'] = number_format($total, 2);
+
+            $order['edit_date'] = '--';
+            if($order->created_at_order != $order->updated_at_order){
+                $array_updated_at_order_1 = explode(" ", $order->updated_at_order);
+                $array_updated_at_order_2 = explode("-", $array_updated_at_order_1[0]);
+                $order['edit_date'] = $array_updated_at_order_2[2].'-'.$array_updated_at_order_2[1].'-'.$array_updated_at_order_2[0];
+            }
         }
 
         //Devolución de la llamada con la paginación
@@ -626,7 +633,7 @@ class OrdersController extends Controller
     //Actualizar orden
     function updateOrder(Request $request){
         //Comprobamos si existe la propuesta
-        if (!$request->has('id_order') || !$request->has('discount')){
+        if (!$request->has('id_order') || !$request->has('discount') || !$request->has('reason_update')){
             $response['code'] = 1001;
             return response()->json($response);
         }
@@ -634,6 +641,7 @@ class OrdersController extends Controller
         //Consultamos si existe la orden
         $id_order = $request->get('id_order');
         $discount = $request->get('discount');
+        $reason_update = $request->get('reason_update');
 
         $order = Order::find($id_order);
         if(!$order){
@@ -737,6 +745,7 @@ class OrdersController extends Controller
         
         $order->discount = $discount;
         $order->status = 0;
+        $order->reason_update = $reason_update;
         $order->save();
 
         $response['code'] = 1000;
