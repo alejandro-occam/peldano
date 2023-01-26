@@ -8,6 +8,7 @@
                 <div class="card-body body-tab-step">
                     <TableComponent v-if="orders.status_view == 1"></TableComponent>
                     <FormComponent v-else-if="orders.status_view == 2"></FormComponent>
+                    <FormComponentOrder v-else-if="orders.status_view == 3"></FormComponentOrder>
                     <TableExportsComponent v-else></TableExportsComponent>
                 </div>
             </div>
@@ -18,6 +19,7 @@
 <script>
 import TableComponent from "./TableComponent.vue";
 import FormComponent from "./FormComponent.vue";
+import FormComponentOrder from "./FormComponentOrder.vue";
 import TableExportsComponent from "./TableExportsComponent.vue";
 import { mapMutations, mapState } from "vuex";
 
@@ -26,7 +28,8 @@ export default {
     components: {
         TableComponent,
         FormComponent,
-        TableExportsComponent
+        TableExportsComponent,
+        FormComponentOrder
     },
     data() {
         return {

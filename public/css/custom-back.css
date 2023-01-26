@@ -814,6 +814,17 @@ a.text-hover-primary:hover, .text-hover-primary:hover{
     background-color: #c8f9ef;
 }
 
+.badge-light-editing {
+    color: #ffb200;
+    background-color: #fff5de;
+}
+
+.badge-light-delete {
+    color: #ff1c55;
+    background-color: #ffecf7;
+}
+
+
 .bg-tarjet-reports{
     background-color: #f7fbff;
     cursor: pointer;

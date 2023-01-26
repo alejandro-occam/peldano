@@ -23,6 +23,7 @@ use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
 use App\Models\Order;
 use App\Models\BillOrder;
 use App\Models\Batch;
+use App\Models\ServiceBillOrder;
 use App\Http\Controllers\CurlController;
 
 class ProposalsController extends Controller
@@ -982,7 +983,10 @@ class ProposalsController extends Controller
         //Creamos las orden
         $order = Order::create([
             'id_company' => $company->id,
-            'id_proposal' => $proposal->id
+            'id_proposal' => $proposal->id,
+            'is_custom' => $proposal->is_custom,
+            'discount' => $proposal->discount,
+            'status' => 0
         ]);
 
         //Consultamos las facturas de la propuesta
@@ -990,6 +994,9 @@ class ProposalsController extends Controller
 
         //Creamos un array de factuas de ordenes para más tarde crearlas en sage
         $array_bills_orders = array();
+
+        $exist = false;
+        $array_custom_services_order = array();
 
         //Recorremos las facturas y creamos las facturas de la orden
         foreach($array_bills as $bill){
@@ -1014,64 +1021,74 @@ class ProposalsController extends Controller
             ]);
 
             $array_bills_orders[] = $bill_order;
-        }
 
-        //Creamos un objeto para el controller ExternalRequest
-        /*$requ_external_request = new ExternalRequestController();
+            $custom_bill = $proposal->is_custom;
 
-        //Creamos el objeto request
-        $request = new \Illuminate\Http\Request();
+            if(!$custom_bill){
+                //Consultamos el servicio de la factura
+                $array_services = ServiceBill::select('services.*')
+                                        ->leftJoin('services', 'services.id', 'services_bills.id_service')
+                                        ->where('services_bills.id_bill', $bill->id)
+                                        ->get();
+                foreach($array_services as $service){
+                    $new_service = Service::create([
+                        'pvp' => $service->pvp,
+                        'date' => $service->date,
+                        'id_article' => $service->id_article
+                    ]);
 
-        //Recorremos las facturas creadas
-        foreach($array_bills_orders as $bill_order){
-            //Consultamos la orden
-            $order = Order::find($bill_order->id_order);
-            
-            //Consultamos la propuesta de la orden
-            $proposal = Proposal::find($order->id_proposal);
-
-            //Creamos un array para guardar los id_sage de cada artículo-producto
-            $array_sage_products = array();
-
-            //Consultamos las facturas internas de la propuesta para consultar los artículos-productos
-            $array_proposals_bills = ProposalBill::where('id_proposal', $proposal->id)->get();
-            foreach($array_proposals_bills as $proposal_bill){
-                //Consultamos la fecha de la factura
-                $bill_bd = Bill::find($proposal_bill->id_bill);
-
-                //Comparamos fechas para saber si estamos haciendo las consultas en la factura correcta
-                if($bill_bd->date == $bill_order->date){
-                    //Consultamos los artículos de la factura
-                    $services_bills = ServiceBill::where('id_bill', $proposal_bill->id_bill)->get();
-                    foreach($services_bills as $service_bill){
-                        $service = Service::find($service_bill->id_service);
-                        $article = Article::find($service->id_article);
-
-                        //Consultamos el id_sage del artículo
-                        $request->replace(['code_sage' => $article->id_sage]);
-                        $id_sage = $requ_external_request->getProductSage($request);
-                        $product['id'] = $id_sage;
-                        $product['pvp'] = $service->pvp;
-                        $array_sage_products[] = $product;
-                    }
+                    //Asociamos el servicio a la factura de la orden
+                    $service_order = ServiceBillOrder::create([
+                        'id_service' => $new_service->id,
+                        'id_bill_order' => $bill_order->id
+                    ]);
                 }
             }
 
-            //Generamos el albarán en Sage
-            $number = Date('y').$bill_order->id.$bill_order->id_order;
-            $request->replace(['array_sage_products' => $array_sage_products, 'customer_id' => $company->id_sage, 'id_bill_order' => $bill_order->id, 'id_order' => $bill_order->id_order, 'amount' => $bill_order->amount, 'number' => $number]);
-            $response = $requ_external_request->generateDeliveryNoteSage($request);
-            if($response == null){
-                //Consultamos el albarán creado
+            if($custom_bill){
+                if(!$exist){
+                    //Consultamos los servicios de la factura
+                    $array_services = ServiceBill::select('services.*')
+                                            ->leftJoin('services', 'services.id', 'services_bills.id_service')
+                                            ->where('services_bills.id_bill', $bill->id)
+                                            ->get();
 
-            }
-        }*/
+                    foreach($array_services as $service){
+                        $new_service = Service::create([
+                            'pvp' => $service->pvp,
+                            'date' => $service->date,
+                            'id_article' => $service->id_article
+                        ]);
+
+                        //Guardamos los nuevos servicios para utilizarlos en las siguientes facturas
+                        $array_custom_services_order[] = $new_service;
+                        
+                        //Asociamos el servicio a la factura de la orden
+                        $service_order = ServiceBillOrder::create([
+                            'id_service' => $new_service->id,
+                            'id_bill_order' => $bill_order->id
+                        ]);
+                    }
+
+                }else{
+                    foreach($array_custom_services_order as $service){
+                        //Asociamos el servicio a la factura de la orden
+                        $service_order = ServiceBillOrder::create([
+                            'id_service' => $service->id,
+                            'id_bill_order' => $bill_order->id
+                        ]);
+                    }
+                }
+
+                $exist = true;
+            }  
+        }
 
         $response['code'] = 1000;
         return response()->json($response);
     }
 
-    //Enviar ordern a Sage
+    //Enviar orden a Sage
     function sendOrderToSage($order){
         $requ_curls = new CurlController();
 

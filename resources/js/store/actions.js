@@ -158,7 +158,6 @@ const actions = {
         }
     },
 
-
     //Actualizar usuario 
     async updateCalendar({ state }, params){
         try {
@@ -948,106 +947,24 @@ function createObjectsStore({ state }, response, type){
     if(type == 2){
         custom_state = state.orders;
     }
+
+    if(response.data.proposal.is_custom){
+        custom_state.num_custom_invoices = Number(response.data.proposal_bills.length);
+    }
+
     var array_services = response.data.array_services;
     custom_state.proposal_obj.chapters.articles = [];
     custom_state.proposal_obj.chapters.dates_prices_aux = [];
     custom_state.bill_obj.array_bills = [];
     var array_dates_aux = [];
     var array_chapters = [];
-    var proposal = response.data.proposal
-    array_services.forEach(function callback(service, index, array) {
-        array_dates_aux.push(service.date);
+    var proposal = response.data.proposal;
 
-        if(array_chapters.length == 0){
-            var article = {
-                amount: 1,
-                article_obj: service.article,
-                dates: [service.date],
-                dates_prices: [{
-                    arr_pvp_date: [{
-                        date: service.date,
-                        arr_pvp: [service.pvp]
-                    }],
-                    date: changeFormatDate(service.date)
-                }],
-                total: service.pvp,
-                chapter_obj: service.chapter,
-                department_obj: proposal.department_obj
-            }
-            array_chapters.push({
-                id_chapter: service.chapter.id,
-                articles: [article],
-                articles_aux: [article],
-                chapter_obj: service.chapter
-            });
- 
-        }else{
-            var exist_1 = false;
-            array_chapters.forEach(function callback(chapter, index, array) {
-                if(chapter.id_chapter == service.chapter.id){
-                    exist_1 = true;
-                    var exist_2 = false;
-                    chapter.articles.forEach(function callback(article, index, array) {
-                        if(article.article_obj.id == service.id_article){
-                            exist_2 = true;
-                            article.amount += 1;
-                            article.dates.push(service.date);
-                            article.total = article.total + service.pvp;
-                            var exist_3 = false;
-                            article.dates_prices.forEach(function callback(date_price, index, array) {
-                                if(date_price.date == changeFormatDate(service.date)){
-                                    exist_3 = true;
-                                    var exist_4 = false;
-                                    date_price.arr_pvp_date.forEach(function callback(pvp_date, index, array) {
-                                        if(pvp_date.date == service.date){
-                                            pvp_date.arr_pvp.push(service.pvp);
-                                            exist_4 = true;
-                                        }
-                                    });
-                                    if(!exist_4){
-                                        var pvp_date = {
-                                            date: service.date,
-                                            arr_pvp: [service.pvp]
-                                        };
-                                        date_price.arr_pvp_date.push(pvp_date);
-                                    }
-                                }
-                                
-                            });
-                            if(!exist_3){
-                                var date_price = {
-                                    date: changeFormatDate(service.date),
-                                    arr_pvp_date: [{
-                                        date: service.date,
-                                        arr_pvp: [service.pvp]
-                                    }]
-                                }
-                                article.dates_prices.push(date_price);
-                            }
-                        }
-                    });
+    if(array_services != undefined){
+        array_services.forEach(function callback(service, index, array) {
+            array_dates_aux.push(service.date);
 
-                    if(!exist_2){
-                        var article = {
-                            amount: 1,
-                            article_obj: service.article,
-                            dates: [service.date],
-                            dates_prices: [{
-                                arr_pvp_date: [{
-                                    date: service.date,
-                                    arr_pvp: [service.pvp]
-                                }],
-                                date: changeFormatDate(service.date)
-                            }],
-                            total: service.pvp,
-                            chapter_obj: service.chapter
-                        }
-                        chapter.articles.push(article);
-                    }
-                }
-            });
-
-            if(!exist_1){
+            if(array_chapters.length == 0){
                 var article = {
                     amount: 1,
                     article_obj: service.article,
@@ -1060,7 +977,8 @@ function createObjectsStore({ state }, response, type){
                         date: changeFormatDate(service.date)
                     }],
                     total: service.pvp,
-                    chapter_obj: service.chapter
+                    chapter_obj: service.chapter,
+                    department_obj: proposal.department_obj
                 }
                 array_chapters.push({
                     id_chapter: service.chapter.id,
@@ -1068,11 +986,100 @@ function createObjectsStore({ state }, response, type){
                     articles_aux: [article],
                     chapter_obj: service.chapter
                 });
+    
+            }else{
+                var exist_1 = false;
+                array_chapters.forEach(function callback(chapter, index, array) {
+                    if(chapter.id_chapter == service.chapter.id){
+                        exist_1 = true;
+                        var exist_2 = false;
+                        chapter.articles.forEach(function callback(article, index, array) {
+                            if(article.article_obj.id == service.id_article){
+                                exist_2 = true;
+                                article.amount += 1;
+                                article.dates.push(service.date);
+                                article.total = article.total + service.pvp;
+                                var exist_3 = false;
+                                article.dates_prices.forEach(function callback(date_price, index, array) {
+                                    if(date_price.date == changeFormatDate(service.date)){
+                                        exist_3 = true;
+                                        var exist_4 = false;
+                                        date_price.arr_pvp_date.forEach(function callback(pvp_date, index, array) {
+                                            if(pvp_date.date == service.date){
+                                                pvp_date.arr_pvp.push(service.pvp);
+                                                exist_4 = true;
+                                            }
+                                        });
+                                        if(!exist_4){
+                                            var pvp_date = {
+                                                date: service.date,
+                                                arr_pvp: [service.pvp]
+                                            };
+                                            date_price.arr_pvp_date.push(pvp_date);
+                                        }
+                                    }
+                                    
+                                });
+                                if(!exist_3){
+                                    var date_price = {
+                                        date: changeFormatDate(service.date),
+                                        arr_pvp_date: [{
+                                            date: service.date,
+                                            arr_pvp: [service.pvp]
+                                        }]
+                                    }
+                                    article.dates_prices.push(date_price);
+                                }
+                            }
+                        });
+
+                        if(!exist_2){
+                            var article = {
+                                amount: 1,
+                                article_obj: service.article,
+                                dates: [service.date],
+                                dates_prices: [{
+                                    arr_pvp_date: [{
+                                        date: service.date,
+                                        arr_pvp: [service.pvp]
+                                    }],
+                                    date: changeFormatDate(service.date)
+                                }],
+                                total: service.pvp,
+                                chapter_obj: service.chapter
+                            }
+                            chapter.articles.push(article);
+                        }
+                    }
+                });
+
+                if(!exist_1){
+                    var article = {
+                        amount: 1,
+                        article_obj: service.article,
+                        dates: [service.date],
+                        dates_prices: [{
+                            arr_pvp_date: [{
+                                date: service.date,
+                                arr_pvp: [service.pvp]
+                            }],
+                            date: changeFormatDate(service.date)
+                        }],
+                        total: service.pvp,
+                        chapter_obj: service.chapter
+                    }
+                    array_chapters.push({
+                        id_chapter: service.chapter.id,
+                        articles: [article],
+                        articles_aux: [article],
+                        chapter_obj: service.chapter
+                    });
+                }
             }
-        }
-        
-    });
-    custom_state.proposal_obj.chapters = array_chapters;
+            
+        });
+        custom_state.proposal_obj.chapters = array_chapters;
+    }
 
     //Consultamos los totales
     var total_amount_global = 0;
@@ -1190,7 +1197,9 @@ function createObjectsStore({ state }, response, type){
 
     var date_aux = '';
     if(!response.data.proposal.is_custom){
-        date_aux = array_articles[0].date;
+        if(array_articles.length > 0){
+            date_aux = array_articles[0].date;
+        }
     }
     var amount = 0;
     var array_finish_bill = [];
@@ -1343,13 +1352,17 @@ function createObjectsStore({ state }, response, type){
     //Guardamos datos
     custom_state.proposal_bd_obj = proposal_submission_settings;
     custom_state.proposal_obj.array_dates = array_dates_prices;
+
     custom_state.status_view = 2;
+    if(type == 2){
+        custom_state.status_view = 3;
+    }
     state.errors.type_error = 'get_info_proposal';
     state.errors.code = response.data.code;
     custom_state.is_change_get_info = 1;
     custom_state.id_company = response.data.proposal.id_company;
     if(type == 2){
-        custom_state.proposal_obj.id_order = response.data.proposal.id_order
+        custom_state.proposal_obj.id_order = response.data.proposal.id
     }
 }
 

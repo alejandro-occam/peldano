@@ -13,7 +13,10 @@ class Order extends Model
 
     public $fillable = [
         'id_company',
-        'id_proposal'
+        'id_proposal',
+        'is_custom',
+        'discount',
+        'status'
     ];
 
     /**
@@ -24,6 +27,9 @@ class Order extends Model
     protected $casts = [
         'id_company' => 'integer',
         'id_proposal' => 'integer',
+        'is_custom' => 'boolean',
+        'discount' => 'string',
+        'status' => 'integer'
     ];
 
     /**
@@ -34,5 +40,8 @@ class Order extends Model
     public static $rules = [
         'id_company',
         'id_proposal',
+        'is_custom',
+        'discount',
+        'status'
     ];
 }
