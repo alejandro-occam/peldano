@@ -1074,7 +1074,7 @@ class ProposalsController extends Controller
                     foreach($array_custom_services_order as $service){
                         //Asociamos el servicio a la factura de la orden
                         $service_order = ServiceBillOrder::create([
-                            'id_service' => $new_service->id,
+                            'id_service' => $service->id,
                             'id_bill_order' => $bill_order->id
                         ]);
                     }

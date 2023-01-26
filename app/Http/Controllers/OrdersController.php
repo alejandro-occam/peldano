@@ -623,6 +623,7 @@ class OrdersController extends Controller
         return response()->json($response);
     }
 
+    //Actualizar orden
     function updateOrder(Request $request){
         //Comprobamos si existe la propuesta
         if (!$request->has('id_order') || !$request->has('discount')){
@@ -651,10 +652,7 @@ class OrdersController extends Controller
         $is_save = 0;
         foreach($array_bills as $bill){
             $array_services_bills_orders = ServiceBillOrder::where('id_bill_order', $bill)->get();
-            error_log('array_services_bills_orders: '.$array_services_bills_orders);
             foreach($array_services_bills_orders as $service_bill_order){
-                error_log('order->is_custom: '.$order->is_custom);
-                error_log('is_save: '.$is_save);
                 if(($order->is_custom && !$is_save)){
                     $array_services[] = $service_bill_order->id_service;
                 }
@@ -663,9 +661,6 @@ class OrdersController extends Controller
             $is_save = 1;
             BillOrder::find($bill)->delete();
         }
-
-        error_log('array_services: '.print_r($array_services, true));
-
         //Hay que duplicar los servicios para la ordenes
         foreach($array_services as $service){
             Service::find($service)->delete();
@@ -794,19 +789,6 @@ class OrdersController extends Controller
             if ($date_custom_bill < $date_now){
                 $will_delete = false;
             }
-
-            //Consultamos los servicios asociados a esta factura
-            $array_services_bills_orders = ServiceBillOrder::where('id_bill_order', $bill_order->id)->get();
-            $array_services = array();
-            foreach($array_services_bills_orders as $service_bill_order){
-                $array_services[] = $service_bill_order->id_service;
-            }
-            ServiceBillOrder::where('id_bill_order', $bill_order->id)->delete();
-            
-            //Eliminamos los servicios
-            foreach($array_services as $service){
-                Service::find($service)->delete();
-            }
         }
 
         //Según las comprobaciones miramos si podemos eliminar la orden o no
@@ -818,6 +800,24 @@ class OrdersController extends Controller
 
         //Podemos eliminar la orden
         if($will_delete){
+            foreach($array_bills_orders as $bill_order){
+                //Consultamos los servicios asociados a esta factura
+                $array_services_bills_orders = ServiceBillOrder::where('id_bill_order', $bill_order->id)->get();
+                $array_services = array();
+                foreach($array_services_bills_orders as $service_bill_order){
+                    $array_services[] = $service_bill_order->id_service;
+                }
+                ServiceBillOrder::where('id_bill_order', $bill_order->id)->delete();
+            }
+
+            //Eliminamos los servicios
+            foreach($array_services as $service){
+                $service_obj = Service::find($service);
+                if($service_obj){
+                    $service_obj->delete();
+                }
+            }
+
             BillOrder::where('id_order', $order->id)->delete();
 
             //Cambiamos el estado a la orden y borramos el descuento
