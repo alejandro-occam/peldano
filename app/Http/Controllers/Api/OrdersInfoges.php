@@ -10,6 +10,9 @@ use App\Models\Order;
 use App\Models\ProposalBill;
 use App\Models\BillOrder;
 use App\Models\Service;
+use App\Models\ServiceBillOrder;
+use App\Models\Article;
+use App\Models\Batch;
 
 class OrdersInfoges extends Controller
 {
@@ -134,11 +137,14 @@ class OrdersInfoges extends Controller
 
         $array_services_aux = array();
         //Consultamos los artículos
-        foreach(json_decode($bill_obj)->articles as $article){
+        foreach($bill_obj['articles'] as $article){
+            //Consultamo el id del artículo
+            $article_custom = Article::where('id_sage', $article['id_sage_article'])->first();
+            error_log($article['id_sage_article']);
             $service = Service::create([
-                'pvp' => $article->amount,
-                'date' => $article->date,
-                'id_article' => $article->article->article_obj->id
+                'pvp' => $article['amount'],
+                'date' => $article['date'],
+                'id_article' => $article_custom->id
             ]);
             $array_services_aux[] = $service;
         }
@@ -146,16 +152,16 @@ class OrdersInfoges extends Controller
         $array_bills_aux = array();
 
         //Consultamos las facturas
-        foreach(json_decode($bill_obj)->array_bills as $key => $bill_obj){
+        foreach($bill_obj['array_bills'] as $key => $bill_obj){
             $bill = BillOrder::create([
                 'number' => $key + 1,
-                'amount' => $bill_obj->amount,
-                'date' => $bill_obj->date,
-                'observations' => $bill_obj->observations,
-                'num_order' => $bill_obj->order_number,
-                'internal_observations' => $bill_obj->internal_observations,
-                'way_to_pay' => $bill_obj->select_way_to_pay,
-                'expiration' => $bill_obj->select_expiration,
+                'amount' => $bill_obj['amount'],
+                'date' => $bill_obj['date'],
+                'observations' => $bill_obj['observations'],
+                'num_order' => $bill_obj['order_number'],
+                'internal_observations' => $bill_obj['internal_observations'],
+                'way_to_pay' => $bill_obj['select_way_to_pay'],
+                'expiration' => $bill_obj['select_expiration'],
                 'id_order' => $order->id
             ]);
 
@@ -183,12 +189,20 @@ class OrdersInfoges extends Controller
                         return response()->json($response);
                     }
 
-                    if($service->date == $bill->date && $bill_obj->article->id_chapter == $batch->id_chapter){
-                        ServiceBillOrder::create([
-                            'id_service' => $service->id,
-                            'id_bill_order' => $bill->id,
-                        ]);
+                    if($service->date == $bill->date){
+                        foreach($bill_obj['array_id_sage_articles'] as $id_sage_article){
+                            if($id_sage_article == $article->id_sage){
+                                $service_bill = ServiceBillOrder::where('id_service', $service->id)->where('id_bill_order', $bill->id)->first();
+                                if(!$service_bill){
+                                    ServiceBillOrder::create([
+                                        'id_service' => $service->id,
+                                        'id_bill_order' => $bill->id,
+                                    ]);
+                                }
+                            }
+                        }
                     }
+
                 }
             }
 
