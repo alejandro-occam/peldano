@@ -345,7 +345,7 @@ import Textarea from 'primevue/textarea';
 import Calendar from 'primevue/calendar';
 
 export default {
-    name: "FormComponent",
+    name: "FormComponentOrder",
     components: {
         AddButtonComponent,
         FormAddArticleComponent,

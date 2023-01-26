@@ -947,6 +947,11 @@ function createObjectsStore({ state }, response, type){
     if(type == 2){
         custom_state = state.orders;
     }
+
+    if(response.data.proposal.is_custom){
+        custom_state.num_custom_invoices = Number(response.data.proposal_bills.length);
+    }
+
     var array_services = response.data.array_services;
     custom_state.proposal_obj.chapters.articles = [];
     custom_state.proposal_obj.chapters.dates_prices_aux = [];

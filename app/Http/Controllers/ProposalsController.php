@@ -995,6 +995,9 @@ class ProposalsController extends Controller
         //Creamos un array de factuas de ordenes para más tarde crearlas en sage
         $array_bills_orders = array();
 
+        $exist = false;
+        $array_custom_services_order = array();
+
         //Recorremos las facturas y creamos las facturas de la orden
         foreach($array_bills as $bill){
             //Consultamos los articulos de la facturar para ver si tienen IVA o no
@@ -1019,13 +1022,7 @@ class ProposalsController extends Controller
 
             $array_bills_orders[] = $bill_order;
 
-            $nun_custom_invoices = $request->get('nun_custom_invoices');
-            $custom_bill = false;
-            if(isset($nun_custom_invoices)){
-                if($nun_custom_invoices > 0){
-                    $custom_bill = true;
-                }
-            }
+            $custom_bill = $proposal->is_custom;
 
             if(!$custom_bill){
                 //Consultamos el servicio de la factura
@@ -1033,7 +1030,6 @@ class ProposalsController extends Controller
                                         ->leftJoin('services', 'services.id', 'services_bills.id_service')
                                         ->where('services_bills.id_bill', $bill->id)
                                         ->get();
-
                 foreach($array_services as $service){
                     $new_service = Service::create([
                         'pvp' => $service->pvp,
@@ -1050,33 +1046,41 @@ class ProposalsController extends Controller
             }
 
             if($custom_bill){
-                //Consultamos los servicios de la factura
-                $array_services = ServiceBill::select('services.*')
-                                        ->leftJoin('services', 'services.id', 'services_bills.id_service')
-                                        ->where('services_bills.id_bill', $bill->id)
-                                        ->get();
+                if(!$exist){
+                    //Consultamos los servicios de la factura
+                    $array_services = ServiceBill::select('services.*')
+                                            ->leftJoin('services', 'services.id', 'services_bills.id_service')
+                                            ->where('services_bills.id_bill', $bill->id)
+                                            ->get();
 
-                foreach($array_services as $service){
-                    $new_service = Service::create([
-                        'pvp' => $service->pvp,
-                        'date' => $service->date,
-                        'id_article' => $service->id_article
-                    ]);
+                    foreach($array_services as $service){
+                        $new_service = Service::create([
+                            'pvp' => $service->pvp,
+                            'date' => $service->date,
+                            'id_article' => $service->id_article
+                        ]);
 
-                    //Asociamos el servicio a la factura de la orden
-                    $service_order = ServiceBillOrder::create([
-                        'id_service' => $new_service->id,
-                        'id_bill_order' => $bill_order->id
-                    ]);
+                        //Guardamos los nuevos servicios para utilizarlos en las siguientes facturas
+                        $array_custom_services_order[] = $new_service;
+                        
+                        //Asociamos el servicio a la factura de la orden
+                        $service_order = ServiceBillOrder::create([
+                            'id_service' => $new_service->id,
+                            'id_bill_order' => $bill_order->id
+                        ]);
+                    }
 
+                }else{
+                    foreach($array_custom_services_order as $service){
+                        //Asociamos el servicio a la factura de la orden
+                        $service_order = ServiceBillOrder::create([
+                            'id_service' => $new_service->id,
+                            'id_bill_order' => $bill_order->id
+                        ]);
+                    }
                 }
 
-                /*foreach($array_services_aux as $service){
-                    ServiceBill::create([
-                        'id_service' => $service->id,
-                        'id_bill' => $bill->id,
-                    ]);
-                }*/
+                $exist = true;
             }  
         }
 

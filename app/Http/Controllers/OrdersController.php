@@ -651,8 +651,11 @@ class OrdersController extends Controller
         $is_save = 0;
         foreach($array_bills as $bill){
             $array_services_bills_orders = ServiceBillOrder::where('id_bill_order', $bill)->get();
+            error_log('array_services_bills_orders: '.$array_services_bills_orders);
             foreach($array_services_bills_orders as $service_bill_order){
-                if(($order->is_custom && !$is_save) || (!$service_bill_order->is_custom)){
+                error_log('order->is_custom: '.$order->is_custom);
+                error_log('is_save: '.$is_save);
+                if(($order->is_custom && !$is_save)){
                     $array_services[] = $service_bill_order->id_service;
                 }
                 $service_bill_order->delete();
@@ -660,6 +663,9 @@ class OrdersController extends Controller
             $is_save = 1;
             BillOrder::find($bill)->delete();
         }
+
+        error_log('array_services: '.print_r($array_services, true));
+
         //Hay que duplicar los servicios para la ordenes
         foreach($array_services as $service){
             Service::find($service)->delete();
@@ -696,13 +702,9 @@ class OrdersController extends Controller
             ]);
 
             $array_bills_aux[] = $bill;
-            $nun_custom_invoices = $request->get('nun_custom_invoices');
-            $custom_bill = false;
-            if(isset($nun_custom_invoices)){
-                if($nun_custom_invoices > 0){
-                    $custom_bill = true;
-                }
-            }
+
+            $custom_bill = $order->is_custom;
+            
             if(!$custom_bill){
                 //Creamos la relación entre las facturas y los artículos
                 foreach($array_services_aux as $service){
@@ -730,7 +732,7 @@ class OrdersController extends Controller
 
             if($custom_bill){
                 foreach($array_services_aux as $service){
-                    ServiceBill::create([
+                    ServiceBillOrder::create([
                         'id_service' => $service->id,
                         'id_bill_order' => $bill->id,
                     ]);
