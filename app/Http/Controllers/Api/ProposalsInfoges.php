@@ -279,11 +279,25 @@ class ProposalsInfoges extends Controller
                         return response()->json($response);
                     }
 
-                    if($service->date == $bill->date && $bill_obj['id_chapter'] == $batch->id_chapter){
+                    /*if($service->date == $bill->date && $bill_obj['id_chapter'] == $batch->id_chapter){
                         ServiceBill::create([
                             'id_service' => $service->id,
                             'id_bill' => $bill->id,
                         ]);
+                    }*/
+
+                    if($service->date == $bill->date){
+                        foreach($bill_obj['array_id_sage_articles'] as $id_sage_article){
+                            if($id_sage_article == $article->id_sage){
+                                $service_bill = ServiceBill::where('id_service', $service->id)->where('id_bill', $bill->id)->first();
+                                if(!$service_bill){
+                                    ServiceBill::create([
+                                        'id_service' => $service->id,
+                                        'id_bill' => $bill->id,
+                                    ]);
+                                }
+                            }
+                        }
                     }
                 }
             }
