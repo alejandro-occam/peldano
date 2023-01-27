@@ -200,8 +200,6 @@ class ExternalRequestController extends Controller
         $delivery_note['Period'] = Date('Y');
         $delivery_note['Serie'] = 'A';
         $delivery_note['TotalNet'] = floatval(round($request->get('amount'), 2));
-        //$delivery_note['TotalTaxes'] = floatval($request->get('amount')) * 0.21;
-        //$delivery_note['Total'] = floatval($request->get('amount')) * 1.21;
 
         //Creamos el objeto de Lines
         $array_sage_products = $request->get('array_sage_products');
@@ -252,6 +250,8 @@ class ExternalRequestController extends Controller
             $order['TaxNumberType'] = '1';
             $order['InvoiceType'] = '1';
             $order['TotalNet'] = floatval($request->get('amount'));
+            $order['TotalTaxes'] = floatval($request->get('amount')) * 0.21;
+            $order['Total'] = floatval($request->get('amount')) * 1.21;
             $order['Lines'] = $array_lines_to_order;
             $url = 'https://sage200.sage.es/api/sales/SalesInvoices?api-version=1.0';
             $response = json_decode($requ_curls->postSageCurl($url, $order)['response'], true);

@@ -12,6 +12,7 @@ use App\Models\ServiceBill;
 use App\Models\Service;
 use App\Models\Article;
 use App\Models\Company;
+use App\Models\ServiceBillOrder;
 use App\Http\Controllers\CurlController;
 use App\Http\Controllers\ExternalRequestController;
 
@@ -72,7 +73,7 @@ class CreateOrder extends Command
             $array_sage_products = array();
 
             //Consultamos las facturas internas de la propuesta para consultar los artículos-productos
-            $array_proposals_bills = ProposalBill::where('id_proposal', $proposal->id)->get();
+            /*$array_proposals_bills = ProposalBill::where('id_proposal', $proposal->id)->get();
             foreach($array_proposals_bills as $proposal_bill){
                 //Consultamos la fecha de la factura
                 $bill_bd = Bill::find($proposal_bill->id_bill);
@@ -93,11 +94,25 @@ class CreateOrder extends Command
                         $array_sage_products[] = $product;
                     }
                 }
+            }*/
+
+            //Consultamos los artículos de la factura
+            $services_bills_orders = ServiceBillOrder::where('id_bill_order', $bill_order->id)->get();
+            foreach($services_bills_orders as $service_bill_order){
+                $service = Service::find($service_bill_order->id_service);
+                $article = Article::find($service->id_article);
+
+                //Consultamos el id_sage del artículo
+                $request->replace(['code_sage' => $article->id_sage]);
+                $id_sage = $requ_external_request->getProductSage($request);
+                $product['id'] = $id_sage;
+                $product['pvp'] = $service->pvp;
+                $array_sage_products[] = $product;
             }
 
             error_log(print_r($array_sage_products, true));
             //Generamos el albarán en Sage
-            $number = Date('y').$bill_order->id.$bill_order->id_order;
+            $number = Date('ymd').$bill_order->id.$bill_order->id_order;
             $request->replace(['array_sage_products' => $array_sage_products, 'customer_id' => $company->id_sage, 'id_bill_order' => $bill_order->id, 'id_order' => $bill_order->id_order, 'amount' => $bill_order->amount, 'number' => $number]);
             $invoice_custom = $requ_external_request->generateDeliveryNoteSage($request);
             if($id_sage != null){
