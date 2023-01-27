@@ -8,7 +8,7 @@
                 :src="'/media/custom-imgs/icono_btn_exportar.svg'"
                 :width="16"
                 :height="16"
-                @click.native="changeViewStatusProposals(3)"
+                v-on:click="changeViewStatusProposals(3)"
             />
             <AddButtonComponent
                 :columns="'px-4'"
@@ -16,7 +16,7 @@
                 :src="'/media/custom-imgs/icono_btn_annadir_propuesta.svg'"
                 :width="25"
                 :height="25"
-                @click.native="changeViewStatusProposals(2)"
+                v-on:click="changeViewStatusProposals(2)"
             />
         </div>
         <div class="col-12 d-flex flex-wrap mt-6">

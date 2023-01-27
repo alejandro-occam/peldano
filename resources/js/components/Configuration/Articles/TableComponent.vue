@@ -2,7 +2,7 @@
     <div class="row">
         <div class="col-12 d-flex flex-wrap justify-content-between">
             <AddButtonComponent
-                @click.native="changeShowViewArticles(2)"
+                v-on:click="changeShowViewArticles(2)"
                 :columns="'px-4 ml-auto mr-7'"
                 :text="'Exportar'"
                 :id="'btn_export'"
@@ -11,7 +11,7 @@
                 :height="16"
             />
             <AddButtonComponent
-                @click.native="openFormModal()"
+                v-on:click="openFormModal()"
                 :columns="'px-4'"
                 :text="'Añadir artículo'"
                 :id="'btn_add_article'"

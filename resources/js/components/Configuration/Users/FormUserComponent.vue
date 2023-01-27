@@ -4,13 +4,13 @@
             <h2 class="color-blue mr-auto" id="title_modal" v-if="config.users.is_update == 0">Añadir usuario</h2>
             <h2 class="color-blue mr-auto" id="title_modal" v-else>Modificar usuario</h2>
             <AddButtonComponent
-                    @click.native="changeShowView(1)"
-                    :columns="'col-1'"
-                    :text="'Volver'"
-                    :id="'btn_add_user'"
-                    :src="'/media/custom-imgs/flecha_btn_volver.svg'"
-                    :width="16"
-                    :height="16"
+                v-on:click="changeShowView(1)"
+                :columns="'col-1'"
+                :text="'Volver'"
+                :id="'btn_add_user'"
+                :src="'/media/custom-imgs/flecha_btn_volver.svg'"
+                :width="16"
+                :height="16"
                 />
         </div>
         <div class="col-6 pl-0 mt-15">

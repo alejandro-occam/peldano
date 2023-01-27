@@ -10,7 +10,7 @@
                     :src="'/media/custom-imgs/icono_btn_exportar.svg'"
                     :width="16"
                     :height="16"
-                    @click.native="changeViewStatusProposals(3)"
+                    v-on:click="changeViewStatusProposals(3)"
                 />
                 <AddButtonComponent
                     :columns="'ml-auto mr-7'"
@@ -19,7 +19,7 @@
                     :src="'/media/custom-imgs/flecha_btn_volver.svg'"
                     :width="16"
                     :height="16"
-                    @click.native="changeViewStatusReports(1)"
+                    v-on:click="changeViewStatusReports(1)"
                 />
             </div>
         </div>

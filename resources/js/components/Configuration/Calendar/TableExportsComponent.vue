@@ -4,16 +4,16 @@
             <div class="col-12 d-flex flex-wrap justify-content-between" >
                 <h3 class="color-blue">Exportar calendario</h3>
                 <AddButtonComponent
-                        @click.native="changeShowViewCalendar(1)"
-                        :columns="'px-4 ml-auto'"
-                        :text="'Volver'"
-                        :id="'btn_add_user'"
-                        :src="'/media/custom-imgs/flecha_btn_volver.svg'"
-                        :width="16"
-                        :height="16"
+                    v-on:click="changeShowViewCalendar(1)"
+                    :columns="'px-4 ml-auto'"
+                    :text="'Volver'"
+                    :id="'btn_add_user'"
+                    :src="'/media/custom-imgs/flecha_btn_volver.svg'"
+                    :width="16"
+                    :height="16"
                     />
                 <AddButtonComponent
-                    @click.native="downloadFile()"
+                    v-on:click="downloadFile()"
                     :columns="'px-4 mx-7'"
                     :text="'Exportar'"
                     :id="'btn_export'"
@@ -22,7 +22,7 @@
                     :height="16"
                 />
                 <AddButtonComponent
-                    @click.native="printPage()"
+                    v-on:clicke="printPage()"
                     :columns="'px-4'"
                     :text="'Imprimir'"
                     :id="'btn_print_calendars_page'"
