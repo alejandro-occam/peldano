@@ -9,7 +9,7 @@ use App\Models\Channel;
 use App\Models\ProposalBill;
 use App\Models\ServiceBill;
 
-class ReportRecruimentByChannel extends Controller
+class ReportRecruimentByChannelController extends Controller
 {
     //Listado de facturas según el filtro
     function reportsList(Request $request){

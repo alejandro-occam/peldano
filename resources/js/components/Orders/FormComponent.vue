@@ -9,7 +9,7 @@
                     :src="'/media/custom-imgs/flecha_btn_volver.svg'"
                     :width="16"
                     :height="16"
-                    @click.native="returnView()"
+                    v-on:click="returnView()"
                 />
                 <template v-if="!this.is_updating_order">
                     <AddButtonComponent
@@ -19,7 +19,7 @@
                         :src="'/media/custom-imgs/icono_btn_crear_orden.svg'"
                         :width="16"
                         :height="16"
-                        @click.native="copyOrderBtn()"
+                        v-on:click="copyOrderBtn()"
                     />
                     <AddButtonComponent
                         :columns="'mr-7'"
@@ -28,7 +28,7 @@
                         :src="'/media/custom-imgs/icono_btn_editar.svg'"
                         :width="16"
                         :height="16"
-                        @click.native="updateOrderFront()"
+                        v-on:click="updateOrderFront()"
                     />
                     <DeleteButtonComponent
                         :columns="''"
@@ -37,7 +37,7 @@
                         :src="'/media/custom-imgs/icono_btn_borrar.svg'"
                         :width="16"
                         :height="16"
-                        @click.native="deleteOrderAction()"
+                        v-on:click="deleteOrderAction()"
                     />
                 </template>
                 
@@ -50,7 +50,7 @@
                     :src="'/media/custom-imgs/flecha_btn_volver.svg'"
                     :width="16"
                     :height="16"
-                    @click.native="returnView()"
+                    v-on:click="returnView()"
                 />
                 
             </template>
@@ -255,8 +255,8 @@
                     <option value="4">Autopromoción</option>
                 </select>
                 <div class="mt-10" v-if="!is_show_buttons_bill">
-                    <button type="submit" class="btn bg-azul color-white px-5 font-weight-bolder mr-4" @click.native="createBills()">Crear factura simple</button>
-                    <button type="submit" class="btn bg-azul color-white px-5 font-weight-bolder ml-4" @click.native="openCustomInvoice()">Crear factura personalizada</button>
+                    <button type="submit" class="btn bg-azul color-white px-5 font-weight-bolder mr-4" v-on:click="createBills()">Crear factura simple</button>
+                    <button type="submit" class="btn bg-azul color-white px-5 font-weight-bolder ml-4" v-on:click="openCustomInvoice()">Crear factura personalizada</button>
                 </div>
             </div>
             <div class="col-12 pl-0 mt-10" v-if="(orders.proposal_obj.chapters[0].chapter_obj != null && this.is_show_buttons_bill && !this.finish_proposal && !this.generate_proposal) || (orders.proposal_obj.chapters[0].chapter_obj != null && this.is_change_get_info == 1)">
@@ -300,7 +300,7 @@
                                     {{ $utils.roundAndFix(orders.bill_obj.array_bills[index].amount) }}
                                 </td>
                                 <td v-if="this.is_change_get_info == 0" class="td-border-right text-align-center">
-                                    <button type="button" class="btn"><img width="40" height="40" src="/media/custom-imgs/icono_tabla_aplicar_todos.svg" @click.native="changeOptions(index)" /></button>
+                                    <button type="button" class="btn"><img width="40" height="40" src="/media/custom-imgs/icono_tabla_aplicar_todos.svg" v-on:click="changeOptions(index)" /></button>
                                 </td>
                             </tr>   
                             <tr class="row-article">
@@ -353,13 +353,13 @@
                             <td v-if="this.is_change_get_info == 0" colspan="4" class="py-6"><span class="ml-5 font-weight-bolder">TOTAL</span></td>
                             <td v-else colspan="4" class="py-6"><span class="ml-5 font-weight-bolder">TOTAL</span></td>
                             <td class="text-align-right"><span class="font-weight-bolder mr-7">{{ $utils.roundAndFix(orders.bill_obj.total_bill) }}€</span></td>
-                            <td v-if="this.is_change_get_info == 0" class="text-align-center bg-white"><span class="font-weight-bolder"><button type="button" class="btn"><img  width="40" height="40" src="/media/custom-imgs/icono_tabla_eliminar.svg" @click.native="this.is_show_buttons_bill=false"/></button></span></td>
+                            <td v-if="this.is_change_get_info == 0" class="text-align-center bg-white"><span class="font-weight-bolder"><button type="button" class="btn"><img  width="40" height="40" src="/media/custom-imgs/icono_tabla_eliminar.svg" v-on:click="this.is_show_buttons_bill=false"/></button></span></td>
                         </tr>    
                     </tbody>
                 </table>
                 <div class="mt-10">
-                    <button v-if="this.is_change_get_info == 0" @click.native="this.finishProposal()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Finalizar propuesta</button>
-                    <button v-else-if="!this.is_change_get_info" @click.native="this.finishProposal()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Guardar cambios</button>
+                    <button v-if="this.is_change_get_info == 0" v-on:click="this.finishProposal()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Finalizar propuesta</button>
+                    <button v-else-if="!this.is_change_get_info" v-on:click="this.finishProposal()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Guardar cambios</button>
                 </div>
             </div>
             <div class="col-12 pl-0 mt-10" v-if="orders.proposal_obj.chapters[0].chapter_obj != null && this.is_show_buttons_bill && this.finish_proposal && !this.generate_proposal">
@@ -527,7 +527,7 @@
                     </div>
                 </div>
                 <div class="mt-10">
-                    <button @click.native="this.generateProposal()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Generar propuesta</button>
+                    <button v-on:click="this.generateProposal()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Generar propuesta</button>
                 </div>
             </div>
             <div class="col-12 pl-0 mt-10" v-if="orders.proposal_obj.chapters[0].chapter_obj != null && this.is_show_buttons_bill && this.finish_proposal && this.generate_proposal && this.is_change_get_info == 0">

@@ -28,7 +28,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
 
     //REPORTS
     //Listar informes de contratación por canal
-    Route::post('/report_list_by_channel', [App\Http\Controllers\ReportRecruimentByChannel::class, 'reportsList'])->name('report_list_by_channel');
+    Route::post('/report_list_by_channel', [App\Http\Controllers\ReportRecruimentByChannelController::class, 'reportsList'])->name('report_list_by_channel');
 
     //PROPOSALS
     //Listar propuestas

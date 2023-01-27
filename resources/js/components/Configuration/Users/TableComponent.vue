@@ -7,7 +7,7 @@
                 :placeholder="'Buscar...'"
             />
             <AddButtonComponent
-                @click.native="openModalAddUser()"
+                v-on:click="openModalAddUser()"
                 :columns="'px-4'"
                 :text="'Añadir usuario'"
                 :id="'btn_add_user'"

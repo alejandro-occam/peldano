@@ -10,7 +10,7 @@
                     :src="'/media/custom-imgs/icono_btn_exportar.svg'"
                     :width="16"
                     :height="16"
-                    @click.native="changeViewStatusProposals(3)"
+                    v-on:click="changeViewStatusProposals(3)"
                 />
                 <RouterButton
                     :columns="'ml-auto mr-7'"
@@ -99,7 +99,7 @@
             </select>
         </div>
         <div class="mx-2 col-12 d-flex mt-10">
-            <button type="submit" class="btn bg-azul color-white px-35 font-weight-bolder" @click.native="filteRreportListByChannel()">Generar informe</button>
+            <button type="submit" class="btn bg-azul color-white px-35 font-weight-bolder" v-on:click="filteRreportListByChannel()">Generar informe</button>
         </div>
     </div>
     <Divider class="my-15" />

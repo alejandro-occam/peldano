@@ -10,7 +10,7 @@
                     :src="'/media/custom-imgs/icono_btn_exportar.svg'"
                     :width="16"
                     :height="16"
-                    @click.native="changeViewStatusProposals(3)"
+                    v-on:click="console.log('hola')"
                 />
                 <RouterButton
                     :columns="'ml-auto mr-7'"
@@ -128,7 +128,7 @@
         <table width="100%" cellpadding="2" cellspacing="1">
             <thead class="custom-columns-datatable">
                 <tr>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 50px;"><span>SEC</span></th>
+                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 50px;"><span>DEP</span></th>
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 50px;"><span>TIPO</span></th>
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 125px;"><span>PERIODO</span></th>
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>*Jan-22</span></th>
@@ -691,7 +691,7 @@
                     select_articles_project: this.select_project
                 }
                 this.getChapters(params);
-            },
+            }
         }
     };
 </script>

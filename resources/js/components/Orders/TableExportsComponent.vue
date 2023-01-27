@@ -13,7 +13,7 @@
                         :height="16"
                     />
                 <AddButtonComponent
-                    @click.native="downloadFile()"
+                    v-on:click="downloadFile()"
                     :columns="'px-4 mx-7'"
                     :text="'Exportar'"
                     :id="'btn_export'"
@@ -22,7 +22,7 @@
                     :height="16"
                 />
                 <AddButtonComponent
-                    @click.native="printPage()"
+                    v-on:click="printPage()"
                     :columns="'px-4'"
                     :text="'Imprimir'"
                     :id="'btn_print_calendars_page'"
