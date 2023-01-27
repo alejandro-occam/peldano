@@ -12,14 +12,13 @@
                     :height="16"
                     @click.native="changeViewStatusProposals(3)"
                 />
-                <AddButtonComponent
+                <RouterButton
                     :columns="'ml-auto mr-7'"
                     :text="'Volver'"
                     :id="'btn_return'"
                     :src="'/media/custom-imgs/flecha_btn_volver.svg'"
                     :width="16"
                     :height="16"
-                    @click.native="changeViewStatusReports(1)"
                 />
             </div>
         </div>
@@ -576,6 +575,7 @@
     import { mapMutations, mapActions, mapState } from "vuex";
 
     import AddButtonComponent from "../../../Partials/AddButtonComponent.vue";
+    import RouterButton from "../../../Partials/RouterButton.vue";
     import Calendar from 'primevue/calendar';
     import Divider from 'primevue/divider';
     import Chart from 'primevue/chart';
@@ -584,6 +584,7 @@
         name: "TableComponentOption4",
         components: {
             AddButtonComponent,
+            RouterButton,
             Calendar,
             Divider,
             Chart
