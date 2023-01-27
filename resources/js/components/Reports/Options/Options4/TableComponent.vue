@@ -10,7 +10,7 @@
                     :src="'/media/custom-imgs/icono_btn_exportar.svg'"
                     :width="16"
                     :height="16"
-                    v-on:click="console.log('hola')"
+                    v-on:click="downloadReportListByChannelFront()"
                 />
                 <RouterButton
                     :columns="'ml-auto mr-7'"
@@ -220,7 +220,7 @@
             this.getDepartments(params);
         },
         methods: {
-            ...mapActions(["getUsers", "getDepartments", "getSections", "getChannels", "getProjects", "getChapters", "reportListSalesOrdersSigned"]),
+            ...mapActions(["getUsers", "getDepartments", "getSections", "getChannels", "getProjects", "getChapters", "reportListSalesOrdersSigned", "downloadReportListByChannel"]),
             ...mapMutations(["changeViewStatusReports"]),
             //Consultar fecha actual
             getNow() {
@@ -326,6 +326,9 @@
                 }
 
                 this.reportListSalesOrdersSigned(params);
+            },
+            downloadReportListByChannelFront(){
+                this.downloadReportListByChannel();
             },
             // Validates that the input string is a valid date formatted as "mm/dd/yyyy"
             isValidDate(dateString) {
