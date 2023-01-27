@@ -122,7 +122,7 @@
         </div>
     </div>
     <Divider class="my-15" />
-    <div class="col-12 mt-15">
+    <div class="col-12 mt-15" v-if="Number(reports.array_bills_orders.length) > 0">
         <table width="100%" cellpadding="2" cellspacing="1">
             <thead class="custom-columns-datatable">
                 <tr>

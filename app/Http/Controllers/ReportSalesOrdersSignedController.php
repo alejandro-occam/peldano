@@ -222,22 +222,22 @@ class ReportSalesOrdersSignedController extends Controller
                 $exist = false;
                 $position = 0;
                 foreach($array_bills_orders_custom as $key_array_bills_orders_custom => $bill_order_custom){
-                    if($bill_order_custom['dep'] == $bill_order_dig->department_nomenclature && $bill_order_custom['type'] == $bill_order_dig->channel_nomenclature){
+                    if($bill_order_custom['dep'] == $order_dig->department_nomenclature && $bill_order_custom['type'] == $order_dig->channel_nomenclature){
                         $exist = true;
                         $position = $key_array_bills_orders_custom;
                     }
                 }
 
                 if(!$exist){
-                    $custom_obj['dep'] = $bill_order_dig->department_nomenclature;
-                    $custom_obj['dep_name'] = $bill_order_dig->department_name;
-                    $custom_obj['id_dep'] = $bill_order_dig->id_department;
-                    $custom_obj['type'] = $bill_order_dig->channel_nomenclature;
-                    $custom_obj['id_type'] = $bill_order_dig->id_channel;
+                    $custom_obj['dep'] = $order_dig->department_nomenclature;
+                    $custom_obj['dep_name'] = $order_dig->department_name;
+                    $custom_obj['id_dep'] = $order_dig->id_department;
+                    $custom_obj['type'] = $order_dig->channel_nomenclature;
+                    $custom_obj['id_type'] = $order_dig->id_channel;
 
                     $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
                     foreach($array_dates_old as $key_date => $date){
-                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
                             $custom_obj_old['amounts'][] = round($amount, 2);
                         }else{
                             $custom_obj_old['amounts'][] = 0;
@@ -247,7 +247,7 @@ class ReportSalesOrdersSignedController extends Controller
 
                     $custom_obj_new['period'] = $date_from.' a '.$date_to;
                     foreach($array_dates as $key_date => $date){
-                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
                         //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
                             $custom_obj_new['amounts'][] = round($amount, 2);
                         }else{
@@ -264,12 +264,12 @@ class ReportSalesOrdersSignedController extends Controller
                 if($exist){
                     //Aquí sumariamos precios de las ordenes
                     foreach($array_dates_old as $key_date => $date){
-                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
                             $array_bills_orders_custom[$position]['old']['amounts'][$key_date] += round($amount, 2);
                         }
                     }
                     foreach($array_dates as $key_date => $date){
-                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
                         //if($date['last_date_custom'] >= $custom_date && $date['first_date_custom'] <= $custom_date){
                             $array_bills_orders_custom[$position]['new']['amounts'][$key_date] += round($amount, 2);
                         }
