@@ -22,9 +22,31 @@ class ProposalsInfoges extends Controller
 
     //Crear propuesta
     function createProposal(Request $request){
+        //Comprobamos se manda el email del ordenante
+        if (!$request->has('email')){
+            $response['code'] = 1004;
+            return response()->json($response);
+        }
+
+        //Comprobamos se manda el email del contacto
+        if (!$request->has('email_contact')){
+            $response['code'] = 1005;
+            return response()->json($response);
+        }
+
         //$id_company = $request->get('id_company');
         $email_contact = $request->get('email_contact');
         $email = $request->get('email');
+
+        if(empty($email)){
+            $response['code'] = 1004;
+            return response()->json($response);
+        }
+
+        if(empty($email_contact)){
+            $response['code'] = 1005;
+            return response()->json($response);
+        }
     
         //Consultamos el usuario
         $user = User::where('email', $email)->first();
