@@ -778,11 +778,14 @@ class ReportRecruimentByChannelController extends Controller
         return $diff = (($year2 - $year1) * 12) + ($month2 - $month1);
     }
 
-    //Descargar tabla propuestas csv
-    function downloadReportsListCsv(){ 
-        $date_from = '01-01-2023';//$request->get('date_from');
-        $date_to = '31-12-2023';//$request->get('date_to');
-        $select_compare = 1;
+    //Descargar tabla de listado de informes csv
+    function downloadReportsListCsv(Request $request){ 
+        $select_department = $request->get('select_department');
+        $select_consultant = $request->get('select_consultant');
+        $select_order = $request->get('select_order');
+        $select_compare = $request->get('select_compare');
+        $date_from = $request->get('date_from');
+        $date_to = $request->get('date_to');
 
         //Generamos array de fechas
         $array_dates = array();
@@ -805,6 +808,10 @@ class ReportRecruimentByChannelController extends Controller
         //Generamos los arrays de fechas
         $array_dates = $this->generateDateArray($num_months, $date_from_custom, 1);
         $array_dates_old = $this->generateDateArray($num_months, $date_from_custom_old, 2);
+
+        //Generamos los arrays de fechas
+        $array_dates = $this->generateDateArray($num_months, $date_from_custom, 1);
+        $array_dates_old = $this->generateDateArray($num_months, $date_from_custom_old, 2);
         $array_bills_orders_dig = BillOrder::select('bills_orders.*', 'departments.nomenclature as department_nomenclature', 'departments.name as department_name', 'departments.id as id_department', 'proposals.id as id_proposal', 'channels.nomenclature as channel_nomenclature')
                                         ->leftJoin('orders', 'orders.id', 'bills_orders.id_order')
                                         ->leftJoin('proposals', 'orders.id_proposal', 'proposals.id')
@@ -820,10 +827,83 @@ class ReportRecruimentByChannelController extends Controller
                                         ->leftJoin('projects', 'projects.id', 'chapters.id_project')
                                         ->leftJoin('channels', 'channels.id', 'projects.id_channel');
         
+        $array_bills_orders_print = BillOrder::select('bills_orders.*', 'departments.nomenclature as department_nomenclature', 'departments.name as department_name', 'departments.id as id_department', 'proposals.id as id_proposal', 'channels.nomenclature as channel_nomenclature')
+                                        ->leftJoin('orders', 'orders.id', 'bills_orders.id_order')
+                                        ->leftJoin('proposals', 'orders.id_proposal', 'proposals.id')
+                                        ->leftJoin('contacts', 'proposals.id_contact', 'contacts.id')
+                                        ->leftJoin('departments', 'proposals.id_department', 'departments.id')
+                                        ->leftJoin('proposals_bills', 'proposals_bills.id_proposal', 'proposals.id')
+                                        ->leftJoin('services_bills', 'services_bills.id_bill', 'proposals_bills.id_bill')
+                                        ->leftJoin('bills', 'bills.id', 'services_bills.id_bill')
+                                        ->leftJoin('services', 'services.id', 'services_bills.id_service')
+                                        ->leftJoin('articles', 'articles.id', 'services.id_article')
+                                        ->leftJoin('batchs', 'batchs.id', 'articles.id_batch')
+                                        ->leftJoin('chapters', 'chapters.id', 'batchs.id_chapter')
+                                        ->leftJoin('projects', 'projects.id', 'chapters.id_project')
+                                        ->leftJoin('channels', 'channels.id', 'projects.id_channel');
+                                    
+        $array_bills_orders_others = BillOrder::select('bills_orders.*', 'departments.nomenclature as department_nomenclature', 'departments.name as department_name', 'departments.id as id_department', 'proposals.id as id_proposal', 'channels.nomenclature as channel_nomenclature')
+                                        ->leftJoin('orders', 'orders.id', 'bills_orders.id_order')
+                                        ->leftJoin('proposals', 'orders.id_proposal', 'proposals.id')
+                                        ->leftJoin('contacts', 'proposals.id_contact', 'contacts.id')
+                                        ->leftJoin('departments', 'proposals.id_department', 'departments.id')
+                                        ->leftJoin('proposals_bills', 'proposals_bills.id_proposal', 'proposals.id')
+                                        ->leftJoin('services_bills', 'services_bills.id_bill', 'proposals_bills.id_bill')
+                                        ->leftJoin('bills', 'bills.id', 'services_bills.id_bill')
+                                        ->leftJoin('services', 'services.id', 'services_bills.id_service')
+                                        ->leftJoin('articles', 'articles.id', 'services.id_article')
+                                        ->leftJoin('batchs', 'batchs.id', 'articles.id_batch')
+                                        ->leftJoin('chapters', 'chapters.id', 'batchs.id_chapter')
+                                        ->leftJoin('projects', 'projects.id', 'chapters.id_project')
+                                        ->leftJoin('channels', 'channels.id', 'projects.id_channel');
+                                        
+        //Filtro departamente
+        if($select_department != '0'){
+            $array_bills_orders_dig = $array_bills_orders_dig->where('proposals.id_department', $select_department);
+            $array_bills_orders_print = $array_bills_orders_print->where('proposals.id_department', $select_department);
+            $array_bills_orders_others = $array_bills_orders_others->where('proposals.id_department', $select_department);
+        }
+
+        //Filtro consultor
+        if($select_consultant != '0'){
+            $array_bills_orders_dig = $array_bills_orders_dig->where('contacts.id', $select_consultant);
+            $array_bills_orders_print = $array_bills_orders_print->where('contacts.id', $select_consultant);
+            $array_bills_orders_others = $array_bills_orders_others->where('contacts.id', $select_consultant);
+        }
+
+        //Filtro firmada o editando
+        if($select_order == '1'){
+            $array_bills_orders_dig = $array_bills_orders_dig->where('bills_orders.id_sage', '<>', null)->where('bills_orders.receipt_order_sage', '<>', null);
+            $array_bills_orders_print = $array_bills_orders_print->where('bills_orders.id_sage', '<>', null)->where('bills_orders.receipt_order_sage', '<>', null);
+            $array_bills_orders_others = $array_bills_orders_others->where('bills_orders.id_sage', '<>', null)->where('bills_orders.receipt_order_sage', '<>', null);
+        }
+
+        if($select_order == '2'){
+            $array_bills_orders_dig = $array_bills_orders_dig->where('bills_orders.id_sage', null)->where('bills_orders.receipt_order_sage', null);
+            $array_bills_orders_print = $array_bills_orders_print->where('bills_orders.id_sage', null)->where('bills_orders.receipt_order_sage', null);
+            $array_bills_orders_others = $array_bills_orders_others->where('bills_orders.id_sage', null)->where('bills_orders.receipt_order_sage', null);
+        }
         //Facturas DIG
         $array_bills_orders_dig = $array_bills_orders_dig->where('channels.nomenclature', 'DIG')
                                                 ->groupBy('bills_orders.id', 'channels.nomenclature')
                                                 ->get();    
+
+        //Facturas PRINT
+        $array_bills_orders_print = $array_bills_orders_print->where('channels.nomenclature', 'PRINT')
+                                                            ->groupBy('bills_orders.id', 'channels.nomenclature')
+                                                            ->get();
+                                                            //error_log(count($array_bills_orders_print));
+                                                            //error_log('array_bills_orders_print: '.$array_bills_orders_print);
+
+        //Facturas OTROS
+        $array_bills_orders_others = $array_bills_orders_others->whereNotIn('channels.nomenclature', ['DIG', 'PRINT'])
+                ->groupBy('bills_orders.id', 'channels.nomenclature')
+                ->get();
+        //error_log(count($array_bills_orders_others));
+        //error_log('array_bills_orders_others: '.$array_bills_orders_others);
+
+        $array_bills_orders_custom = array();
+
         //Recorremos el objeto DIG
         foreach($array_bills_orders_dig as $key => $bill_order_dig){
             $custom_date_array = explode("-", $bill_order_dig->date);
@@ -918,6 +998,167 @@ class ReportRecruimentByChannelController extends Controller
                         if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
                         //if($date['last_date_custom'] >= $custom_date && $date['first_date_custom'] <= $custom_date){
                             $array_bills_orders_custom[$position]['new']['amounts'][$key_date] += round($bill_order_dig->amount, 2);
+                        }
+                    }
+                }
+            }
+        }
+
+        //Recorremos el objeto PRINT
+        foreach($array_bills_orders_print as $key => $bill_order_print){
+            $custom_obj = null;
+            $custom_obj_new = null;
+            $custom_obj_old = null;
+            $custom_obj_diference = null;
+            $custom_date_array = explode("-", $bill_order_print->date);
+            $custom_date = $custom_date_array[1].'-'.$custom_date_array[0].'-'.$custom_date_array[2];
+
+            if($key == 0){
+                $custom_obj['dep'] = $bill_order_print->department_nomenclature;
+                $custom_obj['dep_name'] = $bill_order_print->department_name;
+                $custom_obj['id_dep'] = $bill_order_print->id_department;
+                $custom_obj['type'] = $bill_order_print->channel_nomenclature;
+                $custom_obj['id_type'] = $bill_order_print->id_channel;
+
+                $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
+                foreach($array_dates_old as $key_date => $date){
+                    if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_print->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_print->date)){
+                        $custom_obj_old['amounts'][] = round($bill_order_print->amount, 2);
+                    }else{
+                        $custom_obj_old['amounts'][] = 0;
+                    }
+                }
+                $custom_obj_new['period'] = $date_from.' a '.$date_to;
+                foreach($array_dates as $key_date => $date){
+                    if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_print->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_print->date)){
+                        $custom_obj_new['amounts'][] = round($bill_order_print->amount, 2);
+                    }else{
+                        $custom_obj_new['amounts'][] = 0;
+                    }
+                }
+
+                $custom_obj_diference['period'] = 'Diferencia%';
+                $custom_obj['old'] = $custom_obj_old;
+                $custom_obj['new'] = $custom_obj_new;
+                $custom_obj['diference'] = $custom_obj_diference;
+                $array_bills_orders_custom[] = $custom_obj;
+
+            }else{
+                $exist = false;
+                $position = 0;
+                foreach($array_bills_orders_custom as $key_array_bills_orders_custom => $bill_order_custom){
+                    if($bill_order_custom['dep'] == $bill_order_print->department_nomenclature && $bill_order_custom['type'] == $bill_order_print->channel_nomenclature){
+                        $exist = true;
+                        $position = $key_array_bills_orders_custom;
+                    }
+                }
+
+                if(!$exist){
+                    $custom_obj['dep'] = $bill_order_print->department_nomenclature;
+                    $custom_obj['dep_name'] = $bill_order_print->department_name;
+                    $custom_obj['id_dep'] = $bill_order_print->id_department;
+                    $custom_obj['type'] = $bill_order_print->channel_nomenclature;
+                    $custom_obj['id_type'] = $bill_order_print->id_channel;
+                    $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
+
+                    foreach($array_dates_old as $key_date => $date){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_print->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_print->date)){
+                        //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                            $custom_obj_old['amounts'][] = round($bill_order_print->amount, 2);
+                        }else{
+                            $custom_obj_old['amounts'][] = 0;
+                        }
+                    }
+
+                    $custom_obj_new['period'] = $date_from.' a '.$date_to;
+                    foreach($array_dates as $key_date => $date){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_print->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_print->date)){
+                        //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                            $custom_obj_new['amounts'][] = round($bill_order_print->amount, 2);
+                        }else{
+                            $custom_obj_new['amounts'][] = 0;
+                        }
+                    }
+                    $custom_obj_diference['period'] = 'Diferencia%';
+                    $custom_obj['old'] = $custom_obj_old;
+                    $custom_obj['new'] = $custom_obj_new;
+                    $custom_obj['diference'] = $custom_obj_diference;
+                    $array_bills_orders_custom[] = $custom_obj;
+                }
+
+                if($exist){
+                    //Aquí sumariamos precios de las ordenes
+                    foreach($array_dates_old as $key_date => $date){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_print->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_print->date)){
+                        //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                            $array_bills_orders_custom[$position]['old']['amounts'][$key_date] += round($bill_order_print->amount, 2);
+                        }
+                    }
+                    foreach($array_dates as $key_date => $date){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_print->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_print->date)){
+                        //if($date['last_date_custom'] >= $custom_date && $date['first_date_custom'] <= $custom_date){
+                            $array_bills_orders_custom[$position]['new']['amounts'][$key_date] += round($bill_order_print->amount, 2);
+                        }
+                    }
+                }
+            }
+        }
+
+        //Recorremos el objeto OTROS
+        foreach($array_bills_orders_others as $key => $bill_order_others){
+            $custom_obj = null;
+            $custom_obj_new = null;
+            $custom_obj_old = null;
+            $custom_obj_diference = null;
+
+            $custom_date_array = explode("-", $bill_order_others->date);
+            $custom_date = $custom_date_array[1].'-'.$custom_date_array[0].'-'.$custom_date_array[2];
+
+            if($key == 0){
+                $custom_obj['dep'] = $bill_order_others->department_nomenclature;
+                $custom_obj['dep_name'] = $bill_order_others->department_name;
+                $custom_obj['id_dep'] = $bill_order_others->id_department;
+                $custom_obj['type'] = 'OTROS';
+                $custom_obj['id_type'] = $bill_order_others->id_channel;
+
+                $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
+                foreach($array_dates_old as $key_date => $date){
+                    if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_others->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_others->date)){
+                    //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                        $custom_obj_old['amounts'][] = round($bill_order_others->amount, 2);
+                    }else{
+                        $custom_obj_old['amounts'][] = 0;
+                    }
+                }
+                $custom_obj_new['period'] = $date_from.' a '.$date_to;
+                foreach($array_dates as $key_date => $date){
+                    if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_others->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_others->date)){
+                    //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                        $custom_obj_new['amounts'][] = round($bill_order_others->amount, 2);
+                    }else{
+                        $custom_obj_new['amounts'][] = 0;
+                    }
+                }
+
+                $custom_obj_diference['period'] = 'Diferencia%';
+                $custom_obj['old'] = $custom_obj_old;
+                $custom_obj['new'] = $custom_obj_new;
+                $custom_obj['diference'] = $custom_obj_diference;
+                $array_bills_orders_custom[] = $custom_obj;
+
+            }else{
+                foreach($array_bills_orders_custom as $key_array_bills_orders_custom => $bill_order_custom){
+                    //Aquí sumariamos precios de las ordenes
+                    foreach($array_dates_old as $key_date => $date){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_others->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_others->date)){
+                        //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                            $array_bills_orders_custom[$key_array_bills_orders_custom]['old']['amounts'][$key_date] += round($bill_order_others->amount, 2);
+                        }
+                    }
+                    foreach($array_dates as $key_date => $date){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_others->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_others->date)){
+                        //if($date['last_date_custom'] >= $custom_date && $date['first_date_custom'] <= $custom_date){
+                            $array_bills_orders_custom[$key_array_bills_orders_custom]['new']['amounts'][$key_date] += round($bill_order_others->amount, 2);
                         }
                     }
                 }
@@ -1057,6 +1298,7 @@ class ReportRecruimentByChannelController extends Controller
                         }
                     }
 
+                    $custom_obj['diference']['period'] = 'Diferencia%';
                     $custom_obj['diference']['amounts'] = $amounts_diference;
                     $array_bills_orders_custom_aux[] = $custom_obj;
                 }
@@ -1111,6 +1353,7 @@ class ReportRecruimentByChannelController extends Controller
                         }
                     }
 
+                    $custom_obj['diference']['period'] = 'Diferencia%';
                     $custom_obj['diference']['amounts'] = $amounts_diference;
                     $array_bills_orders_custom_aux[] = $custom_obj;
 
@@ -1223,67 +1466,142 @@ class ReportRecruimentByChannelController extends Controller
             $response['percent_new'] = $percent_new;
         }
 
-        //error_log('array_bills_orders_custom_aux: '.print_r($array_bills_orders_custom_aux, true));
-
-        /*$data = array( 
-            array("NAME" => "John Doe", "EMAIL" => "john.doe@gmail.com", "GENDER" => "Male", "COUNTRY" => "United States"), 
-            array("NAME" => "Gary Riley", "GENDER" => "Male", "COUNTRY" => "United Kingdom"), 
-            array("NAME" => "Edward Siu", "EMAIL" => "siu.edward@gmail.com", "GENDER" => "Male", "COUNTRY" => "Switzerland"), 
-            array("NAME" => "Betty Simons", "EMAIL" => "simons@example.com", "GENDER" => "Female", "COUNTRY" => "Australia"), 
-            array("NAME" => "Frances Lieberman", "EMAIL" => "lieberman@gmail.com", "GENDER" => "Female", "COUNTRY" => "United Kingdom") 
-        );
-
-        // Excel file name for download 
-        $fileName = "codexworld_export_data-" . date('Ymd') . ".xls"; 
-        
-        // Headers for download 
-        header("Content-Disposition: attachment; filename=\"$fileName\""); 
-        header("Content-Type: application/vnd.ms-excel"); 
-        
-        $flag = false; 
-        foreach($data as $row) { 
-            if(!$flag) { 
-                // display column names as first row 
-                echo implode("\t", array_keys($row)) . "\n"; 
-                $flag = true; 
-            } 
-            // filter data 
-            //array_walk($row, 'filterData'); 
-            echo implode("\t", array_values($row)) . "\n"; 
-        } */
-
-        $spreadsheet = new Spreadsheet();
-        $sheet = $spreadsheet->getActiveSheet();
-        //Creamos las cabeceras
-        $sheet->setCellValue('A1', 'Dep');
-        $sheet->setCellValue('B1', 'Tipo');
-        $sheet->setCellValue('C1', 'Periodo');
-        $letter = 'C';
-        for($i=0;$i<count($array_dates);$i++){
+        if(count($array_bills_orders_custom_aux) > 0){
+            $spreadsheet = new Spreadsheet();
+            $sheet = $spreadsheet->getActiveSheet();
+            $array_celdas = array();
+            //Creamos las cabeceras
+            $sheet->setCellValue('A1', 'Dep');
+            $array_celdas[] = 'A';
+            $sheet->setCellValue('B1', 'Tipo');
+            $array_celdas[] = 'B';
+            $sheet->setCellValue('C1', 'Periodo');
+            $array_celdas[] = 'C';
+            $letter = 'C';
+            for($i=0;$i<count($array_dates);$i++){
+                $letter++;
+                $array_celdas[] = $letter;
+                $sheet->setCellValue($letter.'1', $array_dates[$i]['date']);
+            }
             $letter++;
-            error_log($letter);
-            error_log($array_dates[$i]['date']);
-            $sheet->setCellValue($letter.'1', $array_dates[$i]['date']);
-        }
-        return;
-        $sheet->setCellValue('H1', 'Total');
+            $array_celdas[] = $letter;
+            $sheet->setCellValue($letter.'1', 'Total');
 
-        foreach($array_proposals as $key => $proposal){
-            $sheet->setCellValue('A'.($key+2), $proposal->id_user);
-            $sheet->setCellValue('B'.($key+2), $proposal['proposal_custom']);
-            $sheet->setCellValue('C'.($key+2), 'CERRADA');
-            $sheet->setCellValue('D'.($key+2), '--');
-            $sheet->setCellValue('E'.($key+2), $proposal['name_contact']);
-            $sheet->setCellValue('F'.($key+2), $proposal->date_proyect);
-            $sheet->setCellValue('G'.($key+2), $proposal['total_amount']);
-            $sheet->setCellValue('H'.($key+2), $proposal['department_name']);
-        }
+            $normal_key = 2;
+            $old_key = 2;
+            $new_key = 3;
+            $diference_key = 4;
 
-        $writer = new Xlsx($spreadsheet);
-        $writer = new Xlsx($spreadsheet);
-        header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
-        header('Content-Disposition: attachment; filename="'.'propuestas.xlsx');
-        $writer->save('php://output');
+            foreach ($array_bills_orders_custom_aux as $key => $bill_order_custom) {
+                if($bill_order_custom['type_obj'] == 1){
+                    foreach($array_celdas as $key_celda => $celda){
+                        if($celda == 'A'){
+                            if(isset($bill_order_custom['dep'])){
+                                $sheet->setCellValue($celda.($normal_key), $bill_order_custom['dep']);
+                            }
+                        }
+                        if($celda == 'B'){
+                            if(isset($bill_order_custom['type'])){
+                                $sheet->setCellValue($celda.($normal_key), $bill_order_custom['type']);
+                            }
+                        }
+
+                        if($celda != 'A' && $celda != 'B'){
+                            if($celda == 'C'){
+                                $sheet->setCellValue($celda.($old_key), $bill_order_custom['old']['period']);
+                                $sheet->setCellValue($celda.($new_key), $bill_order_custom['new']['period']);
+                                $sheet->setCellValue($celda.($diference_key), $bill_order_custom['diference']['period']);
+                            }
+                            if($celda != 'C'){
+                                $sheet->setCellValue($celda.($old_key), $bill_order_custom['old']['amounts'][$key_celda - 3]);
+                                $sheet->setCellValue($celda.($new_key), $bill_order_custom['new']['amounts'][$key_celda - 3]);
+                                $sheet->setCellValue($celda.($diference_key), $bill_order_custom['diference']['amounts'][$key_celda - 3]);
+                            }
+                        }
+                    }
+                }
+
+                if($bill_order_custom['type_obj'] == 2){
+                    foreach($array_celdas as $key_celda => $celda){
+                        if($celda == 'A'){
+                            if(isset($bill_order_custom['dep'])){
+                                $sheet->setCellValue($celda.($normal_key), $bill_order_custom['dep']);
+                            }
+                        }
+
+                        if($celda != 'A' && $celda != 'B'){
+                            if($celda == 'C'){
+                                $sheet->setCellValue($celda.($old_key), $bill_order_custom['old']['period']);
+                                $sheet->setCellValue($celda.($new_key), $bill_order_custom['new']['period']);
+                                $sheet->setCellValue($celda.($diference_key), $bill_order_custom['diference']['period']);
+                            }
+                            if($celda != 'C'){
+                                $sheet->setCellValue($celda.($old_key), $bill_order_custom['old']['amounts'][$key_celda - 3]);
+                                $sheet->setCellValue($celda.($new_key), $bill_order_custom['new']['amounts'][$key_celda - 3]);
+                                $sheet->setCellValue($celda.($diference_key), $bill_order_custom['diference']['amounts'][$key_celda - 3]);
+                            }
+                        }
+                    }
+                }
+
+                if($bill_order_custom['type_obj'] == 3){
+                    foreach($array_celdas as $key_celda => $celda){
+                        if($celda == 'A'){
+                            if(isset($bill_order_custom['dep'])){
+                                $sheet->setCellValue($celda.($normal_key), $bill_order_custom['dep']);
+                            }
+                        }
+
+                        if($celda != 'A' && $celda != 'B'){
+                            if($celda == 'C'){
+                                $sheet->setCellValue($celda.($old_key), $bill_order_custom['old']['period']);
+                                $sheet->setCellValue($celda.($new_key), $bill_order_custom['new']['period']);
+                                $sheet->setCellValue($celda.($diference_key), $bill_order_custom['diference']['period']);
+                            }
+                            if($celda != 'C'){
+                                $sheet->setCellValue($celda.($old_key), $bill_order_custom['old']['amounts'][$key_celda - 3]);
+                                $sheet->setCellValue($celda.($new_key), $bill_order_custom['new']['amounts'][$key_celda - 3]);
+                                $sheet->setCellValue($celda.($diference_key), $bill_order_custom['diference']['amounts'][$key_celda - 3]);
+                            }
+                        }
+                    }
+                }
+                
+                if($bill_order_custom['type_obj'] == 4){
+                    foreach($array_celdas as $key_celda => $celda){
+                        if($celda == 'A'){
+                            if(isset($bill_order_custom['dep'])){
+                                $sheet->setCellValue($celda.($normal_key), $bill_order_custom['dep']);
+                            }
+                        }
+
+                        if($celda != 'A' && $celda != 'B'){
+                            if($celda == 'C'){
+                                $sheet->setCellValue($celda.($old_key), $bill_order_custom['old']['period']);
+                                $sheet->setCellValue($celda.($new_key), $bill_order_custom['new']['period']);
+                                $sheet->setCellValue($celda.($diference_key), $bill_order_custom['diference']['period']);
+                            }
+                            if($celda != 'C'){
+                                $sheet->setCellValue($celda.($old_key), $bill_order_custom['old']['amounts'][$key_celda - 3]);
+                                $sheet->setCellValue($celda.($new_key), $bill_order_custom['new']['amounts'][$key_celda - 3]);
+                                $sheet->setCellValue($celda.($diference_key), $bill_order_custom['diference']['amounts'][$key_celda - 3]);
+                            }
+                        }
+                    }
+                }
+
+                $normal_key += 3;
+                $old_key += 3;
+                $new_key += 3;
+                $diference_key += 3;
+            }
+
+            $writer = new Xlsx($spreadsheet);
+            $writer = new Xlsx($spreadsheet);
+            header('Content-Type: application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+            header('Content-Disposition: attachment; filename="'.'propuestas.xlsx');
+            $writer->save('php://output');
+        }
     }
 
     function filterData(&$str){ 

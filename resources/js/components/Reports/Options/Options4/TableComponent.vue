@@ -10,7 +10,7 @@
                     :src="'/media/custom-imgs/icono_btn_exportar.svg'"
                     :width="16"
                     :height="16"
-                    v-on:click="downloadReportListByChannelFront()"
+                    v-on:click="downloadFile()"
                 />
                 <RouterButton
                     :columns="'ml-auto mr-7'"
@@ -327,9 +327,6 @@
 
                 this.reportListSalesOrdersSigned(params);
             },
-            downloadReportListByChannelFront(){
-                this.downloadReportListByChannel();
-            },
             // Validates that the input string is a valid date formatted as "mm/dd/yyyy"
             isValidDate(dateString) {
                 var regEx = /^\d{2}-\d{2}-\d{4}$/;
@@ -343,7 +340,35 @@
                 } catch (error) {
                     return false;
                 }
-            }
+            },
+            downloadFile(){
+                var date_from = this.date_from;
+                if(!this.isValidDate(this.date_from)){
+                    var date_ms_from = Date.parse(this.date_from);
+                    date_from = this.$utils.customFormDate(date_ms_from);
+                }
+                this.date_from_custom = date_from;
+               
+                var date_to = this.date_to;
+                if(!this.isValidDate(this.date_to)){
+                    var date_ms_to = Date.parse(this.date_to);
+                    date_to = this.$utils.customFormDate(date_ms_to);
+                }
+                this.date_to_custom = date_to;
+            
+                window.open(this.publicPath + "/admin/download_report_sales_orders_signed?select_department="+this.select_department
+                                                                                +"&select_section="+this.select_section
+                                                                                +"&select_channel="+this.select_channel
+                                                                                +"&select_project="+this.select_project
+                                                                                +"&select_chapter="+this.select_chapter
+                                                                                +"&select_consultant="+this.select_consultant
+                                                                                +"&select_order="+this.select_order
+                                                                                +"&select_order="+this.select_order
+                                                                                +"&select_compare="+this.select_compare
+                                                                                +"&date_from="+date_from
+                                                                                +"&date_to="+date_to
+                                                                                ,"_self")
+            },
         }
     };
 </script>
