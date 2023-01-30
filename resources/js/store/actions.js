@@ -939,6 +939,30 @@ const actions = {
             return error;
         }
     },
+    //Descargar csv ordenes por canal
+    async downloadReportListByChannel({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/download_reports_list_by_channel_csv",
+                params: params,
+                method: 'post'
+            });
+
+            state.errors.type_error = 'download_reports_list_by_channel_csv';
+            /*state.errors.code = response.data.code;
+            state.reports.array_dates = response.data.array_dates;
+            state.reports.array_bills_orders = response.data.array_bills_orders_custom;
+            state.reports.percent_old = response.data.percent_old;
+            state.reports.percent_new = response.data.percent_new;
+            state.reports.period_new = response.data.period_new;
+            state.reports.period_old = response.data.period_old;*/
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
     //Listar ordenes firmadas y ventas
     async reportListSalesOrdersSigned({ state }, params){
         try {

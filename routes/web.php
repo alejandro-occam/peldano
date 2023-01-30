@@ -29,8 +29,13 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     //REPORTS
     //Listar informes de contratación por canal
     Route::post('/report_list_by_channel', [App\Http\Controllers\ReportRecruimentByChannelController::class, 'reportsList'])->name('report_list_by_channel');
-    //Listar informes de contratación por canal
+    //Descarga csv de informes de contratación por canal
+    Route::get('/download_reports_list_by_channel_csv', [App\Http\Controllers\ReportRecruimentByChannelController::class, 'downloadReportsListCsv'])->name('download_reports_list_by_channel_csv');
+    //Listar informes de órdenes firmadas y ventas
     Route::post('/report_sales_orders_signed', [App\Http\Controllers\ReportSalesOrdersSignedController::class, 'reportsList'])->name('report_sales_orders_signed');
+    //Descarga csv de informes de órdenes firmadas y ventas
+    Route::get('/download_report_sales_orders_signed', [App\Http\Controllers\ReportSalesOrdersSignedController::class, 'downloadReportsListCsv'])->name('download_report_sales_orders_signed');
+    
 
     //PROPOSALS
     //Listar propuestas
