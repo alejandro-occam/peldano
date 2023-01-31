@@ -50,57 +50,51 @@ class ReportSalesOrdersSignedController extends Controller
                                         ->leftJoin('bills_orders', 'bills_orders.id_order', 'orders.id')                                
                                         ->leftJoin('proposals', 'orders.id_proposal', 'proposals.id')
                                         ->leftJoin('contacts', 'proposals.id_contact', 'contacts.id')
-                                        ->leftJoin('departments', 'proposals.id_department', 'departments.id')
-                                        ->leftJoin('proposals_bills', 'proposals_bills.id_proposal', 'proposals.id')
-                                        ->leftJoin('services_bills', 'services_bills.id_bill', 'proposals_bills.id_bill')
-                                        ->leftJoin('bills', 'bills.id', 'services_bills.id_bill')
-                                        ->leftJoin('services', 'services.id', 'services_bills.id_service')
+                                        ->leftJoin('services_bills_orders', 'services_bills_orders.id_bill_order', 'bills_orders.id')
+                                        ->leftJoin('services', 'services.id', 'services_bills_orders.id_service')
                                         ->leftJoin('articles', 'articles.id', 'services.id_article')
                                         ->leftJoin('batchs', 'batchs.id', 'articles.id_batch')
                                         ->leftJoin('chapters', 'chapters.id', 'batchs.id_chapter')
                                         ->leftJoin('projects', 'projects.id', 'chapters.id_project')
                                         ->leftJoin('channels', 'channels.id', 'projects.id_channel')
-                                        ->leftJoin('sections', 'sections.id', 'channels.id_section');
-        
+                                        ->leftJoin('sections', 'sections.id', 'channels.id_section')
+                                        ->leftJoin('departments', 'departments.id', 'sections.id_department');
+
         //PRINT
         $array_orders_print = Order::select('orders.*', 'departments.nomenclature as department_nomenclature', 'departments.name as department_name', 'departments.id as id_department', 'proposals.id as id_proposal', 'channels.nomenclature as channel_nomenclature')
                                         ->leftJoin('bills_orders', 'bills_orders.id_order', 'orders.id')                                
                                         ->leftJoin('proposals', 'orders.id_proposal', 'proposals.id')
                                         ->leftJoin('contacts', 'proposals.id_contact', 'contacts.id')
-                                        ->leftJoin('departments', 'proposals.id_department', 'departments.id')
-                                        ->leftJoin('proposals_bills', 'proposals_bills.id_proposal', 'proposals.id')
-                                        ->leftJoin('services_bills', 'services_bills.id_bill', 'proposals_bills.id_bill')
-                                        ->leftJoin('bills', 'bills.id', 'services_bills.id_bill')
-                                        ->leftJoin('services', 'services.id', 'services_bills.id_service')
+                                        ->leftJoin('services_bills_orders', 'services_bills_orders.id_bill_order', 'bills_orders.id')
+                                        ->leftJoin('services', 'services.id', 'services_bills_orders.id_service')
                                         ->leftJoin('articles', 'articles.id', 'services.id_article')
                                         ->leftJoin('batchs', 'batchs.id', 'articles.id_batch')
                                         ->leftJoin('chapters', 'chapters.id', 'batchs.id_chapter')
                                         ->leftJoin('projects', 'projects.id', 'chapters.id_project')
                                         ->leftJoin('channels', 'channels.id', 'projects.id_channel')
-                                        ->leftJoin('sections', 'sections.id', 'channels.id_section');
+                                        ->leftJoin('sections', 'sections.id', 'channels.id_section')
+                                        ->leftJoin('departments', 'departments.id', 'sections.id_department');
                
         //OTROS
         $array_orders_others = Order::select('orders.*', 'departments.nomenclature as department_nomenclature', 'departments.name as department_name', 'departments.id as id_department', 'proposals.id as id_proposal', 'channels.nomenclature as channel_nomenclature')
                                         ->leftJoin('bills_orders', 'bills_orders.id_order', 'orders.id')                                
                                         ->leftJoin('proposals', 'orders.id_proposal', 'proposals.id')
                                         ->leftJoin('contacts', 'proposals.id_contact', 'contacts.id')
-                                        ->leftJoin('departments', 'proposals.id_department', 'departments.id')
-                                        ->leftJoin('proposals_bills', 'proposals_bills.id_proposal', 'proposals.id')
-                                        ->leftJoin('services_bills', 'services_bills.id_bill', 'proposals_bills.id_bill')
-                                        ->leftJoin('bills', 'bills.id', 'services_bills.id_bill')
-                                        ->leftJoin('services', 'services.id', 'services_bills.id_service')
+                                        ->leftJoin('services_bills_orders', 'services_bills_orders.id_bill_order', 'bills_orders.id')
+                                        ->leftJoin('services', 'services.id', 'services_bills_orders.id_service')
                                         ->leftJoin('articles', 'articles.id', 'services.id_article')
                                         ->leftJoin('batchs', 'batchs.id', 'articles.id_batch')
                                         ->leftJoin('chapters', 'chapters.id', 'batchs.id_chapter')
                                         ->leftJoin('projects', 'projects.id', 'chapters.id_project')
                                         ->leftJoin('channels', 'channels.id', 'projects.id_channel')
-                                        ->leftJoin('sections', 'sections.id', 'channels.id_section');
+                                        ->leftJoin('sections', 'sections.id', 'channels.id_section')
+                                        ->leftJoin('departments', 'departments.id', 'sections.id_department');
                                         
         //Filtro departamente
         if($select_department != '0'){
-            $array_orders_dig = $array_orders_dig->where('proposals.id_department', $select_department);
-            $array_orders_print = $array_orders_print->where('proposals.id_department', $select_department);
-            $array_orders_others = $array_orders_others->where('proposals.id_department', $select_department);
+            $array_orders_dig = $array_orders_dig->where('departments.id_department', $select_department);
+            $array_orders_print = $array_orders_print->where('departments.id_department', $select_department);
+            $array_orders_others = $array_orders_others->where('departments.id_department', $select_department);
         }
 
         //Filtro sección
@@ -155,19 +149,19 @@ class ReportSalesOrdersSignedController extends Controller
         $array_orders_dig = $array_orders_dig->where('channels.nomenclature', 'DIG')
                                                 ->groupBy('orders.id', 'channels.nomenclature')
                                                 ->get();
-        //error_log('array_orders_dig: '.$array_orders_dig);
+        error_log('array_orders_dig: '.$array_orders_dig);
         //error_log(count($array_orders_dig));
 
         //Facturas PRINT
         $array_orders_print = $array_orders_print->where('channels.nomenclature', 'PRINT')
-                                                ->groupBy('orders.id', 'channels.nomenclature')
+                                                //->groupBy('orders.id', 'channels.nomenclature')
                                                 ->get();
         //error_log(count($array_orders_print));
         //error_log('array_orders_print: '.$array_orders_print);
 
         //Facturas OTROS
         $array_orders_others = $array_orders_others->whereNotIn('channels.nomenclature', ['DIG', 'PRINT'])
-                                                ->groupBy('orders.id', 'channels.nomenclature')
+                                                //->groupBy('orders.id', 'channels.nomenclature')
                                                 ->get();
         //error_log(count($array_orders_others));
         //error_log('array_orders_others: '.$array_orders_others);
