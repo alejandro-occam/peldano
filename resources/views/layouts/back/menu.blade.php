@@ -34,6 +34,7 @@
                     </div>
                 </router-link>
             </li>
+            @if(Auth::user()->hasRole('admin'))
             <li lass="nav-item mb-3 {{ Request::is('/admin/configuration') ? 'menu-item-active' : '' }}" data-toggle="tooltip" data-placement="right" data-container="body" data-boundary="window">
                 <router-link to="/admin/configuration" class="menu-link">
                     <div style="padding: 9px 25px;">
@@ -44,6 +45,7 @@
                     </div>
                 </router-link>
             </li>
+            @endif
         </ul>
         <!--end::Menu Nav-->
     </div>

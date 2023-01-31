@@ -789,6 +789,23 @@ const actions = {
         }
     },
 
+    //Validar propuesta
+    async validateProposal({ state }, id){
+        try {
+            const response = await http({
+                url: "/admin/validate_proposal/"+id,
+                method: 'get'
+            });
+
+            state.errors.type_error = 'validate_proposal';
+            state.errors.code = response.data.code;
+
+        } catch (error) {
+            console.error(error);
+            return error;
+        }
+    },
+
     //Mostrar información de la orden
     async getInfoOrder({ state }, id){
         try {
@@ -1213,7 +1230,8 @@ function createObjectsStore({ state }, response, type){
         sales_possibilities: proposal.sales_possibilities,
         id_proposal_custom: proposal.id_proposal_custom,
         id_proposal_custom_aux: proposal.id_proposal_custom_aux,
-        discount: proposal.discount
+        discount: proposal.discount,
+        status: proposal.status
     }
     
     //Guardamos con un nuevo formato para las facturas los articulos

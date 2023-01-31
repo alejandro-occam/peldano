@@ -258,9 +258,11 @@
                             sortable: !1,
                             textAlign: "center",
                             template: function (row, data, index) {
-                                return (
-                                    '<span class="badge badge-light-success f-14 fw-bold">CERRADA</span>'
-                                );
+                                var html =  '<span class="badge badge-light-success f-14 fw-bold">CERRADA</span>';
+                                if(row.status != 1){
+                                    html = '<span class="badge badge-light-editing f-14 fw-bold">PENDIENTE DE VALIDAR</span>';
+                                }
+                                return html;
                             },
                         },
                         {
