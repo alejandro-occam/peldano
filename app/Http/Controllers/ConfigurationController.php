@@ -19,6 +19,7 @@ use App\Models\Sector;
 use App\Models\Brand;
 use App\Models\Product;
 use App\Models\Article;
+use App\Models\Service;
 use Auth;
 
 //Batchs
@@ -1043,14 +1044,21 @@ class ConfigurationController extends Controller
 
     //Eliminar artículo
     function deleteArticle($id){
-        //Consultamos si existe el usuario
+        //Consultamos si existe el artículo
         $article = Article::find($id);
         if(!$article){
             $response['code'] = 1001;
             return response()->json($response);
         }
 
-        //Eliminamos el calendario
+        //Consultamos si el artículo pertenece a algún servicio de alguna propuesta
+        $service = Service::where('id_article', $article->id)->first();
+        if($service){
+            $response['code'] = 1002;
+            return response()->json($response);
+        }
+
+        //Eliminamos el artículo
         $article->delete();
 
         $response['code'] = 1000;
