@@ -33,7 +33,8 @@ class Proposal extends Model
         'sales_possibilities',
         'id_department',
         'pdf_file',
-        'is_custom'
+        'is_custom',
+        'status'
     ];
 
     /**
@@ -63,7 +64,8 @@ class Proposal extends Model
         'sales_possibilities' => 'string',
         'id_department' => 'integer',
         'pdf_file' => 'string',
-        'is_custom' => 'boolean'
+        'is_custom' => 'boolean',
+        'status' => 'integer'
     ];
 
     /**
@@ -93,7 +95,8 @@ class Proposal extends Model
         'sales_possibilities',
         'id_department',
         'pdf_file',
-        'is_custom'
+        'is_custom',
+        'status'
     ];
 
     public function department()

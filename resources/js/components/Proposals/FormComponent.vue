@@ -1508,7 +1508,9 @@ export default {
                         if(this.errors.msg != ''){
                             var url = this.errors.msg;
                             this.errors.msg = '';
-                            window.open(url);
+                            if(url != ''){
+                                window.open(url);
+                            }
                         }
                         swal("", "Propuesta añadida correctamente", "success");
                     }else{
@@ -1525,7 +1527,9 @@ export default {
                         if(this.errors.msg != ''){
                             var url = this.errors.msg;
                             this.errors.msg = '';
-                            window.open(url);
+                            if(url != ''){
+                                window.open(url);
+                            }
                         }
                         swal("", "Propuesta actualizada correctamente", "success");
                     }else{
