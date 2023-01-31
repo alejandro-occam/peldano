@@ -847,6 +847,10 @@ class ProposalsController extends Controller
         
         $html = '';
         foreach($array_proposals as $proposal){
+            $status_text = 'CERRADA';
+            if($proposal->status == 2){
+                $status_text = 'PENDIENTE DE VALIDAR';
+            }
             $html .= '<tr data-row="0" class="datatable-row" style="left: 0px;">
                         <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#id_user" aria-label="null">
                             <span class="mx-auto">
@@ -860,7 +864,7 @@ class ProposalsController extends Controller
                         </td>
                         <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#status" aria-label="null">
                             <span class="mx-auto">
-                                <span class="text-dark">CERRADA</span>
+                                <span class="text-dark">'.$status_text.'</span>
                             </span>
                         </td>
                         <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#code" aria-label="null">
@@ -970,7 +974,11 @@ class ProposalsController extends Controller
         foreach($array_proposals as $key => $proposal){
             $sheet->setCellValue('A'.($key+2), $proposal->id_user);
             $sheet->setCellValue('B'.($key+2), $proposal['proposal_custom']);
-            $sheet->setCellValue('C'.($key+2), 'CERRADA');
+            if($proposal->status == 2){
+                $sheet->setCellValue('C'.($key+2), 'PENDIENTE DE VALIDAR');
+            }else{
+                $sheet->setCellValue('C'.($key+2), 'CERRADA');
+            }
             $sheet->setCellValue('D'.($key+2), '--');
             $sheet->setCellValue('E'.($key+2), $proposal['name_contact']);
             $sheet->setCellValue('F'.($key+2), $proposal->date_proyect);
