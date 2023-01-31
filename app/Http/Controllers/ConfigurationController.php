@@ -138,7 +138,7 @@ class ConfigurationController extends Controller
         $extension = $request->get('extension');
 
         if (!isset($name) || empty($name) || !isset($surname) || empty($surname) || !isset($email) || empty($email) || !isset($user) || empty($user) || !isset($password) || empty($password) || !isset($id_position) || empty($id_position)
-            || !isset($mobile) || empty($mobile) || !isset($extension) || empty($extension) || !isset($id_rol) || empty($id_rol) || !isset($commission) || empty($commission) || !isset($status) || empty($status)) {
+            || !isset($mobile) || empty($mobile) || !isset($extension) || empty($extension) || !isset($id_rol) || empty($id_rol) || !isset($commission) || !isset($status) || empty($status)) {
             $response['code'] = 1002;
             $response['msg'] = "Missing or empty parameters";
             return response()->json($response);
