@@ -728,7 +728,7 @@ class ProposalsController extends Controller
             $content = $pdf->download()->getOriginalContent();
             Storage::put('pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf',$content);
             $response['pdf_file'] = $proposal->pdf_file;
-            
+
         }else{
             $response['pdf_file'] = '';
         }
@@ -775,6 +775,22 @@ class ProposalsController extends Controller
         $response['code'] = 1000;
         return response()->json($response);
 
+    }
+
+    //Validar propuesta por el admin
+    function validateProposal($id){
+        //Consultamos si existe la propuesta
+        $proposal = Proposal::find($id);
+        if(!$proposal){
+            $response['code'] = 1001;
+            return response()->json($response);
+        }
+
+        //Modificamos el estado de la propuesta
+        $proposal->status = 1;
+        $proposal->save();
+        $response['code'] = 1000;
+        return response()->json($response);
     }
 
     //Listar tabla de propuestas para exportar

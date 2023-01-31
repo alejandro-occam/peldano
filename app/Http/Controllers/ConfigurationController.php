@@ -76,8 +76,8 @@ class ConfigurationController extends Controller
 
         $array_users = User::select('users.*', 'positions.name as position_nane', 'roles.name as role_name')
                         ->leftJoin('positions', 'positions.id', 'users.id_position')
-                        ->leftJoin('roles_users', 'roles_users.id_user', 'users.id_position')
-                        ->leftJoin('roles', 'roles.id', 'roles_users.id_role')
+                        ->leftJoin('role_user', 'role_user.user_id', 'users.id_position')
+                        ->leftJoin('roles', 'roles.id', 'role_user.role_id')
                         ->where('users.name', 'like', '%'.$search.'%')
                         ->orWhere('users.surname', 'like', '%'.$search.'%')
                         ->orWhere('users.email', 'like', '%'.$search.'%')
@@ -185,7 +185,7 @@ class ConfigurationController extends Controller
         $user['discharge_date'] = $this->customDateBis($user->created_at);
 
         //Consultamos el id rol
-        $role_user = RoleUser::select('roles_users.*', 'roles.name as role_name')->leftJoin('roles', 'roles.id', 'roles_users.id_role')->where('roles_users.id_user', $id)->first();
+        $role_user = RoleUser::select('role_user.*', 'roles.name as role_name')->leftJoin('roles', 'roles.id', 'role_user.role_id')->where('role_user.user_id', $id)->first();
         $user['id_rol'] = $role_user->id_role;
         $user['role_name'] = $role_user['role_name'];
         $user['custom_date'] = $this->customDate($user->created_at);
@@ -196,7 +196,11 @@ class ConfigurationController extends Controller
 
     //Consultar información del usuario
     function getUser(){
-        $user = User::select('users.*', 'positions.name as name_position')->leftJoin('positions', 'positions.id', 'users.id_position')->where('users.id', Auth::user()->id)->first();
+        $user = User::select('users.*', 'positions.name as name_position', 'roles.name as role_name') 
+                        ->leftJoin('positions', 'positions.id', 'users.id_position')
+                        ->leftJoin('role_user', 'role_user.user_id', 'users.id')
+                        ->leftJoin('roles', 'roles.id', 'role_user.role_id')
+                        ->where('users.id', Auth::user()->id)->first();
         $response['user'] = $user;
         $response['code'] = 1000;
         return response()->json($response);

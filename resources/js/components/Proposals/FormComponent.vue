@@ -19,6 +19,17 @@
                     :width="16"
                     :height="16"
                     v-on:click="createOrderView()"
+                    v-if="proposals.proposal_bd_obj.status == 1"
+                />
+                <ValidateButtonComponent
+                    :columns="'mr-7'"
+                    :text="'Validar'"
+                    :id="'btn_validate_proposal'"
+                    :src="'/media/custom-imgs/icono_btn_crear_orden.svg'"
+                    :width="16"
+                    :height="16"
+                    v-on:click="this.validateProposal(proposals.proposal_bd_obj.id)"
+                    v-if="proposals.proposal_bd_obj.status == 2 && proposals.user_obj.role_name == 'admin'"
                 />
                 <AddButtonComponent
                     :columns="'mr-7'"
@@ -741,6 +752,7 @@
 import { mapMutations, mapState, mapActions } from "vuex";
 
 import AddButtonComponent from "../Partials/AddButtonComponent.vue";
+import ValidateButtonComponent from "../Partials/ValidateButtonComponent.vue";
 import DeleteButtonComponent from "../Partials/DeleteButtonComponent.vue"
 import FormAddArticleComponent from "./FormAddArticleComponent.vue";
 import ModalCustomInvoiceComponent from "./ModalCustomInvoiceComponent.vue";
@@ -748,12 +760,12 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Textarea from 'primevue/textarea';
 import Calendar from 'primevue/calendar';
-import { throwStatement } from "@babel/types";
 
 export default {
     name: "FormComponent",
     components: {
         AddButtonComponent,
+        ValidateButtonComponent,
         FormAddArticleComponent,
         DataTable,
         Column,
@@ -842,7 +854,7 @@ export default {
     },
     methods: {
         ...mapMutations(["clearError", "changeViewStatusProposals", "changeProposalObj", "changeValueIsChangeArticle", "generateBill", "clearObjectsProposal"]),
-        ...mapActions(["getCompanies", "saveProposal", "updateProposal", "deleteProposal", "createOrder", "getUser"]),
+        ...mapActions(["getCompanies", "saveProposal", "updateProposal", "deleteProposal", "createOrder", "getUser", "validateProposal"]),
         openFormArticle(){
             $('#modal_form_article_proposals').modal('show');
         },
@@ -1553,7 +1565,7 @@ export default {
                     }
                 }
 
-            }if(this.errors.type_error == 'create_order'){
+            }else if(this.errors.type_error == 'create_order'){
                 if(this.errors.code != ''){
                     if(this.errors.code == 1000){
                         $("#list_proposals").KTDatatable("reload");
@@ -1568,6 +1580,18 @@ export default {
                     }
                 }
 
+            }else if(this.errors.type_error == 'validate_proposal'){
+                if(this.errors.code != ''){
+                    if(this.errors.code == 1000){
+                        this.proposals.proposal_bd_obj.status = 1;
+                        swal("", "Propuesta validada correctamente", "success");
+                    }else if(this.errors.code == 1001){
+                        swal("", "No existe esta propuesta", "warning");
+
+                    }else{
+                        swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
+                    }
+                }
             }
             this.clearError();
         },

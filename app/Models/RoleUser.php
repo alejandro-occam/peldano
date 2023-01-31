@@ -9,7 +9,7 @@ class RoleUser extends Model
 {
     use HasFactory;
 
-    public $table = 'roles_users';
+    public $table = 'role_user';
 
     public $fillable = [
         'id_role',
