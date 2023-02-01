@@ -30,14 +30,14 @@ class ReportSalesOrdersSignedController extends Controller
         $date_from_array = explode("-", $date_from);
         $date_from_custom = $date_from_array[1].'-01-'.$date_from_array[2];
         $date_from_custom_old_time = strtotime($date_from);
-        $date_from_custom_old = date('d-m-Y', strtotime("-".$select_compare." year", $date_from_custom_old_time));
+        $date_from_custom_old = date('d-m-Y', strtotime("-1 year", $date_from_custom_old_time));
         //error_log('date_from_custom: '.$date_from_custom);
         //error_log('date_from_custom_old: '.$date_from_custom_old);
 
         $date_to_array = explode("-", $date_to);
         $date_to_custom = $date_to_array[1].'-01-'.$date_to_array[2];
         $date_to_custom_old_time = strtotime($date_to);
-        $date_to_custom_old = date('d-m-Y', strtotime("-".$select_compare." year", $date_to_custom_old_time));
+        $date_to_custom_old = date('d-m-Y', strtotime("-1 year", $date_to_custom_old_time));
         //error_log('date_to_custom: '.$date_to_custom);
         //error_log('date_to_custom_old: '.$date_to_custom_old);
 
@@ -147,7 +147,7 @@ class ReportSalesOrdersSignedController extends Controller
 
         //Facturas DIG
         $array_orders_dig = $array_orders_dig->where('channels.nomenclature', 'DIG')
-                                                //->groupBy('orders.id', 'channels.nomenclature')
+                                                //->groupBy('orders.id')
                                                 ->get();
         error_log('array_orders_dig: '.$array_orders_dig);
         //error_log(count($array_orders_dig));
@@ -170,6 +170,7 @@ class ReportSalesOrdersSignedController extends Controller
         $array_bills_orders_custom = array();
         
         //Recorremos el objeto DIG
+        $array_aux_id_order_dig = array();
         foreach($array_orders_dig as $key => $order_dig){
             $custom_date_array_aux = explode(" ", $order_dig->created_at);
             $custom_date_array = explode("-", $custom_date_array_aux[0]);
@@ -177,54 +178,21 @@ class ReportSalesOrdersSignedController extends Controller
             $custom_obj = null;
             $custom_obj_new = null;
             $custom_obj_old = null;
-
-            //Consultamos el amount de la orden
-            $amount = BillOrder::where('id_order', $order_dig->id)->sum('amount');
-
-            if($key == 0){
-                $custom_obj['dep'] = $order_dig->department_nomenclature;
-                $custom_obj['dep_name'] = $order_dig->department_name;
-                $custom_obj['id_dep'] = $order_dig->id_department;
-                $custom_obj['type'] = $order_dig->channel_nomenclature;
-                $custom_obj['id_type'] = $order_dig->id_channel;
-
-                $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
-                foreach($array_dates_old as $key_date => $date){
-                    if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
-                    //if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
-                        $custom_obj_old['amounts'][] = round($amount, 2);
-                    }else{
-                        $custom_obj_old['amounts'][] = 0;
-                    }
-                }
-                $custom_obj_new['period'] = $date_from.' a '.$date_to;
-                foreach($array_dates as $key_date => $date){
-
-                    if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
-                    //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
-                        $custom_obj_new['amounts'][] = round($amount, 2);
-                    }else{
-                        $custom_obj_new['amounts'][] = 0;
-                    }
-                }
-
-                $custom_obj_diference['period'] = 'Diferencia%';
-                $custom_obj['old'] = $custom_obj_old;
-                $custom_obj['new'] = $custom_obj_new;
-                $custom_obj['diference'] = $custom_obj_diference;
-                $array_bills_orders_custom[] = $custom_obj;
-
-            }else{
-                $exist = false;
-                $position = 0;
-                foreach($array_bills_orders_custom as $key_array_bills_orders_custom => $bill_order_custom){
-                    if($bill_order_custom['dep'] == $order_dig->department_nomenclature && $bill_order_custom['type'] == $order_dig->channel_nomenclature){
+            $exist = false;
+            if(count($array_aux_id_order_dig) > 0){
+                foreach($array_aux_id_order_dig as $id_order){
+                    if($id_order == $order_dig->id){
                         $exist = true;
-                        $position = $key_array_bills_orders_custom;
+                        error_log('entro');
                     }
                 }
+            }
+            if(!$exist){
+                $array_aux_id_order_dig[] = $order_dig->id;
+                //Consultamos el amount de la orden
+                $amount = BillOrder::where('id_order', $order_dig->id)->sum('amount');
 
-                if(!$exist){
+                if($key == 0){
                     $custom_obj['dep'] = $order_dig->department_nomenclature;
                     $custom_obj['dep_name'] = $order_dig->department_name;
                     $custom_obj['id_dep'] = $order_dig->id_department;
@@ -234,15 +202,15 @@ class ReportSalesOrdersSignedController extends Controller
                     $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
                     foreach($array_dates_old as $key_date => $date){
                         if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
+                        //if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
                             $custom_obj_old['amounts'][] = round($amount, 2);
                         }else{
                             $custom_obj_old['amounts'][] = 0;
                         }
-                        error_log(count($custom_obj_old['amounts']));
                     }
-
                     $custom_obj_new['period'] = $date_from.' a '.$date_to;
                     foreach($array_dates as $key_date => $date){
+
                         if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
                         //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
                             $custom_obj_new['amounts'][] = round($amount, 2);
@@ -250,93 +218,226 @@ class ReportSalesOrdersSignedController extends Controller
                             $custom_obj_new['amounts'][] = 0;
                         }
                     }
+
                     $custom_obj_diference['period'] = 'Diferencia%';
                     $custom_obj['old'] = $custom_obj_old;
                     $custom_obj['new'] = $custom_obj_new;
                     $custom_obj['diference'] = $custom_obj_diference;
                     $array_bills_orders_custom[] = $custom_obj;
-                }
 
-                if($exist){
-                    //Aquí sumariamos precios de las ordenes
-                    foreach($array_dates_old as $key_date => $date){
-                        if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
-                            $array_bills_orders_custom[$position]['old']['amounts'][$key_date] += round($amount, 2);
+                }else{
+                    $exist = false;
+                    $position = 0;
+                    foreach($array_bills_orders_custom as $key_array_bills_orders_custom => $bill_order_custom){
+                        if($bill_order_custom['dep'] == $order_dig->department_nomenclature && $bill_order_custom['type'] == $order_dig->channel_nomenclature){
+                            $exist = true;
+                            $position = $key_array_bills_orders_custom;
                         }
                     }
-                    foreach($array_dates as $key_date => $date){
-                        if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
-                        //if($date['last_date_custom'] >= $custom_date && $date['first_date_custom'] <= $custom_date){
-                            $array_bills_orders_custom[$position]['new']['amounts'][$key_date] += round($amount, 2);
+
+                    if(!$exist){
+                        $custom_obj['dep'] = $order_dig->department_nomenclature;
+                        $custom_obj['dep_name'] = $order_dig->department_name;
+                        $custom_obj['id_dep'] = $order_dig->id_department;
+                        $custom_obj['type'] = $order_dig->channel_nomenclature;
+                        $custom_obj['id_type'] = $order_dig->id_channel;
+
+                        $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
+                        foreach($array_dates_old as $key_date => $date){
+                            if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
+                                $custom_obj_old['amounts'][] = round($amount, 2);
+                            }else{
+                                $custom_obj_old['amounts'][] = 0;
+                            }
+                            error_log(count($custom_obj_old['amounts']));
+                        }
+
+                        $custom_obj_new['period'] = $date_from.' a '.$date_to;
+                        foreach($array_dates as $key_date => $date){
+                            if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
+                            //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                                $custom_obj_new['amounts'][] = round($amount, 2);
+                            }else{
+                                $custom_obj_new['amounts'][] = 0;
+                            }
+                        }
+                        $custom_obj_diference['period'] = 'Diferencia%';
+                        $custom_obj['old'] = $custom_obj_old;
+                        $custom_obj['new'] = $custom_obj_new;
+                        $custom_obj['diference'] = $custom_obj_diference;
+                        $array_bills_orders_custom[] = $custom_obj;
+                    }
+
+                    if($exist){
+                        //Aquí sumariamos precios de las ordenes
+                        foreach($array_dates_old as $key_date => $date){
+                            if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
+                                $array_bills_orders_custom[$position]['old']['amounts'][$key_date] += round($amount, 2);
+                            }
+                        }
+                        foreach($array_dates as $key_date => $date){
+                            if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
+                            //if($date['last_date_custom'] >= $custom_date && $date['first_date_custom'] <= $custom_date){
+                                $array_bills_orders_custom[$position]['new']['amounts'][$key_date] += round($amount, 2);
+                            }
                         }
                     }
                 }
             }
+            $exist = false;
         }
 
-        //error_log(print_r($array_bills_orders_custom, true));
+        error_log(print_r($array_bills_orders_custom, true));
         
         //Recorremos el objeto PRINT
+        $array_aux_id_order_print = array();
         foreach($array_orders_print as $key => $order_print){
-            $custom_date_array_aux = explode(" ", $order_dig->created_at);
+            $exist = false;
+            
+            $custom_date_array_aux = explode(" ", $order_print->created_at);
             $custom_date_array = explode("-", $custom_date_array_aux[0]);
             $custom_date = $custom_date_array[2].'-'.$custom_date_array[1].'-'.$custom_date_array[0];
             $custom_obj = null;
             $custom_obj_new = null;
             $custom_obj_old = null;
             $custom_obj_diference = null;
-
-            //Consultamos el amount de la orden
-            $amount = BillOrder::where('id_order', $order_dig->id)->sum('amount');
-
-            if($key == 0){
-                $custom_obj['dep'] = $order_print->department_nomenclature;
-                $custom_obj['dep_name'] = $order_print->department_name;
-                $custom_obj['id_dep'] = $order_print->id_department;
-                $custom_obj['type'] = $order_print->channel_nomenclature;
-                $custom_obj['id_type'] = $order_print->id_channel;
-
-                $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
-                foreach($array_dates_old as $key_date => $date){
-                    if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
-                        $custom_obj_old['amounts'][] = round($amount, 2);
-                    }else{
-                        $custom_obj_old['amounts'][] = 0;
-                    }
-                }
-                $custom_obj_new['period'] = $date_from.' a '.$date_to;
-                foreach($array_dates as $key_date => $date){
-                    if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
-                        $custom_obj_new['amounts'][] = round($amount, 2);
-                    }else{
-                        $custom_obj_new['amounts'][] = 0;
-                    }
-                }
-
-                $custom_obj_diference['period'] = 'Diferencia%';
-                $custom_obj['old'] = $custom_obj_old;
-                $custom_obj['new'] = $custom_obj_new;
-                $custom_obj['diference'] = $custom_obj_diference;
-                $array_bills_orders_custom[] = $custom_obj;
-
-            }else{
-                $exist = false;
-                $position = 0;
-                foreach($array_bills_orders_custom as $key_array_bills_orders_custom => $bill_order_custom){
-                    if($bill_order_custom['dep'] == $order_print->department_nomenclature && $bill_order_custom['type'] == $order_print->channel_nomenclature){
+            if(count($array_aux_id_order_print) > 0){
+                foreach($array_aux_id_order_print as $id_order){
+                    if($id_order == $order_print->id){
                         $exist = true;
-                        $position = $key_array_bills_orders_custom;
                     }
                 }
+            }
+            if(!$exist){
+                $array_aux_id_order_print[] = $order_print->id;
 
-                if(!$exist){
+                //Consultamos el amount de la orden
+                $amount = BillOrder::where('id_order', $order_print->id)->sum('amount');
+
+                if($key == 0){
                     $custom_obj['dep'] = $order_print->department_nomenclature;
                     $custom_obj['dep_name'] = $order_print->department_name;
                     $custom_obj['id_dep'] = $order_print->id_department;
                     $custom_obj['type'] = $order_print->channel_nomenclature;
                     $custom_obj['id_type'] = $order_print->id_channel;
-                    $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
 
+                    $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
+                    foreach($array_dates_old as $key_date => $date){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
+                            $custom_obj_old['amounts'][] = round($amount, 2);
+                        }else{
+                            $custom_obj_old['amounts'][] = 0;
+                        }
+                    }
+                    $custom_obj_new['period'] = $date_from.' a '.$date_to;
+                    foreach($array_dates as $key_date => $date){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
+                            $custom_obj_new['amounts'][] = round($amount, 2);
+                        }else{
+                            $custom_obj_new['amounts'][] = 0;
+                        }
+                    }
+
+                    $custom_obj_diference['period'] = 'Diferencia%';
+                    $custom_obj['old'] = $custom_obj_old;
+                    $custom_obj['new'] = $custom_obj_new;
+                    $custom_obj['diference'] = $custom_obj_diference;
+                    $array_bills_orders_custom[] = $custom_obj;
+
+                }else{
+                    $exist = false;
+                    $position = 0;
+                    foreach($array_bills_orders_custom as $key_array_bills_orders_custom => $bill_order_custom){
+                        if($bill_order_custom['dep'] == $order_print->department_nomenclature && $bill_order_custom['type'] == $order_print->channel_nomenclature){
+                            $exist = true;
+                            $position = $key_array_bills_orders_custom;
+                        }
+                    }
+
+                    if(!$exist){
+                        $custom_obj['dep'] = $order_print->department_nomenclature;
+                        $custom_obj['dep_name'] = $order_print->department_name;
+                        $custom_obj['id_dep'] = $order_print->id_department;
+                        $custom_obj['type'] = $order_print->channel_nomenclature;
+                        $custom_obj['id_type'] = $order_print->id_channel;
+                        $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
+
+                        foreach($array_dates_old as $key_date => $date){
+                            if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
+                            //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                                $custom_obj_old['amounts'][] = round($amount, 2);
+                            }else{
+                                $custom_obj_old['amounts'][] = 0;
+                            }
+                        }
+
+                        $custom_obj_new['period'] = $date_from.' a '.$date_to;
+                        foreach($array_dates as $key_date => $date){
+                            if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
+                            //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                                $custom_obj_new['amounts'][] = round($amount, 2);
+                            }else{
+                                $custom_obj_new['amounts'][] = 0;
+                            }
+                        }
+                        $custom_obj_diference['period'] = 'Diferencia%';
+                        $custom_obj['old'] = $custom_obj_old;
+                        $custom_obj['new'] = $custom_obj_new;
+                        $custom_obj['diference'] = $custom_obj_diference;
+                        $array_bills_orders_custom[] = $custom_obj;
+                    }
+
+                    if($exist){
+                        //Aquí sumariamos precios de las ordenes
+                        foreach($array_dates_old as $key_date => $date){
+                            if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
+                            //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                                $array_bills_orders_custom[$position]['old']['amounts'][$key_date] += round($amount, 2);
+                            }
+                        }
+                        foreach($array_dates as $key_date => $date){
+                            if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
+                            //if($date['last_date_custom'] >= $custom_date && $date['first_date_custom'] <= $custom_date){
+                                $array_bills_orders_custom[$position]['new']['amounts'][$key_date] += round($amount, 2);
+                            }
+                        }
+                    }
+                }
+            }
+            $exist = false;
+        }
+
+        //Recorremos el objeto OTROS
+        $array_aux_id_order_others = array();
+        foreach($array_orders_others as $key => $order_others){
+            $custom_obj = null;
+            $custom_obj_new = null;
+            $custom_obj_old = null;
+            $custom_obj_diference = null;
+            $custom_date_array_aux = explode(" ", $order_others->created_at);
+            $custom_date_array = explode("-", $custom_date_array_aux[0]);
+            $custom_date = $custom_date_array[2].'-'.$custom_date_array[1].'-'.$custom_date_array[0];
+            $exist = false;
+            if(count($array_aux_id_order_others) > 0){
+                foreach($array_aux_id_order_others as $id_order){
+                    if($id_order == $order_others->id){
+                        $exist = true;
+                    }
+                }
+            }
+            if(!$exist){
+                $array_aux_id_order_others[] = $order_others->id;
+                //Consultamos el amount de la orden
+                $amount = BillOrder::where('id_order', $order_others->id)->sum('amount');
+
+                if($key == 0){
+                    $custom_obj['dep'] = $order_others->department_nomenclature;
+                    $custom_obj['dep_name'] = $order_others->department_name;
+                    $custom_obj['id_dep'] = $order_others->id_department;
+                    $custom_obj['type'] = 'OTROS';
+                    $custom_obj['id_type'] = $order_others->id_channel;
+
+                    $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
                     foreach($array_dates_old as $key_date => $date){
                         if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
                         //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
@@ -345,7 +446,6 @@ class ReportSalesOrdersSignedController extends Controller
                             $custom_obj_old['amounts'][] = 0;
                         }
                     }
-
                     $custom_obj_new['period'] = $date_from.' a '.$date_to;
                     foreach($array_dates as $key_date => $date){
                         if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
@@ -355,93 +455,32 @@ class ReportSalesOrdersSignedController extends Controller
                             $custom_obj_new['amounts'][] = 0;
                         }
                     }
+
                     $custom_obj_diference['period'] = 'Diferencia%';
                     $custom_obj['old'] = $custom_obj_old;
                     $custom_obj['new'] = $custom_obj_new;
                     $custom_obj['diference'] = $custom_obj_diference;
                     $array_bills_orders_custom[] = $custom_obj;
-                }
 
-                if($exist){
-                    //Aquí sumariamos precios de las ordenes
-                    foreach($array_dates_old as $key_date => $date){
-                        if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
-                        //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
-                            $array_bills_orders_custom[$position]['old']['amounts'][$key_date] += round($amount, 2);
+                }else{
+                    foreach($array_bills_orders_custom as $key_array_bills_orders_custom => $bill_order_custom){
+                        //Aquí sumariamos precios de las ordenes
+                        foreach($array_dates_old as $key_date => $date){
+                            if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
+                            //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                                $array_bills_orders_custom[$key_array_bills_orders_custom]['old']['amounts'][$key_date] += round($amount, 2);
+                            }
                         }
-                    }
-                    foreach($array_dates as $key_date => $date){
-                        if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
-                        //if($date['last_date_custom'] >= $custom_date && $date['first_date_custom'] <= $custom_date){
-                            $array_bills_orders_custom[$position]['new']['amounts'][$key_date] += round($amount, 2);
-                        }
-                    }
-                }
-            }
-        }
-
-        //Recorremos el objeto OTROS
-        foreach($array_orders_others as $key => $order_others){
-            $custom_obj = null;
-            $custom_obj_new = null;
-            $custom_obj_old = null;
-            $custom_obj_diference = null;
-            $custom_date_array_aux = explode(" ", $order_dig->created_at);
-            $custom_date_array = explode("-", $custom_date_array_aux[0]);
-            $custom_date = $custom_date_array[2].'-'.$custom_date_array[1].'-'.$custom_date_array[0];
-
-            //Consultamos el amount de la orden
-            $amount = BillOrder::where('id_order', $order_dig->id)->sum('amount');
-
-            if($key == 0){
-                $custom_obj['dep'] = $order_others->department_nomenclature;
-                $custom_obj['dep_name'] = $order_others->department_name;
-                $custom_obj['id_dep'] = $order_others->id_department;
-                $custom_obj['type'] = 'OTROS';
-                $custom_obj['id_type'] = $order_others->id_channel;
-
-                $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
-                foreach($array_dates_old as $key_date => $date){
-                    if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
-                    //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
-                        $custom_obj_old['amounts'][] = round($amount, 2);
-                    }else{
-                        $custom_obj_old['amounts'][] = 0;
-                    }
-                }
-                $custom_obj_new['period'] = $date_from.' a '.$date_to;
-                foreach($array_dates as $key_date => $date){
-                    if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
-                    //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
-                        $custom_obj_new['amounts'][] = round($amount, 2);
-                    }else{
-                        $custom_obj_new['amounts'][] = 0;
-                    }
-                }
-
-                $custom_obj_diference['period'] = 'Diferencia%';
-                $custom_obj['old'] = $custom_obj_old;
-                $custom_obj['new'] = $custom_obj_new;
-                $custom_obj['diference'] = $custom_obj_diference;
-                $array_bills_orders_custom[] = $custom_obj;
-
-            }else{
-                foreach($array_bills_orders_custom as $key_array_bills_orders_custom => $bill_order_custom){
-                    //Aquí sumariamos precios de las ordenes
-                    foreach($array_dates_old as $key_date => $date){
-                        if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
-                        //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
-                            $array_bills_orders_custom[$key_array_bills_orders_custom]['old']['amounts'][$key_date] += round($amount, 2);
-                        }
-                    }
-                    foreach($array_dates as $key_date => $date){
-                        if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
-                        //if($date['last_date_custom'] >= $custom_date && $date['first_date_custom'] <= $custom_date){
-                            $array_bills_orders_custom[$key_array_bills_orders_custom]['new']['amounts'][$key_date] += round($amount, 2);
+                        foreach($array_dates as $key_date => $date){
+                            if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
+                            //if($date['last_date_custom'] >= $custom_date && $date['first_date_custom'] <= $custom_date){
+                                $array_bills_orders_custom[$key_array_bills_orders_custom]['new']['amounts'][$key_date] += round($amount, 2);
+                            }
                         }
                     }
                 }
             }
+            $exist = false;
         }
 
         //Guardamos el objeto diferencia
@@ -460,6 +499,8 @@ class ReportSalesOrdersSignedController extends Controller
                 }
             }
         }
+
+        //error_log(print_r($array_bills_orders_custom, true));
 
         //Calculamos los totales de las cantidades de $array_bills_orders_custom
         foreach($array_bills_orders_custom as $key_array_bills_orders_custom => $bill_order_custom){
@@ -577,6 +618,7 @@ class ReportSalesOrdersSignedController extends Controller
                         }
                     }
 
+                    $custom_obj['diference']['period'] = 'Diferencia%';
                     $custom_obj['diference']['amounts'] = $amounts_diference;
                     $array_bills_orders_custom_aux[] = $custom_obj;
                 }
@@ -859,57 +901,51 @@ class ReportSalesOrdersSignedController extends Controller
                                         ->leftJoin('bills_orders', 'bills_orders.id_order', 'orders.id')                                
                                         ->leftJoin('proposals', 'orders.id_proposal', 'proposals.id')
                                         ->leftJoin('contacts', 'proposals.id_contact', 'contacts.id')
-                                        ->leftJoin('departments', 'proposals.id_department', 'departments.id')
-                                        ->leftJoin('proposals_bills', 'proposals_bills.id_proposal', 'proposals.id')
-                                        ->leftJoin('services_bills', 'services_bills.id_bill', 'proposals_bills.id_bill')
-                                        ->leftJoin('bills', 'bills.id', 'services_bills.id_bill')
-                                        ->leftJoin('services', 'services.id', 'services_bills.id_service')
+                                        ->leftJoin('services_bills_orders', 'services_bills_orders.id_bill_order', 'bills_orders.id')
+                                        ->leftJoin('services', 'services.id', 'services_bills_orders.id_service')
                                         ->leftJoin('articles', 'articles.id', 'services.id_article')
                                         ->leftJoin('batchs', 'batchs.id', 'articles.id_batch')
                                         ->leftJoin('chapters', 'chapters.id', 'batchs.id_chapter')
                                         ->leftJoin('projects', 'projects.id', 'chapters.id_project')
                                         ->leftJoin('channels', 'channels.id', 'projects.id_channel')
-                                        ->leftJoin('sections', 'sections.id', 'channels.id_section');
-        
+                                        ->leftJoin('sections', 'sections.id', 'channels.id_section')
+                                        ->leftJoin('departments', 'departments.id', 'sections.id_department');
+
         //PRINT
         $array_orders_print = Order::select('orders.*', 'departments.nomenclature as department_nomenclature', 'departments.name as department_name', 'departments.id as id_department', 'proposals.id as id_proposal', 'channels.nomenclature as channel_nomenclature')
                                         ->leftJoin('bills_orders', 'bills_orders.id_order', 'orders.id')                                
                                         ->leftJoin('proposals', 'orders.id_proposal', 'proposals.id')
                                         ->leftJoin('contacts', 'proposals.id_contact', 'contacts.id')
-                                        ->leftJoin('departments', 'proposals.id_department', 'departments.id')
-                                        ->leftJoin('proposals_bills', 'proposals_bills.id_proposal', 'proposals.id')
-                                        ->leftJoin('services_bills', 'services_bills.id_bill', 'proposals_bills.id_bill')
-                                        ->leftJoin('bills', 'bills.id', 'services_bills.id_bill')
-                                        ->leftJoin('services', 'services.id', 'services_bills.id_service')
+                                        ->leftJoin('services_bills_orders', 'services_bills_orders.id_bill_order', 'bills_orders.id')
+                                        ->leftJoin('services', 'services.id', 'services_bills_orders.id_service')
                                         ->leftJoin('articles', 'articles.id', 'services.id_article')
                                         ->leftJoin('batchs', 'batchs.id', 'articles.id_batch')
                                         ->leftJoin('chapters', 'chapters.id', 'batchs.id_chapter')
                                         ->leftJoin('projects', 'projects.id', 'chapters.id_project')
                                         ->leftJoin('channels', 'channels.id', 'projects.id_channel')
-                                        ->leftJoin('sections', 'sections.id', 'channels.id_section');
+                                        ->leftJoin('sections', 'sections.id', 'channels.id_section')
+                                        ->leftJoin('departments', 'departments.id', 'sections.id_department');
                
         //OTROS
         $array_orders_others = Order::select('orders.*', 'departments.nomenclature as department_nomenclature', 'departments.name as department_name', 'departments.id as id_department', 'proposals.id as id_proposal', 'channels.nomenclature as channel_nomenclature')
                                         ->leftJoin('bills_orders', 'bills_orders.id_order', 'orders.id')                                
                                         ->leftJoin('proposals', 'orders.id_proposal', 'proposals.id')
                                         ->leftJoin('contacts', 'proposals.id_contact', 'contacts.id')
-                                        ->leftJoin('departments', 'proposals.id_department', 'departments.id')
-                                        ->leftJoin('proposals_bills', 'proposals_bills.id_proposal', 'proposals.id')
-                                        ->leftJoin('services_bills', 'services_bills.id_bill', 'proposals_bills.id_bill')
-                                        ->leftJoin('bills', 'bills.id', 'services_bills.id_bill')
-                                        ->leftJoin('services', 'services.id', 'services_bills.id_service')
+                                        ->leftJoin('services_bills_orders', 'services_bills_orders.id_bill_order', 'bills_orders.id')
+                                        ->leftJoin('services', 'services.id', 'services_bills_orders.id_service')
                                         ->leftJoin('articles', 'articles.id', 'services.id_article')
                                         ->leftJoin('batchs', 'batchs.id', 'articles.id_batch')
                                         ->leftJoin('chapters', 'chapters.id', 'batchs.id_chapter')
                                         ->leftJoin('projects', 'projects.id', 'chapters.id_project')
                                         ->leftJoin('channels', 'channels.id', 'projects.id_channel')
-                                        ->leftJoin('sections', 'sections.id', 'channels.id_section');
+                                        ->leftJoin('sections', 'sections.id', 'channels.id_section')
+                                        ->leftJoin('departments', 'departments.id', 'sections.id_department');
                                         
         //Filtro departamente
         if($select_department != '0'){
-            $array_orders_dig = $array_orders_dig->where('proposals.id_department', $select_department);
-            $array_orders_print = $array_orders_print->where('proposals.id_department', $select_department);
-            $array_orders_others = $array_orders_others->where('proposals.id_department', $select_department);
+            $array_orders_dig = $array_orders_dig->where('departments.id_department', $select_department);
+            $array_orders_print = $array_orders_print->where('departments.id_department', $select_department);
+            $array_orders_others = $array_orders_others->where('departments.id_department', $select_department);
         }
 
         //Filtro sección
@@ -962,21 +998,21 @@ class ReportSalesOrdersSignedController extends Controller
 
         //Facturas DIG
         $array_orders_dig = $array_orders_dig->where('channels.nomenclature', 'DIG')
-                                                ->groupBy('orders.id', 'channels.nomenclature')
+                                                //->groupBy('orders.id')
                                                 ->get();
-        //error_log('array_orders_dig: '.$array_orders_dig);
+        error_log('array_orders_dig: '.$array_orders_dig);
         //error_log(count($array_orders_dig));
 
         //Facturas PRINT
         $array_orders_print = $array_orders_print->where('channels.nomenclature', 'PRINT')
-                                                ->groupBy('orders.id', 'channels.nomenclature')
+                                                //->groupBy('orders.id', 'channels.nomenclature')
                                                 ->get();
         //error_log(count($array_orders_print));
         //error_log('array_orders_print: '.$array_orders_print);
 
         //Facturas OTROS
         $array_orders_others = $array_orders_others->whereNotIn('channels.nomenclature', ['DIG', 'PRINT'])
-                                                ->groupBy('orders.id', 'channels.nomenclature')
+                                                //->groupBy('orders.id', 'channels.nomenclature')
                                                 ->get();
         //error_log(count($array_orders_others));
         //error_log('array_orders_others: '.$array_orders_others);
@@ -985,6 +1021,7 @@ class ReportSalesOrdersSignedController extends Controller
         $array_bills_orders_custom = array();
         
         //Recorremos el objeto DIG
+        $array_aux_id_order_dig = array();
         foreach($array_orders_dig as $key => $order_dig){
             $custom_date_array_aux = explode(" ", $order_dig->created_at);
             $custom_date_array = explode("-", $custom_date_array_aux[0]);
@@ -992,54 +1029,21 @@ class ReportSalesOrdersSignedController extends Controller
             $custom_obj = null;
             $custom_obj_new = null;
             $custom_obj_old = null;
-
-            //Consultamos el amount de la orden
-            $amount = BillOrder::where('id_order', $order_dig->id)->sum('amount');
-
-            if($key == 0){
-                $custom_obj['dep'] = $order_dig->department_nomenclature;
-                $custom_obj['dep_name'] = $order_dig->department_name;
-                $custom_obj['id_dep'] = $order_dig->id_department;
-                $custom_obj['type'] = $order_dig->channel_nomenclature;
-                $custom_obj['id_type'] = $order_dig->id_channel;
-
-                $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
-                foreach($array_dates_old as $key_date => $date){
-                    if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
-                    //if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
-                        $custom_obj_old['amounts'][] = round($amount, 2);
-                    }else{
-                        $custom_obj_old['amounts'][] = 0;
-                    }
-                }
-                $custom_obj_new['period'] = $date_from.' a '.$date_to;
-                foreach($array_dates as $key_date => $date){
-
-                    if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
-                    //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
-                        $custom_obj_new['amounts'][] = round($amount, 2);
-                    }else{
-                        $custom_obj_new['amounts'][] = 0;
-                    }
-                }
-
-                $custom_obj_diference['period'] = 'Diferencia%';
-                $custom_obj['old'] = $custom_obj_old;
-                $custom_obj['new'] = $custom_obj_new;
-                $custom_obj['diference'] = $custom_obj_diference;
-                $array_bills_orders_custom[] = $custom_obj;
-
-            }else{
-                $exist = false;
-                $position = 0;
-                foreach($array_bills_orders_custom as $key_array_bills_orders_custom => $bill_order_custom){
-                    if($bill_order_custom['dep'] == $order_dig->department_nomenclature && $bill_order_custom['type'] == $order_dig->channel_nomenclature){
+            $exist = false;
+            if(count($array_aux_id_order_dig) > 0){
+                foreach($array_aux_id_order_dig as $id_order){
+                    if($id_order == $order_dig->id){
                         $exist = true;
-                        $position = $key_array_bills_orders_custom;
+                        error_log('entro');
                     }
                 }
+            }
+            if(!$exist){
+                $array_aux_id_order_dig[] = $order_dig->id;
+                //Consultamos el amount de la orden
+                $amount = BillOrder::where('id_order', $order_dig->id)->sum('amount');
 
-                if(!$exist){
+                if($key == 0){
                     $custom_obj['dep'] = $order_dig->department_nomenclature;
                     $custom_obj['dep_name'] = $order_dig->department_name;
                     $custom_obj['id_dep'] = $order_dig->id_department;
@@ -1049,15 +1053,15 @@ class ReportSalesOrdersSignedController extends Controller
                     $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
                     foreach($array_dates_old as $key_date => $date){
                         if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
+                        //if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
                             $custom_obj_old['amounts'][] = round($amount, 2);
                         }else{
                             $custom_obj_old['amounts'][] = 0;
                         }
-                        error_log(count($custom_obj_old['amounts']));
                     }
-
                     $custom_obj_new['period'] = $date_from.' a '.$date_to;
                     foreach($array_dates as $key_date => $date){
+
                         if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
                         //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
                             $custom_obj_new['amounts'][] = round($amount, 2);
@@ -1065,93 +1069,226 @@ class ReportSalesOrdersSignedController extends Controller
                             $custom_obj_new['amounts'][] = 0;
                         }
                     }
+
                     $custom_obj_diference['period'] = 'Diferencia%';
                     $custom_obj['old'] = $custom_obj_old;
                     $custom_obj['new'] = $custom_obj_new;
                     $custom_obj['diference'] = $custom_obj_diference;
                     $array_bills_orders_custom[] = $custom_obj;
-                }
 
-                if($exist){
-                    //Aquí sumariamos precios de las ordenes
-                    foreach($array_dates_old as $key_date => $date){
-                        if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
-                            $array_bills_orders_custom[$position]['old']['amounts'][$key_date] += round($amount, 2);
+                }else{
+                    $exist = false;
+                    $position = 0;
+                    foreach($array_bills_orders_custom as $key_array_bills_orders_custom => $bill_order_custom){
+                        if($bill_order_custom['dep'] == $order_dig->department_nomenclature && $bill_order_custom['type'] == $order_dig->channel_nomenclature){
+                            $exist = true;
+                            $position = $key_array_bills_orders_custom;
                         }
                     }
-                    foreach($array_dates as $key_date => $date){
-                        if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
-                        //if($date['last_date_custom'] >= $custom_date && $date['first_date_custom'] <= $custom_date){
-                            $array_bills_orders_custom[$position]['new']['amounts'][$key_date] += round($amount, 2);
+
+                    if(!$exist){
+                        $custom_obj['dep'] = $order_dig->department_nomenclature;
+                        $custom_obj['dep_name'] = $order_dig->department_name;
+                        $custom_obj['id_dep'] = $order_dig->id_department;
+                        $custom_obj['type'] = $order_dig->channel_nomenclature;
+                        $custom_obj['id_type'] = $order_dig->id_channel;
+
+                        $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
+                        foreach($array_dates_old as $key_date => $date){
+                            if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
+                                $custom_obj_old['amounts'][] = round($amount, 2);
+                            }else{
+                                $custom_obj_old['amounts'][] = 0;
+                            }
+                            error_log(count($custom_obj_old['amounts']));
+                        }
+
+                        $custom_obj_new['period'] = $date_from.' a '.$date_to;
+                        foreach($array_dates as $key_date => $date){
+                            if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
+                            //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                                $custom_obj_new['amounts'][] = round($amount, 2);
+                            }else{
+                                $custom_obj_new['amounts'][] = 0;
+                            }
+                        }
+                        $custom_obj_diference['period'] = 'Diferencia%';
+                        $custom_obj['old'] = $custom_obj_old;
+                        $custom_obj['new'] = $custom_obj_new;
+                        $custom_obj['diference'] = $custom_obj_diference;
+                        $array_bills_orders_custom[] = $custom_obj;
+                    }
+
+                    if($exist){
+                        //Aquí sumariamos precios de las ordenes
+                        foreach($array_dates_old as $key_date => $date){
+                            if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
+                                $array_bills_orders_custom[$position]['old']['amounts'][$key_date] += round($amount, 2);
+                            }
+                        }
+                        foreach($array_dates as $key_date => $date){
+                            if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
+                            //if($date['last_date_custom'] >= $custom_date && $date['first_date_custom'] <= $custom_date){
+                                $array_bills_orders_custom[$position]['new']['amounts'][$key_date] += round($amount, 2);
+                            }
                         }
                     }
                 }
             }
+            $exist = false;
         }
 
-        //error_log(print_r($array_bills_orders_custom, true));
+        error_log(print_r($array_bills_orders_custom, true));
         
         //Recorremos el objeto PRINT
+        $array_aux_id_order_print = array();
         foreach($array_orders_print as $key => $order_print){
-            $custom_date_array_aux = explode(" ", $order_dig->created_at);
+            $exist = false;
+            
+            $custom_date_array_aux = explode(" ", $order_print->created_at);
             $custom_date_array = explode("-", $custom_date_array_aux[0]);
             $custom_date = $custom_date_array[2].'-'.$custom_date_array[1].'-'.$custom_date_array[0];
             $custom_obj = null;
             $custom_obj_new = null;
             $custom_obj_old = null;
             $custom_obj_diference = null;
-
-            //Consultamos el amount de la orden
-            $amount = BillOrder::where('id_order', $order_dig->id)->sum('amount');
-
-            if($key == 0){
-                $custom_obj['dep'] = $order_print->department_nomenclature;
-                $custom_obj['dep_name'] = $order_print->department_name;
-                $custom_obj['id_dep'] = $order_print->id_department;
-                $custom_obj['type'] = $order_print->channel_nomenclature;
-                $custom_obj['id_type'] = $order_print->id_channel;
-
-                $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
-                foreach($array_dates_old as $key_date => $date){
-                    if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
-                        $custom_obj_old['amounts'][] = round($amount, 2);
-                    }else{
-                        $custom_obj_old['amounts'][] = 0;
-                    }
-                }
-                $custom_obj_new['period'] = $date_from.' a '.$date_to;
-                foreach($array_dates as $key_date => $date){
-                    if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
-                        $custom_obj_new['amounts'][] = round($amount, 2);
-                    }else{
-                        $custom_obj_new['amounts'][] = 0;
-                    }
-                }
-
-                $custom_obj_diference['period'] = 'Diferencia%';
-                $custom_obj['old'] = $custom_obj_old;
-                $custom_obj['new'] = $custom_obj_new;
-                $custom_obj['diference'] = $custom_obj_diference;
-                $array_bills_orders_custom[] = $custom_obj;
-
-            }else{
-                $exist = false;
-                $position = 0;
-                foreach($array_bills_orders_custom as $key_array_bills_orders_custom => $bill_order_custom){
-                    if($bill_order_custom['dep'] == $order_print->department_nomenclature && $bill_order_custom['type'] == $order_print->channel_nomenclature){
+            if(count($array_aux_id_order_print) > 0){
+                foreach($array_aux_id_order_print as $id_order){
+                    if($id_order == $order_print->id){
                         $exist = true;
-                        $position = $key_array_bills_orders_custom;
                     }
                 }
+            }
+            if(!$exist){
+                $array_aux_id_order_print[] = $order_print->id;
 
-                if(!$exist){
+                //Consultamos el amount de la orden
+                $amount = BillOrder::where('id_order', $order_print->id)->sum('amount');
+
+                if($key == 0){
                     $custom_obj['dep'] = $order_print->department_nomenclature;
                     $custom_obj['dep_name'] = $order_print->department_name;
                     $custom_obj['id_dep'] = $order_print->id_department;
                     $custom_obj['type'] = $order_print->channel_nomenclature;
                     $custom_obj['id_type'] = $order_print->id_channel;
-                    $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
 
+                    $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
+                    foreach($array_dates_old as $key_date => $date){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
+                            $custom_obj_old['amounts'][] = round($amount, 2);
+                        }else{
+                            $custom_obj_old['amounts'][] = 0;
+                        }
+                    }
+                    $custom_obj_new['period'] = $date_from.' a '.$date_to;
+                    foreach($array_dates as $key_date => $date){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
+                            $custom_obj_new['amounts'][] = round($amount, 2);
+                        }else{
+                            $custom_obj_new['amounts'][] = 0;
+                        }
+                    }
+
+                    $custom_obj_diference['period'] = 'Diferencia%';
+                    $custom_obj['old'] = $custom_obj_old;
+                    $custom_obj['new'] = $custom_obj_new;
+                    $custom_obj['diference'] = $custom_obj_diference;
+                    $array_bills_orders_custom[] = $custom_obj;
+
+                }else{
+                    $exist = false;
+                    $position = 0;
+                    foreach($array_bills_orders_custom as $key_array_bills_orders_custom => $bill_order_custom){
+                        if($bill_order_custom['dep'] == $order_print->department_nomenclature && $bill_order_custom['type'] == $order_print->channel_nomenclature){
+                            $exist = true;
+                            $position = $key_array_bills_orders_custom;
+                        }
+                    }
+
+                    if(!$exist){
+                        $custom_obj['dep'] = $order_print->department_nomenclature;
+                        $custom_obj['dep_name'] = $order_print->department_name;
+                        $custom_obj['id_dep'] = $order_print->id_department;
+                        $custom_obj['type'] = $order_print->channel_nomenclature;
+                        $custom_obj['id_type'] = $order_print->id_channel;
+                        $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
+
+                        foreach($array_dates_old as $key_date => $date){
+                            if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
+                            //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                                $custom_obj_old['amounts'][] = round($amount, 2);
+                            }else{
+                                $custom_obj_old['amounts'][] = 0;
+                            }
+                        }
+
+                        $custom_obj_new['period'] = $date_from.' a '.$date_to;
+                        foreach($array_dates as $key_date => $date){
+                            if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
+                            //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                                $custom_obj_new['amounts'][] = round($amount, 2);
+                            }else{
+                                $custom_obj_new['amounts'][] = 0;
+                            }
+                        }
+                        $custom_obj_diference['period'] = 'Diferencia%';
+                        $custom_obj['old'] = $custom_obj_old;
+                        $custom_obj['new'] = $custom_obj_new;
+                        $custom_obj['diference'] = $custom_obj_diference;
+                        $array_bills_orders_custom[] = $custom_obj;
+                    }
+
+                    if($exist){
+                        //Aquí sumariamos precios de las ordenes
+                        foreach($array_dates_old as $key_date => $date){
+                            if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
+                            //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                                $array_bills_orders_custom[$position]['old']['amounts'][$key_date] += round($amount, 2);
+                            }
+                        }
+                        foreach($array_dates as $key_date => $date){
+                            if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
+                            //if($date['last_date_custom'] >= $custom_date && $date['first_date_custom'] <= $custom_date){
+                                $array_bills_orders_custom[$position]['new']['amounts'][$key_date] += round($amount, 2);
+                            }
+                        }
+                    }
+                }
+            }
+            $exist = false;
+        }
+
+        //Recorremos el objeto OTROS
+        $array_aux_id_order_others = array();
+        foreach($array_orders_others as $key => $order_others){
+            $custom_obj = null;
+            $custom_obj_new = null;
+            $custom_obj_old = null;
+            $custom_obj_diference = null;
+            $custom_date_array_aux = explode(" ", $order_others->created_at);
+            $custom_date_array = explode("-", $custom_date_array_aux[0]);
+            $custom_date = $custom_date_array[2].'-'.$custom_date_array[1].'-'.$custom_date_array[0];
+            $exist = false;
+            if(count($array_aux_id_order_others) > 0){
+                foreach($array_aux_id_order_others as $id_order){
+                    if($id_order == $order_others->id){
+                        $exist = true;
+                    }
+                }
+            }
+            if(!$exist){
+                $array_aux_id_order_others[] = $order_others->id;
+                //Consultamos el amount de la orden
+                $amount = BillOrder::where('id_order', $order_others->id)->sum('amount');
+
+                if($key == 0){
+                    $custom_obj['dep'] = $order_others->department_nomenclature;
+                    $custom_obj['dep_name'] = $order_others->department_name;
+                    $custom_obj['id_dep'] = $order_others->id_department;
+                    $custom_obj['type'] = 'OTROS';
+                    $custom_obj['id_type'] = $order_others->id_channel;
+
+                    $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
                     foreach($array_dates_old as $key_date => $date){
                         if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
                         //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
@@ -1160,7 +1297,6 @@ class ReportSalesOrdersSignedController extends Controller
                             $custom_obj_old['amounts'][] = 0;
                         }
                     }
-
                     $custom_obj_new['period'] = $date_from.' a '.$date_to;
                     foreach($array_dates as $key_date => $date){
                         if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
@@ -1170,93 +1306,32 @@ class ReportSalesOrdersSignedController extends Controller
                             $custom_obj_new['amounts'][] = 0;
                         }
                     }
+
                     $custom_obj_diference['period'] = 'Diferencia%';
                     $custom_obj['old'] = $custom_obj_old;
                     $custom_obj['new'] = $custom_obj_new;
                     $custom_obj['diference'] = $custom_obj_diference;
                     $array_bills_orders_custom[] = $custom_obj;
-                }
 
-                if($exist){
-                    //Aquí sumariamos precios de las ordenes
-                    foreach($array_dates_old as $key_date => $date){
-                        if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
-                        //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
-                            $array_bills_orders_custom[$position]['old']['amounts'][$key_date] += round($amount, 2);
+                }else{
+                    foreach($array_bills_orders_custom as $key_array_bills_orders_custom => $bill_order_custom){
+                        //Aquí sumariamos precios de las ordenes
+                        foreach($array_dates_old as $key_date => $date){
+                            if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
+                            //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                                $array_bills_orders_custom[$key_array_bills_orders_custom]['old']['amounts'][$key_date] += round($amount, 2);
+                            }
                         }
-                    }
-                    foreach($array_dates as $key_date => $date){
-                        if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
-                        //if($date['last_date_custom'] >= $custom_date && $date['first_date_custom'] <= $custom_date){
-                            $array_bills_orders_custom[$position]['new']['amounts'][$key_date] += round($amount, 2);
-                        }
-                    }
-                }
-            }
-        }
-
-        //Recorremos el objeto OTROS
-        foreach($array_orders_others as $key => $order_others){
-            $custom_obj = null;
-            $custom_obj_new = null;
-            $custom_obj_old = null;
-            $custom_obj_diference = null;
-            $custom_date_array_aux = explode(" ", $order_dig->created_at);
-            $custom_date_array = explode("-", $custom_date_array_aux[0]);
-            $custom_date = $custom_date_array[2].'-'.$custom_date_array[1].'-'.$custom_date_array[0];
-
-            //Consultamos el amount de la orden
-            $amount = BillOrder::where('id_order', $order_dig->id)->sum('amount');
-
-            if($key == 0){
-                $custom_obj['dep'] = $order_others->department_nomenclature;
-                $custom_obj['dep_name'] = $order_others->department_name;
-                $custom_obj['id_dep'] = $order_others->id_department;
-                $custom_obj['type'] = 'OTROS';
-                $custom_obj['id_type'] = $order_others->id_channel;
-
-                $custom_obj_old['period'] = $date_from_custom_old.' a '.$date_to_custom_old;
-                foreach($array_dates_old as $key_date => $date){
-                    if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
-                    //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
-                        $custom_obj_old['amounts'][] = round($amount, 2);
-                    }else{
-                        $custom_obj_old['amounts'][] = 0;
-                    }
-                }
-                $custom_obj_new['period'] = $date_from.' a '.$date_to;
-                foreach($array_dates as $key_date => $date){
-                    if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
-                    //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
-                        $custom_obj_new['amounts'][] = round($amount, 2);
-                    }else{
-                        $custom_obj_new['amounts'][] = 0;
-                    }
-                }
-
-                $custom_obj_diference['period'] = 'Diferencia%';
-                $custom_obj['old'] = $custom_obj_old;
-                $custom_obj['new'] = $custom_obj_new;
-                $custom_obj['diference'] = $custom_obj_diference;
-                $array_bills_orders_custom[] = $custom_obj;
-
-            }else{
-                foreach($array_bills_orders_custom as $key_array_bills_orders_custom => $bill_order_custom){
-                    //Aquí sumariamos precios de las ordenes
-                    foreach($array_dates_old as $key_date => $date){
-                        if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
-                        //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
-                            $array_bills_orders_custom[$key_array_bills_orders_custom]['old']['amounts'][$key_date] += round($amount, 2);
-                        }
-                    }
-                    foreach($array_dates as $key_date => $date){
-                        if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
-                        //if($date['last_date_custom'] >= $custom_date && $date['first_date_custom'] <= $custom_date){
-                            $array_bills_orders_custom[$key_array_bills_orders_custom]['new']['amounts'][$key_date] += round($amount, 2);
+                        foreach($array_dates as $key_date => $date){
+                            if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
+                            //if($date['last_date_custom'] >= $custom_date && $date['first_date_custom'] <= $custom_date){
+                                $array_bills_orders_custom[$key_array_bills_orders_custom]['new']['amounts'][$key_date] += round($amount, 2);
+                            }
                         }
                     }
                 }
             }
+            $exist = false;
         }
 
         //Guardamos el objeto diferencia
@@ -1275,6 +1350,8 @@ class ReportSalesOrdersSignedController extends Controller
                 }
             }
         }
+
+        //error_log(print_r($array_bills_orders_custom, true));
 
         //Calculamos los totales de las cantidades de $array_bills_orders_custom
         foreach($array_bills_orders_custom as $key_array_bills_orders_custom => $bill_order_custom){
@@ -1392,6 +1469,7 @@ class ReportSalesOrdersSignedController extends Controller
                         }
                     }
 
+                    $custom_obj['diference']['period'] = 'Diferencia%';
                     $custom_obj['diference']['amounts'] = $amounts_diference;
                     $array_bills_orders_custom_aux[] = $custom_obj;
                 }

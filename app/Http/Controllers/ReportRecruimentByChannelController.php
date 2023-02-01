@@ -420,8 +420,6 @@ class ReportRecruimentByChannelController extends Controller
             }
         }
 
-        
-
         //Calculamos los totales de las cantidades de $array_bills_orders_custom
         foreach($array_bills_orders_custom as $key_array_bills_orders_custom => $bill_order_custom){
             $array_amounts_new = $bill_order_custom['new']['amounts'];
@@ -538,6 +536,7 @@ class ReportRecruimentByChannelController extends Controller
                         }
                     }
 
+                    $custom_obj['diference']['period'] = 'Diferencia%';
                     $custom_obj['diference']['amounts'] = $amounts_diference;
                     $array_bills_orders_custom_aux[] = $custom_obj;
                 }
@@ -812,56 +811,54 @@ class ReportRecruimentByChannelController extends Controller
         //Generamos los arrays de fechas
         $array_dates = $this->generateDateArray($num_months, $date_from_custom, 1);
         $array_dates_old = $this->generateDateArray($num_months, $date_from_custom_old, 2);
-        $array_bills_orders_dig = BillOrder::select('bills_orders.*', 'departments.nomenclature as department_nomenclature', 'departments.name as department_name', 'departments.id as id_department', 'proposals.id as id_proposal', 'channels.nomenclature as channel_nomenclature')
+        //Canales DIG Y PRINT
+        $array_bills_orders_dig = BillOrder::select('bills_orders.*', 'departments.nomenclature as department_nomenclature', 'departments.name as department_name', 'departments.id as id_department', 'channels.nomenclature as channel_nomenclature')
                                         ->leftJoin('orders', 'orders.id', 'bills_orders.id_order')
-                                        ->leftJoin('proposals', 'orders.id_proposal', 'proposals.id')
+                                        ->leftJoin('proposals', 'proposals.id', 'orders.id_proposal')
                                         ->leftJoin('contacts', 'proposals.id_contact', 'contacts.id')
-                                        ->leftJoin('departments', 'proposals.id_department', 'departments.id')
-                                        ->leftJoin('proposals_bills', 'proposals_bills.id_proposal', 'proposals.id')
-                                        ->leftJoin('services_bills', 'services_bills.id_bill', 'proposals_bills.id_bill')
-                                        ->leftJoin('bills', 'bills.id', 'services_bills.id_bill')
-                                        ->leftJoin('services', 'services.id', 'services_bills.id_service')
+                                        ->leftJoin('services_bills_orders', 'services_bills_orders.id_bill_order', 'bills_orders.id')
+                                        ->leftJoin('services', 'services.id', 'services_bills_orders.id_service')
                                         ->leftJoin('articles', 'articles.id', 'services.id_article')
                                         ->leftJoin('batchs', 'batchs.id', 'articles.id_batch')
                                         ->leftJoin('chapters', 'chapters.id', 'batchs.id_chapter')
                                         ->leftJoin('projects', 'projects.id', 'chapters.id_project')
-                                        ->leftJoin('channels', 'channels.id', 'projects.id_channel');
-        
-        $array_bills_orders_print = BillOrder::select('bills_orders.*', 'departments.nomenclature as department_nomenclature', 'departments.name as department_name', 'departments.id as id_department', 'proposals.id as id_proposal', 'channels.nomenclature as channel_nomenclature')
-                                        ->leftJoin('orders', 'orders.id', 'bills_orders.id_order')
-                                        ->leftJoin('proposals', 'orders.id_proposal', 'proposals.id')
-                                        ->leftJoin('contacts', 'proposals.id_contact', 'contacts.id')
-                                        ->leftJoin('departments', 'proposals.id_department', 'departments.id')
-                                        ->leftJoin('proposals_bills', 'proposals_bills.id_proposal', 'proposals.id')
-                                        ->leftJoin('services_bills', 'services_bills.id_bill', 'proposals_bills.id_bill')
-                                        ->leftJoin('bills', 'bills.id', 'services_bills.id_bill')
-                                        ->leftJoin('services', 'services.id', 'services_bills.id_service')
-                                        ->leftJoin('articles', 'articles.id', 'services.id_article')
-                                        ->leftJoin('batchs', 'batchs.id', 'articles.id_batch')
-                                        ->leftJoin('chapters', 'chapters.id', 'batchs.id_chapter')
-                                        ->leftJoin('projects', 'projects.id', 'chapters.id_project')
-                                        ->leftJoin('channels', 'channels.id', 'projects.id_channel');
+                                        ->leftJoin('channels', 'channels.id', 'projects.id_channel')
+                                        ->leftJoin('sections', 'sections.id', 'channels.id_section')
+                                        ->leftJoin('departments', 'departments.id', 'sections.id_department');
+
+        $array_bills_orders_print = BillOrder::select('bills_orders.*', 'departments.nomenclature as department_nomenclature', 'departments.name as department_name', 'departments.id as id_department', 'channels.nomenclature as channel_nomenclature')
+                                                ->leftJoin('orders', 'orders.id', 'bills_orders.id_order')
+                                                ->leftJoin('proposals', 'proposals.id', 'orders.id_proposal')
+                                                ->leftJoin('contacts', 'proposals.id_contact', 'contacts.id')
+                                                ->leftJoin('services_bills_orders', 'services_bills_orders.id_bill_order', 'bills_orders.id')
+                                                ->leftJoin('services', 'services.id', 'services_bills_orders.id_service')
+                                                ->leftJoin('articles', 'articles.id', 'services.id_article')
+                                                ->leftJoin('batchs', 'batchs.id', 'articles.id_batch')
+                                                ->leftJoin('chapters', 'chapters.id', 'batchs.id_chapter')
+                                                ->leftJoin('projects', 'projects.id', 'chapters.id_project')
+                                                ->leftJoin('channels', 'channels.id', 'projects.id_channel')
+                                                ->leftJoin('sections', 'sections.id', 'channels.id_section')
+                                                ->leftJoin('departments', 'departments.id', 'sections.id_department');
                                     
-        $array_bills_orders_others = BillOrder::select('bills_orders.*', 'departments.nomenclature as department_nomenclature', 'departments.name as department_name', 'departments.id as id_department', 'proposals.id as id_proposal', 'channels.nomenclature as channel_nomenclature')
-                                        ->leftJoin('orders', 'orders.id', 'bills_orders.id_order')
-                                        ->leftJoin('proposals', 'orders.id_proposal', 'proposals.id')
-                                        ->leftJoin('contacts', 'proposals.id_contact', 'contacts.id')
-                                        ->leftJoin('departments', 'proposals.id_department', 'departments.id')
-                                        ->leftJoin('proposals_bills', 'proposals_bills.id_proposal', 'proposals.id')
-                                        ->leftJoin('services_bills', 'services_bills.id_bill', 'proposals_bills.id_bill')
-                                        ->leftJoin('bills', 'bills.id', 'services_bills.id_bill')
-                                        ->leftJoin('services', 'services.id', 'services_bills.id_service')
-                                        ->leftJoin('articles', 'articles.id', 'services.id_article')
-                                        ->leftJoin('batchs', 'batchs.id', 'articles.id_batch')
-                                        ->leftJoin('chapters', 'chapters.id', 'batchs.id_chapter')
-                                        ->leftJoin('projects', 'projects.id', 'chapters.id_project')
-                                        ->leftJoin('channels', 'channels.id', 'projects.id_channel');
+        $array_bills_orders_others = BillOrder::select('bills_orders.*', 'departments.nomenclature as department_nomenclature', 'departments.name as department_name', 'departments.id as id_department', 'channels.nomenclature as channel_nomenclature')
+                                                ->leftJoin('orders', 'orders.id', 'bills_orders.id_order')
+                                                ->leftJoin('proposals', 'proposals.id', 'orders.id_proposal')
+                                                ->leftJoin('contacts', 'proposals.id_contact', 'contacts.id')
+                                                ->leftJoin('services_bills_orders', 'services_bills_orders.id_bill_order', 'bills_orders.id')
+                                                ->leftJoin('services', 'services.id', 'services_bills_orders.id_service')
+                                                ->leftJoin('articles', 'articles.id', 'services.id_article')
+                                                ->leftJoin('batchs', 'batchs.id', 'articles.id_batch')
+                                                ->leftJoin('chapters', 'chapters.id', 'batchs.id_chapter')
+                                                ->leftJoin('projects', 'projects.id', 'chapters.id_project')
+                                                ->leftJoin('channels', 'channels.id', 'projects.id_channel')
+                                                ->leftJoin('sections', 'sections.id', 'channels.id_section')
+                                                ->leftJoin('departments', 'departments.id', 'sections.id_department');
                                         
         //Filtro departamente
         if($select_department != '0'){
-            $array_bills_orders_dig = $array_bills_orders_dig->where('proposals.id_department', $select_department);
-            $array_bills_orders_print = $array_bills_orders_print->where('proposals.id_department', $select_department);
-            $array_bills_orders_others = $array_bills_orders_others->where('proposals.id_department', $select_department);
+            $array_bills_orders_dig = $array_bills_orders_dig->where('departments.id', $select_department);
+            $array_bills_orders_print = $array_bills_orders_print->where('departments.id', $select_department);
+            $array_bills_orders_others = $array_bills_orders_others->where('departments.id', $select_department);
         }
 
         //Filtro consultor
@@ -883,27 +880,31 @@ class ReportRecruimentByChannelController extends Controller
             $array_bills_orders_print = $array_bills_orders_print->where('bills_orders.id_sage', null)->where('bills_orders.receipt_order_sage', null);
             $array_bills_orders_others = $array_bills_orders_others->where('bills_orders.id_sage', null)->where('bills_orders.receipt_order_sage', null);
         }
+
         //Facturas DIG
         $array_bills_orders_dig = $array_bills_orders_dig->where('channels.nomenclature', 'DIG')
-                                                ->groupBy('bills_orders.id', 'channels.nomenclature')
-                                                ->get();    
+                                                ->get();
+        //error_log(count($array_bills_orders_dig));
+        //error_log('array_bills_orders_dig: '.$array_bills_orders_dig);
+
 
         //Facturas PRINT
         $array_bills_orders_print = $array_bills_orders_print->where('channels.nomenclature', 'PRINT')
-                                                            ->groupBy('bills_orders.id', 'channels.nomenclature')
-                                                            ->get();
-                                                            //error_log(count($array_bills_orders_print));
-                                                            //error_log('array_bills_orders_print: '.$array_bills_orders_print);
+                                                ->get();
+        //error_log(count($array_bills_orders_print));
+        //error_log('array_bills_orders_print: '.$array_bills_orders_print);
 
         //Facturas OTROS
         $array_bills_orders_others = $array_bills_orders_others->whereNotIn('channels.nomenclature', ['DIG', 'PRINT'])
-                ->groupBy('bills_orders.id', 'channels.nomenclature')
-                ->get();
+                                                ->get();
+        
+
         //error_log(count($array_bills_orders_others));
         //error_log('array_bills_orders_others: '.$array_bills_orders_others);
 
+        //Creamos el objeto customizado
         $array_bills_orders_custom = array();
-
+        
         //Recorremos el objeto DIG
         foreach($array_bills_orders_dig as $key => $bill_order_dig){
             $custom_date_array = explode("-", $bill_order_dig->date);
@@ -1003,7 +1004,7 @@ class ReportRecruimentByChannelController extends Controller
                 }
             }
         }
-
+        
         //Recorremos el objeto PRINT
         foreach($array_bills_orders_print as $key => $bill_order_print){
             $custom_obj = null;
@@ -1148,23 +1149,27 @@ class ReportRecruimentByChannelController extends Controller
 
             }else{
                 foreach($array_bills_orders_custom as $key_array_bills_orders_custom => $bill_order_custom){
-                    //Aquí sumariamos precios de las ordenes
-                    foreach($array_dates_old as $key_date => $date){
-                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_others->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_others->date)){
-                        //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
-                            $array_bills_orders_custom[$key_array_bills_orders_custom]['old']['amounts'][$key_date] += round($bill_order_others->amount, 2);
+                    if($bill_order_custom['type'] != 'PRINT' && $bill_order_custom['type'] != 'DIG'){
+                        //Aquí sumariamos precios de las ordenes
+                        foreach($array_dates_old as $key_date => $date){
+                            if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_others->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_others->date)){
+                            //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                                $array_bills_orders_custom[$key_array_bills_orders_custom]['old']['amounts'][$key_date] += round($bill_order_others->amount, 2);
+                            }
                         }
-                    }
-                    foreach($array_dates as $key_date => $date){
-                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_others->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_others->date)){
-                        //if($date['last_date_custom'] >= $custom_date && $date['first_date_custom'] <= $custom_date){
-                            $array_bills_orders_custom[$key_array_bills_orders_custom]['new']['amounts'][$key_date] += round($bill_order_others->amount, 2);
+                        //error_log(print_r($array_bills_orders_custom, true));
+                        foreach($array_dates as $key_date => $date){
+                            if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_others->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_others->date)){
+                            //if($date['last_date_custom'] >= $custom_date && $date['first_date_custom'] <= $custom_date){
+                                $array_bills_orders_custom[$key_array_bills_orders_custom]['new']['amounts'][$key_date] += round($bill_order_others->amount, 2);
+                            }
                         }
                     }
                 }
             }
         }
-
+       
+        //error_log(print_r($array_bills_orders_custom, true));
         //Guardamos el objeto diferencia
         if(count($array_bills_orders_custom) > 0){
             if(count($array_bills_orders_custom[0]['new']) > 0){
@@ -1353,7 +1358,6 @@ class ReportRecruimentByChannelController extends Controller
                         }
                     }
 
-                    $custom_obj['diference']['period'] = 'Diferencia%';
                     $custom_obj['diference']['amounts'] = $amounts_diference;
                     $array_bills_orders_custom_aux[] = $custom_obj;
 
@@ -1442,8 +1446,11 @@ class ReportRecruimentByChannelController extends Controller
 
             if($total_total_new > 0){
                 $percent_others_new = round((100 * $total_others_new) / $total_total_new, 2);
+                error_log('percent_others_new: '.$percent_others_new);
                 $percent_print_new = round((100 * $total_print_new) / $total_total_new, 2);
+                error_log('percent_print_new: '.$percent_print_new);
                 $percent_dig_new = round((100 * $total_dig_new) / $total_total_new, 2);
+                error_log('percent_dig_new: '.$percent_dig_new);
                 $percent_new = [$percent_others_new, 0, $percent_dig_new, $percent_print_new];
             }
 
