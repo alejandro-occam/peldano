@@ -1026,6 +1026,7 @@ export default {
                     me.changeValueIsChangeArticle();
                     me.offer = me.$utils.roundAndFix(me.orders.proposal_obj.total_global);
                     me.total = me.$utils.roundAndFix(me.orders.proposal_obj.total_global);
+                    me.discount = 0;
                     me.is_change_get_info = 1;
                 }else{
                     me.is_change_get_info = 0;
