@@ -147,7 +147,7 @@ class ReportSalesOrdersSignedController extends Controller
 
         //Facturas DIG
         $array_orders_dig = $array_orders_dig->where('channels.nomenclature', 'DIG')
-                                                ->groupBy('orders.id', 'channels.nomenclature')
+                                                //->groupBy('orders.id', 'channels.nomenclature')
                                                 ->get();
         error_log('array_orders_dig: '.$array_orders_dig);
         //error_log(count($array_orders_dig));
