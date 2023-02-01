@@ -312,6 +312,11 @@ class ProposalsController extends Controller
         error_log('id_department: '.$request->get('id_department'));
         //END COMENTARIO PARA EL OBJETO
 
+        $status = 1;
+        if($proposal_submission_settings->discount >= 20){
+            $status = 2;
+        }
+
         $proposal = Proposal::create([
             'id_proposal_custom' => $id_proposal_custom,
             'id_user' => Auth::user()->id,
@@ -332,7 +337,8 @@ class ProposalsController extends Controller
             'show_pvp' => $proposal_submission_settings->show_pvp,
             'sales_possibilities' => $proposal_submission_settings->sales_possibilities,
             'id_department' => $id_department,
-            'is_custom' => $custom_bill
+            'is_custom' => $custom_bill,
+            'status' => $status
         ]);
 
         $fullname = Auth::user()->name.' '.Auth::user()->surnames;
@@ -368,33 +374,35 @@ class ProposalsController extends Controller
             }
             $bill->rows = $rows;
         }
-        
-        
-        $path = 'media/custom-imgs/logo_azul.png';
-        $type = pathinfo($path, PATHINFO_EXTENSION);
-        $data_base64 = file_get_contents($path);
-        $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data_base64);
-         
-        //Preparamos los datos a pasar al pdf
-        $data['proposal'] = $proposal;
-        $data['fullname'] = $fullname;
-        $data['department_name'] = $department->name;
-        $data['proposal_obj'] = json_decode($request->get('proposal_obj'));
-        $data['bill_obj'] = $bill_obj2;
-        $data['select_way_to_pay_options'] = $request->get('select_way_to_pay_options');
-        $data['select_expiration_options'] = $request->get('select_expiration_options');
-        $data['base64'] = $base64;
-                
-        //Generamos el pdf
-        $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pdf.invoice', $data);
-        $content = $pdf->download()->getOriginalContent();
-        Storage::put('pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf',$content);
 
-        //Guardamos el fichero
-        $proposal->pdf_file = 'pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf';
-        $proposal->save();
+        if($status == 1){
+            $path = 'media/custom-imgs/logo_azul.png';
+            $type = pathinfo($path, PATHINFO_EXTENSION);
+            $data_base64 = file_get_contents($path);
+            $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data_base64);
+            
+            //Preparamos los datos a pasar al pdf
+            $data['proposal'] = $proposal;
+            $data['fullname'] = $fullname;
+            $data['department_name'] = $department->name;
+            $data['proposal_obj'] = json_decode($request->get('proposal_obj'));
+            $data['bill_obj'] = $bill_obj2;
+            $data['select_way_to_pay_options'] = $request->get('select_way_to_pay_options');
+            $data['select_expiration_options'] = $request->get('select_expiration_options');
+            $data['base64'] = $base64;
+                    
+            //Generamos el pdf
+            $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pdf.invoice', $data);
+            $content = $pdf->download()->getOriginalContent();
+            Storage::put('pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf',$content);
 
-        $response['pdf_file'] = $proposal->pdf_file;
+            //Guardamos el fichero
+            $proposal->pdf_file = 'pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf';
+            $proposal->save();
+            $response['pdf_file'] = $proposal->pdf_file;
+        }else{
+            $response['pdf_file'] = '';
+        }
         $response['code'] = 1000;
         return response()->json($response);
     }
@@ -658,6 +666,12 @@ class ProposalsController extends Controller
         $proposal->sales_possibilities = $proposal_submission_settings->sales_possibilities;
         $proposal->show_invoices = $proposal_submission_settings->show_invoices;
         $proposal->is_custom = $custom_bill;
+
+        $status = 1;
+        if($proposal_submission_settings->discount >= 20){
+            $status = 2;
+        }
+        $proposal->status = $status;
         $proposal->save();
 
         $fullname = Auth::user()->name.' '.Auth::user()->surnames;
@@ -689,31 +703,36 @@ class ProposalsController extends Controller
             $bill->rows = $rows;
         }
 
-        $path = 'media/custom-imgs/logo_azul.png';
-        $type = pathinfo($path, PATHINFO_EXTENSION);
-        $data_base64 = file_get_contents($path);
-        $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data_base64);
-         
-        //Preparamos los datos a pasar al pdf
-        $data['proposal'] = $proposal;
-        $data['fullname'] = $fullname;
-        $data['department_name'] = $department->name;
-        $data['proposal_obj'] = json_decode($request->get('proposal_obj'));
-        $data['bill_obj'] = $bill_obj2;
-        $data['select_way_to_pay_options'] = $request->get('select_way_to_pay_options');
-        $data['select_expiration_options'] = $request->get('select_expiration_options');
-        $data['base64'] = $base64;
+        if($status == 1){
+            $path = 'media/custom-imgs/logo_azul.png';
+            $type = pathinfo($path, PATHINFO_EXTENSION);
+            $data_base64 = file_get_contents($path);
+            $base64 = 'data:image/' . $type . ';base64,' . base64_encode($data_base64);
+            
+            //Preparamos los datos a pasar al pdf
+            $data['proposal'] = $proposal;
+            $data['fullname'] = $fullname;
+            $data['department_name'] = $department->name;
+            $data['proposal_obj'] = json_decode($request->get('proposal_obj'));
+            $data['bill_obj'] = $bill_obj2;
+            $data['select_way_to_pay_options'] = $request->get('select_way_to_pay_options');
+            $data['select_expiration_options'] = $request->get('select_expiration_options');
+            $data['base64'] = $base64;
 
-        //Guardamos el fichero
-        $proposal->pdf_file = 'pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf';
-        $proposal->save();
-                
-        //Generamos el pdf
-        $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pdf.invoice', $data);
-        $content = $pdf->download()->getOriginalContent();
-        Storage::put('pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf',$content);
+            //Guardamos el fichero
+            $proposal->pdf_file = 'pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf';
+            $proposal->save();
+                    
+            //Generamos el pdf
+            $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pdf.invoice', $data);
+            $content = $pdf->download()->getOriginalContent();
+            Storage::put('pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf',$content);
+            $response['pdf_file'] = $proposal->pdf_file;
 
-        $response['pdf_file'] = $proposal->pdf_file;
+        }else{
+            $response['pdf_file'] = '';
+        }
+        
         $response['code'] = 1000;
         return response()->json($response);
     }
@@ -756,6 +775,22 @@ class ProposalsController extends Controller
         $response['code'] = 1000;
         return response()->json($response);
 
+    }
+
+    //Validar propuesta por el admin
+    function validateProposal($id){
+        //Consultamos si existe la propuesta
+        $proposal = Proposal::find($id);
+        if(!$proposal){
+            $response['code'] = 1001;
+            return response()->json($response);
+        }
+
+        //Modificamos el estado de la propuesta
+        $proposal->status = 1;
+        $proposal->save();
+        $response['code'] = 1000;
+        return response()->json($response);
     }
 
     //Listar tabla de propuestas para exportar
@@ -812,6 +847,10 @@ class ProposalsController extends Controller
         
         $html = '';
         foreach($array_proposals as $proposal){
+            $status_text = 'CERRADA';
+            if($proposal->status == 2){
+                $status_text = 'PENDIENTE DE VALIDAR';
+            }
             $html .= '<tr data-row="0" class="datatable-row" style="left: 0px;">
                         <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#id_user" aria-label="null">
                             <span class="mx-auto">
@@ -825,7 +864,7 @@ class ProposalsController extends Controller
                         </td>
                         <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#status" aria-label="null">
                             <span class="mx-auto">
-                                <span class="text-dark">CERRADA</span>
+                                <span class="text-dark">'.$status_text.'</span>
                             </span>
                         </td>
                         <td style="width: 85px;" class="datatable-cell-center datatable-cell" data-field="#code" aria-label="null">
@@ -935,7 +974,11 @@ class ProposalsController extends Controller
         foreach($array_proposals as $key => $proposal){
             $sheet->setCellValue('A'.($key+2), $proposal->id_user);
             $sheet->setCellValue('B'.($key+2), $proposal['proposal_custom']);
-            $sheet->setCellValue('C'.($key+2), 'CERRADA');
+            if($proposal->status == 2){
+                $sheet->setCellValue('C'.($key+2), 'PENDIENTE DE VALIDAR');
+            }else{
+                $sheet->setCellValue('C'.($key+2), 'CERRADA');
+            }
             $sheet->setCellValue('D'.($key+2), '--');
             $sheet->setCellValue('E'.($key+2), $proposal['name_contact']);
             $sheet->setCellValue('F'.($key+2), $proposal->date_proyect);

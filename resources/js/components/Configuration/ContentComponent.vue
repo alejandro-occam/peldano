@@ -299,8 +299,8 @@ export default {
                             $("#list_articles").KTDatatable("reload");
                             $("#modal_delete_article").modal("hide");
                             swal("", "Articulo eliminado correctamente", "success");
-                        }else if(this.errors.code == 1001 || this.errors.code == 1002){
-                            swal("", "Rellena todos los datos", "warning");
+                        }else if(this.errors.code == 1001){
+                            swal("", "Este artículo pertence a alguna propuesto u orden", "warning");
                         }else{
                             swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
                         }

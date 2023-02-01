@@ -55,18 +55,19 @@ class ReportBilledController extends Controller
         $array_dates_old = $this->generateDateArray($num_months, $date_from_custom_old, 2);
 
         //Canales DIG Y PRINT
-        $array_bills_orders_dig = BillOrder::select('bills_orders.*', 'departments.nomenclature as department_nomenclature', 'departments.name as department_name', 'departments.id as id_department', 'proposals.id_department as id_department_proposal', 'proposals.id as id_proposal')
+        $array_bills_orders_dig = BillOrder::select('bills_orders.*', 'departments.nomenclature as department_nomenclature', 'departments.name as department_name', 'departments.id as id_department', 'sections.nomenclature as section_nomenclature', 'channels.nomenclature as channel_nomenclature')
                                         ->leftJoin('orders', 'orders.id', 'bills_orders.id_order')
-                                        ->leftJoin('proposals', 'orders.id_proposal', 'proposals.id')
-                                        ->leftJoin('departments', 'proposals.id_department', 'departments.id')
-                                        ->leftJoin('sections', 'sections.id_department', 'departments.id')
-                                        ->leftJoin('channels', 'channels.id_section', 'sections.id')
+                                        ->leftJoin('proposals', 'proposals.id', 'orders.id_proposal')
                                         ->leftJoin('contacts', 'proposals.id_contact', 'contacts.id')
-                                        ->leftJoin('proposals_bills', 'proposals_bills.id_proposal', 'proposals.id')
-                                        ->leftJoin('services_bills', 'services_bills.id_bill', 'proposals_bills.id_bill')
-                                        ->leftJoin('bills', 'bills.id', 'services_bills.id_bill')
-                                        ->leftJoin('services', 'services.id', 'services_bills.id_service')
-                                        ->leftJoin('articles', 'articles.id', 'services.id_article');
+                                        ->leftJoin('services_bills_orders', 'services_bills_orders.id_bill_order', 'bills_orders.id')
+                                        ->leftJoin('services', 'services.id', 'services_bills_orders.id_service')
+                                        ->leftJoin('articles', 'articles.id', 'services.id_article')
+                                        ->leftJoin('batchs', 'batchs.id', 'articles.id_batch')
+                                        ->leftJoin('chapters', 'chapters.id', 'batchs.id_chapter')
+                                        ->leftJoin('projects', 'projects.id', 'chapters.id_project')
+                                        ->leftJoin('channels', 'channels.id', 'projects.id_channel')
+                                        ->leftJoin('sections', 'sections.id', 'channels.id_section')
+                                        ->leftJoin('departments', 'departments.id', 'sections.id_department');
 
         /*$array_bills_orders_print = BillOrder::select('bills_orders.*', 'departments.nomenclature as department_nomenclature', 'departments.name as department_name', 'departments.id as id_department', 'proposals.id as id_proposal', 'channels.nomenclature as channel_nomenclature')
                                         ->leftJoin('orders', 'orders.id', 'bills_orders.id_order')
@@ -141,7 +142,7 @@ class ReportBilledController extends Controller
 
         //Facturas DIG
         $array_bills_orders_dig = $array_bills_orders_dig//->where('channels.nomenclature', 'DIG')
-                                                ->groupBy('bills_orders.id')
+                                                //->groupBy('bills_orders.id')
                                                 ->get();
 
         error_log('array_bills_orders_dig: '.$array_bills_orders_dig);
@@ -168,7 +169,8 @@ class ReportBilledController extends Controller
                 $custom_obj['id_dep'] = $bill_order_dig->id_department;
                 $custom_obj['type'] = $bill_order_dig->channel_nomenclature;
                 $custom_obj['id_type'] = $bill_order_dig->id_channel;
-
+                $custom_obj['sec_name'] = $bill_order_dig->section_nomenclature;
+                
                 $custom_obj_old['period'] = 'Hace 1 año';
                 foreach($array_dates_old as $key_date => $date){
                     if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
@@ -210,6 +212,7 @@ class ReportBilledController extends Controller
                     $custom_obj['id_dep'] = $bill_order_dig->id_department;
                     $custom_obj['type'] = $bill_order_dig->channel_nomenclature;
                     $custom_obj['id_type'] = $bill_order_dig->id_channel;
+                    $custom_obj['sec_name'] = $bill_order_dig->section_nomenclature;
 
                     $custom_obj_old['period'] ='Hace 1 año';
                     foreach($array_dates_old as $key_date => $date){

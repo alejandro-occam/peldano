@@ -123,7 +123,7 @@
         </div>
     </div>
     <Divider class="my-15" />
-    <div class="col-12 mt-15">
+    <div class="col-12 mt-15" v-if="Number(reports.array_bills_orders.length) > 0">
         <table width="100%" cellpadding="2" cellspacing="1">
             <thead class="custom-columns-datatable">
                 <tr>
@@ -131,288 +131,47 @@
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 50px;"><span>SEC</span></th>
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 50px;"><span>CAN</span></th>
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 125px;"><span>PERIODO</span></th>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>*Jan-22</span></th>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Feb-22</span></th>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Mar-22</span></th>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Apr-22</span></th>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>May-22</span></th>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Jun-22</span></th>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Jul-22</span></th>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Aug-22</span></th>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Sep-22</span></th>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Oct-22</span></th>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Nov-22</span></th>
-                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>*Dec-22</span></th>
+                    <template v-for="index_report_date in Number(reports.array_dates.length)" :key="index_report_date.id">
+                        <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>{{ reports.array_dates[index_report_date - 1].date }}</span></th>
+                    </template>
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>TOTAL</span></th>
                 </tr>
             </thead>
             <tbody>  
-                <!--CAR DIGITAL-->
-                <tr class="row-product text-align-center bg-white">
-                    <td class="td-border-right bg-light-blue-table" :rowspan="4">CAR</td>
-                    <td class="td-border-right" :rowspan="4">DIGITAL</td>
-                    <td class="td-border-right" :rowspan="4">EMA</td>
-                </tr>
-                <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3">Hace 1 año</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                </tr>   
-                <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3 bg-light-blue-table">Selección</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                </tr>   
-                <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3 bg-purple color-white">Diferencia%</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                </tr>   
-                <!--CAR EXPERIENCIA-->
-                <tr class="row-product text-align-center bg-white">
-                    <td class="td-border-right bg-light-blue-table" :rowspan="4">CAR</td>
-                    <td class="td-border-right" :rowspan="4">EXPERIENCIA</td>
-                    <td class="td-border-right" :rowspan="4">EMA</td>
-                </tr>
-                <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3">Hace 1 año</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                </tr>   
-                <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3 bg-light-blue-table">Selección</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                </tr>   
-                <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3 bg-purple color-white">Diferencia%</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                </tr>   
-                <!--CAR OTROS-->
-                <tr class="row-product text-align-center bg-white">
-                    <td class="td-border-right bg-light-blue-table" :rowspan="4">CAR</td>
-                    <td class="td-border-right" :rowspan="4">OTROS</td>
-                    <td class="td-border-right" :rowspan="4">EMA</td>
-                </tr>
-                <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3">Hace 1 año</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                </tr>   
-                <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3 bg-light-blue-table">Selección</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                </tr>   
-                <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3 bg-purple color-white">Diferencia%</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                </tr>   
-                <!--CARAVANING-->
-                <tr class="row-product bg-white">
-                    <td class="td-border-right bg-light-blue-table pl-5" :rowspan="4" colspan="3">CARAVANING</td>
-                </tr>
-                <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3">Hace 1 año</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                </tr>   
-                <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3 bg-light-blue-table">Selección</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                </tr>   
-                <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3 bg-purple color-white">Diferencia%</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                </tr>    
-                <!--TOTAL-->
-                <tr class="row-product bg-white">
-                    <td class="td-border-right bg-light-blue-table pl-5" :rowspan="4" colspan="3">TOTAL</td>
-                </tr>
-                <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3">Hace 1 año</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                    <td class="text-align-center td-border-right">0</td>
-                </tr>   
-                <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3 bg-light-blue-table">Selección</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                    <td class="text-align-center td-border-right bg-light-blue-table">0</td>
-                </tr>   
-                <tr class="row-product bg-white">
-                    <td class="td-border-right pl-3 bg-purple color-white">Diferencia%</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                    <td class="text-align-center td-border-right bg-light-blue-diference-table">-</td>
-                </tr>   
+                <template v-for="index_bill_order in Number(reports.array_bills_orders.length)" :key="index_bill_order.id">
+                    <tr class="row-product bg-white" v-if="reports.array_bills_orders[index_bill_order - 1].type_obj == 1">
+                        <td class="td-border-right bg-light-blue-table pl-5" :rowspan="4">{{ reports.array_bills_orders[index_bill_order - 1].dep }}</td>
+                        <td class="td-border-right pl-5" :rowspan="4">{{ reports.array_bills_orders[index_bill_order - 1].sec_name }}</td>
+                        <td class="td-border-right pl-5" :rowspan="4">{{ reports.array_bills_orders[index_bill_order - 1].type }}</td>
+                    </tr>
+                    <tr class="row-product bg-white" v-else-if="reports.array_bills_orders[index_bill_order - 1].type_obj == 2">
+                        <td class="td-border-right bg-light-blue-table pl-5 text-align-center" :rowspan="4" colspan="3">{{ reports.array_bills_orders[index_bill_order - 1].dep.toUpperCase() }}</td>
+                    </tr>
+                    <tr class="row-product bg-white"  v-else-if="reports.array_bills_orders[index_bill_order - 1].type_obj == 3">
+                        <td class="td-border-right bg-light-blue-diference-table pl-5" :rowspan="4" colspan="3">{{ reports.array_bills_orders[index_bill_order - 1].dep }}</td>
+                    </tr>
+                    <tr class="row-product bg-white" v-else>
+                        <td class="td-border-right bg-light-blue-table pl-5" :rowspan="4" colspan="3">TOTAL</td>
+                    </tr>
+                    <tr class="row-product bg-white">
+                        <td class="td-border-right pl-3">{{ reports.array_bills_orders[index_bill_order - 1].old.period }}</td>
+                        <template v-for="index_amounts in Number(reports.array_bills_orders[index_bill_order - 1].new.amounts.length)" :key="index_amounts.id">
+                            <td class="text-align-center td-border-right">{{ reports.array_bills_orders[index_bill_order - 1].old.amounts[index_amounts - 1] }}</td>
+                        </template>
+                    </tr>   
+                    <tr class="row-product bg-white">
+                        <td class="td-border-right pl-3 bg-light-blue-table">{{ reports.array_bills_orders[index_bill_order - 1].new.period }}</td>
+                        <template v-for="index_amounts in Number(reports.array_bills_orders[index_bill_order - 1].new.amounts.length)" :key="index_amounts.id">
+                            <td class="text-align-center td-border-right bg-light-blue-table">{{ reports.array_bills_orders[index_bill_order - 1].new.amounts[index_amounts - 1] }}</td>
+                        </template>
+                    </tr>   
+                    <tr class="row-product bg-white">
+                        <td class="td-border-right pl-3 bg-purple color-white">{{ reports.array_bills_orders[index_bill_order - 1].diference.period }}</td>
+                        <template v-for="index_amounts in Number(reports.array_bills_orders[index_bill_order - 1].new.amounts.length)" :key="index_amounts.id">
+                            <td class="text-align-center td-border-right bg-light-blue-diference-table">{{ reports.array_bills_orders[index_bill_order - 1].diference.amounts[index_amounts - 1] }}</td>
+                        </template>
+                    </tr>
+                </template>
             </tbody>
         </table>
     </div>

@@ -19,6 +19,7 @@ use App\Models\Sector;
 use App\Models\Brand;
 use App\Models\Product;
 use App\Models\Article;
+use App\Models\Service;
 use Auth;
 
 //Batchs
@@ -76,8 +77,8 @@ class ConfigurationController extends Controller
 
         $array_users = User::select('users.*', 'positions.name as position_nane', 'roles.name as role_name')
                         ->leftJoin('positions', 'positions.id', 'users.id_position')
-                        ->leftJoin('roles_users', 'roles_users.id_user', 'users.id_position')
-                        ->leftJoin('roles', 'roles.id', 'roles_users.id_role')
+                        ->leftJoin('role_user', 'role_user.user_id', 'users.id_position')
+                        ->leftJoin('roles', 'roles.id', 'role_user.role_id')
                         ->where('users.name', 'like', '%'.$search.'%')
                         ->orWhere('users.surname', 'like', '%'.$search.'%')
                         ->orWhere('users.email', 'like', '%'.$search.'%')
@@ -138,7 +139,7 @@ class ConfigurationController extends Controller
         $extension = $request->get('extension');
 
         if (!isset($name) || empty($name) || !isset($surname) || empty($surname) || !isset($email) || empty($email) || !isset($user) || empty($user) || !isset($password) || empty($password) || !isset($id_position) || empty($id_position)
-            || !isset($mobile) || empty($mobile) || !isset($extension) || empty($extension) || !isset($id_rol) || empty($id_rol) || !isset($commission) || empty($commission) || !isset($status) || empty($status)) {
+            || !isset($mobile) || empty($mobile) || !isset($extension) || empty($extension) || !isset($id_rol) || empty($id_rol) || !isset($commission) || !isset($status) || empty($status)) {
             $response['code'] = 1002;
             $response['msg'] = "Missing or empty parameters";
             return response()->json($response);
@@ -185,7 +186,7 @@ class ConfigurationController extends Controller
         $user['discharge_date'] = $this->customDateBis($user->created_at);
 
         //Consultamos el id rol
-        $role_user = RoleUser::select('roles_users.*', 'roles.name as role_name')->leftJoin('roles', 'roles.id', 'roles_users.id_role')->where('roles_users.id_user', $id)->first();
+        $role_user = RoleUser::select('role_user.*', 'roles.name as role_name')->leftJoin('roles', 'roles.id', 'role_user.role_id')->where('role_user.user_id', $id)->first();
         $user['id_rol'] = $role_user->id_role;
         $user['role_name'] = $role_user['role_name'];
         $user['custom_date'] = $this->customDate($user->created_at);
@@ -196,7 +197,11 @@ class ConfigurationController extends Controller
 
     //Consultar información del usuario
     function getUser(){
-        $user = User::select('users.*', 'positions.name as name_position')->leftJoin('positions', 'positions.id', 'users.id_position')->where('users.id', Auth::user()->id)->first();
+        $user = User::select('users.*', 'positions.name as name_position', 'roles.name as role_name') 
+                        ->leftJoin('positions', 'positions.id', 'users.id_position')
+                        ->leftJoin('role_user', 'role_user.user_id', 'users.id')
+                        ->leftJoin('roles', 'roles.id', 'role_user.role_id')
+                        ->where('users.id', Auth::user()->id)->first();
         $response['user'] = $user;
         $response['code'] = 1000;
         return response()->json($response);
@@ -1039,14 +1044,21 @@ class ConfigurationController extends Controller
 
     //Eliminar artículo
     function deleteArticle($id){
-        //Consultamos si existe el usuario
+        //Consultamos si existe el artículo
         $article = Article::find($id);
         if(!$article){
             $response['code'] = 1001;
             return response()->json($response);
         }
 
-        //Eliminamos el calendario
+        //Consultamos si el artículo pertenece a algún servicio de alguna propuesta
+        $service = Service::where('id_article', $article->id)->first();
+        if($service){
+            $response['code'] = 1002;
+            return response()->json($response);
+        }
+
+        //Eliminamos el artículo
         $article->delete();
 
         $response['code'] = 1000;
