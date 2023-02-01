@@ -45,10 +45,10 @@
                                         <span class="my-5 mx-2 f-14">Informe de órdenes firmadas y ventas.</span>
                                         <img class="ml-auto mr-6 arrow" width="15" src=""/>
                                     </router-link>
-                                    <div class="p-2 d-flex my-10 border-radius-10 bg-tarjet-reports" v-on:click="changeViewStatusReports(7)">
+                                    <router-link to="/admin/reports/report_billed" class="p-2 d-flex mb-10 border-radius-10 bg-tarjet-reports bg-tarjet-reports">
                                         <span class="my-5 mx-2 f-14">Informe facturado.</span>
                                         <img class="ml-auto mr-6 arrow" width="15" src=""/>
-                                    </div>
+                                    </router-link>
                                 </div>
                             </div>
                         </div>
