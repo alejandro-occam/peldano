@@ -92,13 +92,16 @@ class ProposalsController extends Controller
         }
 
         $total_proposals = $array_proposals->groupBy('proposals.id')
+                                            ->orderBy('proposals.created_at', 'desc')
                                             ->get();
 
         $array_proposals = $array_proposals->groupBy('proposals.id')
+                                            ->orderBy('proposals.created_at', 'desc')
                                             ->skip($start)
                                             ->take($skip)
                                             ->get();
 
+                                            
         foreach($array_proposals as $proposal){
             //Consultamos el nombre del contacto
             $contact = Contact::find($proposal->id_contact);

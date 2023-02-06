@@ -168,6 +168,7 @@ class OrdersController extends Controller
         }
 
         $array_orders = $array_orders->groupBy('orders.id')
+                                            ->orderBy('orders.created_at', 'desc')
                                             ->get();
 
         foreach($array_orders as $order){

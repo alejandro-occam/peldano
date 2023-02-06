@@ -249,9 +249,9 @@ class ExternalRequestController extends Controller
             $order['Serie'] = 'A';
             $order['TaxNumberType'] = '1';
             $order['InvoiceType'] = '1';
-            $order['TotalNet'] = floatval($request->get('amount'));
-            $order['TotalTaxes'] = floatval($request->get('amount')) * 0.21;
-            $order['Total'] = floatval($request->get('amount')) * 1.21;
+            $order['TotalNet'] = $delivery_note_obj['TotalNet'];//floatval($request->get('amount'));
+            $order['TotalTaxes'] = $delivery_note_obj['TotalTaxes']; //floatval($request->get('amount')) * 0.21;
+            $order['Total'] = $delivery_note_obj['Total'];//floatval($request->get('amount')) * 1.21;
             $order['Lines'] = $array_lines_to_order;
             $url = 'https://sage200.sage.es/api/sales/SalesInvoices?api-version=1.0';
             $response = json_decode($requ_curls->postSageCurl($url, $order)['response'], true);
