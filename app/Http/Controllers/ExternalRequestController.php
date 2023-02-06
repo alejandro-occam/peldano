@@ -201,7 +201,7 @@ class ExternalRequestController extends Controller
         $delivery_note['Serie'] = 'A';
         $delivery_note['TotalNet'] = floatval(round($request->get('amount'), 2));
 
-        if($delivery_note['TotalNet'] >= 0){
+        if($delivery_note['TotalNet'] > 0){
             //Creamos el objeto de Lines
             $array_sage_products = $request->get('array_sage_products');
             $array_lines = array();
