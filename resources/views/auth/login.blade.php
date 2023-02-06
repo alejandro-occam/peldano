@@ -25,7 +25,7 @@
     </head>
     <!--end::Head-->
     <!--begin::Body-->
-    <body id="kt_body" class="header-mobile-fixed subheader-enabled aside-enabled aside-fixed aside-secondary-enabled page-loading">
+    <body id="kt_body" class="header-mobile-fixed subheader-enabled aside-enabled aside-fixed aside-secondary-enabled page-loading" style="overflow-y: auto;">
         <!--begin::Main-->
         <div class="d-flex flex-column flex-root wrapper-custom">
             <div class="d-flex justify-content-center align-items-center w-100 h-45" style="position: absolute;">

@@ -157,13 +157,14 @@
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>N</span></th>
                             <th tabindex="0" class="pb-3 text-align-center" v-for="index in Number(orders.proposal_obj.array_dates.length)" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>{{ orders.proposal_obj.array_dates[index - 1].date }}</span></th>
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span>TOTAL</span></th>
+                            <th v-if="this.is_updating_order" tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span>ACCIÓN</span></th>
                         </tr>
 					</thead>
                     <tbody>
                         
                         <div class="d-contents" v-for="index in Number(orders.proposal_obj.chapters.length)">
                             <tr class="row-product">
-                                <td class="py-2" :colspan="orders.proposal_obj.array_dates.length + 4">
+                                <td class="py-2" :colspan="orders.proposal_obj.array_dates.length + 5">
                                     <span class="ml-5">{{ orders.proposal_obj.chapters[index - 1].chapter_obj.name }}</span>
                                 </td>
                             </tr>
@@ -190,6 +191,7 @@
                                     <span class="">{{ this.value_form1[index - 1].article[index_article - 1].total_aux }}€</span>
                                 </td>
                                 <td v-else valign="middle" class="td-border-right text-align-center"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].total)) }}€</span></td>
+                                <td v-if="this.is_updating_order" class="text-align-center bg-white"><span class="font-weight-bolder"><button type="button" class="btn" v-on:click="deleteArticle(orders.proposal_obj.chapters[index - 1].articles[0].article_obj.id)"><img  width="40" height="40" src="/media/custom-imgs/icono_tabla_eliminar.svg" v-on:click="this.is_show_buttons_bill=false"/></button></span></td>
                             </tr>
                         </div>
                         <tr class="tr-total-datatable">
@@ -209,6 +211,7 @@
                                 </td>
                                 <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.total_global)) }}€</span></td>
                             </template>
+                            <td v-if="this.is_updating_order" class="text-align-center"><span class="font-weight-bolder"></span></td>
                         </tr>
                         
                     </tbody>
@@ -373,6 +376,7 @@ export default {
             select_type_proposal: '1',
             value_form1: [], //Formulario presupuesto,
             value_form_discount: [],
+            not_zero_discount: true,
             select_way_to_pay_options: [
                 {value: '',text: 'Forma de pago'},
                 {value: '1',text: 'Recibo bancario'},
@@ -433,7 +437,7 @@ export default {
         ...mapState(["errors", "orders"]),
     },
     methods: {
-        ...mapMutations(["clearError", "changeViewStatusOrders", "changeProposalObj", "changeValueIsChangeArticle", "generateBill", "clearObjectsOrders"]),
+        ...mapMutations(["clearError", "changeViewStatusOrders", "changeProposalObj", "changeValueIsChangeArticle", "generateBill", "clearObjectsOrders", "deleteArticleOrder"]),
         ...mapActions(["getCompanies", "updateOrder", "deleteOrder", "copyOrder"]),
         openFormArticle(){
             $('#modal_form_article_proposals').modal('show');
@@ -482,7 +486,7 @@ export default {
                 form: this.value_form1,
                 type: 3
             }
-            
+            this.not_zero_discount = false;
             if(status != undefined){
                 this.changeProposalObj(params);
             }
@@ -589,6 +593,7 @@ export default {
                 type: 3
             }
             this.is_change_get_info_input = 1;
+           
             this.changeProposalObj(params);
             me.is_show_buttons_bill = false;
         },
@@ -603,7 +608,6 @@ export default {
         },
         loadFormObj(){
             let me = this;
-            console.log(me.orders.proposal_obj.is_change);
             me.value_form1 = [];
                 
             //Rellenar los modelos de los inputs de la tabla
@@ -949,6 +953,11 @@ export default {
         },
         copyOrderBtn(){
             this.copyOrder(this.orders.proposal_obj.id_order);
+        },
+        //Eliminar articulo de la tabla
+        deleteArticle(id){
+            this.deleteArticleOrder(id);
+            //console.log(id);
         }
     },
     mounted() {
@@ -1015,6 +1024,18 @@ export default {
                         swal("", "Parece que ha habido un error, inténtelo de nuevo más tarde", "error");
                     }
                 }
+            }else if(this.errors.type_error == 'delete_article_order'){
+                if(this.errors.code != ''){
+                    if(this.errors.code == 1000){
+                        this.loadFormObj();
+                        var params = {
+                            form: this.value_form1,
+                            num_custom_invoices: this.orders.num_custom_invoices,
+                            type: 2
+                        }
+                        this.generateBill(params);
+                    }
+                }
             }
             this.clearError();
         },
@@ -1026,7 +1047,10 @@ export default {
                     me.changeValueIsChangeArticle();
                     me.offer = me.$utils.roundAndFix(me.orders.proposal_obj.total_global);
                     me.total = me.$utils.roundAndFix(me.orders.proposal_obj.total_global);
-                    me.discount = 0;
+                    if(this.not_zero_discount){
+                        me.discount = 0;
+                    }
+                    this.not_zero_discount = true;
                     me.is_change_get_info = 1;
                 }else{
                     me.is_change_get_info = 0;
