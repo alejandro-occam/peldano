@@ -115,7 +115,7 @@ class CreateOrder extends Command
             $number = Date('ymd').$bill_order->id;
             $request->replace(['array_sage_products' => $array_sage_products, 'customer_id' => $company->id_sage, 'id_bill_order' => $bill_order->id, 'id_order' => $bill_order->id_order, 'amount' => $bill_order->amount, 'number' => $number]);
             $invoice_custom = $requ_external_request->generateDeliveryNoteSage($request);
-            error_log(print_r($invoice_custom, true));
+            error_log('invoice_custom: '.print_r($invoice_custom, true));
             if($id_sage != null){
                 $bill_order->id_sage = $invoice_custom['Id'];
                 $bill_order->receipt_order_sage = $invoice_custom['receipt_order_sage'];
