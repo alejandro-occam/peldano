@@ -1021,6 +1021,91 @@ const mutations = {
     //Cambiamos de vistas en Informes
     changeViewStatusReports(state, n){
         state.reports.status_view = n;
+    },
+
+    //Eliminar artículo
+    deleteArticleOrder(state, id){
+        var custom_array = [];
+        var array_dates_aux = [];
+        state.orders.proposal_obj.chapters.map(function(articles_obj, key) {
+            if(articles_obj.articles[0].article_obj.id != id){
+                custom_array.push(articles_obj);
+                articles_obj.articles.map(function(article, key) {
+                    article.dates.map(function(date, key) {
+                        array_dates_aux.push(date);
+                    });
+                });
+            }
+        });
+        state.orders.proposal_obj.chapters = custom_array;
+        //Consultamos los totales
+        var total_amount_global = 0;
+        var total_individual_pvp = 0;
+        var total_global = 0;
+        var total_global_default = 0;
+        state.orders.proposal_obj.chapters.map(function(chapter, key) {
+            chapter.articles.map(function(article, key) {
+                total_individual_pvp += article.article_obj.pvp;
+                article.dates_prices.map(function(date_price, key) {
+                    date_price.arr_pvp_date.map(function(pvp_date, key) {
+                        total_amount_global += pvp_date.arr_pvp.length;
+                        pvp_date.arr_pvp.map(function(pvp, key) {
+                            total_global += Number(pvp);
+                            total_global_default += Number(article.article_obj.pvp);
+                        });
+                    });
+                });
+            });
+        });
+        state.orders.proposal_obj.total_individual_pvp = total_individual_pvp;
+        state.orders.proposal_obj.total_amount_global = total_amount_global;
+        state.orders.proposal_obj.total_global_normal = total_global_default;
+        state.orders.proposal_obj.total_global = total_global;
+
+        //Ordenamos las fechas de forma ascendente
+        array_dates_aux = array_dates_aux.sort(function(a,b){
+            var b_aux = Date.parse(new Date(changeFormatDate2(b)));
+            var a_aux = Date.parse(new Date(changeFormatDate2(a)));
+            return a_aux - b_aux;
+        });
+
+        var array_dates = [];
+        //Modificamos el formato de las fechas para las columnas
+        array_dates_aux.map(function(date, key) {
+            var new_date = changeFormatDate(date);
+            if(!array_dates.includes(new_date)){
+                array_dates.push(new_date);
+            }
+        });
+
+        //Cargamos en el array de fechas para las columnas los totales de cada mes
+        var array_dates_prices = [];
+        array_dates.map(function(date, key) {
+            var total_date = 0;
+            state.orders.proposal_obj.chapters.map(function(articles_obj, key) {
+                articles_obj.articles.map(function(article_finish, key) {
+                    article_finish.dates_prices.map(function(date_aux, key) {
+                        if(date_aux.date == date){
+                            date_aux.arr_pvp_date.map(function(pvp_date, key) {
+                                pvp_date.arr_pvp.map(function(pvp, key) {
+                                    total_date += pvp;
+                                });
+                            });
+                        }
+                    });
+                });
+            });
+            var date_obj = {
+                date: date,
+                total: total_date
+            }
+            array_dates_prices.push(date_obj);
+        });
+
+        state.orders.proposal_obj.array_dates = array_dates_prices;
+
+        state.errors.code = 1000;
+        state.errors.type_error = 'delete_article_order';
     }
 }
 

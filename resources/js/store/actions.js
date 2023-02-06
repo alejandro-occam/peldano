@@ -1137,7 +1137,8 @@ function createObjectsStore({ state }, response, type){
                                     date: changeFormatDate(service.date)
                                 }],
                                 total: service.pvp,
-                                chapter_obj: service.chapter
+                                chapter_obj: service.chapter,
+                                department_obj: proposal.department_obj
                             }
                             chapter.articles.push(article);
                         }
@@ -1157,7 +1158,8 @@ function createObjectsStore({ state }, response, type){
                             date: changeFormatDate(service.date)
                         }],
                         total: service.pvp,
-                        chapter_obj: service.chapter
+                        chapter_obj: service.chapter,
+                        department_obj: proposal.department_obj
                     }
                     array_chapters.push({
                         id_chapter: service.chapter.id,
