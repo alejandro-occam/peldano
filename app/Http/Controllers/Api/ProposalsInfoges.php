@@ -67,6 +67,11 @@ class ProposalsInfoges extends Controller
             //Consultamos el artículo por el id_sage
             $article_sage = Article::where('id_sage', $article['id_sage_article'])->first();
 
+            if(!$article_sage){
+                $response['code'] = 1002;
+                $response['msg'] = 'No se encuentra un artículo en la bd con este id_sage';
+                return response()->json($response);
+            }
             $service = Service::create([
                 'pvp' => $article['amount'],
                 'date' => $article['date'],
@@ -261,6 +266,11 @@ class ProposalsInfoges extends Controller
             //Consultamos el artículo por el id_sage
             $article_sage = Article::where('id_sage', $article['id_sage_article'])->first();
 
+            if(!$article_sage){
+                $response['code'] = 1002;
+                $response['msg'] = 'No se encuentra un artículo en la bd con este id_sage';
+                return response()->json($response);
+            }
             $service = Service::create([
                 'pvp' => $article['amount'],
                 'date' => $article['date'],
