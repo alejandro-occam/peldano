@@ -45,7 +45,8 @@ class InsertArticlesCsv extends Command
     public function handle()
     {
         //Leemos las filas del csv de Canales
-        $content = fopen(public_path().'/articulos.csv','r');
+        //$content = fopen(public_path().'/articulos.csv','r');
+        $content = fopen(public_path().'/articles.csv','r');
         $data = '';
         $fila = 1;
         $array_data = array();
@@ -75,6 +76,13 @@ class InsertArticlesCsv extends Command
             $article['batch'] = $words[9];
             $array_articles_custom[] = $article;
         }
+
+        $array_not_insert_articles_department = array();
+        $array_not_insert_articles_sections = array();
+        $array_not_insert_articles_channels = array();
+        $array_not_insert_articles_projects = array();
+        $array_not_insert_articles_chapters = array();
+        $array_not_insert_articles_batchs = array();
 
         //Recorremos las filas y guardamos la tabla canales
         foreach($array_articles_custom as $article){
@@ -116,12 +124,31 @@ class InsertArticlesCsv extends Command
                                             'id_batch' => $batch->id,
                                         ]);
                                     }
+                                }else{
+                                    $array_not_insert_articles_batchs[] = $article['id_sage'];
                                 }
+                            }else{
+                                $array_not_insert_articles_chapters[] = $article['id_sage'];
                             }
+                        }else{
+                            $array_not_insert_articles_projects[] = $article['id_sage'];
                         }
+                    }else{
+                        $array_not_insert_articles_channels[] = $article['id_sage'];
                     }
+                }else{
+                    $array_not_insert_articles_sections[] = $article['id_sage'];
                 }
+            }else{
+                $array_not_insert_articles_department[] = $article['id_sage'];
             }
         }
+
+        error_log('array_not_insert_articles_department: '.print_r($array_not_insert_articles_department, true));
+        error_log('array_not_insert_articles_sections: '.print_r($array_not_insert_articles_sections, true));
+        error_log('array_not_insert_articles_channels: '.print_r($array_not_insert_articles_channels, true));
+        error_log('array_not_insert_articles_projects: '.print_r($array_not_insert_articles_projects, true));
+        error_log('array_not_insert_articles_chapters: '.print_r($array_not_insert_articles_chapters, true));
+        error_log('array_not_insert_articles_batchs: '.print_r($array_not_insert_articles_batchs, true));
     }
 }
