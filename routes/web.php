@@ -37,6 +37,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('/download_report_sales_orders_signed', [App\Http\Controllers\ReportSalesOrdersSignedController::class, 'downloadReportsListCsv'])->name('download_report_sales_orders_signed');
     //Listar informes de órdenes firmadas y ventas
     Route::post('/report_billed', [App\Http\Controllers\ReportBilledController::class, 'reportsList'])->name('report_billed');
+    //Listar informe de facturas impagadas
+    Route::post('/report_unpaid_invoices', [App\Http\Controllers\ReportUnpaidInvoicesController::class, 'reportsList'])->name('report_unpaid_invoices');
 
     //PROPOSALS
     //Listar propuestas

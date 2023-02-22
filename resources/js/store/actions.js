@@ -1029,6 +1029,26 @@ const actions = {
             return error;
         }
     },
+
+    //Listado de facturas imagadas
+    async reportUnpaidInvoices({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/report_unpaid_invoices",
+                params: params,
+                method: 'post'
+            });
+
+            state.errors.type_error = 'report_unpaid_invoices';
+            state.errors.code = response.data.code;
+            state.reports.array_bills_orders = response.data.array_bill_orders;
+
+        } catch (error) {
+            console.error(error);
+
+            return error;
+        }
+    },
     
 }
 

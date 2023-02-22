@@ -126,7 +126,20 @@
                 </tr>
             </thead>
             <tbody>  
-                <tr class="row-product bg-white ">
+                <tr class="row-product bg-white" v-for="index_report in Number(reports.array_bills_orders.length)" :key="index_report.id">
+                    <td class="pl-3 py-5 text-dark">{{ reports.array_bills_orders[index_report - 1].id_consultant }}</td>
+                    <td class="pl-3 text-gray">{{ reports.array_bills_orders[index_report - 1].id_order }}</td>
+                    <td class="pl-3 text-gray">{{ reports.array_bills_orders[index_report - 1].id_sage }}</td>
+                    <td class="pl-3 text-dark">{{ reports.array_bills_orders[index_report - 1].name_company }}</td>
+                    <td class="pl-3 text-gray">{{ reports.array_bills_orders[index_report - 1].id }}</td>
+                    <td class="pl-3 text-gray">1</td>
+                    <td class="pl-3 text-gray">{{ reports.array_bills_orders[index_report - 1].date }}</td>
+                    <td class="pl-3 text-gray">29-09-2022</td>
+                    <td class="pl-3 text-gray">Recibo a 30 dias</td>
+                    <td class="pl-3 text-gray">No cobrado</td>
+                    <td class="pl-3 text-gray">{{ reports.array_bills_orders[index_report - 1].amount }}</td>
+                </tr>  
+                <!--<tr class="row-product bg-white ">
                     <td class="pl-3 py-5 text-dark">058</td>
                     <td class="pl-3 text-gray">39107</td>
                     <td class="pl-3 text-gray">001137</td>
@@ -164,7 +177,7 @@
                     <td class="pl-3 text-gray">Recibo a 30 dias</td>
                     <td class="pl-3 text-gray">No cobrado</td>
                     <td class="pl-3 text-gray">1.694,00</td>
-                </tr>   
+                </tr>--> 
                 <tr class="tr-total-datatable ">
                     <td colspan="10" class="py-6"><span class="ml-5 font-weight-bolder">TOTAL</span></td>
                     <td  class="text-align-center"><span class="font-weight-bolder">2.895,00€</span></td>
@@ -205,14 +218,15 @@
             };
         },
         computed: {
-            ...mapState(["errors", "config", "proposals"]),
+            ...mapState(["errors", "config", "proposals", "reports"]),
         },
         mounted() {
             this.getNow();
             this.getUsers(1);
+            this.reportUnpaidInvoices();
         },
         methods: {
-            ...mapActions(["getUsers"]),
+            ...mapActions(["getUsers", "reportUnpaidInvoices"]),
             ...mapMutations(["changeViewStatusReports"]),
             //Consultar fecha actual
             getNow() {

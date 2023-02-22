@@ -15,6 +15,7 @@ import ProposalsIndex from "./components/Proposals/ContentComponent.vue";
 import ReportsIndex from "./components/Reports/ContentComponent.vue";
 import ReportOption1 from "./components/Reports/Options/Options1/ContentComponent.vue";
 import ReportOption4 from "./components/Reports/Options/Options4/ContentComponent.vue";
+import ReportOption5 from "./components/Reports/Options/Options5/ContentComponent.vue";
 import ReportOption7 from "./components/Reports/Options/Options7/ContentComponent.vue";
 
 const routes = [
@@ -41,6 +42,10 @@ const routes = [
     {
       path: "/admin/reports/report_sales_orders_signed",
       component: ReportOption4,
+    },
+    {
+      path: "/admin/reports/report_unpaid_invoices",
+      component: ReportOption5,
     },
     {
       path: "/admin/reports/report_billed",

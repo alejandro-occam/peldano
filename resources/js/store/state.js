@@ -130,7 +130,7 @@ const state = {
         percent_new: [],
         percent_old: [],
         period_new: '',
-        period_old: ''
+        period_old: '',
     },
     errors: {
         code: 0,
