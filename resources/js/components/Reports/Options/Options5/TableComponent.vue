@@ -52,7 +52,7 @@
 
         <div class="mx-2 col-2 mt-5"></div>
 
-        <div class="mx-2 col-2">
+        <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Número de orden</span>
             <input type="text" class="form-control bg-gray mt-3 select-filter text-dark-gray" v-model="num_order" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0" />
         </div>

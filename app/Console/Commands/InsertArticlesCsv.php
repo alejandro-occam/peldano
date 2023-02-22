@@ -106,7 +106,7 @@ class InsertArticlesCsv extends Command
                                 if($batch){
                                     //Consultamos si existe el articulo y si no lo creamos
                                     $article_obj = Article::where([
-                                        'name' => $article['name'],
+                                        'id_sage' => $article['id_sage'],
                                         'id_batch' => $batch->id,
                                     ])->first();
 
