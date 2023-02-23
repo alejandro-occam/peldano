@@ -12,21 +12,20 @@
                     :height="16"
                     v-on:click="changeViewStatusProposals(3)"
                 />
-                <AddButtonComponent
+                <RouterButton
                     :columns="'ml-auto mr-7'"
                     :text="'Volver'"
                     :id="'btn_return'"
                     :src="'/media/custom-imgs/flecha_btn_volver.svg'"
                     :width="16"
                     :height="16"
-                    v-on:click="changeViewStatusReports(1)"
                 />
             </div>
         </div>
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Consultor</span>
             <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_consultant" :name="'select_consultant'" :id="'select_consultant'" data-style="select-lightgreen">
-                <option value="" selected>
+                <option value="0" selected>
                     Selecciona un consultor
                 </option>
                 <option :value="user.id" v-for="user in proposals.array_users" :key="user.id" v-text="user.name + ' ' + user.surname"></option>
@@ -97,7 +96,7 @@
         </div>
         
         <div class="mx-2 col-12 d-flex mt-10">
-            <button type="submit" class="btn bg-azul color-white px-35 font-weight-bolder">Generar informe</button>
+            <button type="submit" class="btn bg-azul color-white px-35 font-weight-bolder" v-on:click="loadTable()">Aplicar filtro</button>
         </div>
     </div>
     <Divider class="my-15" />
@@ -136,7 +135,8 @@
                     <td class="pl-3 text-gray">{{ reports.array_bills_orders[index_report - 1].date }}</td>
                     <td class="pl-3 text-gray">29-09-2022</td>
                     <td class="pl-3 text-gray">Recibo a 30 dias</td>
-                    <td class="pl-3 text-gray">No cobrado</td>
+                    <td class="pl-3 text-gray" v-if="reports.array_bills_orders[index_report - 1].payment == 0">No cobrado</td>
+                    <td class="pl-3 text-gray" v-if="reports.array_bills_orders[index_report - 1].payment == 1">Cobrado</td>
                     <td class="pl-3 text-gray">{{ reports.array_bills_orders[index_report - 1].amount }}</td>
                 </tr>  
                 <!--<tr class="row-product bg-white ">
@@ -180,7 +180,7 @@
                 </tr>--> 
                 <tr class="tr-total-datatable ">
                     <td colspan="10" class="py-6"><span class="ml-5 font-weight-bolder">TOTAL</span></td>
-                    <td  class="text-align-center"><span class="font-weight-bolder">2.895,00€</span></td>
+                    <td  class="text-align-center"><span class="font-weight-bolder">{{ reports.total_amount }}€</span></td>
                 </tr>    
             </tbody>
         </table>
@@ -191,6 +191,7 @@
     import { mapMutations, mapActions, mapState } from "vuex";
 
     import AddButtonComponent from "../../../Partials/AddButtonComponent.vue";
+    import RouterButton from "../../../Partials/RouterButton.vue";
     import Calendar from 'primevue/calendar';
     import Divider from 'primevue/divider';
     import Chart from 'primevue/chart';
@@ -199,6 +200,7 @@
         name: "TableComponentOption5",
         components: {
             AddButtonComponent,
+            RouterButton,
             Calendar,
             Divider,
             Chart
@@ -206,7 +208,7 @@
         data() {
             return {
                 publicPath: window.location.origin,
-                select_consultant: '',
+                select_consultant: '0',
                 select_payment: '2',
                 expiration_from: '',
                 expiration_to: '',
@@ -223,7 +225,7 @@
         mounted() {
             this.getNow();
             this.getUsers(1);
-            this.reportUnpaidInvoices();
+            this.loadTable();
         },
         methods: {
             ...mapActions(["getUsers", "reportUnpaidInvoices"]),
@@ -245,6 +247,19 @@
             },
             changeStatusShowAll(status){
                 this.show_all = status;
+            },
+            loadTable(){
+                var params = {
+                    select_consultant: this.select_consultant,
+                    select_payment: this.select_payment,
+                    expiration_from: this.expiration_from,
+                    expiration_to: this.expiration_to,
+                    num_order: this.num_order,
+                    contact_id: this.contact_id,
+                    client_id_sage: this.client_id_sage,
+                    select_satus_bill: this.select_satus_bill,
+                }
+                this.reportUnpaidInvoices(params);
             }
         }
     };

@@ -1042,10 +1042,10 @@ const actions = {
             state.errors.type_error = 'report_unpaid_invoices';
             state.errors.code = response.data.code;
             state.reports.array_bills_orders = response.data.array_bill_orders;
+            state.reports.total_amount = response.data.total_amount;
 
         } catch (error) {
             console.error(error);
-
             return error;
         }
     },

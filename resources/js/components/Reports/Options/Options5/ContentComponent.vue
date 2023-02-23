@@ -31,7 +31,11 @@ export default {
             ...mapState(['reports']),
     },
     methods: {
-        ...mapMutations(["clearError", "changeViewStatusReports"]),
+        ...mapMutations(["clearError", "changeViewStatusReports", "clearReportsObjetc"]),
     },
+    mounted() {
+        this.clearReportsObjetc();
+        //reports.status_view = 2;
+    }
 };
 </script>

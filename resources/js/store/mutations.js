@@ -1023,6 +1023,17 @@ const mutations = {
         state.reports.status_view = n;
     },
 
+    //Limipiat el objeto reports
+    clearReportsObjetc(state){
+        state.reports.array_dates = [];
+        state.reports.array_bills_orders = [];
+        state.reports.percent_new = [];
+        state.reports.percent_old = [];
+        state.reports.period_new = '';
+        state.reports.period_old = '';
+        state.reports.total_amount=  0;
+    },
+
     //Eliminar artículo
     deleteArticleOrder(state, id){
         var custom_array = [];
