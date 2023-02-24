@@ -30,7 +30,7 @@ class ReportUnpaidInvoicesController extends Controller
                                                     ->where('payments.id_sage', $client_id_sage);
         }
 
-        if($select_consultant != '0'){
+        if($select_consultant != '0' && !empty($select_consultant)){
             $array_bill_orders = $array_bill_orders->where('proposals.id_user', $select_consultant);
         }                       
 

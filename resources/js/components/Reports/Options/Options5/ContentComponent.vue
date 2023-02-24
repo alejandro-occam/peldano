@@ -11,7 +11,7 @@
 </template>
 
 <script>
-import { mapMutations, mapState } from "vuex";
+import { mapMutations, mapState, mapActions } from "vuex";
 import AddButtonComponent from "../../../Partials/AddButtonComponent.vue";
 import TableComponent from "./TableComponent.vue";
 
@@ -30,12 +30,27 @@ export default {
     computed: {
             ...mapState(['reports']),
     },
-    methods: {
-        ...mapMutations(["clearError", "changeViewStatusReports", "clearReportsObjetc"]),
-    },
     mounted() {
         this.clearReportsObjetc();
-        //reports.status_view = 2;
-    }
+        this.loadTable();
+    },
+    methods: {
+        ...mapActions(["reportUnpaidInvoices"]),
+        ...mapMutations(["clearError", "changeViewStatusReports", "clearReportsObjetc"]),
+        loadTable(){
+            var params = {
+                select_consultant: this.select_consultant,
+                select_payment: this.select_payment,
+                expiration_from: this.expiration_from,
+                expiration_to: this.expiration_to,
+                num_order: this.num_order,
+                contact_id: this.contact_id,
+                client_id_sage: this.client_id_sage,
+                select_satus_bill: this.select_satus_bill,
+            }
+            this.reportUnpaidInvoices(params);
+        }
+    },
+    
 };
 </script>

@@ -225,7 +225,7 @@
         mounted() {
             this.getNow();
             this.getUsers(1);
-            this.loadTable();
+            //this.loadTable();
         },
         methods: {
             ...mapActions(["getUsers", "reportUnpaidInvoices"]),
