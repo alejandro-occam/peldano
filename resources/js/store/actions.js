@@ -671,7 +671,7 @@ const actions = {
     },
 
     //Mostrar infromación del usuario
-    async getUser({ state }, type){
+    async getUser({ state }, type, type_action){
         try {
             const response = await http({
                 url: "/admin/get_user",
@@ -685,7 +685,9 @@ const actions = {
                     name: response.data.user.name + " "  + response.data.user.surname,
                     percentage: 100
                 }
-                state.proposals.proposal_obj.array_consultants.push(consultant);
+                if(type_action == 0){
+                    state.proposals.proposal_obj.array_consultants.push(consultant);
+                }
                 
             }else{
                 state.orders.user_obj = response.data.user;
@@ -1224,6 +1226,8 @@ function createObjectsStore({ state }, response, type){
     custom_state.proposal_obj.total_amount_global = total_amount_global;
     custom_state.proposal_obj.total_global_normal = total_global_default;
     custom_state.proposal_obj.total_global = total_global;
+    
+    custom_state.proposal_obj.array_consultants = response.data.array_consultants;
 
     //Ordenamos las fechas de forma ascendente
     array_dates_aux = array_dates_aux.sort(function(a,b){

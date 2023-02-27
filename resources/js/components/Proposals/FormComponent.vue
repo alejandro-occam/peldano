@@ -133,9 +133,11 @@
                                     </div>
                                     <div v-for="index in Number(proposals.proposal_obj.array_consultants.length)" class="f-15 text-dark">
                                         <span>{{ proposals.proposal_obj.array_consultants[index - 1].name }} - {{ proposals.proposal_obj.array_consultants[index - 1].percentage }}%</span>
-                                        <button class="ml-3 btn bg-azul color-white px-2 py-0 font-weight-bolder" v-if="index == Number(proposals.proposal_obj.array_consultants.length)" v-on:click="openAddConsultant()">+</button>
-                                        <button v-if="index != 1" data-id="{{ proposals.proposal_obj.array_consultants[index - 1].id }}" type="button" style="color: #2e49ff;background-color: #e7e7e7;" class="btn py-0 px-1 ml-2" v-on:click="showConsultanModal(index)"><img width="12" height="12" src="/media/custom-imgs/icono_btn_editar.svg"></button>
-                                        <button v-if="index != 1" data-id="{{ proposals.proposal_obj.array_consultants[index - 1].id }}" type="button" style="color: #2e49ff;background-color: #ffecf7;" class="btn py-0 px-1 ml-2" v-on:click="deleteConsultanForm(index)"><img width="12" height="12" src="/media/custom-imgs/icono_btn_borrar.svg"></button>
+                                        <template v-if="!this.is_show_buttons_bill && !this.finish_proposal">
+                                            <button class="ml-3 btn bg-azul color-white px-2 py-0 font-weight-bolder" v-if="index == Number(proposals.proposal_obj.array_consultants.length)" v-on:click="openAddConsultant()">+</button>
+                                            <button v-if="index != 1" data-id="{{ proposals.proposal_obj.array_consultants[index - 1].id }}" type="button" style="color: #2e49ff;background-color: #e7e7e7;" class="btn py-0 px-1 ml-2" v-on:click="showConsultanModal(index)"><img width="12" height="12" src="/media/custom-imgs/icono_btn_editar.svg"></button>
+                                            <button v-if="index != 1" data-id="{{ proposals.proposal_obj.array_consultants[index - 1].id }}" type="button" style="color: #2e49ff;background-color: #ffecf7;" class="btn py-0 px-1 ml-2" v-on:click="deleteConsultanForm(index)"><img width="12" height="12" src="/media/custom-imgs/icono_btn_borrar.svg"></button>
+                                        </template>
                                     </div>
                                 </div>
                                 <div class="d-block mx-20">
@@ -606,7 +608,11 @@
                                 </tr>
                                 <tr class="row-product-offer-proposal">
                                     <td class="py-2"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">FECHA:</div><div v-if="!this.create_order && !this.is_change_get_info" class="ml-5 f-13 text-dark">{{ this.$utils.getNow() }}</div><div v-else class="ml-5 f-13 text-dark">{{ this.proposal_submission_settings.date_proyect }}</div></td>
-                                    <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">CONSULTOR:</div><div class="ml-5 f-13 text-dark">{{ proposals.user_obj.name + ' ' + proposals.user_obj.surname }}</div></td>
+                                    <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">CONSULTOR:</div>
+                                        <template v-for="index in Number(proposals.proposal_obj.array_consultants.length)">
+                                            <div class="ml-5 f-13 text-dark">{{ proposals.proposal_obj.array_consultants[index - 1].name + ' - ' + proposals.proposal_obj.array_consultants[index - 1].percentage }}%</div>
+                                        </template>
+                                    </td>
                                     <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">DEPARTAMENTO:</div><div class="ml-5 f-13 text-dark">{{ proposals.proposal_obj.chapters[0].articles[0].department_obj.name }}</div></td>
                                     <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">ANUNCIANTE:</div><div class="ml-5 f-13 text-dark">{{ this.name_company }}</div></td>
                                     <td class="py-2 td-border-left" v-if="this.proposal_submission_settings.show_discounts == 1"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">DESCUENTO:</div><div class="ml-5 f-13 text-dark">{{ this.proposal_submission_settings.discount }}%</div></td>
@@ -1311,7 +1317,8 @@ export default {
                 value_form1: this.value_form1,
                 select_way_to_pay_options: this.select_way_to_pay_options,
                 select_expiration_options: this.select_expiration_options,
-                nun_custom_invoices: this.proposals.num_custom_invoices
+                nun_custom_invoices: this.proposals.num_custom_invoices,
+                array_consultants: this.proposals.proposal_obj.array_consultants
             }
             if(this.proposals.status_view == 2 && this.proposals.proposal_bd_obj != null){
                 params.id_proposal = this.proposals.proposal_bd_obj.id;
@@ -1473,7 +1480,7 @@ export default {
         }
     },
     mounted() {
-        this.getUser(1);
+        this.getUser(1, this.is_updating);
         if(this.proposals.proposal_obj.array_dates != undefined && this.offer == 0 && this.proposals.proposal_obj.array_dates.length > 0 && !this.proposals.is_change_get_info){
             this.changeViewStatusProposals(1);
             this.clearObjectsProposal();
