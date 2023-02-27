@@ -45,8 +45,12 @@
             <h3 class="color-blue" v-if="this.is_updating_order">Datos del cliente</h3>
             <div class="my-5 col-12 row" v-if="this.is_updating_order">
                 <div class="input-group px-0 d-flex mt-5">
-                    <div class="bg-span-gray py-2 w-25 br-5">
-                        <span class="font-weight-bolder color-white ml-5 f-15 text-dark">{{ this.name_company }}</span>
+                    <div class="bg-span-gray py-2 br-5 w-25 my-auto">
+                        <span class="font-weight-bolder color-white mx-5 f-15 text-dark my-auto">{{ this.name_company }}</span>
+                    </div>
+                    <div class="py-2 br-5 ml-5">
+                        <span class="font-weight-bolder color-white mx-5 f-15 text-dark">CIF: {{ this.nif_company }}</span><br>
+                        <span class="font-weight-bolder color-white mx-5 f-15 text-dark">Dirección: {{ this.address_company }}</span>
                     </div>
                 </div>
             </div>
@@ -368,6 +372,8 @@ export default {
             array_companies: [],
             select_company_other_values: '',
             name_company: '',
+            nif_company: '',
+            address_company: '',
             id_company: 0,
             offer: 0,
             total: 0,
@@ -448,11 +454,15 @@ export default {
                 if(type == 1){
                     if(value.id == id){
                         me.name_company = value.name;
+                        me.nif_company = value.nif;
+                        me.address_company = value.address;
                         me.id_company = value.id;
                     }
                 }else{
                     if(value.id_company == id){
                         me.name_company = value.name;
+                        me.nif_company = value.nif;
+                        me.address_company = value.address;
                         me.id_company = value.id;
                     }
                 }
@@ -848,6 +858,8 @@ export default {
             me.select_company = '';
             me.select_company_other_values = '';
             me.name_company = '';
+            me.nif_company = '';
+            me.address_company = '';
             me.id_company = 0;
             me.offer = 0;
             me.total = 0;

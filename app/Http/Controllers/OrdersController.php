@@ -528,7 +528,7 @@ class OrdersController extends Controller
         $user = User::find($proposal->id_user);
 
         //Consultamos la empresa
-        $array_companies = Contact::select('contacts.*', 'companies.name', 'companies.nif', DB::raw('CONCAT(contacts.name, " ", contacts.surnames) as fullname', 'contacts.id as id_contact'), 'contacts.email')
+        $array_companies = Contact::select('contacts.*', 'companies.name', 'companies.nif', 'companies.address', DB::raw('CONCAT(contacts.name, " ", contacts.surnames) as fullname', 'contacts.id as id_contact'), 'contacts.email')
                              ->leftJoin('companies', 'contacts.id_company', 'companies.id')
                              ->where('contacts.id', $proposal->id_contact)
                              ->get();

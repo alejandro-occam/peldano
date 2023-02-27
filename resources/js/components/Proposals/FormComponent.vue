@@ -94,7 +94,7 @@
                     <div class="bg-span-gray py-2 br-5 w-25 my-auto">
                         <span class="font-weight-bolder color-white mx-5 f-15 text-dark my-auto">{{ this.name_company }}</span>
                     </div>
-                    <div class=" py-2 br-5 w-25 ml-5">
+                    <div class="py-2 br-5 ml-5">
                         <span class="font-weight-bolder color-white mx-5 f-15 text-dark">CIF: {{ this.nif_company }}</span><br>
                         <span class="font-weight-bolder color-white mx-5 f-15 text-dark">Dirección: {{ this.address_company }}</span>
                     </div>
