@@ -153,7 +153,7 @@ class ProposalsController extends Controller
     //Consultar empresas
     function getCompanies(){
         //$array_companies = Company::select('companies.*', DB::raw('CONCAT(contacts.name, " ", contacts.surnames) as fullname', 'contacts.id as id_contact'), 'contacts.email')->leftJoin('contacts', 'contacts.id_company', 'companies.id')->get();
-        $array_contacts = Contact::select('contacts.*', 'companies.name', 'companies.nif', DB::raw('CONCAT(contacts.name, " ", contacts.surnames) as fullname', 'contacts.id as id_contact'), 'contacts.email')->leftJoin('companies', 'contacts.id_company', 'companies.id')->get();
+        $array_contacts = Contact::select('contacts.*', 'companies.name', 'companies.nif', 'companies.address', DB::raw('CONCAT(contacts.name, " ", contacts.surnames) as fullname', 'contacts.id as id_contact'), 'contacts.email')->leftJoin('companies', 'contacts.id_company', 'companies.id')->get();
         $response['array_companies'] = $array_contacts;
 
         //Consultamos el usuario
@@ -170,7 +170,7 @@ class ProposalsController extends Controller
         $array_companies = array();
         $array_companies_custom = array();
         if(isset($search)){
-            $array_companies = Contact::select('contacts.*', 'companies.name', 'companies.nif', DB::raw('CONCAT(contacts.name, " ", contacts.surnames) as fullname', 'contacts.id as id_contact'), 'contacts.email')
+            $array_companies = Contact::select('contacts.*', 'companies.name', 'companies.nif', 'companies.address', DB::raw('CONCAT(contacts.name, " ", contacts.surnames) as fullname', 'contacts.id as id_contact'), 'contacts.email')
                                     ->leftJoin('companies', 'contacts.id_company', 'companies.id');
             if($type_search == 1){
                 $array_companies = $array_companies->where('contacts.name', 'like', '%'.$search.'%')
@@ -184,9 +184,6 @@ class ProposalsController extends Controller
                                                     ->orWhere('companies.address', 'like', '%'.$search.'%')
                                                     ->get();
             }
-            //$array_companies->get();
-
-            error_log('array_companies_count: '.count($array_companies));
 
             foreach($array_companies as $company){
                 $company_custom['id'] = $company['id'];
@@ -195,9 +192,10 @@ class ProposalsController extends Controller
                 }
                 if($type_search == 2){
                     $company_custom['text'] = $company['email'].' - '.$company['nif'];
-                    error_log('company_custom: '.$company_custom['text']);
                 }
                 $company_custom['name'] = $company['name'].' - '.$company['fullname'];
+                $company_custom['nif'] = $company['nif'];
+                $company_custom['address'] = $company['address'];
                 $array_companies_custom[] = $company_custom;
             }
         }
