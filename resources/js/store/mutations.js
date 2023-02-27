@@ -1117,6 +1117,37 @@ const mutations = {
 
         state.errors.code = 1000;
         state.errors.type_error = 'delete_article_order';
+    },
+
+    //Eliminar consultor
+    deleteConsultant(state, id){
+        var percentage_aux = 0;
+        state.proposals.proposal_obj.array_consultants.forEach( function(value, index, array) {
+            if(value.id_consultant == id){
+                percentage_aux = state.proposals.proposal_obj.array_consultants[index].percentage;
+                state.proposals.proposal_obj.array_consultants.splice(index, 1);
+            }
+        });
+        state.proposals.proposal_obj.array_consultants[0].percentage += Number(percentage_aux);
+    },
+    //Actualizar consultor
+    updateConsultant(state, params){
+        var percentage_aux = 0;
+        //Consultamos el porcentage del consultor principal
+        var percentage_consultant_principal = state.proposals.proposal_obj.array_consultants[0].percentage;
+        console.log('percentage_consultant_principal: '+percentage_consultant_principal);
+        state.proposals.proposal_obj.array_consultants.forEach( function(value, index, array) {
+            if(value.id_consultant == params.id){
+                percentage_aux = value.percentage;
+                console.log('percentage_aux: '+percentage_aux);
+                percentage_consultant_principal += Number(percentage_aux);
+                console.log('params.percentage: '+params.percentage);
+                state.proposals.proposal_obj.array_consultants[index].percentage = params.percentage;
+                percentage_consultant_principal -= Number(params.percentage);
+                console.log('percentage_consultant_principal: '+percentage_consultant_principal);
+            }
+        });
+        state.proposals.proposal_obj.array_consultants[0].percentage = percentage_consultant_principal;
     }
 }
 
