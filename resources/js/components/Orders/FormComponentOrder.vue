@@ -258,13 +258,13 @@
                                     <Calendar class="w-100 borders-box text-dark-gray px-5"  autocomplete="off" v-model="orders.bill_obj.array_bills[index].date" dateFormat="dd-mm-yy"  />
                                 </td>
                                 <td class="text-align-center py-4 px-5 td-border-right" width="20%">
-                                    <select v-if="this.is_updating_order" class="form-control text-dark select-custom select-filter bg-white" :name="'select_way_to_pay'" :id="'select_way_to_pay'" v-model="orders.bill_obj.array_bills[index].select_way_to_pay" data-style="select-lightgreen">
+                                    <select v-if="this.is_updating_order && orders.bill_obj.array_bills[index].will_update" class="form-control text-dark select-custom select-filter bg-white" :name="'select_way_to_pay'" :id="'select_way_to_pay'" v-model="orders.bill_obj.array_bills[index].select_way_to_pay" data-style="select-lightgreen">
                                         <option v-for="(item, index) in Number(this.select_way_to_pay_options.length)" :key="index" :value="this.select_way_to_pay_options[index].value">{{ this.select_way_to_pay_options[index].text }}</option>
                                     </select>
                                     <span v-else>{{ this.select_way_to_pay_options[orders.bill_obj.array_bills[index].select_way_to_pay].text }}</span>
                                 </td>
                                 <td class="text-align-center py-4 px-5 td-border-right" width="20%">
-                                    <select v-if="this.is_updating_order" class="form-control text-dark select-custom select-filter bg-white" :name="'select_expiration'" :id="'select_expiration'" v-model="orders.bill_obj.array_bills[index].select_expiration" data-style="select-lightgreen">
+                                    <select v-if="this.is_updating_order && orders.bill_obj.array_bills[index].will_update" class="form-control text-dark select-custom select-filter bg-white" :name="'select_expiration'" :id="'select_expiration'" v-model="orders.bill_obj.array_bills[index].select_expiration" data-style="select-lightgreen">
                                         <option v-for="(item, index) in Number(this.select_expiration_options.length)" :key="index" :value="this.select_expiration_options[index].value">{{ this.select_expiration_options[index].text }}</option>
                                     </select>
                                     <span v-else>{{ this.select_expiration_options[orders.bill_obj.array_bills[index].select_expiration].text }}</span>
@@ -273,21 +273,22 @@
                                     {{ $utils.roundAndFix(orders.bill_obj.array_bills[index].amount) }}
                                 </td>
                                 <td v-if="this.is_updating_order" class="td-border-right text-align-center">
-                                    <button type="button" class="btn"><img width="40" height="40" src="/media/custom-imgs/icono_tabla_aplicar_todos.svg" v-on:click="changeOptions(index)" /></button>
+                                    <button v-if="orders.bill_obj.array_bills[index].will_update" type="button" class="btn"><img width="40" height="40" src="/media/custom-imgs/icono_tabla_aplicar_todos.svg" v-on:click="changeOptions(index)" /></button>
+                                    <button v-if="orders.bill_obj.array_bills[index].will_update" v-on:click="payInvoiceForm(orders.bill_obj.array_bills[index].id)"  class="btn" style="background-color: #e1f0ff;color: #2459d9">Abonar</button>
                                 </td>
                             </tr>   
                             <tr class="row-article">
                                 <td v-if="this.is_updating_order" class="p-5" colspan="6">
                                     <div class="d-flex">
                                         <span class="my-auto col-2">Observaciones</span>
-                                        <input type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" v-model="orders.bill_obj.array_bills[index].observations" placeholder="Observaciones" />
+                                        <input v-if="orders.bill_obj.array_bills[index].will_update" type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" v-model="orders.bill_obj.array_bills[index].observations" placeholder="Observaciones" />
+                                        <span class="my-auto col-10" v-else>{{ orders.bill_obj.array_bills[index].observations }}</span>
                                     </div>
                                 </td>
                                 <td v-else class="p-5" colspan="5">
                                     <div class="d-flex">
                                         <span class="my-auto col-2">Observaciones</span>
-                                        <input v-if="this.date_now < this.proposal_submission_settings.date_proyect" type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" v-model="orders.bill_obj.array_bills[index].observations" placeholder="Observaciones" />
-                                        <span class="my-auto col-10" v-else>{{ orders.bill_obj.array_bills[index].observations }}</span>
+                                        <span class="my-auto col-10">{{ orders.bill_obj.array_bills[index].observations }}</span>
                                     </div>
                                 </td>
                             </tr>      
@@ -295,14 +296,14 @@
                                 <td v-if="this.is_updating_order" class="p-5" colspan="6">
                                     <div class="d-flex">
                                         <span class="my-auto col-2">Núm. pedido</span>
-                                        <input type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" v-model="orders.bill_obj.array_bills[index].order_number" placeholder="Número de pedido" />
+                                        <input v-if="orders.bill_obj.array_bills[index].will_update" type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" v-model="orders.bill_obj.array_bills[index].order_number" placeholder="Número de pedido" />
+                                        <span class="my-auto col-10" v-else>{{ orders.bill_obj.array_bills[index].order_number }}</span>
                                     </div>
                                 </td>
                                 <td v-else class="p-5" colspan="5">
                                     <div class="d-flex">
                                         <span class="my-auto col-2">Núm. pedido</span>
-                                        <input v-if="this.date_now < this.proposal_submission_settings.date_proyect" type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" v-model="orders.bill_obj.array_bills[index].order_number" placeholder="Número de pedido" />
-                                        <span class="my-auto col-10" v-else>{{ orders.bill_obj.array_bills[index].order_number }}</span>
+                                        <span class="my-auto col-10">{{ orders.bill_obj.array_bills[index].order_number }}</span>
                                     </div>
                                 </td>
                             </tr>    
@@ -310,14 +311,14 @@
                                 <td v-if="this.is_updating_order" class="p-5" colspan="6">
                                     <div class="d-flex">
                                         <span class="my-auto col-2">Observaciones Internas</span>
-                                        <input type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" v-model="orders.bill_obj.array_bills[index].internal_observations" placeholder="Observaciones Internas" />
+                                        <input v-if="orders.bill_obj.array_bills[index].will_update" type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" v-model="orders.bill_obj.array_bills[index].internal_observations" placeholder="Observaciones Internas" />
+                                        <span class="my-auto col-10" v-else>{{ orders.bill_obj.array_bills[index].internal_observations }}</span>
                                     </div>
                                 </td>
                                 <td v-else class="p-5" colspan="5">
                                     <div class="d-flex">
                                         <span class="my-auto col-2">Observaciones Internas</span>
-                                        <input v-if="this.date_now < this.proposal_submission_settings.date_proyect" type="text" class="form-control bg-gray my-auto select-filter text-dark-gray col-10" v-model="orders.bill_obj.array_bills[index].internal_observations" placeholder="Observaciones Internas" />
-                                        <span class="my-auto col-10" v-else>{{ orders.bill_obj.array_bills[index].internal_observations }}</span>
+                                        <span class="my-auto col-10" >{{ orders.bill_obj.array_bills[index].internal_observations }}</span>
                                     </div>
                                 </td>
                             </tr>   
@@ -452,7 +453,7 @@ export default {
     },
     methods: {
         ...mapMutations(["clearError", "changeViewStatusOrders", "changeProposalObj", "changeValueIsChangeArticle", "generateBill", "clearObjectsOrders", "deleteArticleOrder", "deleteConsultant"]),
-        ...mapActions(["getCompanies", "updateOrder", "deleteOrder", "copyOrder"]),
+        ...mapActions(["getCompanies", "updateOrder", "deleteOrder", "copyOrder", "payInvoice"]),
         openFormArticle(){
             $('#modal_form_article_proposals').modal('show');
         },
@@ -1005,6 +1006,11 @@ export default {
                 }
             });
             $('#modal_add_consultant').modal('show');
+        },
+        //Abonar factura
+        payInvoiceForm(id){
+            this.payInvoice(id);
+            console.log(id);
         }
     },
     mounted() {
@@ -1081,6 +1087,12 @@ export default {
                             type: 2
                         }
                         this.generateBill(params);
+                    }
+                }
+            }else if(this.errors.type_error == 'pay_invoice'){
+                if(this.errors.code != ''){
+                    if(this.errors.code == 1000){
+                        swal("", "Factura abonada correctamente", "success");
                     }
                 }
             }

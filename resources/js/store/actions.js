@@ -1048,7 +1048,7 @@ const actions = {
         }
     },
 
-    //Listado de facturas imagadas
+    //Listado de facturas impagadas
     async reportUnpaidInvoices({ state }, params){
         try {
             const response = await http({
@@ -1068,6 +1068,32 @@ const actions = {
         }
     },
     
+    //Abonar pago
+    async payInvoice({ state }, id){
+        try {
+            const response = await http({
+                url: "/admin/pay_invoice/" + id,
+                params: '',
+                method: 'get'
+            });
+
+            state.errors.type_error = 'pay_invoice';
+            state.errors.code = response.data.code;
+
+            //Cambiamos el estado de la factura
+            state.orders.bill_obj.array_bills.map(function(bill, key) {
+                if(bill.id == id){
+                    bill.will_update = false;
+                    state.orders.bill_obj.total_bill -= bill.amount;
+                }
+            });
+            
+
+        } catch (error) {
+            console.error(error);
+            return error;
+        }
+    }
 }
 
 //Rellenar objetos para el store y mostrar la información de las propuestas u ordenes
@@ -1354,11 +1380,12 @@ function createObjectsStore({ state }, response, type){
                     amount = array_bills[count_bill].amount;
                     date_aux = array_bills[count_bill].date;
                 }else{
-                    amount = Number(article_obj.amount);
+                    amount = Number(array_bills[count_bill].amount);
                 }
                 
-                total_bill += Number(article_obj.amount);
+                total_bill += Number(array_bills[count_bill].amount);
                 var bill_month = {
+                    id: array_bills[count_bill].id,
                     date: date_aux,
                     amount: amount,
                     article: article_obj,
@@ -1381,8 +1408,8 @@ function createObjectsStore({ state }, response, type){
                             if(!is_break){
                                 if(bill_obj.date == article_obj.date){
                                     if(bill_obj.article.id_chapter == article_obj.id_chapter){
-                                        amount += Number(article_obj.amount);
-                                        total_bill += Number(article_obj.amount);
+                                        amount += Number(array_bills[count_bill].amount);
+                                        total_bill += Number(array_bills[count_bill].amount);
                                         array_finish_bill[last_key].amount = amount;
                                         is_break = true;
                                     }
@@ -1393,9 +1420,10 @@ function createObjectsStore({ state }, response, type){
                         if(!is_break){
                             amount = 0;
                             date_aux = article_obj.date;
-                            amount += Number(article_obj.amount);
-                            total_bill += Number(article_obj.amount);
+                            amount += Number(array_bills[count_bill].amount);
+                            total_bill += Number(array_bills[count_bill].amount);
                             var bill_month = {
+                                id: array_bills[count_bill].id,
                                 date: date_aux,
                                 amount: amount,
                                 article: article_obj,
@@ -1414,9 +1442,10 @@ function createObjectsStore({ state }, response, type){
                     }else{
                         amount = 0;
                         date_aux =  article_obj.date;
-                        amount += Number(article_obj.amount);
-                        total_bill += Number(article_obj.amount);
+                        amount += Number(array_bills[count_bill].amount);
+                        total_bill += Number(array_bills[count_bill].amount);
                         var bill_month = {
+                            id: array_bills[count_bill].id,
                             date: date_aux,
                             amount: amount,
                             article: article_obj,
@@ -1434,8 +1463,9 @@ function createObjectsStore({ state }, response, type){
 
                 }else{
                     amount = array_bills[count_bill].amount;
-                    total_bill += Number(article_obj.amount);
+                    total_bill += Number(array_bills[count_bill].amount);
                     var bill_month = {
+                        id: array_bills[count_bill].id,
                         date: array_bills[count_bill].date,
                         amount: amount,
                         article: article_obj,
@@ -1460,6 +1490,7 @@ function createObjectsStore({ state }, response, type){
             
             total_bill += Number(amount);
             var bill_month = {
+                id: array_bills[count_bill].id,
                 date: date_aux,
                 amount: amount,
                 article: '',//article_obj,
