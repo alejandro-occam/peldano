@@ -83,6 +83,9 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('/delete_order/{id}', [App\Http\Controllers\OrdersController::class, 'deleteOrder'])->name('delete_order');
     //Copiar orden 
     Route::get('/copy_order/{id}', [App\Http\Controllers\OrdersController::class, 'copyOrder'])->name('copy_order');
+    //Abonar factura  
+    Route::get('/pay_invoice/{id}', [App\Http\Controllers\OrdersController::class, 'payInvoice'])->name('pay_invoice');
+
     
     //END ORDENES
 
