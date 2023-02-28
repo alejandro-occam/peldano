@@ -24,6 +24,8 @@ use App\Models\Order;
 use App\Models\BillOrder;
 use App\Models\Batch;
 use App\Models\ServiceBillOrder;
+use App\Models\ConsultantProposal;
+use App\Models\ConsultanOrder;
 use App\Http\Controllers\CurlController;
 
 class ProposalsController extends Controller
@@ -376,6 +378,21 @@ class ProposalsController extends Controller
             $bill->rows = $rows;
         }
 
+        //Rellenamos la tabla de consultores
+        $array_consultants = $request->get('array_consultants');
+        if(count($array_consultants) > 1){
+            foreach($array_consultants as $key => $consultant){
+                if($key != 0){
+                    ConsultantProposal::create([
+                        'id_consultant' => json_decode($consultant, true)['id_consultant'],
+                        'id_proposal' => $proposal->id,
+                        'percentage' => json_decode($consultant, true)['percentage'],
+                    ]);
+                }
+            }
+        }
+        
+
         if($status == 1){
             $path = 'media/custom-imgs/logo_azul.png';
             $type = pathinfo($path, PATHINFO_EXTENSION);
@@ -519,12 +536,30 @@ class ProposalsController extends Controller
                              ->leftJoin('companies', 'contacts.id_company', 'companies.id')
                              ->where('contacts.id', $proposal->id_contact)
                              ->get();
+
+        //Consultamos los consultores
+        $array_custom_consultant = array();
+        $custom_consultant['id_consultant'] = $user->id;
+        $custom_consultant['percentage'] = 100;
+        $custom_consultant['name'] = $user->name.' '.$user->surname;
+        $array_custom_consultant[] = $custom_consultant;
+
+        $array_consultants = ConsultantProposal::where('id_proposal', $proposal->id)->get();
+        foreach($array_consultants as $consultant){
+            $user_consultant = User::find($consultant->id_consultant);
+            $custom_consultant['id_consultant'] = $user_consultant->id;
+            $custom_consultant['percentage'] = $consultant->percentage;
+            $custom_consultant['name'] = $user_consultant->name.' '.$user_consultant->surname;
+            $array_custom_consultant[] = $custom_consultant;
+            $array_custom_consultant[0]['percentage'] -= $consultant->percentage;
+        }
         
         $response['company_aux'] = $array_companies;
         $response['consultant'] = $user;
         $response['array_services'] = $array_services;
         $response['proposal'] = $proposal;
         $response['proposal_bills'] = $proposal_bills;
+        $response['array_consultants'] = $array_custom_consultant;
         $response['code'] = 1000;
         return response()->json($response);
     }
@@ -702,6 +737,22 @@ class ProposalsController extends Controller
                 $rows++;
             }
             $bill->rows = $rows;
+        }
+
+        //Actualizamos los consultores
+        ConsultantProposal::where('id_proposal', $proposal->id)->delete();
+        //Rellenamos la tabla de consultores
+        $array_consultants = $request->get('array_consultants');
+        if(count($array_consultants) > 1){
+            foreach($array_consultants as $key => $consultant){
+                if($key != 0){
+                    ConsultantProposal::create([
+                        'id_consultant' => json_decode($consultant, true)['id_consultant'],
+                        'id_proposal' => $proposal->id,
+                        'percentage' => json_decode($consultant, true)['percentage'],
+                    ]);
+                }
+            }
         }
 
         if($status == 1){
@@ -1126,6 +1177,16 @@ class ProposalsController extends Controller
 
                 $exist = true;
             }  
+        }
+
+        //Añadimos los consultores a la orden
+        $array_consultants_proposals = ConsultantProposal::where('id_proposal', $proposal->id)->get();
+        foreach ($array_consultants_proposals as $consultant_proposal) {
+            ConsultanOrder::create([
+                'id_consultant' => $consultant_proposal->id_consultant,
+                'id_order' => $order->id,
+                'percentage' => $consultant_proposal->percentage
+            ]);
         }
 
         $response['code'] = 1000;

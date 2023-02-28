@@ -992,6 +992,7 @@ const mutations = {
         state.proposals.bill_obj.array_bills = [];
         state.proposals.bill_obj.total_bill = 0;
         state.proposals.proposal_bd_obj = null;
+        state.proposals.proposal_obj.array_consultants = [];
     },
 
     //Limpiamos los objetos utilizados para crear la orden
@@ -1117,6 +1118,44 @@ const mutations = {
 
         state.errors.code = 1000;
         state.errors.type_error = 'delete_article_order';
+    },
+
+    //Eliminar consultor
+    deleteConsultant(state, params){
+        var custom_state = state.proposals;
+        if(params.type == 2){
+            custom_state = state.orders;
+        }
+        var percentage_aux = 0;
+        custom_state.proposal_obj.array_consultants.forEach( function(value, index, array) {
+            if(value.id_consultant == params.id){
+                percentage_aux = custom_state.proposal_obj.array_consultants[index].percentage;
+                custom_state.proposal_obj.array_consultants.splice(index, 1);
+            }
+        });
+        custom_state.proposal_obj.array_consultants[0].percentage += Number(percentage_aux);
+    },
+    //Actualizar consultor
+    updateConsultant(state, params){
+        var custom_state = state.proposals;
+        if(params.type == 2){
+            custom_state = state.orders;
+        }
+        var percentage_aux = 0;
+        //Consultamos el porcentage del consultor principal
+        var percentage_consultant_principal = custom_state.proposal_obj.array_consultants[0].percentage;
+        custom_state.proposal_obj.array_consultants.forEach( function(value, index, array) {
+            if(value.id_consultant == params.id){
+                percentage_aux = value.percentage;
+                console.log('percentage_aux: '+percentage_aux);
+                percentage_consultant_principal += Number(percentage_aux);
+                console.log('params.percentage: '+params.percentage);
+                custom_state.proposal_obj.array_consultants[index].percentage = params.percentage;
+                percentage_consultant_principal -= Number(params.percentage);
+                console.log('percentage_consultant_principal: '+percentage_consultant_principal);
+            }
+        });
+        custom_state.proposal_obj.array_consultants[0].percentage = percentage_consultant_principal;
     }
 }
 

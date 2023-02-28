@@ -85,8 +85,13 @@
                                     <div class="f-16 color-dark-gray font-weight-bolder">
                                         <span>CONSULTOR</span>
                                     </div>
-                                    <div class="f-15 text-dark">
-                                        <span v-if="orders.user_obj != null">{{ orders.user_obj.name + ' ' + orders.user_obj.surname }}</span>
+                                    <div v-for="index in Number(orders.proposal_obj.array_consultants.length)" class="f-15 text-dark">
+                                        <span>{{ orders.proposal_obj.array_consultants[index - 1].name }} - {{ orders.proposal_obj.array_consultants[index - 1].percentage }}%</span>
+                                        <template v-if="this.is_updating_order">
+                                            <button class="ml-3 btn bg-azul color-white px-2 py-0 font-weight-bolder" v-if="index == Number(orders.proposal_obj.array_consultants.length)" v-on:click="openAddConsultant()">+</button>
+                                            <button v-if="index != 1" data-id="{{ orders.proposal_obj.array_consultants[index - 1].id }}" type="button" style="color: #2e49ff;background-color: #e7e7e7;" class="btn py-0 px-1 ml-2" v-on:click="showConsultanModal(index)"><img width="12" height="12" src="/media/custom-imgs/icono_btn_editar.svg"></button>
+                                            <button v-if="index != 1" data-id="{{ orders.proposal_obj.array_consultants[index - 1].id }}" type="button" style="color: #2e49ff;background-color: #ffecf7;" class="btn py-0 px-1 ml-2" v-on:click="deleteConsultanForm(index)"><img width="12" height="12" src="/media/custom-imgs/icono_btn_borrar.svg"></button>
+                                        </template>
                                     </div>
                                 </div>
                                 <div class="d-block mx-20">
@@ -338,6 +343,7 @@
     </div>
     <FormAddArticleComponent :type="2"></FormAddArticleComponent>
     <ModalUpdateOrder></ModalUpdateOrder>
+    <ModalAddConsultantComponent ref="modal_add_consultant" :type="2"></ModalAddConsultantComponent>
 </template>
 
 <script>
@@ -348,6 +354,7 @@ import AddButtonComponent from "../Partials/AddButtonComponent.vue";
 import DeleteButtonComponent from "../Partials/DeleteButtonComponent.vue"
 import FormAddArticleComponent from "../Proposals/FormAddArticleComponent.vue";
 import ModalUpdateOrder from "./ModalUpdateOrder.vue";
+import ModalAddConsultantComponent from "../Proposals/ModalAddConsultantComponent.vue";
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Textarea from 'primevue/textarea';
@@ -363,7 +370,8 @@ export default {
         Textarea,
         Calendar,
         DeleteButtonComponent,
-        ModalUpdateOrder
+        ModalUpdateOrder,
+        ModalAddConsultantComponent
     },
     data() {
         return {
@@ -443,10 +451,13 @@ export default {
         ...mapState(["errors", "orders"]),
     },
     methods: {
-        ...mapMutations(["clearError", "changeViewStatusOrders", "changeProposalObj", "changeValueIsChangeArticle", "generateBill", "clearObjectsOrders", "deleteArticleOrder"]),
+        ...mapMutations(["clearError", "changeViewStatusOrders", "changeProposalObj", "changeValueIsChangeArticle", "generateBill", "clearObjectsOrders", "deleteArticleOrder", "deleteConsultant"]),
         ...mapActions(["getCompanies", "updateOrder", "deleteOrder", "copyOrder"]),
         openFormArticle(){
             $('#modal_form_article_proposals').modal('show');
+        },
+        openAddConsultant(){
+            $('#modal_add_consultant').modal('show');
         },
         getNameCompany(id, type){
             let me = this;
@@ -955,7 +966,8 @@ export default {
                     'id_order': this.orders.proposal_obj.id_order,
                     'bill_obj': this.orders.bill_obj,
                     'discount': this.discount,
-                    'reason_update': this.orders.reason_update
+                    'reason_update': this.orders.reason_update,
+                    'array_consultants': this.orders.proposal_obj.array_consultants
                 }
                 this.updateOrder(params);
 
@@ -970,6 +982,29 @@ export default {
         deleteArticle(id){
             this.deleteArticleOrder(id);
             //console.log(id);
+        },
+        deleteConsultanForm(id){
+            var params = {
+                id: id,
+                type: 2
+            }
+            this.deleteConsultant(params);
+        },
+        showConsultanModal(id){
+            let me = this;
+            $('#id_consultant').val(id);
+            me.orders.proposal_obj.array_consultants.forEach( function(value, index, array) {
+                if(value.id_consultant == id){
+                    $('#select_consultant').val(id);
+                    me.$refs.modal_add_consultant.id_consultant = id;
+                    me.$refs.modal_add_consultant.select_consultant = id;
+                    me.$refs.modal_add_consultant.percentage = value.percentage;
+                    me.$refs.modal_add_consultant.title_modal = 'Actualizar consultor';
+                    me.$refs.modal_add_consultant.is_update = 1;
+                    $('#select_consultant').prop('disabled', true);
+                }
+            });
+            $('#modal_add_consultant').modal('show');
         }
     },
     mounted() {

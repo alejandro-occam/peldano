@@ -40,7 +40,7 @@
     import { mapState, mapMutations } from "vuex";
 
     export default {
-        name: "FormAddArticleComponent",
+        name: "ModalCustomInvoiceComponent",
         components: {
         },
         data() {
@@ -51,6 +51,7 @@
                 valid: false
             };
         },
+        props: ["type"],
         computed: {
             ...mapState(["proposals", "orders"]),
         },

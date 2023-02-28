@@ -75,7 +75,8 @@ const state = {
                 }
             ],
             is_change: false,
-            array_dates: []
+            array_dates: [],
+            array_consultants: []
         },
         proposal_bd_obj: null,
         bill_obj: {
@@ -107,7 +108,8 @@ const state = {
                 }
             ],
             is_change: false,
-            array_dates: []
+            array_dates: [],
+            array_consultants: []
         },
         proposal_bd_obj: null,
         bill_obj: {

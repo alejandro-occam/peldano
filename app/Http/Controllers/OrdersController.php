@@ -16,6 +16,7 @@ use App\Models\Chapter;
 use App\Models\Article;
 use App\Models\User;
 use App\Models\ServiceBillOrder;
+use App\Models\ConsultanOrder;
 use DB;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -48,7 +49,7 @@ class OrdersController extends Controller
                         ->leftJoin('proposals_bills', 'proposals.id', 'proposals_bills.id_proposal')
                         ->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill');
 
-        if($request->get('type') == 1){
+        /*if($request->get('type') == 1){
             if($request->get('num_order') != ''){
                 $array_orders = $array_orders->where('proposals.id_proposal_custom', $request->get('num_order'));
             }
@@ -68,7 +69,7 @@ class OrdersController extends Controller
             if($request->get('date_to') != '' && $request->get('date_to') != 'Invalid Date-undefined-undefined'){
                 $array_orders = $array_orders->where('proposals.date_proyect', '<=', $request->get('date_to'));
             }
-        }
+        }*/
 
         $array_orders = $array_orders->groupBy('orders.id')
                                             ->skip($start)
@@ -533,6 +534,24 @@ class OrdersController extends Controller
                              ->where('contacts.id', $proposal->id_contact)
                              ->get();
 
+        //Consultamos los consultores
+        //Consultamos los consultores
+        $array_custom_consultant = array();
+        $custom_consultant['id_consultant'] = $user->id;
+        $custom_consultant['percentage'] = 100;
+        $custom_consultant['name'] = $user->name.' '.$user->surname;
+        $array_custom_consultant[] = $custom_consultant;
+
+        $array_consultants = ConsultanOrder::where('id_order', $order->id)->get();
+        foreach($array_consultants as $consultant){
+            $user_consultant = User::find($consultant->id_consultant);
+            $custom_consultant['id_consultant'] = $user_consultant->id;
+            $custom_consultant['percentage'] = $consultant->percentage;
+            $custom_consultant['name'] = $user_consultant->name.' '.$user_consultant->surname;
+            $array_custom_consultant[] = $custom_consultant;
+            $array_custom_consultant[0]['percentage'] -= $consultant->percentage;
+        }
+
         //Adjuntamos el id_order al objeto proposal
         $proposal['id_order'] = $order->id;
         
@@ -541,6 +560,7 @@ class OrdersController extends Controller
         $response['array_services'] = $array_services;
         $response['proposal'] = $order;
         $response['proposal_bills'] = $bills_orders;
+        $response['array_consultants'] = $array_custom_consultant;
         $response['code'] = 1000;
         return response()->json($response);
     }
@@ -802,6 +822,22 @@ class OrdersController extends Controller
         $order->status = 0;
         $order->reason_update = $reason_update;
         $order->save();
+
+        //Actualizamos los consultores
+        ConsultanOrder::where('id_order', $order->id)->delete();
+        //Rellenamos la tabla de consultores
+        $array_consultants = $request->get('array_consultants');
+        if(count($array_consultants) > 1){
+            foreach($array_consultants as $key => $consultant){
+                if($key != 0){
+                    ConsultanOrder::create([
+                        'id_consultant' => json_decode($consultant, true)['id_consultant'],
+                        'id_order' => $order->id,
+                        'percentage' => json_decode($consultant, true)['percentage'],
+                    ]);
+                }
+            }
+        }
 
         $response['code'] = 1000;
         return response()->json($response);

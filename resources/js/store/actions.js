@@ -671,17 +671,35 @@ const actions = {
     },
 
     //Mostrar infromación del usuario
-    async getUser({ state }, type){
+    async getUser({ state }, params){
         try {
             const response = await http({
                 url: "/admin/get_user",
                 method: 'get'
             });
 
-            if(type == 1){
+            if(params.type == 1){
                 state.proposals.user_obj = response.data.user;
+                var consultant = {
+                    id_consultant: response.data.user.id,
+                    name: response.data.user.name + " "  + response.data.user.surname,
+                    percentage: 100
+                }
+                if(params.type_action == 0){
+                    state.proposals.proposal_obj.array_consultants.push(consultant);
+                }
+                
             }else{
                 state.orders.user_obj = response.data.user;
+                var consultant = {
+                    id_consultant: response.data.user.id,
+                    name: response.data.user.name + " "  + response.data.user.surname,
+                    percentage: 100
+                }
+                if(params.type_action == 0){
+                    state.orders.proposal_obj.array_consultants.push(consultant);
+                }
+                
             }
             
 
@@ -1059,6 +1077,8 @@ function createObjectsStore({ state }, response, type){
         custom_state = state.orders;
     }
 
+    console.log(response.data);
+
     if(response.data.proposal.is_custom){
         custom_state.num_custom_invoices = Number(response.data.proposal_bills.length);
     }
@@ -1217,6 +1237,8 @@ function createObjectsStore({ state }, response, type){
     custom_state.proposal_obj.total_amount_global = total_amount_global;
     custom_state.proposal_obj.total_global_normal = total_global_default;
     custom_state.proposal_obj.total_global = total_global;
+    
+    custom_state.proposal_obj.array_consultants = response.data.array_consultants;
 
     //Ordenamos las fechas de forma ascendente
     array_dates_aux = array_dates_aux.sort(function(a,b){
