@@ -671,21 +671,21 @@ const actions = {
     },
 
     //Mostrar infromación del usuario
-    async getUser({ state }, type, type_action){
+    async getUser({ state }, params){
         try {
             const response = await http({
                 url: "/admin/get_user",
                 method: 'get'
             });
 
-            if(type == 1){
+            if(params.type == 1){
                 state.proposals.user_obj = response.data.user;
                 var consultant = {
                     id_consultant: response.data.user.id,
                     name: response.data.user.name + " "  + response.data.user.surname,
                     percentage: 100
                 }
-                if(type_action == 0){
+                if(params.type_action == 0){
                     state.proposals.proposal_obj.array_consultants.push(consultant);
                 }
                 

@@ -25,6 +25,7 @@ use App\Models\BillOrder;
 use App\Models\Batch;
 use App\Models\ServiceBillOrder;
 use App\Models\ConsultantProposal;
+use App\Models\ConsultanOrder;
 use App\Http\Controllers\CurlController;
 
 class ProposalsController extends Controller
@@ -54,7 +55,7 @@ class ProposalsController extends Controller
                         ->leftJoin('proposals_bills', 'proposals.id', 'proposals_bills.id_proposal')
                         ->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill');
 
-        /*if($request->get('type') == 1){
+        if($request->get('type') == 1){
             if($request->get('status_order') != '' && $request->get('status_order') != 3){
                 $array_proposals = Proposal::select('proposals.*', 'departments.name as department_name')
                                             ->leftJoin('departments', 'departments.id', 'proposals.id_department')
@@ -90,7 +91,7 @@ class ProposalsController extends Controller
             if($request->get('date_to') != '' && $request->get('date_to') != 'Invalid Date-undefined-undefined'){
                 $array_proposals = $array_proposals->where('proposals.date_proyect', '<=', $request->get('date_to'));
             }
-        }*/
+        }
 
         $total_proposals = $array_proposals->groupBy('proposals.id')
                                             ->orderBy('proposals.created_at', 'desc')
@@ -738,6 +739,22 @@ class ProposalsController extends Controller
             $bill->rows = $rows;
         }
 
+        //Actualizamos los consultores
+        ConsultantProposal::where('id_proposal', $proposal->id)->delete();
+        //Rellenamos la tabla de consultores
+        $array_consultants = $request->get('array_consultants');
+        if(count($array_consultants) > 1){
+            foreach($array_consultants as $key => $consultant){
+                if($key != 0){
+                    ConsultantProposal::create([
+                        'id_consultant' => json_decode($consultant, true)['id_consultant'],
+                        'id_proposal' => $proposal->id,
+                        'percentage' => json_decode($consultant, true)['percentage'],
+                    ]);
+                }
+            }
+        }
+
         if($status == 1){
             $path = 'media/custom-imgs/logo_azul.png';
             $type = pathinfo($path, PATHINFO_EXTENSION);
@@ -1160,6 +1177,16 @@ class ProposalsController extends Controller
 
                 $exist = true;
             }  
+        }
+
+        //Añadimos los consultores a la orden
+        $array_consultants_proposals = ConsultantProposal::where('id_proposal', $proposal->id)->get();
+        foreach ($array_consultants_proposals as $consultant_proposal) {
+            ConsultanOrder::create([
+                'id_consultant' => $consultant_proposal->id_consultant,
+                'id_order' => $order->id,
+                'percentage' => $consultant_proposal->percentage
+            ]);
         }
 
         $response['code'] = 1000;

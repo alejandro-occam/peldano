@@ -133,7 +133,7 @@
                                     </div>
                                     <div v-for="index in Number(proposals.proposal_obj.array_consultants.length)" class="f-15 text-dark">
                                         <span>{{ proposals.proposal_obj.array_consultants[index - 1].name }} - {{ proposals.proposal_obj.array_consultants[index - 1].percentage }}%</span>
-                                        <template v-if="!this.is_show_buttons_bill && !this.finish_proposal">
+                                        <template v-if="!this.finish_proposal">
                                             <button class="ml-3 btn bg-azul color-white px-2 py-0 font-weight-bolder" v-if="index == Number(proposals.proposal_obj.array_consultants.length)" v-on:click="openAddConsultant()">+</button>
                                             <button v-if="index != 1" data-id="{{ proposals.proposal_obj.array_consultants[index - 1].id }}" type="button" style="color: #2e49ff;background-color: #e7e7e7;" class="btn py-0 px-1 ml-2" v-on:click="showConsultanModal(index)"><img width="12" height="12" src="/media/custom-imgs/icono_btn_editar.svg"></button>
                                             <button v-if="index != 1" data-id="{{ proposals.proposal_obj.array_consultants[index - 1].id }}" type="button" style="color: #2e49ff;background-color: #ffecf7;" class="btn py-0 px-1 ml-2" v-on:click="deleteConsultanForm(index)"><img width="12" height="12" src="/media/custom-imgs/icono_btn_borrar.svg"></button>
@@ -1469,6 +1469,7 @@ export default {
             me.proposals.proposal_obj.array_consultants.forEach( function(value, index, array) {
                 if(value.id_consultant == id){
                     $('#select_consultant').val(id);
+                    me.$refs.modal_add_consultant.id_consultant = id;
                     me.$refs.modal_add_consultant.select_consultant = id;
                     me.$refs.modal_add_consultant.percentage = value.percentage;
                     me.$refs.modal_add_consultant.title_modal = 'Actualizar consultor';
@@ -1480,7 +1481,15 @@ export default {
         }
     },
     mounted() {
-        this.getUser(1, this.is_updating);
+        var type_action = 0;
+        if(this.proposals.proposal_bd_obj != null){
+            type_action = 1;
+        }
+        var params = {
+            type: 1,
+            type_action: type_action
+        }
+        this.getUser(params);
         if(this.proposals.proposal_obj.array_dates != undefined && this.offer == 0 && this.proposals.proposal_obj.array_dates.length > 0 && !this.proposals.is_change_get_info){
             this.changeViewStatusProposals(1);
             this.clearObjectsProposal();

@@ -81,7 +81,7 @@ import { mapState, mapMutations } from "vuex";
                 let me = this;
                 this.valid = true;
                 this.valid2 = true;
-                this.amount_error = false;
+                this.percentage_error = false;
                 
 
                 if(this.percentage == "" || this.percentage == null || this.percentage == 0){
