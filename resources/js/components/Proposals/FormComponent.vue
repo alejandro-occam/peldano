@@ -758,7 +758,7 @@
     </div>
     <FormAddArticleComponent :type="1"></FormAddArticleComponent>
     <ModalCustomInvoiceComponent></ModalCustomInvoiceComponent>
-    <ModalAddConsultantComponent ref="modal_add_consultant"></ModalAddConsultantComponent>
+    <ModalAddConsultantComponent ref="modal_add_consultant" :type="1"></ModalAddConsultantComponent>
 </template>
 
 <script>
@@ -1461,7 +1461,11 @@ export default {
             this.loadFormObj(); 
         },
         deleteConsultanForm(id){
-            this.deleteConsultant(id);
+            var params = {
+                id: id, 
+                type: 1
+            }
+            this.deleteConsultant(params);
         },
         showConsultanModal(id){
             let me = this;

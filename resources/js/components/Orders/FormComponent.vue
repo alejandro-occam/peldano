@@ -117,8 +117,13 @@
                                     <div class="f-16 color-dark-gray font-weight-bolder">
                                         <span>CONSULTOR</span>
                                     </div>
-                                    <div class="f-15 text-dark">
-                                        <span v-if="orders.user_obj != null">{{ orders.user_obj.name + ' ' + orders.user_obj.surname }}</span>
+                                    <div v-for="index in Number(orders.proposal_obj.array_consultants.length)" class="f-15 text-dark">
+                                        <span>{{ orders.proposal_obj.array_consultants[index - 1].name }} - {{ orders.proposal_obj.array_consultants[index - 1].percentage }}%</span>
+                                        <template v-if="!this.finish_proposal">
+                                            <button class="ml-3 btn bg-azul color-white px-2 py-0 font-weight-bolder" v-if="index == Number(orders.proposal_obj.array_consultants.length)" v-on:click="openAddConsultant()">+</button>
+                                            <button v-if="index != 1" data-id="{{ orders.proposal_obj.array_consultants[index - 1].id }}" type="button" style="color: #2e49ff;background-color: #e7e7e7;" class="btn py-0 px-1 ml-2" v-on:click="showConsultanModal(index)"><img width="12" height="12" src="/media/custom-imgs/icono_btn_editar.svg"></button>
+                                            <button v-if="index != 1" data-id="{{ orders.proposal_obj.array_consultants[index - 1].id }}" type="button" style="color: #2e49ff;background-color: #ffecf7;" class="btn py-0 px-1 ml-2" v-on:click="deleteConsultanForm(index)"><img width="12" height="12" src="/media/custom-imgs/icono_btn_borrar.svg"></button>
+                                        </template>
                                     </div>
                                 </div>
                                 <div class="d-block mx-20">
@@ -581,7 +586,11 @@
                                 </tr>
                                 <tr class="row-product-offer-proposal">
                                     <td class="py-2"><div class="f-13 ml-5 font-weight-bolder gray-chapter-offer-proposal">FECHA:</div><div class="ml-5 f-13 text-dark">{{ this.$utils.getNow() }}</div></td>
-                                    <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-chapter-offer-proposal">CONSULTOR:</div><div class="ml-5 f-13 text-dark">{{ orders.user_obj.name + ' ' + orders.user_obj.surname }}</div></td>
+                                    <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-chapter-offer-proposal">CONSULTOR:</div>
+                                        <template v-for="index in Number(orders.proposal_obj.array_consultants.length)">
+                                            <div class="ml-5 f-13 text-dark">{{ orders.proposal_obj.array_consultants[index - 1].name + ' - ' + orders.proposal_obj.array_consultants[index - 1].percentage }}%</div>
+                                        </template>
+                                    </td>
                                     <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-chapter-offer-proposal">DEPARTAMENTO:</div><div class="ml-5 f-13 text-dark">{{ orders.proposal_obj.chapters[0].articles[0].department_obj.name }}</div></td>
                                     <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-chapter-offer-proposal">ANUNCIANTE:</div><div class="ml-5 f-13 text-dark">{{ this.name_company }}</div></td>
                                     <td class="py-2 td-border-left" v-if="this.proposal_submission_settings.show_discounts == 1"><div class="f-13 ml-5 font-weight-bolder gray-chapter-offer-proposal">DESCUENTO:</div><div class="ml-5 f-13 text-dark">{{ this.discount }}%</div></td>
@@ -736,6 +745,7 @@
     </div>
     <FormAddArticleComponent :type="2"></FormAddArticleComponent>
     <ModalCustomInvoiceComponent></ModalCustomInvoiceComponent>
+    <ModalAddConsultantComponent :type="2" ref="modal_add_consultant"></ModalAddConsultantComponent>
 </template>
 
 <script>
@@ -746,6 +756,7 @@ import AddButtonComponent from "../Partials/AddButtonComponent.vue";
 import DeleteButtonComponent from "../Partials/DeleteButtonComponent.vue"
 import FormAddArticleComponent from "../Proposals/FormAddArticleComponent.vue";
 import ModalCustomInvoiceComponent from "../Proposals/ModalCustomInvoiceComponent.vue";
+import ModalAddConsultantComponent from "../Proposals/ModalAddConsultantComponent.vue";
 import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Textarea from 'primevue/textarea';
@@ -761,7 +772,8 @@ export default {
         Textarea,
         Calendar,
         ModalCustomInvoiceComponent,
-        DeleteButtonComponent
+        DeleteButtonComponent,
+        ModalAddConsultantComponent
     },
     data() {
         return {
@@ -843,13 +855,16 @@ export default {
         ...mapState(["errors", "orders"]),
     },
     methods: {
-        ...mapMutations(["clearError", "changeViewStatusOrders", "changeProposalObj", "changeValueIsChangeArticle", "generateBill", "clearObjectsOrders"]),
+        ...mapMutations(["clearError", "changeViewStatusOrders", "changeProposalObj", "changeValueIsChangeArticle", "generateBill", "clearObjectsOrders", "deleteConsultant"]),
         ...mapActions(["getCompanies", "saveProposal", "updateOrder", "deleteOrder", "getUser", "copyOrder"]),
         openFormArticle(){
             $('#modal_form_article_proposals').modal('show');
         },
         openCustomInvoice(){
             $('#modal_custom_invoice').modal('show');
+        },
+        openAddConsultant(){
+            $('#modal_add_consultant').modal('show');
         },
         getNameCompany(id, type){
             let me = this;
@@ -1285,7 +1300,8 @@ export default {
                 value_form1: this.value_form1,
                 select_way_to_pay_options: this.select_way_to_pay_options,
                 select_expiration_options: this.select_expiration_options,
-                nun_custom_invoices: this.orders.num_custom_invoices
+                nun_custom_invoices: this.orders.num_custom_invoices,
+                array_consultants: this.orders.proposal_obj.array_consultants
             }
             if(this.orders.status_view == 2 && this.orders.proposal_bd_obj != null){
                 params.id_proposal = this.orders.proposal_bd_obj.id;
@@ -1420,10 +1436,41 @@ export default {
         },
         copyOrderBtn(){
             this.copyOrder(this.orders.proposal_obj.id_order);
+        },
+        deleteConsultanForm(id){
+            var params = {
+                id: id, 
+                type: 2
+            }
+            this.deleteConsultant(params);
+        },
+        showConsultanModal(id){
+            let me = this;
+            $('#id_consultant').val(id);
+            me.orders.proposal_obj.array_consultants.forEach( function(value, index, array) {
+                if(value.id_consultant == id){
+                    $('#select_consultant').val(id);
+                    me.$refs.modal_add_consultant.id_consultant = id;
+                    me.$refs.modal_add_consultant.select_consultant = id;
+                    me.$refs.modal_add_consultant.percentage = value.percentage;
+                    me.$refs.modal_add_consultant.title_modal = 'Actualizar consultor';
+                    me.$refs.modal_add_consultant.is_update = 1;
+                    $('#select_consultant').prop('disabled', true);
+                }
+            });
+            $('#modal_add_consultant').modal('show');
         }
     },
     mounted() {
-        this.getUser(2);
+        var type_action = 0;
+        if(this.orders.proposal_bd_obj != null){
+            type_action = 1;
+        }
+        var params = {
+            type: 2,
+            type_action: type_action
+        }
+        this.getUser(params);
         if(this.orders.proposal_obj.array_dates != undefined && this.offer == 0 && this.orders.proposal_obj.array_dates.length > 0 && !this.orders.is_change_get_info){
             this.changeViewStatusOrders(1);
             this.clearObjectsOrders();

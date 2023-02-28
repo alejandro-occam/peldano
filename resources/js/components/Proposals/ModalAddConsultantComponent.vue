@@ -18,8 +18,15 @@
                                 <option value="0" selected>
                                     Selecciona un consultor
                                 </option>
-                                <template v-for="index in Number(proposals.array_users.length)">
-                                    <option :value="proposals.array_users[index - 1].id" :key="proposals.array_users[index - 1].id" v-text="proposals.array_users[index - 1].name + ' ' + proposals.array_users[index - 1].surname" ></option>
+                                <template v-if="this.type == 1">
+                                    <template  v-for="index in Number(proposals.array_users.length)" :key="proposals.array_users[index - 1].id">
+                                        <option :value="proposals.array_users[index - 1].id"  v-text="proposals.array_users[index - 1].name + ' ' + proposals.array_users[index - 1].surname" ></option>
+                                    </template>
+                                </template>
+                                <template v-else>
+                                    <template  v-for="index in Number(orders.array_users.length)" :key="orders.array_users[index - 1].id">
+                                        <option :value="orders.array_users[index - 1].id"  v-text="orders.array_users[index - 1].name + ' ' + orders.array_users[index - 1].surname" ></option>
+                                    </template>
                                 </template>
                             </select>
                         </div>
@@ -68,6 +75,7 @@ import { mapState, mapMutations } from "vuex";
                 is_update: 0
             };
         },
+        props: ["type"],
         computed: {
             ...mapState(["proposals", "orders"]),
         },
@@ -100,19 +108,37 @@ import { mapState, mapMutations } from "vuex";
                     }
                     var is_valid = true;
                     var value_percentage_aux = 0;
-                    this.proposals.proposal_obj.array_consultants.forEach( function(value, index, array) {
-                        if(index == 0){
-                            value_percentage_aux = value.percentage;
-                            if((value_percentage_aux - consultant.percentage) > 0){
-                                if(!me.is_update){
-                                    value.percentage = value.percentage - consultant.percentage;
+                    if(this.type == 1){
+                        this.proposals.proposal_obj.array_consultants.forEach( function(value, index, array) {
+                            if(index == 0){
+                                value_percentage_aux = value.percentage;
+                                if((value_percentage_aux - consultant.percentage) > 0){
+                                    if(!me.is_update){
+                                        value.percentage = value.percentage - consultant.percentage;
+                                    }
+                                }else{
+                                    is_valid = false;
                                 }
-                            }else{
-                                is_valid = false;
+                            
                             }
-                           
-                        }
-                    });
+                        });
+
+                    }else{
+                        this.orders.proposal_obj.array_consultants.forEach( function(value, index, array) {
+                            if(index == 0){
+                                value_percentage_aux = value.percentage;
+                                if((value_percentage_aux - consultant.percentage) > 0){
+                                    if(!me.is_update){
+                                        value.percentage = value.percentage - consultant.percentage;
+                                    }
+                                }else{
+                                    is_valid = false;
+                                }
+                            
+                            }
+                        });
+                    }
+                    
                     if(is_valid){
                         if(this.is_update){
                             this.updateConsultantModal();
@@ -147,14 +173,28 @@ import { mapState, mapMutations } from "vuex";
             getConsultantSelect(){
                 let me = this;
                 var is_select = false;
-                this.proposals.proposal_obj.array_consultants.forEach( function(value, index, array) {
-                    if(value.id_consultant == me.proposals.array_users[me.select_consultant - 1].id){
-                        is_select = true;
-                    }
-                });
+                if(this.type == 1){
+                    this.proposals.proposal_obj.array_consultants.forEach( function(value, index, array) {
+                        if(value.id_consultant == me.proposals.array_users[me.select_consultant - 1].id){
+                            is_select = true;
+                        }
+                    });
+                }else{
+                    this.orders.proposal_obj.array_consultants.forEach( function(value, index, array) {
+                        if(value.id_consultant == me.orders.array_users[me.select_consultant - 1].id){
+                            is_select = true;
+                        }
+                    });
+                }
+                
                 if(!is_select){
-                    me.name = me.proposals.array_users[me.select_consultant - 1].name + " " + me.proposals.array_users[me.select_consultant - 1].surname;
-                    me.id_consultant = me.proposals.array_users[me.select_consultant - 1].id;
+                    if(this.type == 1){
+                        me.name = me.proposals.array_users[me.select_consultant - 1].name + " " + me.proposals.array_users[me.select_consultant - 1].surname;
+                        me.id_consultant = me.proposals.array_users[me.select_consultant - 1].id;
+                    }else{
+                        me.name = me.orders.array_users[me.select_consultant - 1].name + " " + me.orders.array_users[me.select_consultant - 1].surname;
+                        me.id_consultant = me.orders.array_users[me.select_consultant - 1].id;
+                    }
                 }else{
                     me.select_consultant = 0;
                     swal("", "Este consultor ya está seleccionado", "warning");
@@ -163,7 +203,8 @@ import { mapState, mapMutations } from "vuex";
             updateConsultantModal(){
                 var params = {
                     id: this.id_consultant, 
-                    percentage: this.percentage
+                    percentage: this.percentage,
+                    type: this.type
                 };
                 this.updateConsultant(params);
             }

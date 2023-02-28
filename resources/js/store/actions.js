@@ -691,6 +691,15 @@ const actions = {
                 
             }else{
                 state.orders.user_obj = response.data.user;
+                var consultant = {
+                    id_consultant: response.data.user.id,
+                    name: response.data.user.name + " "  + response.data.user.surname,
+                    percentage: 100
+                }
+                if(params.type_action == 0){
+                    state.orders.proposal_obj.array_consultants.push(consultant);
+                }
+                
             }
             
 
@@ -1067,6 +1076,8 @@ function createObjectsStore({ state }, response, type){
     if(type == 2){
         custom_state = state.orders;
     }
+
+    console.log(response.data);
 
     if(response.data.proposal.is_custom){
         custom_state.num_custom_invoices = Number(response.data.proposal_bills.length);
