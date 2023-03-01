@@ -249,7 +249,10 @@
 					</thead>
                     <tbody>  
                         <template v-for="(item, index) in Number(orders.bill_obj.array_bills.length)" :key="index">
-                            <tr class="row-product text-align-center">
+                            <tr v-if="orders.bill_obj.array_bills[index].status_validate" class="row-product text-align-center bg-validate-invoice">
+                                <td class="td-border-right" rowspan="5">{{ index + 1 }}</td>
+                            </tr>
+                            <tr v-else class="row-product text-align-center">
                                 <td class="td-border-right" rowspan="5">{{ index + 1 }}</td>
                             </tr>
                             <tr class="row-product">

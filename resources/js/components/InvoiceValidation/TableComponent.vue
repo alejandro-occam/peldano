@@ -31,6 +31,7 @@
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>FP</span></th>
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Venc</span></th>
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Pedido</span></th>
+                            <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Acción</span></th>
                         </tr>
                     </thead>
                     <tbody>  
@@ -48,6 +49,7 @@
                                 <td class="text-align-center text-dark" style="color: red !important;">Transf</td>
                                 <td class="text-align-center text-dark" style="color: red !important;">Al contado</td>
                                 <td class="text-align-center text-dark">{{ invoice_validations.array_bill_orders[index_bill_order - 1].num_order }}</td>
+                                <td class="text-align-center text-dark"><button class="btn bg-azul color-white" v-if="!invoice_validations.array_bill_orders[index_bill_order - 1].status_validate" v-on:click="validateBillTable(invoice_validations.array_bill_orders[index_bill_order - 1].id)">Validar</button></td>
                             </tr>   
                             <tr v-if="invoice_validations.array_bill_orders[index_bill_order - 1].observations != '' && invoice_validations.array_bill_orders[index_bill_order - 1].observations != undefined && invoice_validations.array_bill_orders[index_bill_order - 1].observations != null">
                                 <td class="pt-3 pl-9" :colspan="11">
@@ -200,8 +202,8 @@
             };
         },
         methods: {
-            ...mapActions(["listBillsValidation"]),
-            ...mapMutations([]),
+            ...mapActions(["listBillsValidation", "validateBill"]),
+            ...mapMutations(["clearError"]),
             // Validates that the input string is a valid date formatted as "mm/dd/yyyy"
             isValidDate(dateString) {
                 var regEx = /^\d{2}-\d{2}-\d{4}$/;
@@ -242,6 +244,13 @@
                 const date_to =  day + '-'+ month + '-' + today.getFullYear();
                 this.date_to = date_to;
             },
+            //Validar factura
+            validateBillTable(id){
+                var params = {
+                    id_bill: id
+                }
+                this.validateBill(params)
+            }
         },
         computed: {
                 ...mapState(["errors", "invoice_validations"]),
@@ -255,6 +264,22 @@
                 handler: async function(val) {
                     this.loadBillsValidation();
                 }
+            },
+            '$store.state.errors.code': function() {
+                if(this.errors.type_error == 'validate_bill'){
+                    if(this.errors.code != ''){
+                        if(this.errors.code == 1000){
+                            swal("", "Factura validada correctamente", "success");
+
+                        }else{
+                            swal("", "Ha habido un error. Inténtalo de nuevo más tatrde", "error");
+                        }
+                    
+                    }else{
+                        swal("", "Ha habido un error. Inténtalo de nuevo más tatrde", "error");
+                    }
+                }
+                this.clearError();
             }
         }
     };

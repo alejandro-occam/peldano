@@ -85,8 +85,6 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::get('/copy_order/{id}', [App\Http\Controllers\OrdersController::class, 'copyOrder'])->name('copy_order');
     //Abonar factura  
     Route::get('/pay_invoice/{id}', [App\Http\Controllers\OrdersController::class, 'payInvoice'])->name('pay_invoice');
-
-    
     //END ORDENES
 
     Route::group(['middleware' => 'role:admin'], function () {
@@ -147,6 +145,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         //VALIDACIÓN DE FACTURAS
         //Listar facturas para la validación
         Route::post('/list_bill_orders', [App\Http\Controllers\InvoiceValidationController::class, 'listBillsOrder'])->name('list_bill_orders');
+        //Validar factura
+        Route::post('/validate_bill', [App\Http\Controllers\InvoiceValidationController::class, 'validateBill'])->name('validate_bill');
         
     });
 

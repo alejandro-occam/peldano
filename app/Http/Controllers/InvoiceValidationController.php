@@ -81,4 +81,32 @@ class InvoiceValidationController extends Controller
         $response['code'] = 1000;
         return response()->json($response);
     }
+
+    //Validar factura
+    function validateBill(Request $request){
+        if(!$request->has('id_bill')){
+            $response['code'] = 10011;
+            return response()->json($response);
+        }
+
+        $id_bill = $request->get('id_bill');
+
+        if(empty($id_bill)){
+            $response['code'] = 10012;
+            return response()->json($response);
+        }
+
+        //Comprobamos si existe la factura
+        $bill_order = BillOrder::find($id_bill);
+        if(!$bill_order){
+            $response['code'] = 10013;
+            return response()->json($response);
+        }
+
+        $bill_order->status_validate = 1;
+        $bill_order->save();
+
+        $response['code'] = 1000;
+        return response()->json($response);
+    }
 }
