@@ -136,7 +136,9 @@ const state = {
         total_amount: 0,
     },
     invoice_validations: {
-        array_bill_orders: []
+        array_bill_orders: [{
+            array_articles: []
+        }]
     },
     errors: {
         code: 0,

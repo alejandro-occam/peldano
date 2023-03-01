@@ -1,15 +1,23 @@
 <template>
     <div class="row">
-        <div class="col-12 d-flex flex-wrap justify-content-between">
-        </div>
-        <div class="col-12 mt-7">
-            <div class="col-12 d-flex flex-wrap mt-6">
-                <div class="col-12 flex-wrap justify-content-between">
-                    <h3 class="color-blue my-auto">Resultados</h3>
-                </div>
+        <div class="col-12 d-flex flex-wrap">            
+            <div class="mx-2 col-2 mt-5">
+                <span class="text-dark font-weight-bold mb-2">Tipo</span>
+                <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_type" :name="'select_type'" :id="'select_type'" data-style="select-lightgreen" @change="loadBillsValidation">
+                    <option value="0" selected>Todas</option>
+                    <option value="1">Facturas personalizadas</option>
+                    <option value="2">Facturas simples</option>
+                    <!--<option :value="department.id" v-for="department in config.articles.filter.array_departments" :key="department.id" v-text="department.nomenclature + '-' + department.name" ></option>-->
+                </select>
             </div>
+            <div class="mx-2 col-2 mt-5">
+                <span class="text-dark font-weight-bold mb-2">Factura hasta</span>
+                <Calendar class="w-100 select-filter input-custom-calendar mt-3" v-model="date_to" inputId="date_to" autocomplete="off" dateFormat="dd-mm-yy" />
+            </div>
+        </div>
+        <div class="col-12 mt-2">
             <div class="col-12 mt-15">
-                <table width="100%" cellpadding="2" cellspacing="1">
+                <table width="100%" cellpadding="2" cellspacing="1" v-if=" Number(invoice_validations.array_bill_orders.length) > 0">
                     <thead class="custom-columns-datatable">
                         <tr class="">
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 25px;"><span>N</span></th>
@@ -28,69 +36,47 @@
                     <tbody>  
                         <template v-for="index_bill_order in Number(invoice_validations.array_bill_orders.length)" :key="index_bill_order.id">
                             <!--ROW 1-->
-                            <tr class="row-product bg-white">
+                            <tr class="row-product bg-blue-light-white">
                                 <td class="pl-3 py-5 text-dark text-align-center">{{ invoice_validations.array_bill_orders[index_bill_order - 1].id }}</td>
-                                <td class="text-align-center text-gray">P </td>
-                                <td class="text-align-center text-gray">NV330546</td>
-                                <td class="text-dark">Beta10 Soluciones Tecnológicas, S. L.</td>
-                                <td class="text-align-center text-gray">{{ invoice_validations.array_bill_orders[index_bill_order - 1].id_order }}</td>
-                                <td class="text-align-center text-dark">688,20</td>
-                                <td class="text-align-center text-gray">089</td>
-                                <td class="text-align-center text-gray">{{ invoice_validations.array_bill_orders[index_bill_order - 1].date }}</td>
-                                <td class="text-align-center text-gray">Transf</td>
-                                <td class="text-align-center text-gray">Al contado</td>
-                                <td class="text-align-center text-gray"></td>
+                                <td class="text-align-center text-dark" style="color: red !important;">P </td>
+                                <td class="text-align-center text-dark" style="color: red !important;">NV330546</td>
+                                <td class="text-dark">{{ invoice_validations.array_bill_orders[index_bill_order - 1].name_company }}</td>
+                                <td class="text-align-center text-dark">{{ invoice_validations.array_bill_orders[index_bill_order - 1].id_order }}</td>
+                                <td class="text-align-center text-dark" style="color: red !important;">688,20</td>
+                                <td class="text-align-center text-dark">{{ invoice_validations.array_bill_orders[index_bill_order - 1].id_consultant }}</td>
+                                <td class="text-align-center text-dark">{{ invoice_validations.array_bill_orders[index_bill_order - 1].date }}</td>
+                                <td class="text-align-center text-dark" style="color: red !important;">Transf</td>
+                                <td class="text-align-center text-dark" style="color: red !important;">Al contado</td>
+                                <td class="text-align-center text-dark">{{ invoice_validations.array_bill_orders[index_bill_order - 1].num_order }}</td>
                             </tr>   
                             <tr v-if="invoice_validations.array_bill_orders[index_bill_order - 1].observations != '' && invoice_validations.array_bill_orders[index_bill_order - 1].observations != undefined && invoice_validations.array_bill_orders[index_bill_order - 1].observations != null">
-                                <td class="pt-3 pl-7" :colspan="11">
+                                <td class="pt-3 pl-9" :colspan="11">
                                     <tr style="width: 25px;">
                                         <span class="font-weight-bolder">Observaciones: </span><span>{{ invoice_validations.array_bill_orders[index_bill_order - 1].observations }}</span>
                                     </tr>
                                 </td>
                             </tr>
                             <tr v-if="invoice_validations.array_bill_orders[index_bill_order - 1].internal_observations != '' && invoice_validations.array_bill_orders[index_bill_order - 1].internal_observations != undefined && invoice_validations.array_bill_orders[index_bill_order - 1].internal_observations != null">
-                                <td class="pt-3 pb-2 pl-7" :colspan="11">
+                                <td class="pt-3 pb-2 pl-9" :colspan="11">
                                     <tr style="width: 25px;">
                                         <span class="font-weight-bolder">Observaciones internas: </span><span>{{ invoice_validations.array_bill_orders[index_bill_order - 1].internal_observations }}</span>
                                     </tr>
                                 </td>
                             </tr>
-                            <tr class="row-product bg-blue-light-white">
+                            <tr class="row-product bg-white">
                                 <td :colspan="11" class="pl-7">
-                                    <table width="100%" class="my-3 bg-blue-light-white" cellpadding="2" cellspacing="1">
+                                    <table width="100%" class="my-3 bg-white" cellpadding="2" cellspacing="1">
                                         <tbody>  
-                                            <tr class="">
-                                                <td class="pl-3 py-1 text-dark">MEGABANNER DESTACADO 1</td>
-                                                <td class="pl-3 py-1 text-dark">Beta10</td>
-                                                <td class="pl-3 py-1 text-dark">1</td>
-                                                <td class="pl-3 py-1 text-dark">1,000</td>
-                                                <td class="pl-3 py-1 text-dark">740,00</td>
-                                                <td class="pl-3 py-1 text-dark">740,00</td>
-                                                <td class="pl-3 py-1 text-dark">7,00</td>
-                                                <td class="pl-3 py-1 text-dark">0,00</td>
-                                                <td class="pl-3 py-1 text-dark">688,20</td>
-                                            </tr>
-                                            <tr class="">
-                                                <td class="pl-3 py-1 text-dark"><span style="color:#EB434D">41406NV2238</span> : 02023-MEGABANNER DESTACADO 1	</td>
-                                                <td class="pl-3 py-1 text-dark">Beta10</td>
-                                                <td class="pl-3 py-1 text-dark">1</td>
-                                                <td class="pl-3 py-1 text-dark">1,000</td>
-                                                <td class="pl-3 py-1 text-dark">740,00</td>
-                                                <td class="pl-3 py-1 text-dark">740,00</td>
-                                                <td class="pl-3 py-1 text-dark">7,00</td>
-                                                <td class="pl-3 py-1 text-dark">0,00</td>
-                                                <td class="pl-3 py-1 text-dark">688,20</td>
-                                            </tr>
-                                            <tr class="">
-                                                <td class="pl-3 py-1 text-dark"><span style="color:#EB434D">41406NV2238</span> : 02023-MEGABANNER DESTACADO 1	</td>
-                                                <td class="pl-3 py-1 text-dark">Beta10</td>
-                                                <td class="pl-3 py-1 text-dark">1</td>
-                                                <td class="pl-3 py-1 text-dark">1,000</td>
-                                                <td class="pl-3 py-1 text-dark">740,00</td>
-                                                <td class="pl-3 py-1 text-dark">740,00</td>
-                                                <td class="pl-3 py-1 text-dark">7,00</td>
-                                                <td class="pl-3 py-1 text-dark">0,00</td>
-                                                <td class="pl-3 py-1 text-dark">688,20</td>
+                                            <tr v-for="index_article in Number(invoice_validations.array_bill_orders[index_bill_order - 1].array_articles.length)"  class="">
+                                                <td class="pl-3 py-1 text-dark" style="width: 800px;">{{ invoice_validations.array_bill_orders[index_bill_order - 1].array_articles[index_article - 1].name }}</td>
+                                                <td class="pl-3 py-1 text-dark" style="color: red !important;">Beta10</td>
+                                                <td class="pl-3 py-1 text-dark">{{ invoice_validations.array_bill_orders[index_bill_order - 1].array_articles[index_article - 1].amount }}</td>
+                                                <td class="pl-3 py-1 text-dark" style="color: red !important;">1,000</td>
+                                                <td class="pl-3 py-1 text-dark" style="color: red !important;">740,00</td>
+                                                <td class="pl-3 py-1 text-dark" style="color: red !important;">740,00</td>
+                                                <td class="pl-3 py-1 text-dark" style="color: red !important;">7,00</td>
+                                                <td class="pl-3 py-1 text-dark" style="color: red !important;">0,00</td>
+                                                <td class="pl-3 py-1 text-dark" style="color: red !important;">688,20</td>
                                             </tr>
                                         </tbody>
                                     </table>
@@ -197,36 +183,79 @@
 </template>
 
 <script>
+    import Calendar from 'primevue/calendar';
+
     import { mapMutations, mapActions, mapState } from "vuex";
     export default {
         name: "TableComponent",
         components: {
+            Calendar
         },
         data() {
             return {
                 publicPath: window.location.origin,
-                desplegable1: 0,
-                desplegable2: 0
+                select_type: 0,
+                date_to: '',
+                date_to_custom: ''
             };
         },
         methods: {
             ...mapActions(["listBillsValidation"]),
             ...mapMutations([]),
-            testDesplegable(status, dropdown){
-                if(dropdown == 1){
-                    this.desplegable1 = status;
+            // Validates that the input string is a valid date formatted as "mm/dd/yyyy"
+            isValidDate(dateString) {
+                var regEx = /^\d{2}-\d{2}-\d{4}$/;
+                // First check for the pattern
+                try {
+                    if(!dateString.match(regEx)){
+                        return false;
+                    }else{
+                        return true;
+                    }
+                } catch (error) {
+                    return false;
                 }
-                if(dropdown == 2){
-                    this.desplegable2 = status;
+            },
+            loadBillsValidation(){
+                var date_to = this.date_to;
+                if(!this.isValidDate(this.date_to)){
+                    var date_ms_to = Date.parse(this.date_to);
+                    date_to = this.$utils.customFormDate(date_ms_to);
                 }
-            }
-            
+                this.date_to_custom = date_to;
+                var params = {
+                    select_type: this.select_type,
+                    date: this.date_to_custom
+                }
+                this.listBillsValidation(params);
+            },
+            getNow() {
+                const today = new Date();
+                var day = today.getUTCDate();
+                if(day < 10){
+                    day = '0'+day;
+                }
+                var month = today.getMonth() + 1;
+                if(month < 10){
+                    month = '0'+month;
+                }
+                const date_to =  day + '-'+ month + '-' + today.getFullYear();
+                this.date_to = date_to;
+            },
         },
         computed: {
                 ...mapState(["errors", "invoice_validations"]),
         },
         mounted() {
-            this.listBillsValidation();
+            this.getNow();
+            this.loadBillsValidation();
         },
+        watch: {
+            date_to: {
+                handler: async function(val) {
+                    this.loadBillsValidation();
+                }
+            }
+        }
     };
     </script>
