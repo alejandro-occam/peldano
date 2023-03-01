@@ -147,7 +147,10 @@ class ProposalsController extends Controller
 
     //Consultar usuarios
     function getUsers(){
-        $array_users = User::get();
+        $array_users = User::select('users.*', 'roles.name as role_name') 
+                            ->leftJoin('role_user', 'role_user.user_id', 'users.id')
+                            ->leftJoin('roles', 'roles.id', 'role_user.role_id')
+                            ->get();
         $response['array_users'] = $array_users;
         return response()->json($response);
     }

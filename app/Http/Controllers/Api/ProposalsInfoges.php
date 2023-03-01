@@ -136,6 +136,8 @@ class ProposalsInfoges extends Controller
                 }
             }
             if($custom_bill){
+                error_log('entro aquí');
+                error_log('array_services_aux: '.print_r($array_services_aux, true));
                 foreach($array_services_aux as $service){
                     ServiceBill::create([
                         'id_service' => $service->id,

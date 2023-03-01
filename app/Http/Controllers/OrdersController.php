@@ -19,6 +19,7 @@ use App\Models\ServiceBillOrder;
 use App\Models\ConsultanOrder;
 use App\Models\PayInvoice;
 use App\Models\Company;
+use Auth;
 use DB;
 use PhpOffice\PhpSpreadsheet\Spreadsheet;
 use PhpOffice\PhpSpreadsheet\Writer\Xlsx;
@@ -541,6 +542,11 @@ class OrdersController extends Controller
         error_log($bills_orders);
         //Consultamos el usuario que ha creado la propuesta
         $user = User::find($proposal->id_user);
+        $user_control = User::select('users.*', 'roles.name as role_name') 
+                            ->leftJoin('role_user', 'role_user.user_id', 'users.id')
+                            ->leftJoin('roles', 'roles.id', 'role_user.role_id')
+                            ->where('users.id', Auth::user()->id)
+                            ->first();
 
         //Consultamos la empresa
         $array_companies = Contact::select('contacts.*', 'companies.name', 'companies.nif', 'companies.address', DB::raw('CONCAT(contacts.name, " ", contacts.surnames) as fullname', 'contacts.id as id_contact'), 'contacts.email')
@@ -569,6 +575,7 @@ class OrdersController extends Controller
         //Adjuntamos el id_order al objeto proposal
         $proposal['id_order'] = $order->id;
         
+        $response['user_control'] = $user_control;
         $response['company_aux'] = $array_companies;
         $response['consultant'] = $user;
         $response['array_services'] = $array_services;

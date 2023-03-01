@@ -23,7 +23,8 @@ class BillOrder extends Model
         'iva',
         'id_sage',
         'id_order',
-        'receipt_order_sage'
+        'receipt_order_sage',
+        'status_validate'
     ];
 
     /**
@@ -43,7 +44,8 @@ class BillOrder extends Model
         'iva' => 'double',
         'id_sage' => 'string',
         'id_order' => 'integer',
-        'receipt_order_sage' => 'string'
+        'receipt_order_sage' => 'string',
+        'status_validate' => 'integer'
     ];
 
     /**
@@ -63,6 +65,7 @@ class BillOrder extends Model
         'iva',
         'id_sage',
         'id_order',
-        'receipt_order_sage'
+        'receipt_order_sage',
+        'status_validate'
     ];
 }

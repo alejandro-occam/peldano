@@ -892,3 +892,7 @@ a.text-hover-primary:hover, .text-hover-primary:hover{
     color: white;
     border-radius: 5px;
 }
+
+.bg-validate-invoice{
+    background-color: #c8f9ef !important;
+}

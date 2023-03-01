@@ -17,6 +17,8 @@ import ReportOption1 from "./components/Reports/Options/Options1/ContentComponen
 import ReportOption4 from "./components/Reports/Options/Options4/ContentComponent.vue";
 import ReportOption5 from "./components/Reports/Options/Options5/ContentComponent.vue";
 import ReportOption7 from "./components/Reports/Options/Options7/ContentComponent.vue";
+import InvoiceValidation from "./components/InvoiceValidation/ContentComponent.vue";
+
 
 const routes = [
     {
@@ -50,6 +52,10 @@ const routes = [
     {
       path: "/admin/reports/report_billed",
       component: ReportOption7,
+    },
+    {
+      path: "/admin/invoice_validation",
+      component: InvoiceValidation,
     },
   ];
   

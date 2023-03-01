@@ -51,7 +51,7 @@ class CreateOrder extends Command
     {
         //Consultamos las ordernas con fecha actual
         $date = Date('d-m-Y');
-        $array_bills_orders = BillOrder::where('date', '<=',  $date)->where('id_sage', '')->orWhere('date', '<=', $date)->where('id_sage', null)->get();
+        $array_bills_orders = BillOrder::where('date', '<=',  $date)->where('id_sage', '')->where('status_validate', 0)->orWhere('date', '<=', $date)->where('id_sage', null)->where('status_validate', 0)->get();
         //Creamos un objeto para el controller ExternalRequest
         $requ_external_request = new ExternalRequestController();
 

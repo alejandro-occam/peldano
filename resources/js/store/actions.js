@@ -833,6 +833,7 @@ const actions = {
             });
 
             //Rellenar objetos para el store y mostrar la información de las propuestas
+            state.orders.user_control = response.data.user_control;
             createObjectsStore({ state }, response, 2);
 
         } catch (error) {
@@ -974,6 +975,7 @@ const actions = {
             return error;
         }
     },
+
     //Descargar csv ordenes por canal
     async downloadReportListByChannel({ state }, params){
         try {
@@ -998,6 +1000,7 @@ const actions = {
             return error;
         }
     },
+
     //Listar ordenes firmadas y ventas
     async reportListSalesOrdersSigned({ state }, params){
         try {
@@ -1088,6 +1091,49 @@ const actions = {
                 }
             });
             
+
+        } catch (error) {
+            console.error(error);
+            return error;
+        }
+    },
+
+    //Listar facturas para la validación
+    async listBillsValidation({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/list_bill_orders/",
+                params: params,
+                method: 'post'
+            });
+
+            state.errors.type_error = 'list_bill_orders';
+            state.errors.code = response.data.code;
+            state.invoice_validations.array_bill_orders = response.data.array_bill_orders;
+
+        } catch (error) {
+            console.error(error);
+            return error;
+        }
+    },
+
+    //Validar facturas
+    async validateBill({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/validate_bill/",
+                params: params,
+                method: 'post'
+            });
+
+            state.errors.type_error = 'validate_bill';
+            state.errors.code = response.data.code;
+            //Cambiamos el estado de la factura
+            state.invoice_validations.array_bill_orders.map(function(bill, key) {
+                if(bill.id == params.id_bill){
+                    bill.status_validate = 1;
+                }
+            });
 
         } catch (error) {
             console.error(error);
@@ -1395,6 +1441,7 @@ function createObjectsStore({ state }, response, type){
                     order_number: array_bills[count_bill].num_order,
                     internal_observations: array_bills[count_bill].internal_observations,
                     will_update: array_bills[count_bill].will_update,
+                    status_validate: array_bills[count_bill].status_validate,
                 }
 
                 count_bill ++;
@@ -1433,6 +1480,7 @@ function createObjectsStore({ state }, response, type){
                                 order_number: array_bills[count_bill].num_order,
                                 internal_observations: array_bills[count_bill].internal_observations,
                                 will_update: array_bills[count_bill].will_update,
+                                status_validate: array_bills[count_bill].status_validate,
                             }
                             array_finish_bill.push(bill_month);
                             count_bill++;
@@ -1455,6 +1503,7 @@ function createObjectsStore({ state }, response, type){
                             order_number: array_bills[count_bill].num_order,
                             internal_observations: array_bills[count_bill].internal_observations,
                             will_update: array_bills[count_bill].will_update,
+                            status_validate: array_bills[count_bill].status_validate,
                         }
                         count_bill++;
                         array_finish_bill.push(bill_month);
@@ -1475,6 +1524,7 @@ function createObjectsStore({ state }, response, type){
                         order_number: array_bills[count_bill].num_order,
                         internal_observations: array_bills[count_bill].internal_observations,
                         will_update: array_bills[count_bill].will_update,
+                        status_validate: array_bills[count_bill].status_validate,
                     }
 
                     count_bill ++;
@@ -1500,6 +1550,7 @@ function createObjectsStore({ state }, response, type){
                 order_number: array_bills[count_bill].num_order,
                 internal_observations: array_bills[count_bill].internal_observations,
                 will_update: array_bills[count_bill].will_update,
+                status_validate: array_bills[count_bill].status_validate,
             }
 
             count_bill ++;

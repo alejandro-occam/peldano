@@ -120,6 +120,10 @@ const state = {
             name: null,
             surname: null
         },
+        user_control: {
+            name: null,
+            surname: null
+        },
         num_custom_invoices: 0,
         is_change_get_info: 0,
         id_company: 0,
@@ -134,6 +138,11 @@ const state = {
         period_new: '',
         period_old: '',
         total_amount: 0,
+    },
+    invoice_validations: {
+        array_bill_orders: [{
+            array_articles: []
+        }]
     },
     errors: {
         code: 0,

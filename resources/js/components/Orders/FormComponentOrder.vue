@@ -249,7 +249,10 @@
 					</thead>
                     <tbody>  
                         <template v-for="(item, index) in Number(orders.bill_obj.array_bills.length)" :key="index">
-                            <tr class="row-product text-align-center">
+                            <tr v-if="orders.bill_obj.array_bills[index].status_validate" class="row-product text-align-center bg-validate-invoice">
+                                <td class="td-border-right" rowspan="5">{{ index + 1 }}</td>
+                            </tr>
+                            <tr v-else class="row-product text-align-center">
                                 <td class="td-border-right" rowspan="5">{{ index + 1 }}</td>
                             </tr>
                             <tr class="row-product">
@@ -274,7 +277,7 @@
                                 </td>
                                 <td v-if="this.is_updating_order" class="td-border-right text-align-center">
                                     <button v-if="orders.bill_obj.array_bills[index].will_update" type="button" class="btn"><img width="40" height="40" src="/media/custom-imgs/icono_tabla_aplicar_todos.svg" v-on:click="changeOptions(index)" /></button>
-                                    <button v-if="orders.bill_obj.array_bills[index].will_update" v-on:click="payInvoiceForm(orders.bill_obj.array_bills[index].id)"  class="btn" style="background-color: #e1f0ff;color: #2459d9">Abonar</button>
+                                    <button v-if="orders.bill_obj.array_bills[index].will_update && orders.user_control.role_name == 'admin'" v-on:click="payInvoiceForm(orders.bill_obj.array_bills[index].id)"  class="btn" style="background-color: #e1f0ff;color: #2459d9">Abonar</button>
                                 </td>
                             </tr>   
                             <tr class="row-article">
