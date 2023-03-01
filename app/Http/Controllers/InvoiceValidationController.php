@@ -12,9 +12,8 @@ class InvoiceValidationController extends Controller
     //Listado de facturas
     function listBillsOrder(Request $request){
         $select_type = $request->get('select_type');
+        $select_validate = $request->get('select_validate');
         $date = $request->get('date');
-
-        error_log('date: '.$date);
         
         $array_bill_orders = BillOrder::select('bills_orders.*', 'proposals.id_user as id_consultant', 'companies.name as name_company')
                                         ->leftJoin('orders', 'orders.id', 'bills_orders.id_order')
@@ -29,6 +28,16 @@ class InvoiceValidationController extends Controller
             }
             if($select_type == 2){
                 $array_bill_orders = $array_bill_orders->where('orders.is_custom', 0);
+            }
+        }
+
+        //Todas, si validadas, no validadas
+        if(!empty($select_validate)){
+            if($select_validate == 1){
+                $array_bill_orders = $array_bill_orders->where('bills_orders.status_validate', 1);
+            }
+            if($select_validate == 2){
+                $array_bill_orders = $array_bill_orders->where('bills_orders.status_validate', 0);
             }
         }
         
