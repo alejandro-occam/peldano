@@ -28,11 +28,9 @@ Route::post('/save_deal_hubspot', [App\Http\Controllers\ExternalRequestControlle
 //Login
 Route::post('login', '\App\Http\Controllers\Auth\LoginController@loginapi');
 
-//Crear propuesta
-Route::post('/create_proposal', [App\Http\Controllers\Api\ProposalsInfoges::class, 'createProposal'])->name('create_proposal');
-
 Route::group(['middleware' => ['jwt.verify']], function() {
-    
+    //Crear propuesta
+    Route::post('/create_proposal', [App\Http\Controllers\Api\ProposalsInfoges::class, 'createProposal'])->name('create_proposal');
 
     //Modificar propuesta
     Route::post('/update_proposal', [App\Http\Controllers\Api\ProposalsInfoges::class, 'updateProposal'])->name('update_proposal');
