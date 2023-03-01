@@ -68,7 +68,7 @@
                                     <table width="100%" class="my-3 bg-white" cellpadding="2" cellspacing="1">
                                         <tbody>  
                                             <tr v-for="index_article in Number(invoice_validations.array_bill_orders[index_bill_order - 1].array_articles.length)"  class="">
-                                                <td class="pl-3 py-1 text-dark" style="width: 800px;">{{ invoice_validations.array_bill_orders[index_bill_order - 1].array_articles[index_article - 1].name }}</td>
+                                                <td class="pl-3 py-1 text-dark" style="width: 750px;">{{ invoice_validations.array_bill_orders[index_bill_order - 1].array_articles[index_article - 1].name }}</td>
                                                 <td class="pl-3 py-1 text-dark" style="color: red !important;">Beta10</td>
                                                 <td class="pl-3 py-1 text-dark">{{ invoice_validations.array_bill_orders[index_bill_order - 1].array_articles[index_article - 1].amount }}</td>
                                                 <td class="pl-3 py-1 text-dark" style="color: red !important;">1,000</td>

@@ -833,6 +833,7 @@ const actions = {
             });
 
             //Rellenar objetos para el store y mostrar la información de las propuestas
+            state.orders.user_control = response.data.user_control;
             createObjectsStore({ state }, response, 2);
 
         } catch (error) {

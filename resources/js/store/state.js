@@ -120,6 +120,10 @@ const state = {
             name: null,
             surname: null
         },
+        user_control: {
+            name: null,
+            surname: null
+        },
         num_custom_invoices: 0,
         is_change_get_info: 0,
         id_company: 0,
