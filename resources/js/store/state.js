@@ -100,7 +100,19 @@ const state = {
             chapters:[
                 {
                     chapter_obj: null,
-                    articles: [],
+                    articles: [
+                        {
+                            department_obj: {
+                                name: ''
+                            },
+                            article_obj: {
+                                name: ''
+                            }
+                        }
+                    ],
+                    chapter_obj: {
+                        name: ''
+                    },
                     articles_aux: [],
                     total_global: 0,
                     total_amount_global: 0,
