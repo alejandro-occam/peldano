@@ -14,6 +14,15 @@
                 <span class="text-dark font-weight-bold mb-2">Factura hasta</span>
                 <Calendar class="w-100 select-filter input-custom-calendar mt-3" v-model="date_to" inputId="date_to" autocomplete="off" dateFormat="dd-mm-yy" />
             </div>
+            <div class="mx-2 col-2 mt-5">
+                <span class="text-dark font-weight-bold mb-2">Validadas</span>
+                <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_validate" :name="'select_validate'" :id="'select_validate'" data-style="select-lightgreen" @change="loadBillsValidation">
+                    <option value="0" selected>Todas</option>
+                    <option value="1">SI</option>
+                    <option value="2">NO</option>
+                    <!--<option :value="department.id" v-for="department in config.articles.filter.array_departments" :key="department.id" v-text="department.nomenclature + '-' + department.name" ></option>-->
+                </select>
+            </div>
         </div>
         <div class="col-12 mt-2">
             <div class="col-12 mt-15">
@@ -197,6 +206,7 @@
             return {
                 publicPath: window.location.origin,
                 select_type: 0,
+                select_validate: 0,
                 date_to: '',
                 date_to_custom: ''
             };
@@ -227,7 +237,8 @@
                 this.date_to_custom = date_to;
                 var params = {
                     select_type: this.select_type,
-                    date: this.date_to_custom
+                    date: this.date_to_custom,
+                    select_validate: this.select_validate
                 }
                 this.listBillsValidation(params);
             },
