@@ -96,10 +96,10 @@ class ProposalsInfoges extends Controller
 
             $array_bills_aux[] = $bill;
 
-            $nun_custom_invoices = $request->get('nun_custom_invoices');
+            $num_custom_invoices = $request->get('num_custom_invoices');
             $custom_bill = false;
-            if(isset($nun_custom_invoices)){
-                if($nun_custom_invoices > 0){
+            if(isset($num_custom_invoices)){
+                if($num_custom_invoices > 0){
                     $custom_bill = true;
                 }
             }
