@@ -1093,6 +1093,25 @@ const actions = {
             console.error(error);
             return error;
         }
+    },
+
+    //Listar facturas para la validación
+    async listBillsValidation({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/list_bill_orders/",
+                params: params,
+                method: 'post'
+            });
+
+            state.errors.type_error = 'list_bill_orders';
+            state.errors.code = response.data.code;
+            state.invoice_validations.array_bill_orders = response.data.array_bill_orders;
+
+        } catch (error) {
+            console.error(error);
+            return error;
+        }
     }
 }
 

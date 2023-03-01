@@ -135,6 +135,9 @@ const state = {
         period_old: '',
         total_amount: 0,
     },
+    invoice_validations: {
+        array_bill_orders: []
+    },
     errors: {
         code: 0,
         type_error: ''

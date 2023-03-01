@@ -143,6 +143,11 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         Route::get('/download_list_articles_csv/{filter?}', [App\Http\Controllers\ConfigurationController::class, 'downloadListArticlesCsv'])->name('download_list_articles_csv');
         //Consultar información de un artículo
         Route::get('/get_info_article/{id}', [App\Http\Controllers\ConfigurationController::class, 'getInfoArticle'])->name('get_info_article');
+
+        //VALIDACIÓN DE FACTURAS
+        //Listar facturas para la validación
+        Route::post('/list_bill_orders', [App\Http\Controllers\InvoiceValidationController::class, 'listBillsOrder'])->name('list_bill_orders');
+        
     });
 
     //Consultar información del usuario
