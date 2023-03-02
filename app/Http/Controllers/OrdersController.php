@@ -555,7 +555,6 @@ class OrdersController extends Controller
                              ->get();
 
         //Consultamos los consultores
-        //Consultamos los consultores
         $array_custom_consultant = array();
         $custom_consultant['id_consultant'] = $user->id;
         $custom_consultant['percentage'] = 100;
