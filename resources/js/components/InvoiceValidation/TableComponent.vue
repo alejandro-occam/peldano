@@ -26,7 +26,7 @@
         </div>
         <div class="col-12 mt-2">
             <div class="col-12 mt-15">
-                <table width="100%" cellpadding="2" cellspacing="1" v-if=" Number(invoice_validations.array_bill_orders.length) > 0 && invoice_validations.array_bill_orders != undefined">
+                <table width="100%" cellpadding="2" cellspacing="1" v-if="Number(invoice_validations.array_bill_orders.length) > 0 && invoice_validations.array_bill_orders != undefined">
                     <thead class="custom-columns-datatable">
                         <tr class="">
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 25px;"><span>N</span></th>
