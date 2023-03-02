@@ -15,7 +15,7 @@ class InvoiceValidationController extends Controller
         $select_validate = $request->get('select_validate');
         $date = $request->get('date');
         
-        $array_bill_orders = BillOrder::select('bills_orders.*', 'proposals.id_user as id_consultant', 'companies.name as name_company')
+        $array_bill_orders = BillOrder::select('bills_orders.*', 'orders.id as id_order', 'proposals.id_user as id_consultant', 'companies.name as name_company', 'companies.id_sage as id_company_sage', 'proposals.is_custom as type_order', 'orders.is_custom  as order_custom')
                                         ->leftJoin('orders', 'orders.id', 'bills_orders.id_order')
                                         ->leftJoin('proposals', 'proposals.id', 'orders.id_proposal')
                                         ->leftJoin('contacts', 'contacts.id', 'proposals.id_contact')
@@ -60,7 +60,7 @@ class InvoiceValidationController extends Controller
             
             if(!$is_delete){
                 $array_articles = array();
-                $array_services_bill_order = ServiceBillOrder::select('articles.name', 'articles.id as id_article')
+                $array_services_bill_order = ServiceBillOrder::select('articles.name', 'articles.pvp as price_article', 'services.pvp as price_article_service', 'articles.id as id_article', 'articles.id_sage as id_sage_article')
                                                                 ->leftJoin('services', 'services.id', 'services_bills_orders.id_service')
                                                                 ->leftJoin('articles', 'articles.id', 'services.id_article')
                                                                 ->where('id_bill_order', $bill_order->id)
@@ -68,16 +68,45 @@ class InvoiceValidationController extends Controller
 
                 $exist = false;                                                
                 foreach($array_services_bill_order as $service){
-                    foreach($array_articles as $article){
+                    foreach($array_articles as $key_article => $article){
                         if($article['id_article'] == $service['id_article']){
-                            $custom_article['amount'] += 1;
+                            $array_articles[$key_article]['amount'] += 1;
                             $exist = true;
+                            if($bill_order['order_custom'] == 1){
+                                if($service['price_article_service'] > 0){
+                                    $array_articles[$key_article]['real_amount'] = ($service['price_article_service'] * $array_articles[$key_article]['amount'] ) / $count_bill_order;
+                                }
+                            }
                         }
                     }
                     if(!$exist){
+                        $custom_article['discount_percent'] = 0;
+                        if($service['price_article'] != $service['price_article_service']){
+                            if($service['price_article_service'] == 0){
+                                $custom_article['discount_percent'] = 100;
+                            }else{
+                                $custom_article['discount_percent'] = ($service['price_article_service'] * 100) / $service['price_article'];
+                            }
+                        }
+                        $custom_article['id_sage_article'] = $service['id_sage_article'];
                         $custom_article['id_article'] = $service['id_article'];
                         $custom_article['name'] = $service['name'];
+                        $custom_article['price_article'] = $service['price_article'];
+                        $custom_article['price_article_percent'] = $service['price_article_percent'];
                         $custom_article['amount'] = 1;
+                        $custom_article['amount_percent'] = number_format(1, 3);
+                        $custom_article['real_amount'] = $service['price_article_service'];
+                        if($bill_order['order_custom'] == 1){
+                            //Consultamos el número de facturas que hacen la orden
+                            $count_bill_order = BillOrder::where('id_order', $bill_order['id_order'])->count();
+                            $custom_article['amount_percent'] = number_format(1 / $count_bill_order, 3);
+                            $custom_article['price_article_percent'] = $custom_article['price_article'] * $custom_article['amount_percent'];
+                            $custom_article['real_amount'] = 0;
+                            if($service['price_article_service'] > 0){
+                                $custom_article['real_amount'] = ($service['price_article_service'] * $custom_article['amount'] ) / $count_bill_order;
+                            }
+                            
+                        }
                         $array_articles[] = $custom_article;
                     }
                     
