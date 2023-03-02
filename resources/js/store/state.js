@@ -153,7 +153,8 @@ const state = {
     },
     invoice_validations: {
         array_bill_orders: [{
-            array_articles: []
+            array_articles: [],
+            array_custom_consultant: []
         }]
     },
     errors: {

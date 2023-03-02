@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\BillOrder;
 use App\Models\ServiceBillOrder;
+use App\Models\ConsultanOrder;
+use App\Models\User;
 use DB;
 
 class InvoiceValidationController extends Controller
@@ -19,7 +21,9 @@ class InvoiceValidationController extends Controller
                                         ->leftJoin('orders', 'orders.id', 'bills_orders.id_order')
                                         ->leftJoin('proposals', 'proposals.id', 'orders.id_proposal')
                                         ->leftJoin('contacts', 'contacts.id', 'proposals.id_contact')
-                                        ->leftJoin('companies', 'companies.id', 'contacts.id_company');
+                                        ->leftJoin('pay_invoices', 'pay_invoices.id_bill', 'bills_orders.id')
+                                        ->leftJoin('companies', 'companies.id', 'contacts.id_company')
+                                        ->where('pay_invoices.id', null);
 
         //Todas, personalizas o simples
         if(!empty($select_type)){
@@ -113,6 +117,25 @@ class InvoiceValidationController extends Controller
                 }
                 $bill_order['array_articles'] = $array_articles;
             }
+
+            //Consultamos los consultores
+            $user = User::find($bill_order['id_consultant']);
+            $array_custom_consultant = array();
+            $custom_consultant['id_consultant'] = $user->id;
+            $custom_consultant['percentage'] = 100;
+            $custom_consultant['name'] = $user->name.' '.$user->surname;
+            $array_custom_consultant[] = $custom_consultant;
+
+            $array_consultants = ConsultanOrder::where('id_order', $bill_order['id_order'])->get();
+            foreach($array_consultants as $consultant){
+                $user_consultant = User::find($consultant->id_consultant);
+                $custom_consultant['id_consultant'] = $user_consultant->id;
+                $custom_consultant['percentage'] = $consultant->percentage;
+                $custom_consultant['name'] = $user_consultant->name.' '.$user_consultant->surname;
+                $array_custom_consultant[] = $custom_consultant;
+                $array_custom_consultant[0]['percentage'] -= $consultant->percentage;
+            }
+            $bill_order['array_custom_consultant'] = $array_custom_consultant;
         }
 
         $response['array_bill_orders'] = $array_bill_orders;

@@ -26,12 +26,12 @@
         </div>
         <div class="col-12 mt-2">
             <div class="col-12 mt-15">
-                <table width="100%" cellpadding="2" cellspacing="1" v-if=" Number(invoice_validations.array_bill_orders.length) > 0 && invoice_validations.array_bill_orders != undefined">
+                <table width="100%" cellpadding="2" cellspacing="1" v-if="Number(invoice_validations.array_bill_orders.length) > 0 && invoice_validations.array_bill_orders != undefined">
                     <thead class="custom-columns-datatable">
                         <tr class="">
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 25px;"><span>N</span></th>
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 25px;"><span>F</span></th>
-                            <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 50px;"><span>Código</span></th>
+                            <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 125px;"><span>Código</span></th>
                             <th tabindex="0" class="pb-3" aria-controls="example" rowspan="1" colspan="1" style="width: 125px;"><span>CLIENTE</span></th>
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Orden</span></th>
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>Importe</span></th>
@@ -54,7 +54,11 @@
                                 <td class="text-dark">{{ invoice_validations.array_bill_orders[index_bill_order - 1].name_company }}</td>
                                 <td class="text-align-center text-dark"><a class="url-order" target="_blank" :href="'/admin/orders/'+invoice_validations.array_bill_orders[index_bill_order - 1].id_order">{{ invoice_validations.array_bill_orders[index_bill_order - 1].id_order }}</a></td>
                                 <td class="text-align-center text-dark">{{ this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(invoice_validations.array_bill_orders[index_bill_order - 1].amount)) }}</td>
-                                <td class="text-align-center text-dark">{{ invoice_validations.array_bill_orders[index_bill_order - 1].id_consultant }}</td>
+                                <td class="text-align-center text-dark">
+                                    <template v-for="index_consultants in Number(invoice_validations.array_bill_orders[index_bill_order - 1].array_custom_consultant.length)" >
+                                        <div>{{ invoice_validations.array_bill_orders[index_bill_order - 1].array_custom_consultant[index_consultants - 1].id_consultant }}</div>
+                                    </template>
+                                </td>
                                 <td class="text-align-center text-dark">{{ invoice_validations.array_bill_orders[index_bill_order - 1].date }}</td>
                                 
                                 <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].expiration == 1" class="text-align-center text-dark">Recibo bancario</td>

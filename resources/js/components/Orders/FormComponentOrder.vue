@@ -256,7 +256,7 @@
                                 <td class="td-border-right" rowspan="5">{{ index + 1 }}</td>
                             </tr>
                             <tr class="row-product">
-                                <td class="text-align-center td-border-right" width="20%" v-if="orders.num_custom_invoices == 0">{{ orders.bill_obj.array_bills[index].date }}</td>
+                                <td class="text-align-center td-border-right" width="20%" v-if="orders.num_custom_invoices == 0 || !this.is_updating_order || !orders.bill_obj.array_bills[index].will_update">{{ orders.bill_obj.array_bills[index].date }}</td>
                                 <td class="text-align-center td-border-right" width="20%" v-else>
                                     <Calendar class="w-100 borders-box text-dark-gray px-5"  autocomplete="off" v-model="orders.bill_obj.array_bills[index].date" dateFormat="dd-mm-yy"  />
                                 </td>

@@ -185,10 +185,7 @@
                                 <td class="td-border-right" rowspan="5">{{ index + 1 }}</td>
                             </tr>
                             <tr class="row-product" style="background-color: #e4f2fd;">
-                                <td class="text-align-center td-border-right" width="20%" v-if="orders.num_custom_invoices == 0">{{ orders.bill_obj.array_bills[index].date }}</td>
-                                <td class="text-align-center td-border-right" width="20%" v-else>
-                                    <Calendar class="w-100 borders-box text-dark-gray px-5"  autocomplete="off" v-model="orders.bill_obj.array_bills[index].date" dateFormat="dd-mm-yy"  />
-                                </td>
+                                <td class="text-align-center td-border-right" width="20%">{{ orders.bill_obj.array_bills[index].date }}</td>
                                 <td class="text-align-center py-4 px-5 td-border-right" width="20%">
                                     <select v-if="this.is_updating_order && orders.bill_obj.array_bills[index].will_update" class="form-control text-dark select-custom select-filter bg-white" :name="'select_way_to_pay'" :id="'select_way_to_pay'" v-model="orders.bill_obj.array_bills[index].select_way_to_pay" data-style="select-lightgreen">
                                         <option v-for="(item, index) in Number(this.select_way_to_pay_options.length)" :key="index" :value="this.select_way_to_pay_options[index].value">{{ this.select_way_to_pay_options[index].text }}</option>
