@@ -51,12 +51,38 @@
                                 <td class="text-align-center text-dark" style="color: red !important;">P </td>
                                 <td class="text-align-center text-dark" style="color: red !important;">NV330546</td>
                                 <td class="text-dark">{{ invoice_validations.array_bill_orders[index_bill_order - 1].name_company }}</td>
-                                <td class="text-align-center text-dark">{{ invoice_validations.array_bill_orders[index_bill_order - 1].id_order }}</td>
+                                <td class="text-align-center text-dark"><a class="url-order" target="_blank" :href="'/admin/orders/'+invoice_validations.array_bill_orders[index_bill_order - 1].id_order">{{ invoice_validations.array_bill_orders[index_bill_order - 1].id_order }}</a></td>
                                 <td class="text-align-center text-dark" style="color: red !important;">688,20</td>
                                 <td class="text-align-center text-dark">{{ invoice_validations.array_bill_orders[index_bill_order - 1].id_consultant }}</td>
                                 <td class="text-align-center text-dark">{{ invoice_validations.array_bill_orders[index_bill_order - 1].date }}</td>
-                                <td class="text-align-center text-dark" style="color: red !important;">Transf</td>
-                                <td class="text-align-center text-dark" style="color: red !important;">Al contado</td>
+                                
+                                <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].expiration == 1" class="text-align-center text-dark">Recibo bancario</td>
+                                <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].expiration == 2" class="text-align-center text-dark">Talón nominativo</td>
+                                <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].expiration == 3" class="text-align-center text-dark">Transferencia bancaria</td>
+                                <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].expiration == 4" class="text-align-center text-dark">Letra aceptada</td>
+                                <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].expiration == 5" class="text-align-center text-dark">Pagaré</td>
+                                <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].expiration == 6" class="text-align-center text-dark">Metálico</td>
+                                <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].expiration == 7" class="text-align-center text-dark">Especial camping</td>
+                                <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].expiration == 8" class="text-align-center text-dark">Confirming</td>
+                                <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].expiration == 9" class="text-align-center text-dark">Pago certificado</td>
+                                <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].expiration == 10" class="text-align-center text-dark">Tarjeta</td>
+                                <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].expiration == 11" class="text-align-center text-dark">Talón conformado</td>
+                                <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].expiration == 12" class="text-align-center text-dark">Paypal</td>
+                                <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].expiration == 13" class="text-align-center text-dark">* Intercambio de facturas</td>
+                                <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].expiration == 14" class="text-align-center text-dark">Especial Gaceta</td>
+
+                                <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].way_to_pay == 1" class="text-align-center text-dark">15 días</td>
+                                <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].way_to_pay == 2" class="text-align-center text-dark">30 días</td>
+                                <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].way_to_pay == 3" class="text-align-center text-dark">30 y 60 días</td>
+                                <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].way_to_pay == 4" class="text-align-center text-dark">40 días</td>
+                                <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].way_to_pay == 5" class="text-align-center text-dark">45 días</td>
+                                <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].way_to_pay == 6" class="text-align-center text-dark">60 días</td>
+                                <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].way_to_pay == 7" class="text-align-center text-dark">90 días</td>
+                                <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].way_to_pay == 8" class="text-align-center text-dark">Al contado</td>
+                                <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].way_to_pay == 9" class="text-align-center text-dark">Al contado y 30 días</td>
+                                <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].way_to_pay == 10" class="text-align-center text-dark">Al contado y 60 días</td>
+                                <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].way_to_pay == 11" class="text-align-center text-dark">Al contado, 30 y 60 días</td>
+
                                 <td class="text-align-center text-dark">{{ invoice_validations.array_bill_orders[index_bill_order - 1].num_order }}</td>
                                 <td class="text-align-center text-dark"><button class="btn bg-azul color-white" v-if="!invoice_validations.array_bill_orders[index_bill_order - 1].status_validate" v-on:click="validateBillTable(invoice_validations.array_bill_orders[index_bill_order - 1].id)">Validar</button></td>
                             </tr>   

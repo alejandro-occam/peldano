@@ -896,3 +896,9 @@ a.text-hover-primary:hover, .text-hover-primary:hover{
 .bg-validate-invoice{
     background-color: #c8f9ef !important;
 }
+
+a.url-order{
+    color: #2e49ff !important;
+    text-decoration: none;
+    background-color: transparent;
+}
