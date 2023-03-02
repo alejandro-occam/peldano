@@ -97,6 +97,7 @@ class ExternalRequestController extends Controller
 
             //Consultamos la empresa asociada a este contacto
             $url_contacts_association = 'https://api.hubapi.com/crm/v4/objects/contacts/'.$hub_id.'/associations/companies?limit=10&archived=false';
+            Log::info('url_contacts_association: ' . $url_contacts_association);
             $stop_companies_association_contacts = 0;
             while($stop_companies_association_contacts == 0){
                 $array_companies_association_contacts_hubspot_obj = json_decode($requ_curls->getCurl($url_contacts_association, 1)['response'], true);
