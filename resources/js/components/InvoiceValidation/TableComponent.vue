@@ -51,7 +51,7 @@
                                 <td class="text-align-center text-dark" style="color: red !important;">P </td>
                                 <td class="text-align-center text-dark" style="color: red !important;">NV330546</td>
                                 <td class="text-dark">{{ invoice_validations.array_bill_orders[index_bill_order - 1].name_company }}</td>
-                                <td class="text-align-center text-dark">{{ invoice_validations.array_bill_orders[index_bill_order - 1].id_order }}</td>
+                                <td class="text-align-center text-dark"><a class="url-order" target="_blank" :href="'/admin/orders/'+invoice_validations.array_bill_orders[index_bill_order - 1].id_order">{{ invoice_validations.array_bill_orders[index_bill_order - 1].id_order }}</a></td>
                                 <td class="text-align-center text-dark" style="color: red !important;">688,20</td>
                                 <td class="text-align-center text-dark">{{ invoice_validations.array_bill_orders[index_bill_order - 1].id_consultant }}</td>
                                 <td class="text-align-center text-dark">{{ invoice_validations.array_bill_orders[index_bill_order - 1].date }}</td>

@@ -111,7 +111,7 @@
 					</thead>
                     <tbody>
                         <div class="d-contents" v-for="index in Number(orders.proposal_obj.chapters.length)">
-                            <tr class="row-product">
+                            <tr class="row-product" style="background-color: #e4f2fd;" >
                                 <td class="py-2" :colspan="orders.proposal_obj.array_dates.length + 5">
                                     <span class="ml-5">{{ orders.proposal_obj.chapters[index - 1].chapter_obj.name }}</span>
                                 </td>
@@ -184,7 +184,7 @@
                             <tr v-else class="row-product text-align-center">
                                 <td class="td-border-right" rowspan="5">{{ index + 1 }}</td>
                             </tr>
-                            <tr class="row-product">
+                            <tr class="row-product" style="background-color: #e4f2fd;">
                                 <td class="text-align-center td-border-right" width="20%" v-if="orders.num_custom_invoices == 0">{{ orders.bill_obj.array_bills[index].date }}</td>
                                 <td class="text-align-center td-border-right" width="20%" v-else>
                                     <Calendar class="w-100 borders-box text-dark-gray px-5"  autocomplete="off" v-model="orders.bill_obj.array_bills[index].date" dateFormat="dd-mm-yy"  />
@@ -619,5 +619,16 @@ export default {
         this.getInfoOrder(this.$route.params.id);   
         this.clearError();
     },
+    watch: {
+        '$store.state.errors.code': function() {
+            if(this.errors.type_error == 'get_info_proposal'){
+                if(this.errors.code != ''){
+                    if(this.errors.code == 1000){
+                        this.loadViewInfoProposal();  
+                    }
+                }
+            }
+        }
+    }
 };
 </script>
