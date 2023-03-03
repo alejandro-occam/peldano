@@ -147,6 +147,16 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         Route::post('/list_bill_orders', [App\Http\Controllers\InvoiceValidationController::class, 'listBillsOrder'])->name('list_bill_orders');
         //Validar factura
         Route::post('/validate_bill', [App\Http\Controllers\InvoiceValidationController::class, 'validateBill'])->name('validate_bill');
+
+        //SUSCRIPCIONES
+        //Listar suscripciones
+        Route::post('/list_suscriptions', [App\Http\Controllers\SuscriptionsController::class, 'listSuscriptions'])->name('list_suscriptions');
+        //Listar calendarios de revistas
+        Route::get('/get_calendars_magazines', [App\Http\Controllers\SuscriptionsController::class, 'listCalendarsMagazines'])->name('get_calendars_magazines');
+        //Listar artículos
+        Route::get('/list_articles_suscriptions/{id}', [App\Http\Controllers\SuscriptionsController::class, 'listArticles'])->name('list_articles_suscriptions');
+        //Añadir suscripción
+        Route::post('/add_suscription', [App\Http\Controllers\SuscriptionsController::class, 'addSuscription'])->name('add_suscription');
         
     });
 

@@ -19,6 +19,7 @@ import ReportOption5 from "./components/Reports/Options/Options5/ContentComponen
 import ReportOption7 from "./components/Reports/Options/Options7/ContentComponent.vue";
 import InvoiceValidation from "./components/InvoiceValidation/ContentComponent.vue";
 import InfoOrder from "./components/Orders/InfoOrderComponent.vue";
+import Suscriptions from "./components/Suscriptions/ContentComponent.vue";
 
 const routes = [
     {
@@ -61,6 +62,10 @@ const routes = [
       path: "/admin/orders/:id",
       component: InfoOrder,
     },
+    {
+      path: "/admin/suscriptions",
+      component: Suscriptions,
+    }
   ];
   
   const router = createRouter({

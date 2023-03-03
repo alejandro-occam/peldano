@@ -35,22 +35,32 @@
                 </router-link>
             </li>
             @if(Auth::user()->hasRole('admin'))
-            <li lass="nav-item mb-3 {{ Request::is('/admin/configuration') ? 'menu-item-active' : '' }}" data-toggle="tooltip" data-placement="right" data-container="body" data-boundary="window">
-                <router-link to="/admin/configuration" class="menu-link">
-                    <div style="padding: 9px 25px;">
-                        <span class="svg-icon svg-icon-xl color-gray menu-text" >
-                            <img class="btn-folder mr-2 config" src="{{ Request::is('/admin/configuration') ? '/media/custom-imgs/icono_config_activo.svg' : '/media/custom-imgs/icono_config_desactivo.svg' }}" width="35" height="35"/>
-                            <b>Configuración</b>
-                        </span>
-                    </div>
-                </router-link>
-            </li>
             <li lass="nav-item mb-3 {{ Request::is('/admin/invoice_validation') ? 'menu-item-active' : '' }}" data-toggle="tooltip" data-placement="right" data-container="body" data-boundary="window">
                 <router-link to="/admin/invoice_validation" class="menu-link">
                     <div style="padding: 9px 25px;">
                         <span class="svg-icon svg-icon-xl color-gray menu-text" >
                             <img class="btn-folder mr-2 config" src="{{ Request::is('/admin/invoice_validation') ? '/media/custom-imgs/icono_config_activo.svg' : '/media/custom-imgs/icono_config_desactivo.svg' }}" width="35" height="35"/>
                             <b>Validación de factura</b>
+                        </span>
+                    </div>
+                </router-link>
+            </li>
+            <li lass="nav-item mb-3 {{ Request::is('/admin/suscriptions') ? 'menu-item-active' : '' }}" data-toggle="tooltip" data-placement="right" data-container="body" data-boundary="window">
+                <router-link to="/admin/suscriptions" class="menu-link">
+                    <div style="padding: 9px 25px;">
+                        <span class="svg-icon svg-icon-xl color-gray menu-text" >
+                            <img class="btn-folder mr-2 config" src="{{ Request::is('/admin/suscriptions') ? '/media/custom-imgs/icono_config_activo.svg' : '/media/custom-imgs/icono_config_desactivo.svg' }}" width="35" height="35"/>
+                            <b>Suscripciones</b>
+                        </span>
+                    </div>
+                </router-link>
+            </li>
+            <li lass="nav-item mb-3 {{ Request::is('/admin/configuration') ? 'menu-item-active' : '' }}" data-toggle="tooltip" data-placement="right" data-container="body" data-boundary="window">
+                <router-link to="/admin/configuration" class="menu-link">
+                    <div style="padding: 9px 25px;">
+                        <span class="svg-icon svg-icon-xl color-gray menu-text" >
+                            <img class="btn-folder mr-2 config" src="{{ Request::is('/admin/configuration') ? '/media/custom-imgs/icono_config_activo.svg' : '/media/custom-imgs/icono_config_desactivo.svg' }}" width="35" height="35"/>
+                            <b>Configuración</b>
                         </span>
                     </div>
                 </router-link>
