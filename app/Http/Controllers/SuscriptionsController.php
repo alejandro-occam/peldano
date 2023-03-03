@@ -119,4 +119,33 @@ class SuscriptionsController extends Controller
         $response['code'] = 1000;
         return response()->json($response);
     }
+
+    //Actualizar suscripción
+    function updateSuscription(Request $request){
+        if (!$request->has('array_suscriptions') || !$request->has('num')){
+            $response['code'] = 1001;
+            return response()->json($response);
+        }
+
+        $num = $request->get('num');
+        $array_suscriptions_custom = $request->get('array_suscriptions');
+        $array_suscriptions = explode(",", $array_suscriptions_custom);
+
+        if(!isset($num) || empty($num) || !isset($array_suscriptions) || empty($array_suscriptions)){
+            $response['code'] = 1001;
+            return response()->json($response);
+        }
+
+        foreach($array_suscriptions as $suscription){
+            //Consultamos la suscripción
+            $suscription = Suscription::find($suscription);
+            if($suscription){
+                $suscription->num = $num;
+                $suscription->save();
+            }
+        }
+
+        $response['code'] = 1000;
+        return response()->json($response);
+    }
 }

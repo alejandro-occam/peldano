@@ -12,18 +12,21 @@
         </div>
     </div>
     <ModalAddSuscriptionComponent></ModalAddSuscriptionComponent>
+    <ModalUpdateSuscriptionComponent></ModalUpdateSuscriptionComponent>
 </template>
 
 <script>
     import TableComponent from "./TableComponent.vue";
     import ModalAddSuscriptionComponent from "./ModalAddSuscriptionComponent.vue";
+    import ModalUpdateSuscriptionComponent from "./ModalUpdateSuscriptionComponent.vue";
     import { mapMutations, mapState } from "vuex";
 
     export default {
         name: "ContentComponent",
         components: {
             TableComponent,
-            ModalAddSuscriptionComponent
+            ModalAddSuscriptionComponent,
+            ModalUpdateSuscriptionComponent
         },
         data() {
             return {

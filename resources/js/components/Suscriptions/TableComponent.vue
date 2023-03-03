@@ -163,9 +163,12 @@
     
                 $("#list_suscriptions").on("click", ".btn-edit", function () {
                     var id = $(this).data("id");
-                    me.controlFormUsers(1);
-                    me.getInfoUser(id);
-                    me.changeShowView(2);
+                    var array_suscriptions = [];
+                    array_suscriptions.push(id);
+                    array_suscriptions.push(2);
+                    //this.$refs.modal_update_suscription.array_suscriptions = array_suscriptions;
+                    document.getElementById('array_suscriptions').value = array_suscriptions;
+                    $('#modal_update_suscription').modal('show');
                 });
 
                 $("#list_suscriptions").on("click", ".btn-delete", function () {
@@ -183,24 +186,6 @@
         },
         mounted() {
            this.listSuscriptions();
-        },
-        watch: {
-            '$store.state.errors.code': function() {
-                if(this.errors.type_error == 'validate_bill'){
-                    if(this.errors.code != ''){
-                        if(this.errors.code == 1000){
-                            swal("", "Factura validada correctamente", "success");
-
-                        }else{
-                            swal("", "Ha habido un error. Inténtalo de nuevo más tatrde", "error");
-                        }
-                    
-                    }else{
-                        swal("", "Ha habido un error. Inténtalo de nuevo más tatrde", "error");
-                    }
-                }
-                this.clearError();
-            }
         }
     };
     </script>

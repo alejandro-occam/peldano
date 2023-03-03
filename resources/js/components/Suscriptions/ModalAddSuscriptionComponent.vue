@@ -77,7 +77,7 @@ import { mapState, mapMutations, mapActions } from "vuex";
         },
         props: ["type"],
         computed: {
-            ...mapState(["suscriptions"]),
+            ...mapState(["suscriptions", "errors"]),
         },
         methods: {
             ...mapMutations(["clearError", "updateConsultant"]),
@@ -167,8 +167,15 @@ import { mapState, mapMutations, mapActions } from "vuex";
                 if(this.errors.type_error == 'add_suscription'){
                     if(this.errors.code != ''){
                         if(this.errors.code == 1000){
-                            swal("", "Suscripción creada correctamente", "success");
                             $("#modal_add_consultant").modal("hide");
+                            swal("", "Suscripción creada correctamente", "success");
+                        }
+                    }
+                }else if(this.errors.type_error == 'update_suscription'){
+                    if(this.errors.code != ''){
+                        if(this.errors.code == 1000){
+                            swal("", "Suscriptor/es actualizado/s correctamente", "success");
+                            $("#modal_update_consultant").modal("hide");
                         }
                     }
                 }

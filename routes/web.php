@@ -157,6 +157,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         Route::get('/list_articles_suscriptions/{id}', [App\Http\Controllers\SuscriptionsController::class, 'listArticles'])->name('list_articles_suscriptions');
         //Añadir suscripción
         Route::post('/add_suscription', [App\Http\Controllers\SuscriptionsController::class, 'addSuscription'])->name('add_suscription');
+        //Actualizar suscripción
+        Route::post('/update_suscription', [App\Http\Controllers\SuscriptionsController::class, 'updateSuscription'])->name('update_suscription');
         
     });
 

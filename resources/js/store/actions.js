@@ -1198,7 +1198,25 @@ const actions = {
             console.error(error);
             return error;
         }
-    }
+    },
+    //Actualizar suscripción 
+    async updateSusctiptions({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/update_suscription",
+                params: params,
+                method: 'post'
+            });
+
+            state.errors.type_error = 'update_suscription';
+            state.errors.code = response.data.code;
+            
+
+        } catch (error) {
+            console.error(error);
+            return error;
+        }
+    },
 }
 
 //Rellenar objetos para el store y mostrar la información de las propuestas u ordenes
