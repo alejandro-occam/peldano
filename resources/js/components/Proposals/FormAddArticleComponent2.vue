@@ -103,7 +103,7 @@
                                 <div class="d-flex px-0 col-12 row">
                                     <div v-for="index in Number(this.amount)" class="mt-2 col-4">
                                         <span class="my-auto w-25">Fecha {{ index }}</span>
-                                        <Calendar class="w-100 borders-box text-dark-gray mt-1"  autocomplete="off" v-model="this.date[index - 1]" dateFormat="dd-mm-yy"  />
+                                        <Calendar :minDate="minDate" class="w-100 borders-box text-dark-gray mt-1"  autocomplete="off" v-model="this.date[index - 1]" dateFormat="dd-mm-yy"  />
                                     </div>
                                 </div>
                                 <small class="text-danger " v-if="date_error">Debes rellenar las fechas</small>
@@ -155,7 +155,8 @@
                 amount_error: false,
                 date: [],
                 date_error: false,
-                show_amount_dates: false
+                show_amount_dates: false,
+                minDate: ''
             };
         },
         props: ["type"],
@@ -341,6 +342,7 @@
             }
         },
         mounted() {
+            this.minDate = new Date();
             var params = {
                 type: 2
             }

@@ -291,7 +291,7 @@
                             <tr class="row-product">
                                 <td class="text-align-center td-border-right" v-if="orders.num_custom_invoices == 0">{{ orders.bill_obj.array_bills[index].date }}</td>
                                 <td class="text-align-center td-border-right" v-else>
-                                    <Calendar class="w-100 borders-box text-dark-gray px-5"  autocomplete="off" v-model="orders.bill_obj.array_bills[index].date" dateFormat="dd-mm-yy"  />
+                                    <Calendar :minDate="minDate" class="w-100 borders-box text-dark-gray px-5" autocomplete="off" v-model="orders.bill_obj.array_bills[index].date" dateFormat="dd-mm-yy"  />
                                 </td>
                                 <td class="text-align-center py-4 px-5 td-border-right" width="20%">
                                     <select v-if="this.proposal_submission_settings.date_proyect == '' || this.date_now < this.proposal_submission_settings.date_proyect || (orders.bill_obj.array_bills[index].will_update && this.is_updating_order)" class="form-control text-dark select-custom select-filter bg-white" :name="'select_way_to_pay'" :id="'select_way_to_pay'" v-model="orders.bill_obj.array_bills[index].select_way_to_pay" data-style="select-lightgreen">
@@ -848,7 +848,8 @@ export default {
             is_updating: 0,
             date_now: '',
             search_company: '',
-            is_updating_order: 0
+            is_updating_order: 0,
+            minDate: ''
         };
     },
     computed: {
@@ -1462,6 +1463,7 @@ export default {
         }
     },
     mounted() {
+        this.minDate = new Date();
         var type_action = 0;
         if(this.orders.proposal_bd_obj != null){
             type_action = 1;
