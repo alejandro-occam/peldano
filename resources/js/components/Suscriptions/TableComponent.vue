@@ -46,7 +46,7 @@
             };
         },
         methods: {
-            ...mapActions(["getInfoAddSuscriptions"]),
+            ...mapActions(["deleteSuscription"]),
             ...mapMutations(["clearError"]),
             listSuscriptions() {
                 let me = this;
@@ -202,8 +202,21 @@
 
                 $("#list_suscriptions").on("click", ".btn-delete", function () {
                     var id = $(this).data("id");
-                    me.getInfoUser(id);
-                    $("#modal_delete_user").modal("show");                    
+                    swal({
+                        title: '¿Está seguro de eliminar el suscriptor?',
+                        text: 'No podrás recuperar los datos eliminados',
+                        type: "warning",
+                        showCancelButton: true,
+                        confirmButtonColor: "#2e49ff",
+                        confirmButtonText: 'Aceptar',
+                        cancelButtonText: 'Cancelar',
+                        closeOnCancel: true,
+                        closeOnConfirm: false
+                    }, function(isConfirm) {
+                        if (isConfirm) {
+                            me.deleteSuscription(id);
+                        }
+                    });                      
                 });
 
                 var e = $("#list_suscriptions").KTDatatable();
@@ -239,6 +252,25 @@
         },
         mounted() {
            this.listSuscriptions();
+        },
+        watch: {
+            '$store.state.errors.code': function() {
+                if(this.errors.type_error == 'delete_suscription'){
+                    if(this.errors.code != ''){
+                        if(this.errors.code == 1000){
+                            $("#list_suscriptions").KTDatatable("reload");
+                            swal("", "Suscriptor eliminado correctamente", "success");
+
+                        }else if(this.errors.code == 1001){
+                            swal("", "El suscriptor no existe", "warning");
+
+                        }else{
+                            swal("", "Parece que ha habiado un error. Inténtalo de nuevo más tarde", "error");
+                        }
+                    }
+                }
+                this.clearError();
+            }
         }
     };
     </script>

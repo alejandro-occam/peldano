@@ -1141,11 +1141,31 @@ const actions = {
         }
     },
 
-    //Consultar calendarios de revistas
-    async getCalendarsMagazines({ state }){
+    //Consultar calendatios para las suscripciones
+    async getCalendarsSuscriptions({ state }){
         try {
             const response = await http({
-                url: "/admin/get_calendars_magazines",
+                url: "/admin/get_calendars_suscriptions",
+                params: '',
+                method: 'get'
+            });
+
+            state.errors.type_error = 'get_calendars_suscriptions';
+            state.errors.code = response.data.code;
+            state.suscriptions.array_calendars = response.data.array_calendars;
+            
+
+        } catch (error) {
+            console.error(error);
+            return error;
+        }
+    },
+
+    //Consultar calendarios de revistas
+    async getCalendarsMagazines({ state }, id){
+        try {
+            const response = await http({
+                url: "/admin/get_calendars_magazines/" + id,
                 params: '',
                 method: 'get'
             });
@@ -1199,6 +1219,7 @@ const actions = {
             return error;
         }
     },
+
     //Actualizar suscripción 
     async updateSusctiptions({ state }, params){
         try {
@@ -1217,6 +1238,24 @@ const actions = {
             return error;
         }
     },
+
+    //Eliminar suscripción
+    async deleteSuscription({ state }, id){
+        try {
+            const response = await http({
+                url: "/admin/delete_suscription/"+id,
+                params: '',
+                method: 'get'
+            });
+
+            state.errors.type_error = 'delete_suscription';
+            state.errors.code = response.data.code;            
+
+        } catch (error) {
+            console.error(error);
+            return error;
+        }
+    }
 }
 
 //Rellenar objetos para el store y mostrar la información de las propuestas u ordenes

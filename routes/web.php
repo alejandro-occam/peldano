@@ -151,14 +151,18 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         //SUSCRIPCIONES
         //Listar suscripciones
         Route::post('/list_suscriptions', [App\Http\Controllers\SuscriptionsController::class, 'listSuscriptions'])->name('list_suscriptions');
+        //Listar calendarios 
+        Route::get('/get_calendars_suscriptions', [App\Http\Controllers\SuscriptionsController::class, 'listCalendars'])->name('get_calendars_suscriptions');
         //Listar calendarios de revistas
-        Route::get('/get_calendars_magazines', [App\Http\Controllers\SuscriptionsController::class, 'listCalendarsMagazines'])->name('get_calendars_magazines');
+        Route::get('/get_calendars_magazines/{id}', [App\Http\Controllers\SuscriptionsController::class, 'listCalendarsMagazines'])->name('get_calendars_magazines');
         //Listar artículos
         Route::get('/list_articles_suscriptions/{id}', [App\Http\Controllers\SuscriptionsController::class, 'listArticles'])->name('list_articles_suscriptions');
         //Añadir suscripción
         Route::post('/add_suscription', [App\Http\Controllers\SuscriptionsController::class, 'addSuscription'])->name('add_suscription');
         //Actualizar suscripción
         Route::post('/update_suscription', [App\Http\Controllers\SuscriptionsController::class, 'updateSuscription'])->name('update_suscription');
+        //Eliminar suscripción
+        Route::get('/delete_suscription/{id}', [App\Http\Controllers\SuscriptionsController::class, 'deleteSuscription'])->name('delete_suscription');
         
     });
 

@@ -46,6 +46,7 @@ class InvoiceValidationController extends Controller
         }
         
         $array_bill_orders = $array_bill_orders->get();
+
         //Consultamos los artículos de la factura
         foreach($array_bill_orders as $index => $bill_order){
             $is_delete = false;
@@ -166,6 +167,8 @@ class InvoiceValidationController extends Controller
 
         $bill_order->status_validate = 1;
         $bill_order->save();
+
+        //Generamos el albarán y la factura en SAGE
 
         $response['code'] = 1000;
         return response()->json($response);

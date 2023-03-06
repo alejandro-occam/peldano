@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\CalendarMagazine;
+use App\Models\Calendar;
 use App\Models\Article;
 use App\Models\Suscription;
 use App\Models\Company;
@@ -67,10 +68,20 @@ class SuscriptionsController extends Controller
         return response()->json($response);
     }
 
+    //Listar calendarios
+    function listCalendars(){
+        $array_calendars = Calendar::get();
+
+        $response['array_calendars'] = $array_calendars;
+        $response['code'] = 1000;
+        return response()->json($response);
+    }
+
     //Listar calendarios de revistas
-    function listCalendarsMagazines(){
+    function listCalendarsMagazines($id){
         $array_calendars_magazines = CalendarMagazine::select('calendars_magazines.*' ,'calendars.name as name_calendar')
                                                         ->leftJoin('calendars', 'calendars.id', 'calendars_magazines.id_calendar')
+                                                        ->where('calendars_magazines.id_calendar', $id)
                                                         ->get();
 
         $response['array_calendars_magazines'] = $array_calendars_magazines;
@@ -152,6 +163,21 @@ class SuscriptionsController extends Controller
             }
             $this->generateDeliveryAndInvoice($suscription);
         }
+
+        $response['code'] = 1000;
+        return response()->json($response);
+    }
+
+    //Eliminar suscriptor
+    function deleteSuscription($id){
+        //Consultamos si existe el suscriptor
+        $suscription = Suscription::find($id);
+        if(!$suscription){
+            $response['code'] = 1001;
+            return response()->json($response);
+        }
+
+        $suscription->delete();
 
         $response['code'] = 1000;
         return response()->json($response);
