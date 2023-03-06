@@ -902,3 +902,11 @@ a.url-order{
     text-decoration: none;
     background-color: transparent;
 }
+
+.checkbox>input:checked~span {
+    background-color: #2e49ff !important;
+}
+
+.datatable-cell-center.ml-auto.datatable-cell.datatable-cell-check>span{
+    margin-left: auto;
+}

@@ -9,6 +9,15 @@
                 :height="16"
                 v-on:click="openModalAddSuscription()"
             />
+            <ValidateButtonComponent
+                :columns="'mr-7'"
+                :text="'Actualizar suscriptores seleccionados'"
+                :id="'btn_update_suscription'"
+                v-if="this.is_update"
+                :width="16"
+                :height="16"
+                v-on:click="openModalUpdateSuscription()"
+            />
         </div>
         <div class="col-12 mt-2">
             <div class="col-12 mt-15">
@@ -21,21 +30,19 @@
 <script>
     import Calendar from 'primevue/calendar';
     import ValidateButtonComponent from "../Partials/ValidateButtonComponent.vue";
-    import ModalAddSuscriptionComponent from "./ModalAddSuscriptionComponent.vue";
-    import ModalUpdateSuscriptionComponent from "./ModalUpdateSuscriptionComponent.vue";
 
     import { mapMutations, mapActions, mapState } from "vuex";
     export default {
         name: "TableComponent",
         components: {
             Calendar,
-            ValidateButtonComponent,
-            ModalAddSuscriptionComponent,
-            ModalUpdateSuscriptionComponent
+            ValidateButtonComponent
         },
         data() {
             return {
                 publicPath: window.location.origin,
+                array_ids_update: [],
+                is_update: false
             };
         },
         methods: {
@@ -100,6 +107,15 @@
                     },
                     columns: [
                         {
+                            field: 'RecordID',
+                            title: '',
+                            sortable: false,
+                            width: 20,
+                            selector: true,
+                            textAlign: 'center',
+                            class: 'ml-auto'
+                        },
+                        {
                             field: "#contact",
                             title: "Cliente",
                             sortable: !1,
@@ -163,6 +179,15 @@
                             },
                         },
                     ],
+                    extensions: {
+                        checkbox: true/*{
+                            vars: {
+                                selectedAllRows: 'selectedAllRows',
+                                requestIds: 'requestIds',
+                                rowIds: 'meta.rowIds',
+                            },
+                        },*/
+                    }
                 });
     
                 $("#list_suscriptions").on("click", ".btn-edit", function () {
@@ -180,9 +205,33 @@
                     me.getInfoUser(id);
                     $("#modal_delete_user").modal("show");                    
                 });
+
+                var e = $("#list_suscriptions").KTDatatable();
+                e.on("datatable-on-click-checkbox", (function(event, args) {
+                    me.array_ids_update = [];
+                    var a = e.checkbox().getSelectedId();
+                    me.array_ids_update = a;
+                    //Eliminamos el primer parámetro que guarda un array vacío cuando hacemos un checkall
+                    if(a.length >= 1){
+                        if(a[0].length == 0){
+                            me.array_ids_update.shift();
+                        }
+                        me.is_update = true;
+                    }
+                    if(a.length == 0){
+                        me.is_update = false;
+                    }
+                }));
+
+                    
             },
             openModalAddSuscription(){
                 $('#modal_add_suscription').modal('show');
+            },
+            openModalUpdateSuscription(){
+                //this.$refs.modal_update_suscription.array_suscriptions = array_suscriptions;
+                document.getElementById('array_suscriptions').value = this.array_ids_update;
+                $('#modal_update_suscription').modal('show');
             }
         },
         computed: {

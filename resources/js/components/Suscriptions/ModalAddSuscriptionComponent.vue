@@ -177,7 +177,7 @@ import { mapState, mapMutations, mapActions } from "vuex";
                         if(this.errors.code == 1000){
                             $("#list_suscriptions").KTDatatable("reload");
                             swal("", "Suscriptor/es actualizado/s correctamente", "success");
-                            $("#modal_update_consultant").modal("hide");
+                            $("#modal_update_suscription").modal("hide");
                         }
                     }
                 }
