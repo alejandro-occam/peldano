@@ -17,7 +17,7 @@ class InvoiceValidationController extends Controller
         $select_validate = $request->get('select_validate');
         $date = $request->get('date');
         
-        $array_bill_orders = BillOrder::select('bills_orders.*', 'orders.id as id_order', 'proposals.id_user as id_consultant', 'companies.name as name_company', 'companies.id_sage as id_company_sage', 'proposals.is_custom as type_order', 'orders.is_custom  as order_custom')
+        $array_bill_orders_custom = BillOrder::select('bills_orders.*', 'orders.id as id_order', 'proposals.id_user as id_consultant', 'companies.name as name_company', 'companies.id_sage as id_company_sage', 'proposals.is_custom as type_order', 'orders.is_custom  as order_custom')
                                         ->leftJoin('orders', 'orders.id', 'bills_orders.id_order')
                                         ->leftJoin('proposals', 'proposals.id', 'orders.id_proposal')
                                         ->leftJoin('contacts', 'contacts.id', 'proposals.id_contact')
@@ -28,27 +28,27 @@ class InvoiceValidationController extends Controller
         //Todas, personalizas o simples
         if(!empty($select_type)){
             if($select_type == 1){
-                $array_bill_orders = $array_bill_orders->where('orders.is_custom', 1);
+                $array_bill_orders_custom = $array_bill_orders_custom->where('orders.is_custom', 1);
             }
             if($select_type == 2){
-                $array_bill_orders = $array_bill_orders->where('orders.is_custom', 0);
+                $array_bill_orders_custom = $array_bill_orders_custom->where('orders.is_custom', 0);
             }
         }
 
         //Todas, si validadas, no validadas
         if(!empty($select_validate)){
             if($select_validate == 1){
-                $array_bill_orders = $array_bill_orders->where('bills_orders.status_validate', 1);
+                $array_bill_orders_custom = $array_bill_orders_custom->where('bills_orders.status_validate', 1);
             }
             if($select_validate == 2){
-                $array_bill_orders = $array_bill_orders->where('bills_orders.status_validate', 0);
+                $array_bill_orders_custom = $array_bill_orders_custom->where('bills_orders.status_validate', 0);
             }
         }
         
-        $array_bill_orders = $array_bill_orders->get();
+        $array_bill_orders_custom = $array_bill_orders_custom->get();
 
         //Consultamos los artículos de la factura
-        foreach($array_bill_orders as $index => $bill_order){
+        foreach($array_bill_orders_custom as $index => $bill_order){
             $is_delete = false;
             if(!empty($date)){
                 $array_date_order = explode("-", $bill_order->date);
@@ -58,7 +58,7 @@ class InvoiceValidationController extends Controller
                 $date_custom = $array_date_front[2].'-'.$array_date_front[1].'-'.$array_date_front[0];
 
                 if($date_custom < $date_order){
-                    unset($array_bill_orders[$index]);
+                    unset($array_bill_orders_custom[$index]);
                     $is_delete = true;
                 }
             }
@@ -137,6 +137,11 @@ class InvoiceValidationController extends Controller
                 $array_custom_consultant[0]['percentage'] -= $consultant->percentage;
             }
             $bill_order['array_custom_consultant'] = $array_custom_consultant;
+        }
+
+        $array_bill_orders = array();
+        foreach($array_bill_orders_custom as $bill_order_custom){
+            $array_bill_orders[] = $bill_order_custom;
         }
 
         $response['array_bill_orders'] = $array_bill_orders;
