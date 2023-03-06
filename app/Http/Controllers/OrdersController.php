@@ -75,6 +75,7 @@ class OrdersController extends Controller
         }*/
 
         $array_orders = $array_orders->groupBy('orders.id')
+                                            ->orderBy('orders.created_at', 'desc')
                                             ->skip($start)
                                             ->take($skip)
                                             ->get();

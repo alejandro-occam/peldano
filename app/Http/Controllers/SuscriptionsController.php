@@ -38,9 +38,16 @@ class SuscriptionsController extends Controller
                                             ->take($skip)
                                             ->get();
 
-        $tota_suscriptions =Suscription::count();
+        $rowIds[] = array();
+        foreach($array_suscriptions as $suscription){
+            $rowIds[] = $suscription->id;
+            $suscription['RecordID'] = $suscription->id;
+        }
+
+        $tota_suscriptions = Suscription::count();
 
         //Devolución de la llamada con la paginación
+        $meta['rowIds'] = $rowIds;
         $meta['page'] = $pagination['page'];
 
         if ($tota_suscriptions < 1) {
@@ -114,7 +121,7 @@ class SuscriptionsController extends Controller
             'num' => $num
         ]);
 
-        $this->generateDeliveryAndInvoice($suscription);
+        //$this->generateDeliveryAndInvoice($suscription);
 
         $response['code'] = 1000;
         return response()->json($response);
