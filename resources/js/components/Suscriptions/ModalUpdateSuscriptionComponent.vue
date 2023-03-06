@@ -16,13 +16,13 @@
                         <div class="input-group mb-5 d-block" >
                             <span class="my-auto w-25">Nº revista inicial</span>
                             <div class="mt-3">
-                                <input v-model="num" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
+                                <input v-model="num" type="number" class="form-control borders-box text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 0"/>
                             </div>
                         </div>
                         <div class="input-group mb-5 d-block" >
                             <span class="my-auto w-25">Nº revista final</span>
                             <div class="mt-3">
-                                <input v-model="num_finish" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
+                                <input v-model="num_finish" type="number" class="form-control borders-box text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 0"/>
                             </div>
                         </div>
                     </div>
@@ -73,7 +73,7 @@ import { mapState, mapMutations, mapActions } from "vuex";
             validateForm(){
                 this.valid = true;
                 
-                if(this.num == "" || this.num == null || this.num_finish == "" || this.num_finish == null){
+                if(this.num == "" || this.num <= 0 ||  this.num == null || this.num_finish == "" || this.num_finish == null || this.num_finish <= 0){
                     this.valid = false;
                 }
 
