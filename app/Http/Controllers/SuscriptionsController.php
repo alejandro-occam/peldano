@@ -121,7 +121,7 @@ class SuscriptionsController extends Controller
             'num' => $num
         ]);
 
-        //$this->generateDeliveryAndInvoice($suscription);
+        $this->generateDeliveryAndInvoice($suscription);
 
         $response['code'] = 1000;
         return response()->json($response);
@@ -150,6 +150,7 @@ class SuscriptionsController extends Controller
                 $suscription->num = $num;
                 $suscription->save();
             }
+            $this->generateDeliveryAndInvoice($suscription);
         }
 
         $response['code'] = 1000;
