@@ -7,8 +7,7 @@
             <div class="card card-custom shadow-none border-0">
                 <div class="card-body body-tab-step">
                     <TableComponent></TableComponent>
-                    <ModalAddSuscriptionComponent></ModalAddSuscriptionComponent>
-                    <ModalUpdateSuscriptionComponent></ModalUpdateSuscriptionComponent>
+                    
                 </div>
             </div>
         </div>

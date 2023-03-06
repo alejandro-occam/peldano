@@ -1,5 +1,5 @@
 <template>
-    <div class="modal fade" id="modal_update_suscription" role="dialog" aria-hidden="true">
+    <div class="modal fade" id="modal_update_suscription" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <!-- Modal Header -->
             <input id="id_consultant" type="hidden" value="" />
@@ -14,9 +14,15 @@
                     </div>
                     <div class="modal-body">
                         <div class="input-group mb-5 d-block" >
-                            <span class="my-auto w-25">Nº revista</span>
+                            <span class="my-auto w-25">Nº revista inicial</span>
                             <div class="mt-3">
                                 <input v-model="num" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
+                            </div>
+                        </div>
+                        <div class="input-group mb-5 d-block" >
+                            <span class="my-auto w-25">Nº revista final</span>
+                            <div class="mt-3">
+                                <input v-model="num_finish" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
                             </div>
                         </div>
                     </div>
@@ -47,6 +53,7 @@ import { mapState, mapMutations, mapActions } from "vuex";
                 publicPath: window.location.origin,
                 array_suscriptions: [],
                 num: '',
+                num_finish: '',
                 title_modal: 'Actualizar suscriptor',
                 valid: false
             };
@@ -66,7 +73,7 @@ import { mapState, mapMutations, mapActions } from "vuex";
             validateForm(){
                 this.valid = true;
                 
-                if(this.num == "" || this.num == null){
+                if(this.num == "" || this.num == null || this.num_finish == "" || this.num_finish == null){
                     this.valid = false;
                 }
 
@@ -75,7 +82,8 @@ import { mapState, mapMutations, mapActions } from "vuex";
                 if(this.valid){ 
                     var params = {
                         array_suscriptions: this.array_suscriptions,
-                        num: this.num
+                        num: this.num,
+                        num_finish: this.num_finish
                     }
                     this.updateSusctiptions(params);
 
@@ -86,6 +94,7 @@ import { mapState, mapMutations, mapActions } from "vuex";
             clearForm(){
                 this.id_suscriptor = 0;
                 this.num = '';
+                this.num_finish = '';
                 this.title_modal = 'Actualizar suscriptor';
                 $("#modal_update_suscription").modal("hide");
             }
