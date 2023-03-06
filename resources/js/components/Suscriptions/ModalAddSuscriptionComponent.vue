@@ -43,13 +43,13 @@
                         <div class="input-group mb-5 d-block" >
                             <span class="my-auto w-25">Nº revista inicial</span>
                             <div class="mt-3">
-                                <input v-model="num" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
+                                <input v-model="num" type="number" class="form-control borders-box text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 0"/>
                             </div>
                         </div>
                         <div class="input-group mb-5 d-block" >
                             <span class="my-auto w-25">Nº revista final</span>
                             <div class="mt-3">
-                                <input v-model="num_finish" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
+                                <input v-model="num_finish" type="number" class="form-control borders-box text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 0"/>
                             </div>
                         </div>
                     </div>
@@ -108,8 +108,8 @@ import { mapState, mapMutations, mapActions } from "vuex";
                 if(this.select_client == "" || this.select_client == 0 || this.select_client == null
                     || this.select_magazine == "" || this.select_magazine == 0 || this.select_magazine == null
                     || this.select_article == "" || this.select_article == 0 || this.select_article == null
-                    || this.num == "" || this.num == null
-                    || this.num_finish == "" || this.num_finish == null){
+                    || this.num == "" || this.num == null || this.num <= 0
+                    || this.num_finish == "" || this.num_finish == null || this.num_finish <= 0){
                     this.valid = false;
                 }
                 
