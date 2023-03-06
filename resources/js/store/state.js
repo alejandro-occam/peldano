@@ -158,6 +158,7 @@ const state = {
         }]
     },
     suscriptions: {
+        array_calendars: [],
         array_calendars_magazines: [],
         array_articles: [],
     },
