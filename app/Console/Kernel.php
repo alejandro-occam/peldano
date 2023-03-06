@@ -16,7 +16,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
-        $schedule->command('createOrder:cron')->daily();
+        //$schedule->command('createOrder:cron')->daily();
         $schedule->command('knowIfBillIsPay:cron')->daily();
         $schedule->command('refreshTokenSage:cron')->everySixHours();
     }
