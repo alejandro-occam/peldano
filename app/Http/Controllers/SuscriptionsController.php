@@ -6,6 +6,7 @@ use Illuminate\Http\Request;
 use App\Models\CalendarMagazine;
 use App\Models\Article;
 use App\Models\Suscription;
+use App\Models\Company;
 
 class SuscriptionsController extends Controller
 {
@@ -77,7 +78,6 @@ class SuscriptionsController extends Controller
                                             ->leftJoin('calendars', 'calendars.id', 'calendars_magazines.id_calendar')
                                             ->where('calendars_magazines.id', $id)->first();
 
-                                            \DB::enableQueryLog();
         $array_articles = Article::select('articles.*')
                                     ->leftJoin('batchs', 'batchs.id', 'articles.id_batch')
                                     ->leftJoin('chapters', 'chapters.id', 'batchs.id_chapter')
@@ -85,8 +85,6 @@ class SuscriptionsController extends Controller
                                     ->where('projects.id', $calendar_magazine['id_project'])
                                     ->get();
         
-        error_log(print_r(\DB::getQueryLog(), true));
-        error_log(count($array_articles));
         $response['array_articles'] = $array_articles;
         $response['code'] = 1000;
         return response()->json($response);
@@ -109,12 +107,14 @@ class SuscriptionsController extends Controller
             return response()->json($response);
         }
 
-        Suscription::create([
+        $suscription = Suscription::create([
             'id_contact' => $id_client,
             'id_calendar' => $id_calendar_magazine,
             'id_article' => $id_article,
             'num' => $num
         ]);
+
+        $this->generateDeliveryAndInvoice($suscription);
 
         $response['code'] = 1000;
         return response()->json($response);
@@ -147,5 +147,42 @@ class SuscriptionsController extends Controller
 
         $response['code'] = 1000;
         return response()->json($response);
+    }
+
+    //Generar albarán y factura para la suscripción
+    function generateDeliveryAndInvoice($suscription){
+        //Creamos un objeto para el controller ExternalRequest
+        $requ_external_request = new ExternalRequestController();
+
+        //Creamos el objeto request
+        $request = new \Illuminate\Http\Request();
+
+        error_log('id_contact: '.$suscription->id_contact);
+
+        //Consultamos la empresa a la que pertenece la suscripción
+        $company = Company::select('companies.*')->leftJoin('contacts', 'contacts.id_company', 'companies.id')->where('contacts.id', $suscription->id_contact)->first();
+
+        //Creamos un array para guardar los id_sage de cada artículo-producto
+        $array_sage_products = array();
+
+        $article = Article::find($suscription->id_article);
+
+        //Creamos un array para guardar los id_sage de cada artículo-producto
+        $array_sage_products = array();
+
+        //Consultamos el id_sage del artículo
+        $request->replace(['code_sage' => $article->id_sage]);
+        $id_sage = $requ_external_request->getProductSage($request);
+        $product['id'] = $id_sage;
+        $product['pvp'] = $article->pvp;
+        $array_sage_products[] = $product;
+
+        $number = Date('Y').$company->id.$suscription->id;
+
+        error_log(print_r($array_sage_products, true));
+        //Generamos el albarán en Sage
+        $request->replace(['array_sage_products' => $array_sage_products, 'customer_id' => $company->id_sage, 'amount' => $article->pvp, 'number' => $number]);
+
+        $invoice_custom = $requ_external_request->generateDeliveryNoteSageSuscription($request);
     }
 }
