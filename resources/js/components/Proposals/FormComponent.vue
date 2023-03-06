@@ -298,7 +298,7 @@
                             <tr class="row-product">
                                 <td class="text-align-center td-border-right" v-if="proposals.num_custom_invoices == 0">{{ proposals.bill_obj.array_bills[index].date }}</td>
                                 <td class="text-align-center td-border-right" v-else>
-                                    <Calendar class="w-100 borders-box text-dark-gray px-5"  autocomplete="off" v-model="proposals.bill_obj.array_bills[index].date" dateFormat="dd-mm-yy"  />
+                                    <Calendar :minDate="minDate" class="w-100 borders-box text-dark-gray px-5" autocomplete="off" v-model="proposals.bill_obj.array_bills[index].date" dateFormat="dd-mm-yy"  />
                                 </td>
                                 <td class="text-align-center py-4 px-5 td-border-right" width="20%">
                                     <template v-if="!this.create_order">
@@ -440,7 +440,7 @@
                     <div class="d-flex input-group my-5" >
                         <span class="my-auto w-25">Fecha de proyecto</span>
                         <div class="w-62">
-                            <Calendar v-model="proposal_submission_settings.date_proyect" class="w-100 borders-box text-dark-gray mt-1"  autocomplete="off"  dateFormat="dd-mm-yy"  />
+                            <Calendar :minDate="minDate" v-model="proposal_submission_settings.date_proyect" class="w-100 borders-box text-dark-gray mt-1"  autocomplete="off"  dateFormat="dd-mm-yy"  />
                         </div>
                     </div>
                 </div>
@@ -775,6 +775,7 @@ import DataTable from 'primevue/datatable';
 import Column from 'primevue/column';
 import Textarea from 'primevue/textarea';
 import Calendar from 'primevue/calendar';
+import { tsObjectKeyword } from "@babel/types";
 
 export default {
     name: "FormComponent",
@@ -864,7 +865,8 @@ export default {
             create_order: false,
             date_now: '',
             is_copy: false,
-            search_company: ''
+            search_company: '',
+            minDate: ''
         };
     },
     computed: {
@@ -1485,6 +1487,7 @@ export default {
         }
     },
     mounted() {
+        this.minDate = new Date();
         var type_action = 0;
         if(this.proposals.proposal_bd_obj != null){
             type_action = 1;
