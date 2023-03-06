@@ -312,6 +312,7 @@
                 if(this.errors.type_error == 'validate_bill'){
                     if(this.errors.code != ''){
                         if(this.errors.code == 1000){
+                            this.loadBillsValidation();
                             swal("", "Factura validada correctamente", "success");
 
                         }else{
