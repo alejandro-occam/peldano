@@ -7,6 +7,7 @@ use App\Models\BillOrder;
 use App\Models\ServiceBillOrder;
 use App\Models\ConsultanOrder;
 use App\Models\User;
+use DateTime;
 use DB;
 
 class InvoiceValidationController extends Controller
@@ -47,13 +48,16 @@ class InvoiceValidationController extends Controller
         
         $array_bill_orders_custom = $array_bill_orders_custom->get();
 
+        $array_dates = array();
+
         //Consultamos los artículos de la factura
         foreach($array_bill_orders_custom as $index => $bill_order){
             $is_delete = false;
             if(!empty($date)){
                 $array_date_order = explode("-", $bill_order->date);
                 $date_order = $array_date_order[2].'-'.$array_date_order[1].'-'.$array_date_order[0];
-
+                $bill_order['custom_date'] = $date_order;
+                $array_dates[] = $bill_order['custom_date'];
                 $array_date_front = explode("-", $date);
                 $date_custom = $array_date_front[2].'-'.$array_date_front[1].'-'.$array_date_front[0];
 
@@ -141,8 +145,25 @@ class InvoiceValidationController extends Controller
 
         $array_bill_orders = array();
         foreach($array_bill_orders_custom as $bill_order_custom){
+            $bill_order['type_order'] = $bill_order_custom['type_order'];
+            $bill_order['id_company_sage'] = $bill_order_custom['id_company_sage'];
+            $bill_order['name_company'] = $bill_order_custom['name_company'];
+            $bill_order['id_order'] = $bill_order_custom['id_order'];
+            $bill_order['amount'] = $bill_order_custom['amount'];
+            $bill_order['array_custom_consultant'] = $bill_order_custom['array_custom_consultant'];
+            $bill_order['date'] = $bill_order_custom['date'];
+            $bill_order['expiration'] = $bill_order_custom['expiration'];
+            $bill_order['way_to_pay'] = $bill_order_custom['way_to_pay'];
+            $bill_order['num_order'] = $bill_order_custom['num_order'];
+            $bill_order['observations'] = $bill_order_custom['observations'];
+            $bill_order['internal_observations'] = $bill_order_custom['internal_observations'];
+            $bill_order['array_articles'] = $bill_order_custom['array_articles'];
+            $bill_order['custom_date'] = $bill_order_custom['custom_date'];
+            
             $array_bill_orders[] = $bill_order_custom;
         }
+
+        usort($array_bill_orders, array($this, "sortFunction"));
 
         $response['array_bill_orders'] = $array_bill_orders;
         $response['code'] = 1000;
@@ -177,5 +198,20 @@ class InvoiceValidationController extends Controller
 
         $response['code'] = 1000;
         return response()->json($response);
+    }
+
+    //Ordernar array por fecha
+    function sortFunction( $a, $b ) {
+        //return strtotime($a["custom_date_aux"]) + strtotime($b["custom_date_aux"]);
+        error_log('a: '.$a['custom_date']);
+        error_log('b: '.$b['custom_date']);
+        $ad = new DateTime($a['custom_date']);
+        $bd = new DateTime($b['custom_date']);
+
+        if ($ad == $bd) {
+            return 0;
+        }
+
+        return $ad > $bd ? -1 : 1;
     }
 }
