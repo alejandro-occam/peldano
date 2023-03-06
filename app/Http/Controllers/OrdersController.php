@@ -467,7 +467,7 @@ class OrdersController extends Controller
             $array_date_custom_bill = explode("-", $bill_order->date);
             $date_custom_bill = $array_date_custom_bill[2].'-'.$array_date_custom_bill[1].'-'.$array_date_custom_bill[0];
             $bills_orders[$key]['will_update'] = true;
-            if ($date_custom_bill < $date_now){
+            if ($date_custom_bill < $date_now || $bill_order->status_validate){
                 $bills_orders[$key]['will_update'] = false;
             }
 
