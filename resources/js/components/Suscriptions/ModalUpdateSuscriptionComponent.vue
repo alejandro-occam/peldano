@@ -87,7 +87,7 @@ import { mapState, mapMutations, mapActions } from "vuex";
                 this.id_suscriptor = 0;
                 this.num = '';
                 this.title_modal = 'Actualizar suscriptor';
-                $("#modal_update_consultant").modal("hide");
+                $("#modal_update_suscription").modal("hide");
             }
         },
         mounted() {
@@ -99,7 +99,7 @@ import { mapState, mapMutations, mapActions } from "vuex";
                     if(this.errors.code != ''){
                         if(this.errors.code == 1000){
                             swal("", "Suscriptor/es actualizado/s correctamente", "success");
-                            $("#modal_update_consultant").hide();
+                            $("#modal_update_suscription").hide();
                         }
                     }
                 }

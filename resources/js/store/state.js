@@ -159,7 +159,7 @@ const state = {
     },
     suscriptions: {
         array_calendars_magazines: [],
-        array_articles: []
+        array_articles: [],
     },
     errors: {
         code: 0,

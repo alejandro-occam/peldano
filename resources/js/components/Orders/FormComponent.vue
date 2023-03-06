@@ -93,7 +93,7 @@
                     Añadir artículo
                 </button>
             </div>
-            <div class="mb-5 mt-15 col-12 row" v-if="(orders.proposal_obj.chapters[0].chapter_obj != null && !this.generate_proposal) || (orders.proposal_obj.chapters[0].chapter_obj != null && this.is_change_get_info == 1)">
+            <div class="mb-5 mt-15 col-12 row" v-if="(orders.proposal_obj.chapters[0].chapter_obj.name != '' && !this.generate_proposal) || (orders.proposal_obj.chapters[0].chapter_obj.name != '' && this.is_change_get_info == 1)">
                 <div>
                     <img class="mr-2" width="150" height="150" src="/media/custom-imgs/icono_ficha_ordenes.svg" />
                 </div>
@@ -189,7 +189,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12 mt-15 pl-0" v-if="(orders.proposal_obj.chapters[0].chapter_obj != null && !this.finish_proposal && !this.generate_proposal) || (orders.proposal_obj.chapters[0].chapter_obj != null && this.is_change_get_info == 1)">
+            <div class="col-12 mt-15 pl-0" v-if="(orders.proposal_obj.chapters[0].chapter_obj.name != '' && !this.finish_proposal && !this.generate_proposal) || (orders.proposal_obj.chapters[0].chapter_obj.name != '' && this.is_change_get_info == 1)">
                 <table width="100%" cellpadding="2" cellspacing="1">
                     <thead class="custom-columns-datatable">
 						<tr>
@@ -255,7 +255,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="col-12 pl-0 mt-10" v-if="orders.proposal_obj.chapters[0].chapter_obj != null && !this.finish_proposal && !this.generate_proposal">
+            <div class="col-12 pl-0 mt-10" v-if="orders.proposal_obj.chapters[0].chapter_obj.name != '' && !this.finish_proposal && !this.generate_proposal">
                 <span class="text-dark font-weight-bold mb-2">Tipo de propuesta</span>
                 <select v-if="!this.is_updating_order" class="form-control bg-gray text-dark select-custom select-filter mt-3 col-2" :name="'select_type_proposal'" :id="'select_type_proposal'" v-model="select_type_proposal" data-style="select-lightgreen">
                     <option value="1" selected>Normal</option>
@@ -268,7 +268,7 @@
                     <button type="submit" class="btn bg-azul color-white px-5 font-weight-bolder ml-4" v-on:click="openCustomInvoice()">Crear factura personalizada</button>
                 </div>
             </div>
-            <div class="col-12 pl-0 mt-10" v-if="(orders.proposal_obj.chapters[0].chapter_obj != null && this.is_show_buttons_bill && !this.finish_proposal && !this.generate_proposal) || (orders.proposal_obj.chapters[0].chapter_obj != null && this.is_change_get_info == 1)">
+            <div class="col-12 pl-0 mt-10" v-if="(orders.proposal_obj.chapters[0].chapter_obj.name != '' && this.is_show_buttons_bill && !this.finish_proposal && !this.generate_proposal) || (orders.proposal_obj.chapters[0].chapter_obj.name != '' && this.is_change_get_info == 1)">
                 <table width="100%" cellpadding="2" cellspacing="1">
                     <thead class="custom-columns-datatable">
 						<tr>
@@ -371,7 +371,7 @@
                     <button v-else-if="!this.is_change_get_info" v-on:click="this.finishProposal()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Guardar cambios</button>
                 </div>
             </div>
-            <div class="col-12 pl-0 mt-10" v-if="orders.proposal_obj.chapters[0].chapter_obj != null && this.is_show_buttons_bill && this.finish_proposal && !this.generate_proposal">
+            <div class="col-12 pl-0 mt-10" v-if="orders.proposal_obj.chapters[0].chapter_obj.name != '' && this.is_show_buttons_bill && this.finish_proposal && !this.generate_proposal">
                 <h3 class="color-blue">Configuración de la presentación de la propuesta</h3>
                 <div class="col-6 pl-0 mt-6">
                     <div class="d-flex input-group mb-5 mt-10" >
@@ -539,7 +539,7 @@
                     <button v-on:click="this.generateProposal()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Generar propuesta</button>
                 </div>
             </div>
-            <div class="col-12 pl-0 mt-10" v-if="orders.proposal_obj.chapters[0].chapter_obj != null && this.is_show_buttons_bill && this.finish_proposal && this.generate_proposal && this.is_change_get_info == 0">
+            <div class="col-12 pl-0 mt-10" v-if="orders.proposal_obj.chapters[0].chapter_obj.name != '' && this.is_show_buttons_bill && this.finish_proposal && this.generate_proposal && this.is_change_get_info == 0">
                 <h3 v-if="this.is_change_get_info == 0" class="color-blue"></h3>
                 <div class="mt-7">
                     <template v-if="this.is_change_get_info == 0">

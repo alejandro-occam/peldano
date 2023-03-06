@@ -1,5 +1,5 @@
 <template>
-    <div class="modal fade" id="modal_add_suscription" role="dialog" aria-hidden="true">
+    <div class="modal fade" id="modal_add_suscription" tabindex="-1" role="dialog" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <!-- Modal Header -->
             <input id="id_consultant" type="hidden" value="" />
@@ -116,7 +116,7 @@ import { mapState, mapMutations, mapActions } from "vuex";
                 this.select_article = 0;
                 this.num = '';
                 this.title_modal = 'Añadir suscriptor';
-                $("#modal_add_consultant").modal("hide");
+                $("#modal_add_suscription").modal("hide");
             },
             //Listar artículos
             listArticlesModal(){
@@ -167,13 +167,15 @@ import { mapState, mapMutations, mapActions } from "vuex";
                 if(this.errors.type_error == 'add_suscription'){
                     if(this.errors.code != ''){
                         if(this.errors.code == 1000){
-                            $("#modal_add_consultant").modal("hide");
+                            $("#list_suscriptions").KTDatatable("reload");
+                            $("#modal_add_suscription").modal("hide");
                             swal("", "Suscripción creada correctamente", "success");
                         }
                     }
                 }else if(this.errors.type_error == 'update_suscription'){
                     if(this.errors.code != ''){
                         if(this.errors.code == 1000){
+                            $("#list_suscriptions").KTDatatable("reload");
                             swal("", "Suscriptor/es actualizado/s correctamente", "success");
                             $("#modal_update_consultant").modal("hide");
                         }

@@ -21,13 +21,17 @@
 <script>
     import Calendar from 'primevue/calendar';
     import ValidateButtonComponent from "../Partials/ValidateButtonComponent.vue";
+    import ModalAddSuscriptionComponent from "./ModalAddSuscriptionComponent.vue";
+    import ModalUpdateSuscriptionComponent from "./ModalUpdateSuscriptionComponent.vue";
 
     import { mapMutations, mapActions, mapState } from "vuex";
     export default {
         name: "TableComponent",
         components: {
             Calendar,
-            ValidateButtonComponent
+            ValidateButtonComponent,
+            ModalAddSuscriptionComponent,
+            ModalUpdateSuscriptionComponent
         },
         data() {
             return {
