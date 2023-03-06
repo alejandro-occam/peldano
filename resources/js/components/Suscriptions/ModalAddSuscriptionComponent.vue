@@ -41,9 +41,15 @@
                             </select>
                         </div>
                         <div class="input-group mb-5 d-block" >
-                            <span class="my-auto w-25">Nº revista</span>
+                            <span class="my-auto w-25">Nº revista inicial</span>
                             <div class="mt-3">
                                 <input v-model="num" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
+                            </div>
+                        </div>
+                        <div class="input-group mb-5 d-block" >
+                            <span class="my-auto w-25">Nº revista final</span>
+                            <div class="mt-3">
+                                <input v-model="num_finish" type="text" class="form-control borders-box text-dark-gray" placeholder="" />
                             </div>
                         </div>
                     </div>
@@ -78,6 +84,7 @@ import { mapState, mapMutations, mapActions } from "vuex";
                 select_magazine: 0,
                 select_article: 0,
                 num: '',
+                num_finish: '',
                 title_modal: 'Añadir suscriptor',
                 search_client: '',
                 valid: false
@@ -101,7 +108,8 @@ import { mapState, mapMutations, mapActions } from "vuex";
                 if(this.select_client == "" || this.select_client == 0 || this.select_client == null
                     || this.select_magazine == "" || this.select_magazine == 0 || this.select_magazine == null
                     || this.select_article == "" || this.select_article == 0 || this.select_article == null
-                    || this.num == "" || this.num == null){
+                    || this.num == "" || this.num == null
+                    || this.num_finish == "" || this.num_finish == null){
                     this.valid = false;
                 }
                 
@@ -110,7 +118,8 @@ import { mapState, mapMutations, mapActions } from "vuex";
                         id_client: this.select_client,
                         id_calendar_magazine: this.select_magazine,
                         id_article: this.select_article,
-                        num: this.num
+                        num: this.num,
+                        num_finish: this.num_finish
                     }
                     this.addSusctiption(params);
 
@@ -123,6 +132,7 @@ import { mapState, mapMutations, mapActions } from "vuex";
                 this.select_magazine = 0;
                 this.select_article = 0;
                 this.num = '';
+                this.num_finish = '';
                 this.title_modal = 'Añadir suscriptor';
                 $("#modal_add_suscription").modal("hide");
             },

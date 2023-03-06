@@ -17,6 +17,7 @@ class Suscription extends Model
         'id_article',
         'id_calendar',
         'num',
+        'num_finish'
     ];
 
     /**
@@ -30,6 +31,7 @@ class Suscription extends Model
         'id_article' => 'integer',
         'id_calendar' => 'integer',
         'num' => 'string',
+        'num_finish' => 'string'
     ];
 
     /**
@@ -43,5 +45,6 @@ class Suscription extends Model
         'id_article',
         'id_calendar',
         'num',
+        'num_finish'
     ];
 }

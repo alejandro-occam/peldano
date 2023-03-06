@@ -25,18 +25,24 @@
             </div>
         </div>
     </div>
+    <ModalAddSuscriptionComponent></ModalAddSuscriptionComponent>
+                    <ModalUpdateSuscriptionComponent></ModalUpdateSuscriptionComponent>
 </template>
 
 <script>
     import Calendar from 'primevue/calendar';
     import ValidateButtonComponent from "../Partials/ValidateButtonComponent.vue";
+    import ModalAddSuscriptionComponent from "./ModalAddSuscriptionComponent.vue";
+    import ModalUpdateSuscriptionComponent from "./ModalUpdateSuscriptionComponent.vue";
 
     import { mapMutations, mapActions, mapState } from "vuex";
     export default {
         name: "TableComponent",
         components: {
             Calendar,
-            ValidateButtonComponent
+            ValidateButtonComponent,
+            ModalAddSuscriptionComponent,
+            ModalUpdateSuscriptionComponent
         },
         data() {
             return {
@@ -168,6 +174,19 @@
                             },
                         },
                         {
+                            field: "#finish_num",
+                            title: "Nº final",
+                            sortable: !1,
+                            textAlign: "center",
+                            template: function (row, data, index) {
+                                return (
+                                        '<span class="text-blue-table font-weight-bold">' +
+                                        row.num_finish +
+                                        "</span>"
+                                    );
+                            },
+                        },
+                        {
                             field: "#",
                             title: "Acciones",
                             sortable: !1,
@@ -268,7 +287,31 @@
                             swal("", "Parece que ha habiado un error. Inténtalo de nuevo más tarde", "error");
                         }
                     }
+                }else if(this.errors.type_error == 'update_suscription'){
+                    if(this.errors.code != ''){
+                        if(this.errors.code == 1000){
+                            this.is_update = false;
+                            $("#list_suscriptions").KTDatatable("reload");
+                            swal("", "Suscriptor/es actualizado/s correctamente", "success");
+                            $("#modal_update_suscription").modal("hide");
+                        }
+                    }else{
+                        swal("", "Parece que ha habiado un error. Inténtalo de nuevo más tarde", "error");
+                    }
+
+                }else if(this.errors.type_error == 'add_suscription'){
+                    if(this.errors.code != ''){
+                        if(this.errors.code == 1000){
+                            this.is_update = false;
+                            $("#list_suscriptions").KTDatatable("reload");
+                            $("#modal_add_suscription").modal("hide");
+                            swal("", "Suscripción creada correctamente", "success");
+                        }
+                    }else{
+                        swal("", "Parece que ha habiado un error. Inténtalo de nuevo más tarde", "error");
+                    }
                 }
+                
                 this.clearError();
             }
         }
