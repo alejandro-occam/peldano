@@ -172,6 +172,10 @@ class ProposalsController extends Controller
      function getCompaniesSearch(Request $request){
         $search = $request->get('term');
         $type_search = $request->get('type_search');
+
+        error_log('search: '.$search);
+        error_log('type_search: '.$type_search);
+
         $array_companies = array();
         $array_companies_custom = array();
         if(isset($search)){

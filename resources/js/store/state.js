@@ -157,6 +157,10 @@ const state = {
             array_custom_consultant: []
         }]
     },
+    suscriptions: {
+        array_calendars_magazines: [],
+        array_articles: [],
+    },
     errors: {
         code: 0,
         type_error: ''

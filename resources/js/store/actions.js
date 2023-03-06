@@ -1139,7 +1139,84 @@ const actions = {
             console.error(error);
             return error;
         }
-    }
+    },
+
+    //Consultar calendarios de revistas
+    async getCalendarsMagazines({ state }){
+        try {
+            const response = await http({
+                url: "/admin/get_calendars_magazines",
+                params: '',
+                method: 'get'
+            });
+
+            state.errors.type_error = 'get_calendars_magazines';
+            state.errors.code = response.data.code;
+            state.suscriptions.array_calendars_magazines = response.data.array_calendars_magazines;
+            
+
+        } catch (error) {
+            console.error(error);
+            return error;
+        }
+    },
+
+    //Listar artículos para las suscripciones 
+    async getArticlesSuscriptions({ state }, id){
+        try {
+            const response = await http({
+                url: "/admin/list_articles_suscriptions/"+id,
+                params: '',
+                method: 'get'
+            });
+
+            state.errors.type_error = 'list_articles_suscriptions';
+            state.errors.code = response.data.code;
+            state.suscriptions.array_articles = response.data.array_articles;
+            
+
+        } catch (error) {
+            console.error(error);
+            return error;
+        }
+    },
+
+    //Añadir suscripción
+    async addSusctiption({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/add_suscription",
+                params: params,
+                method: 'post'
+            });
+
+            state.errors.type_error = 'add_suscription';
+            state.errors.code = response.data.code;
+            
+
+        } catch (error) {
+            console.error(error);
+            return error;
+        }
+    },
+    //Actualizar suscripción 
+    async updateSusctiptions({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/update_suscription",
+                params: params,
+                method: 'post'
+            });
+
+            state.errors.type_error = 'update_suscription';
+            state.errors.code = response.data.code;
+            
+
+        } catch (error) {
+            console.error(error);
+            return error;
+        }
+    },
 }
 
 //Rellenar objetos para el store y mostrar la información de las propuestas u ordenes
