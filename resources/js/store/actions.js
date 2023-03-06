@@ -1102,7 +1102,7 @@ const actions = {
     async listBillsValidation({ state }, params){
         try {
             const response = await http({
-                url: "/admin/list_bill_orders/",
+                url: "/admin/list_bill_orders",
                 params: params,
                 method: 'post'
             });
@@ -1121,7 +1121,7 @@ const actions = {
     async validateBill({ state }, params){
         try {
             const response = await http({
-                url: "/admin/validate_bill/",
+                url: "/admin/validate_bill",
                 params: params,
                 method: 'post'
             });
