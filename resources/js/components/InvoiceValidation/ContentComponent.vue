@@ -15,12 +15,13 @@
 
 <script>
     import TableComponent from "./TableComponent.vue";
+
     import { mapMutations, mapState } from "vuex";
 
     export default {
         name: "ContentComponent",
         components: {
-            TableComponent,
+            TableComponent
         },
         data() {
             return {

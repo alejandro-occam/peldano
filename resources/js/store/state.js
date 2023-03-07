@@ -155,12 +155,14 @@ const state = {
         array_bill_orders: [{
             array_articles: [],
             array_custom_consultant: []
-        }]
+        }],
+        is_loading: false
     },
     suscriptions: {
         array_calendars: [],
         array_calendars_magazines: [],
         array_articles: [],
+        is_loading: false
     },
     errors: {
         code: 0,
