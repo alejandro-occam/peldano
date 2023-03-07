@@ -65,15 +65,18 @@
             </div>
         </div>
     </div>
+    <ProgressSpinner v-if="suscriptions.is_loading" style="position: fixed; top:50vh; left: 50%; z-index: 9999;" aria-label="Loading" />
 </template>
     
     <script>
 
 import { mapState, mapMutations, mapActions } from "vuex";
+import ProgressSpinner from 'primevue/progressspinner';
 
     export default {
         name: "ModalAddSuscriptionComponent",
         components: {
+            ProgressSpinner
         },
         data() {
             return {
@@ -121,6 +124,7 @@ import { mapState, mapMutations, mapActions } from "vuex";
                         num: this.num,
                         num_finish: this.num_finish
                     }
+                    this.suscriptions.is_loading = true;
                     this.addSusctiption(params);
 
                 }else{
@@ -213,6 +217,7 @@ import { mapState, mapMutations, mapActions } from "vuex";
                         }
                     }
                 }
+                this.suscriptions.is_loading = false;
                 this.clearError();
             }
         }

@@ -26,7 +26,7 @@
         </div>
     </div>
     <ModalAddSuscriptionComponent></ModalAddSuscriptionComponent>
-                    <ModalUpdateSuscriptionComponent></ModalUpdateSuscriptionComponent>
+    <ModalUpdateSuscriptionComponent></ModalUpdateSuscriptionComponent>
 </template>
 
 <script>
@@ -311,7 +311,7 @@
                         swal("", "Parece que ha habiado un error. Inténtalo de nuevo más tarde", "error");
                     }
                 }
-                
+                this.suscriptions.is_loading = false;
                 this.clearError();
             }
         }

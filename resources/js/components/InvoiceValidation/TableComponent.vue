@@ -223,16 +223,19 @@
             </div>
         </div>
     </div>
+    <ProgressSpinner v-if="invoice_validations.is_loading" style="position: fixed; top:50vh; left: 50%; " aria-label="Loading" />
 </template>
 
 <script>
     import Calendar from 'primevue/calendar';
+    import ProgressSpinner from 'primevue/progressspinner';
 
     import { mapMutations, mapActions, mapState } from "vuex";
     export default {
         name: "TableComponent",
         components: {
-            Calendar
+            Calendar,
+            ProgressSpinner
         },
         data() {
             return {
@@ -292,6 +295,7 @@
                 var params = {
                     id_bill: id
                 }
+                this.invoice_validations.is_loading = true;
                 this.validateBill(params)
             }
         },
@@ -322,6 +326,7 @@
                     }else{
                         swal("", "Ha habido un error. Inténtalo de nuevo más tatrde", "error");
                     }
+                    this.invoice_validations.is_loading = false;
                 }
                 this.clearError();
             }
