@@ -164,8 +164,9 @@ class SuscriptionsController extends Controller
                 $suscription->num = $num;
                 $suscription->num_finish = $num_finish;
                 $suscription->save();
+                $this->generateDeliveryAndInvoice($suscription);
             }
-            $this->generateDeliveryAndInvoice($suscription);
+            
         }
 
         $response['code'] = 1000;
