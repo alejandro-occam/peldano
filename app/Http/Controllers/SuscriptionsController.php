@@ -151,6 +151,7 @@ class SuscriptionsController extends Controller
         $num_finish = $request->get('num_finish');
         $array_suscriptions_custom = $request->get('array_suscriptions');
         $array_suscriptions = explode(",", $array_suscriptions_custom);
+        error_log('array_suscriptions: '.print_r($array_suscriptions, true));
 
         if(!isset($num) || empty($num) || !isset($num_finish) || empty($num_finish) || !isset($array_suscriptions) || empty($array_suscriptions)){
             $response['code'] = 1001;
