@@ -1265,8 +1265,6 @@ function createObjectsStore({ state }, response, type){
         custom_state = state.orders;
     }
 
-    console.log(response.data);
-
     if(response.data.proposal.is_custom){
         custom_state.num_custom_invoices = Number(response.data.proposal_bills.length);
     }
@@ -1469,6 +1467,7 @@ function createObjectsStore({ state }, response, type){
     });
 
     //Recogemos datos de la propuesta
+    console.log(response.data);
     var proposal = response.data.proposal
     var proposal_submission_settings = {
         id: proposal.id,
@@ -1489,7 +1488,8 @@ function createObjectsStore({ state }, response, type){
         id_proposal_custom: proposal.id_proposal_custom,
         id_proposal_custom_aux: proposal.id_proposal_custom_aux,
         discount: proposal.discount,
-        status: proposal.status
+        status: proposal.status,
+        advertiser: proposal.advertiser
     }
     
     //Guardamos con un nuevo formato para las facturas los articulos

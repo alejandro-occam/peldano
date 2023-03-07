@@ -325,7 +325,7 @@
                                                             </td>
                                                             <td class="py-2 td-border-left">
                                                                 <div class="f-10 ml-5 font-weight-bolder gray-chapter-offer-proposal">ANUNCIANTE:</div>
-                                                                <div class="ml-5 f-10 text-dark">{!! $proposal->commercial_name !!}</div>
+                                                                <div class="ml-5 f-10 text-dark">{!! $advertiser !!}</div>
                                                             </td><!--v-if-->
                                                             <td colspan="2" class="py-2 td-border-left bg-blue-light-white">
                                                                 <div class="f-10 ml-5 font-weight-bolder color-blue">OFERTA:</div>

@@ -789,7 +789,7 @@ class OrdersController extends Controller
     //Actualizar orden
     function updateOrder(Request $request){
         //Comprobamos si existe la propuesta
-        if (!$request->has('id_order') || !$request->has('discount') || !$request->has('reason_update')){
+        if (!$request->has('id_order') || !$request->has('discount') || !$request->has('reason_update') || !$request->has('advertiser')){
             $response['code'] = 1001;
             return response()->json($response);
         }
@@ -798,6 +798,7 @@ class OrdersController extends Controller
         $id_order = $request->get('id_order');
         $discount = $request->get('discount');
         $reason_update = $request->get('reason_update');
+        $advertiser = $request->get('advertiser');
 
         $order = Order::find($id_order);
         if(!$order){
@@ -902,6 +903,7 @@ class OrdersController extends Controller
         $order->discount = $discount;
         $order->status = 0;
         $order->reason_update = $reason_update;
+        $order->advertiser = $advertiser;
         $order->save();
 
         //Actualizamos los consultores

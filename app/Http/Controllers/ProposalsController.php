@@ -327,6 +327,8 @@ class ProposalsController extends Controller
             $status = 2;
         }
 
+        $advertiser = $request->get('advertiser');
+
         $proposal = Proposal::create([
             'id_proposal_custom' => $id_proposal_custom,
             'id_user' => Auth::user()->id,
@@ -348,7 +350,8 @@ class ProposalsController extends Controller
             'sales_possibilities' => $proposal_submission_settings->sales_possibilities,
             'id_department' => $id_department,
             'is_custom' => $custom_bill,
-            'status' => $status
+            'status' => $status,
+            'advertiser' => $advertiser
         ]);
 
         $fullname = Auth::user()->name.' '.Auth::user()->surnames;
@@ -414,6 +417,7 @@ class ProposalsController extends Controller
             $data['bill_obj'] = $bill_obj2;
             $data['select_way_to_pay_options'] = $request->get('select_way_to_pay_options');
             $data['select_expiration_options'] = $request->get('select_expiration_options');
+            $data['advertiser'] = $request->get('advertiser');
             $data['base64'] = $base64;
                     
             //Generamos el pdf
@@ -446,6 +450,8 @@ class ProposalsController extends Controller
     //Mostrar información de una propuesta
     function getInfoProposal($id){
         //Consultamos si existe la propuesta
+        $custom_proposal = Proposal::find($id);
+        error_log('custom_proposal: '.$custom_proposal);
         $proposal = Proposal::select('proposals.*', 'contacts.name as contact_name', 'contacts.surnames as contact_surnames', 'contacts.email as contact_email', 'contacts.phone as contact_phone', 'contacts.id_company')
                                 ->leftJoin('contacts', 'contacts.id', 'proposals.id_contact')
                                 ->where('proposals.id', $id)
@@ -692,6 +698,7 @@ class ProposalsController extends Controller
 
         //Actualizamos la propuesta 
         $proposal_submission_settings = json_decode($request->get('proposal_submission_settings'));
+        $advertiser = $request->get('advertiser');
 
         $proposal->discount = $proposal_submission_settings->discount;
         $proposal->language = $proposal_submission_settings->language;
@@ -709,6 +716,7 @@ class ProposalsController extends Controller
         $proposal->sales_possibilities = $proposal_submission_settings->sales_possibilities;
         $proposal->show_invoices = $proposal_submission_settings->show_invoices;
         $proposal->is_custom = $custom_bill;
+        $proposal->advertiser = $advertiser;
 
         $status = 1;
         if($proposal_submission_settings->discount >= 20){
@@ -777,6 +785,7 @@ class ProposalsController extends Controller
             $data['select_way_to_pay_options'] = $request->get('select_way_to_pay_options');
             $data['select_expiration_options'] = $request->get('select_expiration_options');
             $data['base64'] = $base64;
+            $data['advertiser'] = $advertiser;
 
             //Guardamos el fichero
             $proposal->pdf_file = 'pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf';
@@ -1088,7 +1097,8 @@ class ProposalsController extends Controller
             'id_proposal' => $proposal->id,
             'is_custom' => $proposal->is_custom,
             'discount' => $proposal->discount,
-            'status' => 0
+            'status' => 0,
+            'advertiser' => $proposal->advertiser
         ]);
 
         //Consultamos las facturas de la propuesta
