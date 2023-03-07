@@ -825,16 +825,21 @@ const actions = {
     },
 
     //Mostrar información de la orden
-    async getInfoOrder({ state }, id){
+    async getInfoOrder({ state }, params){
         try {
             const response = await http({
-                url: "/admin/get_info_order/"+id,
+                url: "/admin/get_info_order/"+params.id,
                 method: 'get'
             });
 
             //Rellenar objetos para el store y mostrar la información de las propuestas
             state.orders.user_control = response.data.user_control;
-            createObjectsStore({ state }, response, 2);
+            if(params.type == 1){
+                createObjectsStore({ state }, response, 2);
+            }else{
+                createObjectsStoreInfo({ state }, response), 2;
+            }
+            
 
         } catch (error) {
             console.error(error);
@@ -1265,7 +1270,444 @@ function createObjectsStore({ state }, response, type){
         custom_state = state.orders;
     }
 
+    if(response.data.proposal.is_custom){
+        custom_state.num_custom_invoices = Number(response.data.proposal_bills.length);
+    }
+
+    var array_services = response.data.array_services;
+    custom_state.proposal_obj.chapters.articles = [];
+    custom_state.proposal_obj.chapters.dates_prices_aux = [];
+    custom_state.bill_obj.array_bills = [];
+    var array_dates_aux = [];
+    var array_chapters = [];
+    var proposal = response.data.proposal;
+
+    if(array_services != undefined){
+        array_services.forEach(function callback(service, index, array) {
+            array_dates_aux.push(service.date);
+
+            if(array_chapters.length == 0){
+                var article = {
+                    amount: 1,
+                    article_obj: service.article,
+                    dates: [service.date],
+                    dates_prices: [{
+                        arr_pvp_date: [{
+                            date: service.date,
+                            arr_pvp: [service.pvp]
+                        }],
+                        date: changeFormatDate(service.date)
+                    }],
+                    total: service.pvp,
+                    chapter_obj: service.chapter,
+                    department_obj: proposal.department_obj
+                }
+                array_chapters.push({
+                    id_chapter: service.chapter.id,
+                    articles: [article],
+                    articles_aux: [article],
+                    chapter_obj: service.chapter
+                });
+    
+            }else{
+                var exist_1 = false;
+                array_chapters.forEach(function callback(chapter, index, array) {
+                    if(chapter.id_chapter == service.chapter.id){
+                        exist_1 = true;
+                        var exist_2 = false;
+                        chapter.articles.forEach(function callback(article, index, array) {
+                            if(article.article_obj.id == service.id_article){
+                                exist_2 = true;
+                                article.amount += 1;
+                                article.dates.push(service.date);
+                                article.total = article.total + service.pvp;
+                                var exist_3 = false;
+                                article.dates_prices.forEach(function callback(date_price, index, array) {
+                                    if(date_price.date == changeFormatDate(service.date)){
+                                        exist_3 = true;
+                                        var exist_4 = false;
+                                        date_price.arr_pvp_date.forEach(function callback(pvp_date, index, array) {
+                                            if(pvp_date.date == service.date){
+                                                pvp_date.arr_pvp.push(service.pvp);
+                                                exist_4 = true;
+                                            }
+                                        });
+                                        if(!exist_4){
+                                            var pvp_date = {
+                                                date: service.date,
+                                                arr_pvp: [service.pvp]
+                                            };
+                                            date_price.arr_pvp_date.push(pvp_date);
+                                        }
+                                    }
+                                    
+                                });
+                                if(!exist_3){
+                                    var date_price = {
+                                        date: changeFormatDate(service.date),
+                                        arr_pvp_date: [{
+                                            date: service.date,
+                                            arr_pvp: [service.pvp]
+                                        }]
+                                    }
+                                    article.dates_prices.push(date_price);
+                                }
+                            }
+                        });
+
+                        if(!exist_2){
+                            var article = {
+                                amount: 1,
+                                article_obj: service.article,
+                                dates: [service.date],
+                                dates_prices: [{
+                                    arr_pvp_date: [{
+                                        date: service.date,
+                                        arr_pvp: [service.pvp]
+                                    }],
+                                    date: changeFormatDate(service.date)
+                                }],
+                                total: service.pvp,
+                                chapter_obj: service.chapter,
+                                department_obj: proposal.department_obj
+                            }
+                            chapter.articles.push(article);
+                        }
+                    }
+                });
+
+                if(!exist_1){
+                    var article = {
+                        amount: 1,
+                        article_obj: service.article,
+                        dates: [service.date],
+                        dates_prices: [{
+                            arr_pvp_date: [{
+                                date: service.date,
+                                arr_pvp: [service.pvp]
+                            }],
+                            date: changeFormatDate(service.date)
+                        }],
+                        total: service.pvp,
+                        chapter_obj: service.chapter,
+                        department_obj: proposal.department_obj
+                    }
+                    array_chapters.push({
+                        id_chapter: service.chapter.id,
+                        articles: [article],
+                        articles_aux: [article],
+                        chapter_obj: service.chapter
+                    });
+                }
+            }
+            
+        });
+        custom_state.proposal_obj.chapters = array_chapters;
+    }
+
+    //Consultamos los totales
+    var total_amount_global = 0;
+    var total_individual_pvp = 0;
+    var total_global = 0;
+    var total_global_default = 0;
+    custom_state.proposal_obj.chapters.map(function(chapter, key) {
+        chapter.articles.map(function(article, key) {
+            total_individual_pvp += article.article_obj.pvp;
+            article.dates_prices.map(function(date_price, key) {
+                date_price.arr_pvp_date.map(function(pvp_date, key) {
+                    total_amount_global += pvp_date.arr_pvp.length;
+                    pvp_date.arr_pvp.map(function(pvp, key) {
+                        total_global += Number(pvp);
+                        total_global_default += Number(article.article_obj.pvp);
+                    });
+                });
+            });
+        });
+    });
+    custom_state.proposal_obj.total_individual_pvp = total_individual_pvp;
+    custom_state.proposal_obj.total_amount_global = total_amount_global;
+    custom_state.proposal_obj.total_global_normal = total_global_default;
+    custom_state.proposal_obj.total_global = total_global;
+    
+    custom_state.proposal_obj.array_consultants = response.data.array_consultants;
+
+    //Ordenamos las fechas de forma ascendente
+    array_dates_aux = array_dates_aux.sort(function(a,b){
+        var b_aux = Date.parse(new Date(changeFormatDate2(b)));
+        var a_aux = Date.parse(new Date(changeFormatDate2(a)));
+        return a_aux - b_aux;
+    });
+
+    var array_dates = [];
+    //Modificamos el formato de las fechas para las columnas
+    array_dates_aux.map(function(date, key) {
+        var new_date = changeFormatDate(date);
+        if(!array_dates.includes(new_date)){
+            array_dates.push(new_date);
+        }
+    });
+
+    //Cargamos en el array de fechas para las columnas los totales de cada mes
+    var array_dates_prices = [];
+    array_dates.map(function(date, key) {
+        var total_date = 0;
+        custom_state.proposal_obj.chapters.map(function(articles_obj, key) {
+            articles_obj.articles.map(function(article_finish, key) {
+                article_finish.dates_prices.map(function(date_aux, key) {
+                    if(date_aux.date == date){
+                        date_aux.arr_pvp_date.map(function(pvp_date, key) {
+                            pvp_date.arr_pvp.map(function(pvp, key) {
+                                total_date += pvp;
+                            });
+                        });
+                    }
+                });
+            });
+        });
+        var date_obj = {
+            date: date,
+            total: total_date
+        }
+        array_dates_prices.push(date_obj);
+    });
+
+    //Recogemos datos de la propuesta
     console.log(response.data);
+    var proposal = response.data.proposal
+    var proposal_submission_settings = {
+        id: proposal.id,
+        commercial_name: proposal.commercial_name,
+        language: proposal.language,
+        type_proyect: proposal.type_proyect,
+        name_proyect: proposal.name_proyect,
+        date_proyect: proposal.date_proyect,
+        objetives: proposal.objetives,
+        proposal: proposal.proposal,
+        actions: proposal.actions,
+        observations: proposal.observations,
+        show_discounts: proposal.show_discounts,
+        show_inserts: proposal.show_inserts,
+        show_invoices: proposal.show_invoices,
+        show_pvp: proposal.show_pvp,
+        sales_possibilities: proposal.sales_possibilities,
+        id_proposal_custom: proposal.id_proposal_custom,
+        id_proposal_custom_aux: proposal.id_proposal_custom_aux,
+        discount: proposal.discount,
+        status: proposal.status,
+        advertiser: proposal.advertiser
+    }
+    
+    //Guardamos con un nuevo formato para las facturas los articulos
+    var array_articles = [];
+    custom_state.proposal_obj.chapters.map(function(chapters, key) {
+        chapters.articles.map(function(article_obj, key) {
+            article_obj.dates_prices.map(function(dates_prices_obj, key) {
+                dates_prices_obj.arr_pvp_date.map(function(arr_pvp_date_obj, key) {
+                    arr_pvp_date_obj.arr_pvp.map(function(arr_pvp_obj, key) {
+                        var article_obj_aux = {
+                            date: arr_pvp_date_obj.date,
+                            article: article_obj,
+                            id_chapter: chapters.chapter_obj.id,
+                            amount: arr_pvp_obj
+                        }
+                        array_articles.push(article_obj_aux);
+                    });
+                });
+            });
+        });
+    });
+
+    //Ordenamos los artículos por fecha
+    array_articles = array_articles.sort(function(a,b){
+        var b_aux = Date.parse(new Date(changeFormatDate2(b.date)));
+        var a_aux = Date.parse(new Date(changeFormatDate2(a.date)));
+        return a_aux - b_aux;
+    });
+
+    var date_aux = '';
+    if(!response.data.proposal.is_custom){
+        if(array_articles.length > 0){
+            date_aux = array_articles[0].date;
+        }
+    }
+    var amount = 0;
+    var array_finish_bill = [];
+    var last_key = 0;
+    var total_bill = 0;
+    custom_state.bill_obj.articles = array_articles;
+
+    //Creamos el objeto factura
+    var array_bills = response.data.proposal_bills;
+
+    var count_bill = 0;
+    if(!response.data.proposal.is_custom){
+        array_articles.map(function(article_obj, key) {
+            if(key == 0){
+                if(response.data.proposal.is_custom){
+                    amount = array_bills[count_bill].amount;
+                    date_aux = array_bills[count_bill].date;
+                }else{
+                    amount = Number(array_bills[count_bill].amount);
+                }
+                
+                total_bill += Number(array_bills[count_bill].amount);
+                var bill_month = {
+                    id: array_bills[count_bill].id,
+                    date: date_aux,
+                    amount: amount,
+                    article: article_obj,
+                    select_way_to_pay: array_bills[count_bill].way_to_pay,
+                    select_expiration: array_bills[count_bill].expiration,
+                    observations: array_bills[count_bill].observations,
+                    order_number: array_bills[count_bill].num_order,
+                    internal_observations: array_bills[count_bill].internal_observations,
+                    will_update: array_bills[count_bill].will_update,
+                    status_validate: array_bills[count_bill].status_validate,
+                }
+
+                count_bill ++;
+                array_finish_bill.push(bill_month);
+
+            }else{
+                if(!response.data.proposal.is_custom){
+                    if(date_aux == article_obj.date){
+                        var is_break = false;
+                        array_finish_bill.map(function(bill_obj, key) {
+                            if(!is_break){
+                                if(bill_obj.date == article_obj.date){
+                                    if(bill_obj.article.id_chapter == article_obj.id_chapter){
+                                        amount += Number(array_bills[count_bill].amount);
+                                        total_bill += Number(array_bills[count_bill].amount);
+                                        array_finish_bill[last_key].amount = amount;
+                                        is_break = true;
+                                    }
+                                }
+                            }
+                        });
+
+                        if(!is_break){
+                            amount = 0;
+                            date_aux = article_obj.date;
+                            amount += Number(array_bills[count_bill].amount);
+                            total_bill += Number(array_bills[count_bill].amount);
+                            var bill_month = {
+                                id: array_bills[count_bill].id,
+                                date: date_aux,
+                                amount: amount,
+                                article: article_obj,
+                                select_way_to_pay: array_bills[count_bill].way_to_pay,
+                                select_expiration: array_bills[count_bill].expiration,
+                                observations: array_bills[count_bill].observations,
+                                order_number: array_bills[count_bill].num_order,
+                                internal_observations: array_bills[count_bill].internal_observations,
+                                will_update: array_bills[count_bill].will_update,
+                                status_validate: array_bills[count_bill].status_validate,
+                            }
+                            array_finish_bill.push(bill_month);
+                            count_bill++;
+                            last_key = (array_finish_bill.length - 1);
+                        }
+
+                    }else{
+                        amount = 0;
+                        date_aux =  article_obj.date;
+                        amount += Number(array_bills[count_bill].amount);
+                        total_bill += Number(array_bills[count_bill].amount);
+                        var bill_month = {
+                            id: array_bills[count_bill].id,
+                            date: date_aux,
+                            amount: amount,
+                            article: article_obj,
+                            select_way_to_pay: array_bills[count_bill].way_to_pay,
+                            select_expiration: array_bills[count_bill].expiration,
+                            observations: array_bills[count_bill].observations,
+                            order_number: array_bills[count_bill].num_order,
+                            internal_observations: array_bills[count_bill].internal_observations,
+                            will_update: array_bills[count_bill].will_update,
+                            status_validate: array_bills[count_bill].status_validate,
+                        }
+                        count_bill++;
+                        array_finish_bill.push(bill_month);
+                        last_key = (array_finish_bill.length - 1);
+                    }
+
+                }else{
+                    amount = array_bills[count_bill].amount;
+                    total_bill += Number(array_bills[count_bill].amount);
+                    var bill_month = {
+                        id: array_bills[count_bill].id,
+                        date: array_bills[count_bill].date,
+                        amount: amount,
+                        article: article_obj,
+                        select_way_to_pay: array_bills[count_bill].way_to_pay,
+                        select_expiration: array_bills[count_bill].expiration,
+                        observations: array_bills[count_bill].observations,
+                        order_number: array_bills[count_bill].num_order,
+                        internal_observations: array_bills[count_bill].internal_observations,
+                        will_update: array_bills[count_bill].will_update,
+                        status_validate: array_bills[count_bill].status_validate,
+                    }
+
+                    count_bill ++;
+                    array_finish_bill.push(bill_month);
+                }
+            }
+        });
+
+    }else{
+        array_bills.map(function(bill_obj, key) {
+            amount = array_bills[count_bill].amount;
+            date_aux = array_bills[count_bill].date;
+            
+            total_bill += Number(amount);
+            var bill_month = {
+                id: array_bills[count_bill].id,
+                date: date_aux,
+                amount: amount,
+                article: '',//article_obj,
+                select_way_to_pay: array_bills[count_bill].way_to_pay,
+                select_expiration: array_bills[count_bill].expiration,
+                observations: array_bills[count_bill].observations,
+                order_number: array_bills[count_bill].num_order,
+                internal_observations: array_bills[count_bill].internal_observations,
+                will_update: array_bills[count_bill].will_update,
+                status_validate: array_bills[count_bill].status_validate,
+            }
+
+            count_bill ++;
+            array_finish_bill.push(bill_month);
+        });
+    }
+
+    custom_state.bill_obj.array_bills = array_finish_bill;
+    custom_state.bill_obj.total_bill = total_bill;
+
+    //Nombre completo del consultor
+    custom_state.user_obj = response.data.consultant;
+
+    //Nombre de la empresa
+    custom_state.company_aux = response.data.company_aux;
+
+    //Guardamos datos
+    custom_state.proposal_bd_obj = proposal_submission_settings;
+    custom_state.proposal_obj.array_dates = array_dates_prices;
+
+    custom_state.status_view = 2;
+    if(type == 2){
+        custom_state.status_view = 3;
+    }
+    state.errors.type_error = 'get_info_proposal';
+    state.errors.code = response.data.code;
+    custom_state.is_change_get_info = 1;
+    custom_state.id_company = response.data.proposal.id_company;
+    if(type == 2){
+        custom_state.proposal_obj.id_order = response.data.proposal.id
+    }
+}
+
+//Rellenar objetos para el store y mostrar la información de las ordenes de información
+function createObjectsStoreInfo({ state }, response, type){
+    var custom_state = state.invoice_validations;
 
     if(response.data.proposal.is_custom){
         custom_state.num_custom_invoices = Number(response.data.proposal_bills.length);
@@ -1469,6 +1911,7 @@ function createObjectsStore({ state }, response, type){
     });
 
     //Recogemos datos de la propuesta
+    console.log(response.data);
     var proposal = response.data.proposal
     var proposal_submission_settings = {
         id: proposal.id,
@@ -1489,7 +1932,8 @@ function createObjectsStore({ state }, response, type){
         id_proposal_custom: proposal.id_proposal_custom,
         id_proposal_custom_aux: proposal.id_proposal_custom_aux,
         discount: proposal.discount,
-        status: proposal.status
+        status: proposal.status,
+        advertiser: proposal.advertiser
     }
     
     //Guardamos con un nuevo formato para las facturas los articulos

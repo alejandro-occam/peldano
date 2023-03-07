@@ -110,9 +110,6 @@ const state = {
                             }
                         }
                     ],
-                    chapter_obj: {
-                        name: ''
-                    },
                     articles_aux: [],
                     total_global: 0,
                     total_amount_global: 0,
@@ -156,7 +153,54 @@ const state = {
             array_articles: [],
             array_custom_consultant: []
         }],
-        is_loading: false
+        is_loading: false,
+        //Info
+        array_users: null,
+        array_companies: null,
+        status_view: 1,
+        proposal_obj: {
+            chapters:[
+                {
+                    chapter_obj: {
+                        name: ''
+                    },
+                    articles: [
+                        {
+                            department_obj: {
+                                name: ''
+                            },
+                            article_obj: {
+                                name: ''
+                            }
+                        }
+                    ],
+                    articles_aux: [],
+                    total_global: 0,
+                    total_amount_global: 0,
+                    total_individual_pvp: 0,
+                }
+            ],
+            is_change: false,
+            array_dates: [],
+            array_consultants: []
+        },
+        proposal_bd_obj: null,
+        bill_obj: {
+            articles: [],
+            array_bills: []
+        },
+        user_obj: {
+            name: null,
+            surname: null
+        },
+        user_control: {
+            name: null,
+            surname: null
+        },
+        num_custom_invoices: 0,
+        is_change_get_info: 0,
+        id_company: 0,
+        html_orders_list: ''
     },
     suscriptions: {
         array_calendars: [],

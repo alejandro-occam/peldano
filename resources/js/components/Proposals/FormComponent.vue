@@ -153,7 +153,8 @@
                                         <span>ANUNCIANTE</span>
                                     </div>
                                     <div class="f-15 text-dark">
-                                        {{ name_company }}
+                                        <input v-if="!this.finish_proposal && !this.create_order" v-model="advertiser" type="text" class="form-control discount bg-blue-light-white font-weight-bolder f-15 color-dark-gray not-border mt-3" style="width:150px;" placeholder=""/>
+                                        <span v-else >{{ this.advertiser }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -614,7 +615,7 @@
                                         </template>
                                     </td>
                                     <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">DEPARTAMENTO:</div><div class="ml-5 f-13 text-dark">{{ proposals.proposal_obj.chapters[0].articles[0].department_obj.name }}</div></td>
-                                    <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">ANUNCIANTE:</div><div class="ml-5 f-13 text-dark">{{ this.name_company }}</div></td>
+                                    <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">ANUNCIANTE:</div><div class="ml-5 f-13 text-dark">{{ this.proposal_submission_settings.advertiser }}</div></td>
                                     <td class="py-2 td-border-left" v-if="this.proposal_submission_settings.show_discounts == 1"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">DESCUENTO:</div><div class="ml-5 f-13 text-dark">{{ this.proposal_submission_settings.discount }}%</div></td>
                                     <td class="py-2 td-border-left bg-blue-light-white"><div class="f-13 ml-5 font-weight-bolder color-blue">OFERTA:</div><div class="ml-5 f-13 text-dark">{{ $utils.numberWithDotAndComma($utils.roundAndFix(this.offer)) }}€</div></td>
                                 </tr>
@@ -800,6 +801,7 @@ export default {
             name_company: '',
             nif_company: '',
             address_company: '',
+            advertiser: '',
             id_company: 0,
             offer: 0,
             total: 0,
@@ -1294,6 +1296,7 @@ export default {
                 }
             }
             this.generate_proposal = true;
+            this.proposal_submission_settings.advertiser = this.advertiser;
         },
         //Saber si estan rellenos observaciones, num pedido y observaciones internas
         countRows(obj){
@@ -1320,7 +1323,8 @@ export default {
                 select_way_to_pay_options: this.select_way_to_pay_options,
                 select_expiration_options: this.select_expiration_options,
                 nun_custom_invoices: this.proposals.num_custom_invoices,
-                array_consultants: this.proposals.proposal_obj.array_consultants
+                array_consultants: this.proposals.proposal_obj.array_consultants,
+                advertiser: this.advertiser
             }
             if(this.proposals.status_view == 2 && this.proposals.proposal_bd_obj != null){
                 params.id_proposal = this.proposals.proposal_bd_obj.id;
@@ -1336,6 +1340,7 @@ export default {
             me.select_company = '';
             me.select_company_other_values = '';
             me.name_company = '';
+            me.advertiser = '';
             me.name_nif = '';
             me.name_address = '';
             me.id_company = 0;
@@ -1362,6 +1367,7 @@ export default {
             me.proposal_submission_settings.show_pvp = 1;
             me.proposal_submission_settings.sales_possibilities = 6;
             me.proposal_submission_settings.discount = 0;
+            me.proposal_submission_settings.advertiser = '';
         },
         //Copiar propuesta
         copyOrderView(){
@@ -1458,6 +1464,8 @@ export default {
             this.proposal_submission_settings.show_pvp = this.proposals.proposal_bd_obj.show_pvp;
             this.proposal_submission_settings.sales_possibilities = this.proposals.proposal_bd_obj.sales_possibilities;
             this.proposal_submission_settings.discount = this.proposals.proposal_bd_obj.discount;
+            this.proposal_submission_settings.advertiser = this.proposals.proposal_bd_obj.advertiser;
+            this.advertiser = this.proposals.proposal_bd_obj.advertiser;
             this.discount = this.proposal_submission_settings.discount;
             this.offer = Math.round(Number(this.proposals.bill_obj.total_bill) * 100) / 100; //this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.bill_obj.total_bill));
             this.loadFormObj(); 

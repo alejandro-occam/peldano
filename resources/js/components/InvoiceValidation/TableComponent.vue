@@ -112,13 +112,12 @@
                                             <tr v-for="index_article in Number(invoice_validations.array_bill_orders[index_bill_order - 1].array_articles.length)"  class="">
                                                 <td class="pl-3 py-1 text-dark" style="width: 50px;">{{ invoice_validations.array_bill_orders[index_bill_order - 1].array_articles[index_article - 1].id_sage_article }}</td>
                                                 <td class="pl-3 py-1 text-dark" style="width: 750px;">{{ invoice_validations.array_bill_orders[index_bill_order - 1].array_articles[index_article - 1].name }}</td>
-                                                <td class="pl-3 py-1 text-dark" style="color: red !important;">Beta10</td>
+                                                <td class="pl-3 py-1 text-dark" >{{ invoice_validations.array_bill_orders[index_bill_order - 1].advertiser }}</td>
                                                 <td class="pl-3 py-1 text-dark">{{ invoice_validations.array_bill_orders[index_bill_order - 1].array_articles[index_article - 1].amount }}</td>
                                                 <td class="pl-3 py-1 text-dark">{{ this.$utils.numberWithDotAndComma(invoice_validations.array_bill_orders[index_bill_order - 1].array_articles[index_article - 1].amount_percent) }}</td>
                                                 <td class="pl-3 py-1 text-dark">{{ this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(invoice_validations.array_bill_orders[index_bill_order - 1].array_articles[index_article - 1].price_article)) }}</td>
                                                 <td class="pl-3 py-1 text-dark">{{ this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(invoice_validations.array_bill_orders[index_bill_order - 1].array_articles[index_article - 1].price_article_percent)) }}</td>
                                                 <td class="pl-3 py-1 text-dark">{{ this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(invoice_validations.array_bill_orders[index_bill_order - 1].array_articles[index_article - 1].discount_percent)) }}</td>
-                                                <td class="pl-3 py-1 text-dark" style="color: red !important;">0,00</td>
                                                 <td class="pl-3 py-1 text-dark">{{ this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(invoice_validations.array_bill_orders[index_bill_order - 1].array_articles[index_article - 1].real_amount)) }}</td>
                                             </tr>
                                         </tbody>

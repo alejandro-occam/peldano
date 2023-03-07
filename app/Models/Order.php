@@ -17,7 +17,8 @@ class Order extends Model
         'is_custom',
         'discount',
         'status',
-        'reason_update'
+        'reason_update',
+        'advertiser'
     ];
 
     /**
@@ -31,7 +32,8 @@ class Order extends Model
         'is_custom' => 'boolean',
         'discount' => 'string',
         'status' => 'integer',
-        'reason_update' => 'string'
+        'reason_update' => 'string',
+        'advertiser' => 'string'
     ];
 
     /**
@@ -45,6 +47,7 @@ class Order extends Model
         'is_custom',
         'discount',
         'status',
-        'reason_update'
+        'reason_update',
+        'advertiser'
     ];
 }
