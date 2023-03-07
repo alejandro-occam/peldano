@@ -23,7 +23,7 @@ class InvoiceValidationController extends Controller
         $select_validate = $request->get('select_validate');
         $date = $request->get('date');
         
-        $array_bill_orders_custom = BillOrder::select('bills_orders.*', 'orders.id as id_order', 'proposals.id_user as id_consultant', 'companies.name as name_company', 'companies.id_sage as id_company_sage', 'proposals.is_custom as type_order', 'orders.is_custom  as order_custom')
+        $array_bill_orders_custom = BillOrder::select('bills_orders.*', 'orders.id as id_order', 'orders.advertiser as advertiser', 'proposals.id_user as id_consultant', 'companies.name as name_company', 'companies.id_sage as id_company_sage', 'proposals.is_custom as type_order', 'orders.is_custom  as order_custom')
                                         ->leftJoin('orders', 'orders.id', 'bills_orders.id_order')
                                         ->leftJoin('proposals', 'proposals.id', 'orders.id_proposal')
                                         ->leftJoin('contacts', 'contacts.id', 'proposals.id_contact')

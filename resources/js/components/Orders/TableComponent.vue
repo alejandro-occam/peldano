@@ -434,7 +434,11 @@ import { off } from "process";
 
                 $("#list_orders").on("click", ".btn-show", function () {
                     var id = $(this).data("id");
-                    me.getInfoOrder(id);
+                    var params = {
+                        id: id,
+                        type: 1
+                    }
+                    me.getInfoOrder(params);
                 });
             },
             changeStatusShowAll(status){
