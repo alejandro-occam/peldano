@@ -47,7 +47,7 @@
                                         <span>ANUNCIANTE</span>
                                     </div>
                                     <div class="f-15 text-dark">
-                                        {{ name_company }}
+                                        {{ this.advertiser }}
                                     </div>
                                 </div>
                             </div>
@@ -268,6 +268,7 @@ export default {
             name_company: '',
             nif_company: '',
             address_company: '',
+            advertiser: '',
             id_company: 0,
             offer: 0,
             total: 0,
@@ -590,6 +591,7 @@ export default {
             me.select_type_proposal = '1';
             me.is_show_buttons_bill = false;
             me.is_updating_order = 0;
+            me.advertiser = '';
         },
         returnView(){
             this.changeViewStatusOrders(1);
@@ -600,6 +602,7 @@ export default {
             this.is_change_get_info = this.invoice_validations.is_change_get_info;
             this.invoice_validations.is_change_get_info = 0;
             this.id_company = this.invoice_validations.id_company;
+            this.advertiser = this.invoice_validations.proposal_bd_obj.advertiser;
             this.select_company = this.id_company;
             this.array_companies = this.invoice_validations.company_aux;
             this.getNameCompany(this.select_company, 2);

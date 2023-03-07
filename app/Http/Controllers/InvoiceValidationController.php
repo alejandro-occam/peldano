@@ -52,6 +52,7 @@ class InvoiceValidationController extends Controller
         }
         
         $array_bill_orders_custom = $array_bill_orders_custom->get();
+        error_log('array_bill_orders_custom: '.$array_bill_orders_custom);
 
         $array_dates = array();
 
@@ -164,6 +165,7 @@ class InvoiceValidationController extends Controller
             $bill_order['internal_observations'] = $bill_order_custom['internal_observations'];
             $bill_order['array_articles'] = $bill_order_custom['array_articles'];
             $bill_order['custom_date'] = $bill_order_custom['custom_date'];
+            $bill_order['advertiser'] = $bill_order_custom['advertiser'];
             
             $array_bill_orders[] = $bill_order_custom;
         }

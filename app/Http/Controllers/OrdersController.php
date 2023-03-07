@@ -540,7 +540,6 @@ class OrdersController extends Controller
                 $bill['array_articles'] = $array_articles;
             }
         }
-        error_log($bills_orders);
         //Consultamos el usuario que ha creado la propuesta
         $user = User::find($proposal->id_user);
         $user_control = User::select('users.*', 'roles.name as role_name') 
@@ -574,6 +573,8 @@ class OrdersController extends Controller
 
         //Adjuntamos el id_order al objeto proposal
         $proposal['id_order'] = $order->id;
+
+        error_log($order);
         
         $response['user_control'] = $user_control;
         $response['company_aux'] = $array_companies;
