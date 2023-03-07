@@ -213,7 +213,6 @@
                     var id = $(this).data("id");
                     var array_suscriptions = [];
                     array_suscriptions.push(id);
-                    array_suscriptions.push(2);
                     //this.$refs.modal_update_suscription.array_suscriptions = array_suscriptions;
                     document.getElementById('array_suscriptions').value = array_suscriptions;
                     $('#modal_update_suscription').modal('show');
