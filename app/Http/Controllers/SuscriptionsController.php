@@ -217,7 +217,7 @@ class SuscriptionsController extends Controller
         $product['pvp'] = $article->pvp;
         $array_sage_products[] = $product;
 
-        $number = Date('Y').$company->id.$suscription->id;
+        $number = Date('Y').$company->id.$suscription->id.$suscription->num.$suscription->num_finish;
 
         error_log(print_r($array_sage_products, true));
         //Generamos el albarán en Sage
