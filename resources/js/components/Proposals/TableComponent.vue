@@ -143,11 +143,14 @@
 
                 var date_ms_from = '';
                 var date_ms_to = '';
+                var date_from = '';
+                var date_to = '';
 
                 if(type == 1 || type == undefined){
                     date_ms_from = Date.parse(me.date_from);
                     date_ms_to = Date.parse(me.date_to);
-                    
+                    date_from = me.$utils.customFormDate(date_ms_from);
+                    date_to = me.$utils.customFormDate(date_ms_to);
                     // me.datatable.setDataSourceParam('num_proposal', me.num_proposal);
                     // me.datatable.setDataSourceParam('select_consultant', me.select_consultant);
                     // me.datatable.setDataSourceParam('select_department', me.select_department);
@@ -183,8 +186,8 @@
                                     select_consultant: me.select_consultant,
                                     select_department: me.select_department,
                                     select_status_order: me.select_status_order,
-                                    date_from: me.$utils.customFormDate(date_ms_from),
-                                    date_to: me.$utils.customFormDate(date_ms_to)
+                                    date_from: date_from,
+                                    date_to: date_to
                                 }
 
                             },
