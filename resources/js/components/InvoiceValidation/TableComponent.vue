@@ -29,6 +29,7 @@
                 <table width="100%" cellpadding="2" cellspacing="1" v-if="Number(invoice_validations.array_bill_orders.length) > 0 && invoice_validations.array_bill_orders != undefined">
                     <thead class="custom-columns-datatable">
                         <tr class="">
+                            <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 25px;"><span style="width: 20px;"><label class="checkbox checkbox-single checkbox-all ml-2"><input  class="input-checkbox-all" type="checkbox" @change="selectAllCheck">&nbsp;<span></span></label></span></th>
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 25px;"><span>N</span></th>
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 25px;"><span>F</span></th>
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 125px;"><span>Código</span></th>
@@ -47,6 +48,7 @@
                         <template v-for="index_bill_order in Number(invoice_validations.array_bill_orders.length)" :key="index_bill_order.id">
                             <!--ROW 1-->
                             <tr class="row-product bg-blue-light-white">
+                                <td><input :checked="true" class="input-checkbox-single" type="checkbox" :value="invoice_validations.array_bill_orders[index_bill_order - 1].id" v-on:click="selectSingleCheck(index_bill_order - 1)"/></td>
                                 <td class="pl-3 py-5 text-dark text-align-center">{{ index_bill_order }}</td>
                                 <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].type_order == 0" class="text-align-center text-dark">S </td>
                                 <td v-else class="text-align-center text-dark">P </td>
@@ -112,13 +114,12 @@
                                             <tr v-for="index_article in Number(invoice_validations.array_bill_orders[index_bill_order - 1].array_articles.length)"  class="">
                                                 <td class="pl-3 py-1 text-dark" style="width: 50px;">{{ invoice_validations.array_bill_orders[index_bill_order - 1].array_articles[index_article - 1].id_sage_article }}</td>
                                                 <td class="pl-3 py-1 text-dark" style="width: 750px;">{{ invoice_validations.array_bill_orders[index_bill_order - 1].array_articles[index_article - 1].name }}</td>
-                                                <td class="pl-3 py-1 text-dark" style="color: red !important;">Beta10</td>
+                                                <td class="pl-3 py-1 text-dark" >{{ invoice_validations.array_bill_orders[index_bill_order - 1].advertiser }}</td>
                                                 <td class="pl-3 py-1 text-dark">{{ invoice_validations.array_bill_orders[index_bill_order - 1].array_articles[index_article - 1].amount }}</td>
                                                 <td class="pl-3 py-1 text-dark">{{ this.$utils.numberWithDotAndComma(invoice_validations.array_bill_orders[index_bill_order - 1].array_articles[index_article - 1].amount_percent) }}</td>
                                                 <td class="pl-3 py-1 text-dark">{{ this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(invoice_validations.array_bill_orders[index_bill_order - 1].array_articles[index_article - 1].price_article)) }}</td>
                                                 <td class="pl-3 py-1 text-dark">{{ this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(invoice_validations.array_bill_orders[index_bill_order - 1].array_articles[index_article - 1].price_article_percent)) }}</td>
                                                 <td class="pl-3 py-1 text-dark">{{ this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(invoice_validations.array_bill_orders[index_bill_order - 1].array_articles[index_article - 1].discount_percent)) }}</td>
-                                                <td class="pl-3 py-1 text-dark" style="color: red !important;">0,00</td>
                                                 <td class="pl-3 py-1 text-dark">{{ this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(invoice_validations.array_bill_orders[index_bill_order - 1].array_articles[index_article - 1].real_amount)) }}</td>
                                             </tr>
                                         </tbody>
@@ -297,6 +298,27 @@
                 }
                 this.invoice_validations.is_loading = true;
                 this.validateBill(params)
+            },
+            selectAllCheck(){
+                var check_all = document.getElementsByClassName("input-checkbox-all");
+                var list = document.getElementsByClassName("input-checkbox-single");
+                if(check_all[0].checked){
+                    for (var index = 0; index < list.length; ++index) {
+                        list[index].setAttribute("checked", "true");
+                    }
+                }else{
+                    for (var index = 0; index < list.length; ++index) {
+                        list[index].removeAttribute("checked", "true");
+                    }
+                }                
+            },
+            selectSingleCheck(id){
+                var check_single = document.getElementsByClassName("input-checkbox-single")[id];
+                if(check_single.checked){
+                    check_single.setAttribute("checked", "true");
+                }else{
+                    check_single.removeAttribute("checked", "false");
+                }
             }
         },
         computed: {

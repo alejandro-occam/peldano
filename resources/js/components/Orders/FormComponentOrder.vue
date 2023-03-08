@@ -107,7 +107,8 @@
                                         <span>ANUNCIANTE</span>
                                     </div>
                                     <div class="f-15 text-dark">
-                                        {{ name_company }}
+                                        <input v-if="this.is_updating_order" v-model="advertiser" type="text" class="form-control discount bg-blue-light-white font-weight-bolder f-15 color-dark-gray not-border mt-3" style="width:150px;" placeholder=""/>
+                                        <span v-else >{{ this.advertiser }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -386,6 +387,7 @@ export default {
             name_company: '',
             nif_company: '',
             address_company: '',
+            advertiser: '',
             id_company: 0,
             offer: 0,
             total: 0,
@@ -442,7 +444,8 @@ export default {
                 show_invoices: 1,
                 show_pvp: 1,
                 sales_possibilities: '6',
-                discount: 0
+                discount: 0,
+                advertiser: ''
             },
             is_change_get_info: 0,
             is_change_get_info_input: 0,
@@ -876,6 +879,7 @@ export default {
             me.nif_company = '';
             me.address_company = '';
             me.id_company = 0;
+            me.advertiser = '';
             me.offer = 0;
             me.total = 0;
             me.discount = '0.00';
@@ -897,6 +901,7 @@ export default {
             me.proposal_submission_settings.show_pvp = 1;
             me.proposal_submission_settings.sales_possibilities = 6;
             me.proposal_submission_settings.discount = 0;
+            me.proposal_submission_settings.advertiser = '';
             me.is_updating_order = 0;
         },
         //Modificar orden
@@ -932,6 +937,8 @@ export default {
             this.proposal_submission_settings.show_pvp = this.orders.proposal_bd_obj.show_pvp;
             this.proposal_submission_settings.sales_possibilities = this.orders.proposal_bd_obj.sales_possibilities;
             this.proposal_submission_settings.discount = this.orders.proposal_bd_obj.discount;
+            this.proposal_submission_settings.advertiser = this.orders.proposal_bd_obj.advertiser;
+            this.advertiser = this.orders.proposal_bd_obj.advertiser;
             this.discount = this.proposal_submission_settings.discount;
             this.offer = Math.round(Number(this.orders.bill_obj.total_bill) * 100) / 100; //this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.bill_obj.total_bill));
             this.loadFormObj(); 
@@ -971,7 +978,8 @@ export default {
                     'bill_obj': this.orders.bill_obj,
                     'discount': this.discount,
                     'reason_update': this.orders.reason_update,
-                    'array_consultants': this.orders.proposal_obj.array_consultants
+                    'array_consultants': this.orders.proposal_obj.array_consultants,
+                    'advertiser': this.advertiser
                 }
                 this.updateOrder(params);
 
@@ -1147,6 +1155,8 @@ export default {
                 this.proposal_submission_settings.sales_possibilities = this.orders.proposal_bd_obj.sales_possibilities;
                 this.proposal_submission_settings.discount = this.orders.proposal_bd_obj.discount;
                 this.discount =  this.proposal_submission_settings.discount;
+                this.proposal_submission_settings.advertiser = this.orders.proposal_bd_obj.advertiser;
+                this.advertiser =  this.proposal_submission_settings.advertiser;
                 this.loadFormObj();        
                 this.offer = this.orders.bill_obj.total_bill;
             }

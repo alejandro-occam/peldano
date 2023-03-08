@@ -31,9 +31,9 @@ class SuscriptionsController extends Controller
             }
         }
 
-        $array_suscriptions = Suscription::select('suscriptions.*', 'articles.name as article_name', 'calendars_magazines.title as calendars_magazines_name', 'contacts.name as contacts_name', 'contacts.surnames as contacts_surname')
+        $array_suscriptions = Suscription::select('suscriptions.*', 'articles.name as article_name', 'calendars.name as calendars_magazines_name', 'contacts.name as contacts_name', 'contacts.surnames as contacts_surname')
                                             ->leftJoin('articles', 'articles.id', 'suscriptions.id_article')
-                                            ->leftJoin('calendars_magazines', 'calendars_magazines.id', 'suscriptions.id_calendar')
+                                            ->leftJoin('calendars', 'calendars.id', 'suscriptions.id_calendar')
                                             ->leftJoin('contacts', 'contacts.id', 'suscriptions.id_contact')
                                             ->skip($start)
                                             ->take($skip)
@@ -70,7 +70,7 @@ class SuscriptionsController extends Controller
 
     //Listar calendarios
     function listCalendars(){
-        $array_calendars = Calendar::get();
+        $array_calendars = Calendar::orderBy('name')->get();
 
         $response['array_calendars'] = $array_calendars;
         $response['code'] = 1000;
@@ -81,7 +81,7 @@ class SuscriptionsController extends Controller
     function listCalendarsMagazines($id){
         $array_calendars_magazines = CalendarMagazine::select('calendars_magazines.*' ,'calendars.name as name_calendar')
                                                         ->leftJoin('calendars', 'calendars.id', 'calendars_magazines.id_calendar')
-                                                        ->where('calendars_magazines.id_calendar', $id)
+                                                         ->where('calendars_magazines.id_calendar', $id)
                                                         ->get();
 
         $response['array_calendars_magazines'] = $array_calendars_magazines;
@@ -91,18 +91,17 @@ class SuscriptionsController extends Controller
 
     //Listar articulos según el id_project
     function listArticles($id){
-        //Consultamos el calendar_magazine
-        $calendar_magazine = CalendarMagazine::select('calendars.id_project')
-                                            ->leftJoin('calendars', 'calendars.id', 'calendars_magazines.id_calendar')
-                                            ->where('calendars_magazines.id', $id)->first();
-
+        //Consultamos los artículos en base al calendario seleccionado
         $array_articles = Article::select('articles.*')
                                     ->leftJoin('batchs', 'batchs.id', 'articles.id_batch')
                                     ->leftJoin('chapters', 'chapters.id', 'batchs.id_chapter')
                                     ->leftJoin('projects', 'projects.id', 'chapters.id_project')
-                                    ->where('projects.id', $calendar_magazine['id_project'])
+                                    ->leftJoin('calendars', 'calendars.id_project', 'projects.id')
+                                    ->where('calendars.id', $id)
+                                    ->groupBy('articles.id')
+                                    ->orderBy('articles.name')
                                     ->get();
-        
+                                    
         $response['array_articles'] = $array_articles;
         $response['code'] = 1000;
         return response()->json($response);
@@ -110,25 +109,25 @@ class SuscriptionsController extends Controller
 
     //Añadir suscripción
     function addSuscription(Request $request){
-        if (!$request->has('id_client') || !$request->has('id_calendar_magazine') || !$request->has('id_article') || !$request->has('num') || !$request->has('num_finish')) {
+        if (!$request->has('id_client') || !$request->has('id_calendar') || !$request->has('id_article') || !$request->has('num') || !$request->has('num_finish')) {
             $response['code'] = 1001;
             return response()->json($response);
         }
 
         $id_client = $request->get('id_client');
-        $id_calendar_magazine = $request->get('id_calendar_magazine');
+        $id_calendar = $request->get('id_calendar');
         $id_article = $request->get('id_article');
         $num = $request->get('num');
         $num_finish = $request->get('num_finish');
 
-        if(!isset($id_client) || empty($id_client) || !isset($id_calendar_magazine) || empty($id_calendar_magazine) || !isset($id_article) || empty($id_article) || !isset($num) || empty($num) || !isset($num_finish) || empty($num_finish)){
+        if(!isset($id_client) || empty($id_client) || !isset($id_calendar) || empty($id_calendar) || !isset($id_article) || empty($id_article) || !isset($num) || empty($num) || !isset($num_finish) || empty($num_finish)){
             $response['code'] = 1001;
             return response()->json($response);
         }
 
         $suscription = Suscription::create([
             'id_contact' => $id_client,
-            'id_calendar' => $id_calendar_magazine,
+            'id_calendar' => $id_calendar,
             'id_article' => $id_article,
             'num' => $num,
             'num_finish' => $num_finish

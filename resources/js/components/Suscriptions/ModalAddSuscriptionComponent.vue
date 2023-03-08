@@ -21,16 +21,9 @@
                         </div>
                         <div class="input-group mb-5 d-block" >
                             <span class="my-auto w-25">Calendarios</span>
-                            <select class="form-control bg-gray text-dark select-custom select-filter mt-3 w-100" style="color: #181C32 !important;" :name="'select_calendar'" :id="'select_calendar'" v-model="select_calendar" data-style="select-lightgreen" @change="listMagazinesModal">
+                            <select class="form-control bg-gray text-dark select-custom select-filter mt-3 w-100" style="color: #181C32 !important;" :name="'select_calendar'" :id="'select_calendar'" v-model="select_calendar" data-style="select-lightgreen" @change="listArticlesModal">
                                 <option value="0" selected> Selecciona un calendario</option>
                                 <option v-for="calendar in suscriptions.array_calendars" :value="calendar.id" :key="calendar.id" v-text="calendar.name" ></option>
-                            </select>
-                        </div>
-                        <div class="input-group mb-5 d-block" >
-                            <span class="my-auto w-25">Revista</span>
-                            <select class="form-control bg-gray text-dark select-custom select-filter mt-3 w-100" style="color: #181C32 !important;" :name="'select_magazine'" :id="'select_magazine'" v-model="select_magazine" data-style="select-lightgreen" @change="listArticlesModal">
-                                <option value="0" selected> Selecciona una revista</option>
-                                <option v-for="calendar_magazine in suscriptions.array_calendars_magazines" :value="calendar_magazine.id" :key="calendar_magazine.id" v-text="calendar_magazine.name_calendar + ' - ' + calendar_magazine.title" ></option>
                             </select>
                         </div>
                         <div class="input-group mb-5 d-block" >
@@ -84,7 +77,6 @@ import ProgressSpinner from 'primevue/progressspinner';
                 select_client: 0, 
                 array_clients: [],
                 select_calendar: 0,
-                select_magazine: 0,
                 select_article: 0,
                 num: '',
                 num_finish: '',
@@ -109,7 +101,7 @@ import ProgressSpinner from 'primevue/progressspinner';
                 this.valid = true;
                 
                 if(this.select_client == "" || this.select_client == 0 || this.select_client == null
-                    || this.select_magazine == "" || this.select_magazine == 0 || this.select_magazine == null
+                    || this.select_calendar == "" || this.select_calendar == 0 || this.select_calendar == null
                     || this.select_article == "" || this.select_article == 0 || this.select_article == null
                     || this.num == "" || this.num == null || this.num <= 0
                     || this.num_finish == "" || this.num_finish == null || this.num_finish <= 0){
@@ -119,7 +111,7 @@ import ProgressSpinner from 'primevue/progressspinner';
                 if(this.valid){ 
                     var params = {
                         id_client: this.select_client,
-                        id_calendar_magazine: this.select_magazine,
+                        id_calendar: this.select_calendar,
                         id_article: this.select_article,
                         num: this.num,
                         num_finish: this.num_finish
@@ -133,7 +125,7 @@ import ProgressSpinner from 'primevue/progressspinner';
             },
             clearForm(){
                 this.select_client = 0;
-                this.select_magazine = 0;
+                this.select_calendar = 0;
                 this.select_article = 0;
                 this.num = '';
                 this.num_finish = '';
@@ -142,14 +134,14 @@ import ProgressSpinner from 'primevue/progressspinner';
             },
             //Listar revistas modal, 
             listMagazinesModal(){
-                this.select_magazine = 0;
+                this.select_calendar = 0;
                 this.select_article = 0;
                 this.getCalendarsMagazines(this.select_calendar);
             },
             //Listar artículos
             listArticlesModal(){
                 this.select_article = 0;
-                this.getArticlesSuscriptions(this.select_magazine);
+                this.getArticlesSuscriptions(this.select_calendar);
                 this.clearError();
             }
         },

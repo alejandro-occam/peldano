@@ -1,79 +1,30 @@
 <template>
     <div>
         <div class="col-12 d-flex flex-wrap justify-content-between">
-            <template v-if="(orders.status_view == 2 && orders.proposal_bd_obj != null)">
-                <AddButtonComponent
-                    :columns="'ml-auto mr-7'"
-                    :text="'Volver'"
-                    :id="'btn_return'"
-                    :src="'/media/custom-imgs/flecha_btn_volver.svg'"
-                    :width="16"
-                    :height="16"
-                    v-on:click="returnView()"
-                />
-                <template v-if="!this.is_updating_order">
-                    <AddButtonComponent
-                        :columns="'mr-7'"
-                        :text="'Copiar'"
-                        :id="'btn_copy_order'"
-                        :src="'/media/custom-imgs/icono_btn_crear_orden.svg'"
-                        :width="16"
-                        :height="16"
-                        v-on:click="copyOrderBtn()"
-                    />
-                    <AddButtonComponent
-                        :columns="'mr-7'"
-                        :text="'Modificar'"
-                        :id="'btn_update_order'"
-                        :src="'/media/custom-imgs/icono_btn_editar.svg'"
-                        :width="16"
-                        :height="16"
-                        v-on:click="updateOrderFront()"
-                    />
-                    <DeleteButtonComponent
-                        :columns="''"
-                        :text="'Eliminar'"
-                        :id="'btn_delete_order'"
-                        :src="'/media/custom-imgs/icono_btn_borrar.svg'"
-                        :width="16"
-                        :height="16"
-                        v-on:click="deleteOrderAction()"
-                    />
-                </template>
-                
-            </template>
-            <template v-else>
-                <AddButtonComponent
-                    :columns="'ml-auto mr-7'"
-                    :text="'Volver'"
-                    :id="'btn_return'"
-                    :src="'/media/custom-imgs/flecha_btn_volver.svg'"
-                    :width="16"
-                    :height="16"
-                    v-on:click="returnView()"
-                />
-                
-            </template>
-            
+            <AddButtonComponent
+                :columns="'ml-auto mr-7'"
+                :text="'Volver'"
+                :id="'btn_return'"
+                :src="'/media/custom-imgs/flecha_btn_volver.svg'"
+                :width="16"
+                :height="16"
+                v-on:click="returnView()"
+            />
         </div>
         <div class="col-12 pl-0 mt-15">
-            <h3 class="color-blue" v-if="!this.finish_proposal && !this.is_updating_order">Datos del cliente</h3>
-            <div class="my-5 col-12 row" v-if="!this.finish_proposal && !this.generate_proposal && !this.is_updating_order">
+            <h3 class="color-blue" v-if="!this.finish_proposal">Datos del cliente</h3>
+            <div class="my-5 col-12 row" v-if="!this.finish_proposal && !this.generate_proposal">
                 <div class="input-group px-0 d-flex" v-if="this.select_company == '' && this.select_company_other_values == ''">
                     <div class="w-25">
                         <span class="w-25">Empresa o nombre y apellidos</span>
                         <div class="mt-2 select-filter">
-                            <select class="form-control select2 select-filter" id="select_company" v-model="select_company">
-                                <!---<option :data-name="company.name" :value="company.id" v-for="company in orders.array_companies" :key="company.id" v-text="company.name + ' - ' + company.fullname" ></option>-->
-                            </select>
+                            <select class="form-control select2 select-filter" id="select_company" v-model="select_company"></select>
                         </div>
                     </div>
                     <div class="w-25 ml-10">
                         <span class="w-25">Otros (localidad, e-mail, cif/nif, tlf, cp)</span>
                         <div class="mt-2 select-filter">
-                            <select class="form-control select2 select-filter" id="select_company_other_values" v-model="select_company_other_values">
-                                <!--<option :data-name="company.name" :value="company.id" v-for="company in orders.array_companies" :key="company.id" v-text="company.email + ' - ' + company.nif" ></option>-->
-                            </select>
+                            <select class="form-control select2 select-filter" id="select_company_other_values" v-model="select_company_other_values"></select>
                         </div>
                     </div>
                 </div>
@@ -87,13 +38,13 @@
                     </div>
                 </div>
             </div>
-            <div class="mt-15" v-if="(this.select_company != '' || this.select_company_other_values != '') && !this.finish_proposal && !this.generate_proposal && !this.is_updating_order">
+            <div class="mt-15" v-if="(this.select_company != '' || this.select_company_other_values != '') && !this.finish_proposal && !this.generate_proposal">
                 <button type="button" class="btn bg-azul color-white px-5 font-weight-bolder" @click="this.openFormArticle()">
                     <img class="mr-2" width="24" height="24" src="/media/custom-imgs/icono_btn_annadir_articulo_blanco.svg" />
                     Añadir artículo
                 </button>
             </div>
-            <div class="mb-5 mt-15 col-12 row" v-if="(orders.proposal_obj.chapters[0].chapter_obj.name != '' && !this.generate_proposal) || (orders.proposal_obj.chapters[0].chapter_obj.name != '' && this.is_change_get_info == 1)">
+            <div class="mb-5 mt-15 col-12 row" v-if="(orders.proposal_obj.chapters[0].chapter_obj != null && !this.generate_proposal) || (orders.proposal_obj.chapters[0].chapter_obj != null && this.is_change_get_info == 1)">
                 <div>
                     <img class="mr-2" width="150" height="150" src="/media/custom-imgs/icono_ficha_ordenes.svg" />
                 </div>
@@ -139,7 +90,8 @@
                                         <span>ANUNCIANTE</span>
                                     </div>
                                     <div class="f-15 text-dark">
-                                        {{ name_company }}
+                                        <input v-if="!this.finish_proposal && !this.create_order" v-model="advertiser" type="text" class="form-control discount bg-blue-light-white font-weight-bolder f-15 color-dark-gray not-border mt-3" style="width:150px;" placeholder=""/>
+                                        <span v-else >{{ this.advertiser }}</span>
                                     </div>
                                 </div>
                             </div>
@@ -189,7 +141,7 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12 mt-15 pl-0" v-if="(orders.proposal_obj.chapters[0].chapter_obj.name != '' && !this.finish_proposal && !this.generate_proposal) || (orders.proposal_obj.chapters[0].chapter_obj.name != '' && this.is_change_get_info == 1)">
+            <div class="col-12 mt-15 pl-0" v-if="(orders.proposal_obj.chapters[0].chapter_obj != null && !this.finish_proposal && !this.generate_proposal) || (orders.proposal_obj.chapters[0].chapter_obj != null && this.is_change_get_info == 1)">
                 <table width="100%" cellpadding="2" cellspacing="1">
                     <thead class="custom-columns-datatable">
 						<tr>
@@ -255,7 +207,7 @@
                     </tbody>
                 </table>
             </div>
-            <div class="col-12 pl-0 mt-10" v-if="orders.proposal_obj.chapters[0].chapter_obj.name != '' && !this.finish_proposal && !this.generate_proposal">
+            <div class="col-12 pl-0 mt-10" v-if="orders.proposal_obj.chapters[0].chapter_obj != null && !this.finish_proposal && !this.generate_proposal">
                 <span class="text-dark font-weight-bold mb-2">Tipo de propuesta</span>
                 <select v-if="!this.is_updating_order" class="form-control bg-gray text-dark select-custom select-filter mt-3 col-2" :name="'select_type_proposal'" :id="'select_type_proposal'" v-model="select_type_proposal" data-style="select-lightgreen">
                     <option value="1" selected>Normal</option>
@@ -268,7 +220,7 @@
                     <button type="submit" class="btn bg-azul color-white px-5 font-weight-bolder ml-4" v-on:click="openCustomInvoice()">Crear factura personalizada</button>
                 </div>
             </div>
-            <div class="col-12 pl-0 mt-10" v-if="(orders.proposal_obj.chapters[0].chapter_obj.name != '' && this.is_show_buttons_bill && !this.finish_proposal && !this.generate_proposal) || (orders.proposal_obj.chapters[0].chapter_obj.name != '' && this.is_change_get_info == 1)">
+            <div class="col-12 pl-0 mt-10" v-if="(orders.proposal_obj.chapters[0].chapter_obj != null && this.is_show_buttons_bill && !this.finish_proposal && !this.generate_proposal) || (orders.proposal_obj.chapters[0].chapter_obj != null && this.is_change_get_info == 1)">
                 <table width="100%" cellpadding="2" cellspacing="1">
                     <thead class="custom-columns-datatable">
 						<tr>
@@ -371,7 +323,7 @@
                     <button v-else-if="!this.is_change_get_info" v-on:click="this.finishProposal()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Guardar cambios</button>
                 </div>
             </div>
-            <div class="col-12 pl-0 mt-10" v-if="orders.proposal_obj.chapters[0].chapter_obj.name != '' && this.is_show_buttons_bill && this.finish_proposal && !this.generate_proposal">
+            <div class="col-12 pl-0 mt-10" v-if="orders.proposal_obj.chapters[0].chapter_obj != null && this.is_show_buttons_bill && this.finish_proposal && !this.generate_proposal">
                 <h3 class="color-blue">Configuración de la presentación de la propuesta</h3>
                 <div class="col-6 pl-0 mt-6">
                     <div class="d-flex input-group mb-5 mt-10" >
@@ -539,7 +491,7 @@
                     <button v-on:click="this.generateProposal()" type="button" class="btn bg-azul color-white px-30 font-weight-bolder">Generar propuesta</button>
                 </div>
             </div>
-            <div class="col-12 pl-0 mt-10" v-if="orders.proposal_obj.chapters[0].chapter_obj.name != '' && this.is_show_buttons_bill && this.finish_proposal && this.generate_proposal && this.is_change_get_info == 0">
+            <div class="col-12 pl-0 mt-10" v-if="orders.proposal_obj.chapters[0].chapter_obj != null && this.is_show_buttons_bill && this.finish_proposal && this.generate_proposal && this.is_change_get_info == 0">
                 <h3 v-if="this.is_change_get_info == 0" class="color-blue"></h3>
                 <div class="mt-7">
                     <template v-if="this.is_change_get_info == 0">
@@ -592,7 +544,7 @@
                                         </template>
                                     </td>
                                     <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-chapter-offer-proposal">DEPARTAMENTO:</div><div class="ml-5 f-13 text-dark">{{ orders.proposal_obj.chapters[0].articles[0].department_obj.name }}</div></td>
-                                    <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-chapter-offer-proposal">ANUNCIANTE:</div><div class="ml-5 f-13 text-dark">{{ this.name_company }}</div></td>
+                                    <td class="py-2 td-border-left"><div class="f-13 ml-5 font-weight-bolder gray-product-offer-proposal">ANUNCIANTE:</div><div class="ml-5 f-13 text-dark">{{ this.proposal_submission_settings.advertiser }}</div></td>
                                     <td class="py-2 td-border-left" v-if="this.proposal_submission_settings.show_discounts == 1"><div class="f-13 ml-5 font-weight-bolder gray-chapter-offer-proposal">DESCUENTO:</div><div class="ml-5 f-13 text-dark">{{ this.discount }}%</div></td>
                                     <td class="py-2 td-border-left bg-blue-light-white"><div class="f-13 ml-5 font-weight-bolder color-blue">OFERTA:</div><div class="ml-5 f-13 text-dark">{{ this.offer }}€</div></td>
                                 </tr>
@@ -784,6 +736,7 @@ export default {
             name_company: '',
             nif_company: '',
             address_company: '',
+            advertiser: '',
             id_company: 0,
             offer: 0,
             total: 0,
@@ -1276,6 +1229,7 @@ export default {
                 }
             }
             this.generate_proposal = true;
+            this.proposal_submission_settings.advertiser = this.advertiser;
         },
         //Saber si estan rellenos observaciones, num pedido y observaciones internas
         countRows(obj){
@@ -1302,7 +1256,8 @@ export default {
                 select_way_to_pay_options: this.select_way_to_pay_options,
                 select_expiration_options: this.select_expiration_options,
                 nun_custom_invoices: this.orders.num_custom_invoices,
-                array_consultants: this.orders.proposal_obj.array_consultants
+                array_consultants: this.orders.proposal_obj.array_consultants,
+                advertiser: this.advertiser
             }
             if(this.orders.status_view == 2 && this.orders.proposal_bd_obj != null){
                 params.id_proposal = this.orders.proposal_bd_obj.id;
@@ -1320,6 +1275,7 @@ export default {
             me.name_company = '';
             me.nif_company = '';
             me.address_company = '';
+            me.advertiser = '';
             me.id_company = 0;
             me.offer = 0;
             me.total = 0;
@@ -1345,6 +1301,7 @@ export default {
             me.proposal_submission_settings.show_pvp = 1;
             me.proposal_submission_settings.sales_possibilities = 6;
             me.proposal_submission_settings.discount = 0;
+            me.proposal_submission_settings.advertiser = '';
             me.is_updating_order = 0;
         },
         //Modificar propuesta
@@ -1404,6 +1361,8 @@ export default {
             this.proposal_submission_settings.sales_possibilities = this.orders.proposal_bd_obj.sales_possibilities;
             this.proposal_submission_settings.discount = this.orders.proposal_bd_obj.discount;
             this.discount = this.proposal_submission_settings.discount;
+            this.proposal_submission_settings.advertiser = this.proposals.proposal_bd_obj.advertiser;
+            this.advertiser = this.proposals.proposal_bd_obj.advertiser;
             this.offer = Math.round(Number(this.orders.bill_obj.total_bill) * 100) / 100; //this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.bill_obj.total_bill));
             this.loadFormObj(); 
         },

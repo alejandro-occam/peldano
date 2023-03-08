@@ -1,13 +1,13 @@
 <template>
     <div>
         <div class="col-12 pl-0 mt-15">
-            <div class="mb-5 mt-15 col-12 row" v-if="orders.proposal_obj.chapters.length > 0">
+            <div class="mb-5 mt-15 col-12 row" v-if="invoice_validations.proposal_obj.chapters.length > 0">
                 <div>
                     <img class="mr-2" width="150" height="150" src="/media/custom-imgs/icono_ficha_ordenes.svg" />
                 </div>
                 <div>
                     <div class="ml-10">
-                        <div v-if="orders.status_view == 3 && orders.proposal_bd_obj != null"><h2 class="text-dark">Propuesta {{ orders.proposal_bd_obj.id_proposal_custom_aux }}</h2></div>
+                        <div v-if="invoice_validations.status_view == 3 && invoice_validations.proposal_bd_obj != null"><h2 class="text-dark">Propuesta {{ invoice_validations.proposal_bd_obj.id_proposal_custom_aux }}</h2></div>
                         <div class="f-20">
                             <span class="text-dark font-weight-bold">Cliente: <span class="color-dark-gray font-weight-bold">{{ name_company }}</span></span>
                         </div>
@@ -25,12 +25,12 @@
                                     <div class="f-16 color-dark-gray font-weight-bolder">
                                         <span>CONSULTOR</span>
                                     </div>
-                                    <div v-for="index in Number(orders.proposal_obj.array_consultants.length)" class="f-15 text-dark">
-                                        <span>{{ orders.proposal_obj.array_consultants[index - 1].name }} - {{ orders.proposal_obj.array_consultants[index - 1].percentage }}%</span>
+                                    <div v-for="index in Number(invoice_validations.proposal_obj.array_consultants.length)" class="f-15 text-dark">
+                                        <span>{{ invoice_validations.proposal_obj.array_consultants[index - 1].name }} - {{ invoice_validations.proposal_obj.array_consultants[index - 1].percentage }}%</span>
                                         <template v-if="this.is_updating_order">
-                                            <button class="ml-3 btn bg-azul color-white px-2 py-0 font-weight-bolder" v-if="index == Number(orders.proposal_obj.array_consultants.length)" v-on:click="openAddConsultant()">+</button>
-                                            <button v-if="index != 1" data-id="{{ orders.proposal_obj.array_consultants[index - 1].id }}" type="button" style="color: #2e49ff;background-color: #e7e7e7;" class="btn py-0 px-1 ml-2" v-on:click="showConsultanModal(index)"><img width="12" height="12" src="/media/custom-imgs/icono_btn_editar.svg"></button>
-                                            <button v-if="index != 1" data-id="{{ orders.proposal_obj.array_consultants[index - 1].id }}" type="button" style="color: #2e49ff;background-color: #ffecf7;" class="btn py-0 px-1 ml-2" v-on:click="deleteConsultanForm(index)"><img width="12" height="12" src="/media/custom-imgs/icono_btn_borrar.svg"></button>
+                                            <button class="ml-3 btn bg-azul color-white px-2 py-0 font-weight-bolder" v-if="index == Number(invoice_validations.proposal_obj.array_consultants.length)" v-on:click="openAddConsultant()">+</button>
+                                            <button v-if="index != 1" data-id="{{ invoice_validations.proposal_obj.array_consultants[index - 1].id }}" type="button" style="color: #2e49ff;background-color: #e7e7e7;" class="btn py-0 px-1 ml-2" v-on:click="showConsultanModal(index)"><img width="12" height="12" src="/media/custom-imgs/icono_btn_editar.svg"></button>
+                                            <button v-if="index != 1" data-id="{{ invoice_validations.proposal_obj.array_consultants[index - 1].id }}" type="button" style="color: #2e49ff;background-color: #ffecf7;" class="btn py-0 px-1 ml-2" v-on:click="deleteConsultanForm(index)"><img width="12" height="12" src="/media/custom-imgs/icono_btn_borrar.svg"></button>
                                         </template>
                                     </div>
                                 </div>
@@ -39,7 +39,7 @@
                                         <span>DEPARTAMENTO</span>
                                     </div>
                                     <div class="f-15 text-dark">
-                                        <span>{{ orders.proposal_obj.chapters[0].articles[0].department_obj.name }}</span>
+                                        <span>{{ invoice_validations.proposal_obj.chapters[0].articles[0].department_obj.name }}</span>
                                     </div>
                                 </div>
                                 <div class="d-block ml-20">
@@ -47,7 +47,7 @@
                                         <span>ANUNCIANTE</span>
                                     </div>
                                     <div class="f-15 text-dark">
-                                        {{ name_company }}
+                                        {{ this.advertiser }}
                                     </div>
                                 </div>
                             </div>
@@ -87,7 +87,7 @@
                                                 <span>TARIFA</span>
                                             </div>
                                             <div class="f-15 color-dark-gray font-weight-bolder px-8 py-2 mt-3">
-                                                <span >{{ this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.orders.proposal_obj.total_global_normal)) }}€</span>
+                                                <span >{{ this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.invoice_validations.proposal_obj.total_global_normal)) }}€</span>
                                             </div>
                                         </div>
                                     </div>
@@ -97,39 +97,39 @@
                     </div>
                 </div>
             </div>
-            <div class="col-12 mt-15 pl-0" v-if="(orders.proposal_obj.chapters.length > 0) || (orders.proposal_obj.chapters.length > 0 && this.is_change_get_info == 1)">
+            <div class="col-12 mt-15 pl-0" v-if="(invoice_validations.proposal_obj.chapters.length > 0) || (invoice_validations.proposal_obj.chapters.length > 0 && this.is_change_get_info == 1)">
                 <table width="100%" cellpadding="2" cellspacing="1">
                     <thead class="custom-columns-datatable">
 						<tr>
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span>SERVICIOS</span></th>
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>PVP</span></th>
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>N</span></th>
-                            <th tabindex="0" class="pb-3 text-align-center" v-for="index in Number(orders.proposal_obj.array_dates.length)" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>{{ orders.proposal_obj.array_dates[index - 1].date }}</span></th>
+                            <th tabindex="0" class="pb-3 text-align-center" v-for="index in Number(invoice_validations.proposal_obj.array_dates.length)" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>{{ invoice_validations.proposal_obj.array_dates[index - 1].date }}</span></th>
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span>TOTAL</span></th>
                             <th v-if="this.is_updating_order" tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 165px;"><span>ACCIÓN</span></th>
                         </tr>
 					</thead>
                     <tbody>
-                        <div class="d-contents" v-for="index in Number(orders.proposal_obj.chapters.length)">
+                        <div class="d-contents" v-for="index in Number(invoice_validations.proposal_obj.chapters.length)">
                             <tr class="row-product" style="background-color: #e4f2fd;" >
-                                <td class="py-2" :colspan="orders.proposal_obj.array_dates.length + 5">
-                                    <span class="ml-5">{{ orders.proposal_obj.chapters[index - 1].chapter_obj.name }}</span>
+                                <td class="py-2" :colspan="invoice_validations.proposal_obj.array_dates.length + 5">
+                                    <span class="ml-5">{{ invoice_validations.proposal_obj.chapters[index - 1].chapter_obj.name }}</span>
                                 </td>
                             </tr>
-                            <tr class="row-article" v-for="index_article in Number(orders.proposal_obj.chapters[index - 1].articles.length)">
-                                <td valign="middle" class="td-border-right"><span class="ml-5">{{ orders.proposal_obj.chapters[index - 1].articles[index_article - 1].article_obj.name }}</span></td>
-                                <td valign="middle" class="td-border-right text-align-center"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].article_obj.pvp)) }}€</span></td>
-                                <td valign="middle" class="td-border-right text-align-center"><span class="">{{ orders.proposal_obj.chapters[index - 1].articles[index_article - 1].amount }}</span></td>
-                                <td v-for="index_arr_date in Number(orders.proposal_obj.array_dates.length)" valign="middle" class="td-border-right">
-                                    <template v-for="index_dates in Number(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices.length)">
-                                        <template v-if="orders.proposal_obj.array_dates[index_arr_date - 1].date == orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].date">
+                            <tr class="row-article" v-for="index_article in Number(invoice_validations.proposal_obj.chapters[index - 1].articles.length)">
+                                <td valign="middle" class="td-border-right"><span class="ml-5">{{ invoice_validations.proposal_obj.chapters[index - 1].articles[index_article - 1].article_obj.name }}</span></td>
+                                <td valign="middle" class="td-border-right text-align-center"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(invoice_validations.proposal_obj.chapters[index - 1].articles[index_article - 1].article_obj.pvp)) }}€</span></td>
+                                <td valign="middle" class="td-border-right text-align-center"><span class="">{{ invoice_validations.proposal_obj.chapters[index - 1].articles[index_article - 1].amount }}</span></td>
+                                <td v-for="index_arr_date in Number(invoice_validations.proposal_obj.array_dates.length)" valign="middle" class="td-border-right">
+                                    <template v-for="index_dates in Number(invoice_validations.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices.length)">
+                                        <template v-if="invoice_validations.proposal_obj.array_dates[index_arr_date - 1].date == invoice_validations.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].date">
                                             <div class="d-grid px-5">
-                                                <template v-for="index_pvp_date in Number(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date.length)">
+                                                <template v-for="index_pvp_date in Number(invoice_validations.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date.length)">
                                                     <input v-if="this.value_form1.length > 0 && this.is_updating_order" v-model="this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1]" 
-                                                    v-for="index_pvp in Number(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)" 
+                                                    v-for="index_pvp in Number(invoice_validations.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)" 
                                                     @input="changeValuesOffer($event)"
                                                     type="text" class="form-control discount bg-blue-light-white text-align-center not-border my-2" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0"/>
-                                                    <span v-for="index_pvp in Number(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)" v-if="this.value_form1.length > 0 && this.is_change_get_info == 1 && this.is_updating_order == 0" class="mx-auto py-3">{{ this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1] }}€</span>
+                                                    <span v-for="index_pvp in Number(invoice_validations.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)" v-if="this.value_form1.length > 0 && this.is_change_get_info == 1 && this.is_updating_order == 0" class="mx-auto py-3">{{ this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1] }}€</span>
                                                 </template>
                                             </div>
                                         </template>
@@ -138,26 +138,26 @@
                                 <td v-if="this.discount != 0" valign="middle" class="td-border-right text-align-center">
                                     <span class="">{{ this.value_form1[index - 1].article[index_article - 1].total_aux }}€</span>
                                 </td>
-                                <td v-else valign="middle" class="td-border-right text-align-center"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].total)) }}€</span></td>
-                                <td v-if="this.is_updating_order" class="text-align-center bg-white"><span class="font-weight-bolder"><button type="button" class="btn" v-on:click="deleteArticle(orders.proposal_obj.chapters[index - 1].articles[0].article_obj.id)"><img  width="40" height="40" src="/media/custom-imgs/icono_tabla_eliminar.svg" v-on:click="this.is_show_buttons_bill=false"/></button></span></td>
+                                <td v-else valign="middle" class="td-border-right text-align-center"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(invoice_validations.proposal_obj.chapters[index - 1].articles[index_article - 1].total)) }}€</span></td>
+                                <td v-if="this.is_updating_order" class="text-align-center bg-white"><span class="font-weight-bolder"><button type="button" class="btn" v-on:click="deleteArticle(invoice_validations.proposal_obj.chapters[index - 1].articles[0].article_obj.id)"><img  width="40" height="40" src="/media/custom-imgs/icono_tabla_eliminar.svg" v-on:click="this.is_show_buttons_bill=false"/></button></span></td>
                             </tr>
                         </div>
                         <tr class="tr-total-datatable">
                             <td class="py-6"><span class="ml-5 font-weight-bolder">TOTAL</span></td>
-                            <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.total_individual_pvp)) }}€</span></td>
-                            <td class="text-align-center"><span class="font-weight-bolder">{{ orders.proposal_obj.total_amount_global }}</span></td>
+                            <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(invoice_validations.proposal_obj.total_individual_pvp)) }}€</span></td>
+                            <td class="text-align-center"><span class="font-weight-bolder">{{ invoice_validations.proposal_obj.total_amount_global }}</span></td>
                             
                             <template v-if="this.discount != 0">
-                                <td class="text-align-center" v-for="index in Number(orders.proposal_obj.array_dates.length)">
+                                <td class="text-align-center" v-for="index in Number(invoice_validations.proposal_obj.array_dates.length)">
                                     <span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(this.value_form_discount[index - 1].pvp)) }}€</span>
                                 </td>
                                 <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(this.offer)) }}€</span></td>
                             </template>
                             <template v-else>
-                                <td class="text-align-center" v-for="index in Number(orders.proposal_obj.array_dates.length)">
-                                    <span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.array_dates[index - 1].total)) }}€</span>
+                                <td class="text-align-center" v-for="index in Number(invoice_validations.proposal_obj.array_dates.length)">
+                                    <span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(invoice_validations.proposal_obj.array_dates[index - 1].total)) }}€</span>
                                 </td>
-                                <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.total_global)) }}€</span></td>
+                                <td class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(invoice_validations.proposal_obj.total_global)) }}€</span></td>
                             </template>
                             <td v-if="this.is_updating_order" class="text-align-center"><span class="font-weight-bolder"></span></td>
                         </tr>
@@ -177,36 +177,36 @@
                         </tr>
 					</thead>
                     <tbody>  
-                        <template v-for="(item, index) in Number(orders.bill_obj.array_bills.length)" :key="index">
-                            <tr v-if="orders.bill_obj.array_bills[index].status_validate" class="row-product text-align-center bg-validate-invoice">
+                        <template v-for="(item, index) in Number(invoice_validations.bill_obj.array_bills.length)" :key="index">
+                            <tr v-if="invoice_validations.bill_obj.array_bills[index].status_validate" class="row-product text-align-center bg-validate-invoice">
                                 <td class="td-border-right" rowspan="5">{{ index + 1 }}</td>
                             </tr>
                             <tr v-else class="row-product text-align-center">
                                 <td class="td-border-right" rowspan="5">{{ index + 1 }}</td>
                             </tr>
                             <tr class="row-product" style="background-color: #e4f2fd;">
-                                <td class="text-align-center td-border-right" width="20%">{{ orders.bill_obj.array_bills[index].date }}</td>
+                                <td class="text-align-center td-border-right" width="20%">{{ invoice_validations.bill_obj.array_bills[index].date }}</td>
                                 <td class="text-align-center py-4 px-5 td-border-right" width="20%">
-                                    <select v-if="this.is_updating_order && orders.bill_obj.array_bills[index].will_update" class="form-control text-dark select-custom select-filter bg-white" :name="'select_way_to_pay'" :id="'select_way_to_pay'" v-model="orders.bill_obj.array_bills[index].select_way_to_pay" data-style="select-lightgreen">
+                                    <select v-if="this.is_updating_order && invoice_validations.bill_obj.array_bills[index].will_update" class="form-control text-dark select-custom select-filter bg-white" :name="'select_way_to_pay'" :id="'select_way_to_pay'" v-model="invoice_validations.bill_obj.array_bills[index].select_way_to_pay" data-style="select-lightgreen">
                                         <option v-for="(item, index) in Number(this.select_way_to_pay_options.length)" :key="index" :value="this.select_way_to_pay_options[index].value">{{ this.select_way_to_pay_options[index].text }}</option>
                                     </select>
-                                    <span v-else>{{ this.select_way_to_pay_options[orders.bill_obj.array_bills[index].select_way_to_pay].text }}</span>
+                                    <span v-else>{{ this.select_way_to_pay_options[invoice_validations.bill_obj.array_bills[index].select_way_to_pay].text }}</span>
                                 </td>
                                 <td class="text-align-center py-4 px-5 td-border-right" width="20%">
-                                    <select v-if="this.is_updating_order && orders.bill_obj.array_bills[index].will_update" class="form-control text-dark select-custom select-filter bg-white" :name="'select_expiration'" :id="'select_expiration'" v-model="orders.bill_obj.array_bills[index].select_expiration" data-style="select-lightgreen">
+                                    <select v-if="this.is_updating_order && invoice_validations.bill_obj.array_bills[index].will_update" class="form-control text-dark select-custom select-filter bg-white" :name="'select_expiration'" :id="'select_expiration'" v-model="invoice_validations.bill_obj.array_bills[index].select_expiration" data-style="select-lightgreen">
                                         <option v-for="(item, index) in Number(this.select_expiration_options.length)" :key="index" :value="this.select_expiration_options[index].value">{{ this.select_expiration_options[index].text }}</option>
                                     </select>
-                                    <span v-else>{{ this.select_expiration_options[orders.bill_obj.array_bills[index].select_expiration].text }}</span>
+                                    <span v-else>{{ this.select_expiration_options[invoice_validations.bill_obj.array_bills[index].select_expiration].text }}</span>
                                 </td>
                                 <td class="text-align-center td-border-right" width="20%">
-                                    {{ $utils.roundAndFix(orders.bill_obj.array_bills[index].amount) }}
+                                    {{ $utils.roundAndFix(invoice_validations.bill_obj.array_bills[index].amount) }}
                                 </td>
                             </tr>   
                             <tr class="row-article">
                                 <td class="p-5" colspan="5">
                                     <div class="d-flex">
                                         <span class="my-auto col-2">Observaciones</span>
-                                        <span class="my-auto col-10">{{ orders.bill_obj.array_bills[index].observations }}</span>
+                                        <span class="my-auto col-10">{{ invoice_validations.bill_obj.array_bills[index].observations }}</span>
                                     </div>
                                 </td>
                             </tr>      
@@ -214,7 +214,7 @@
                                 <td class="p-5" colspan="5">
                                     <div class="d-flex">
                                         <span class="my-auto col-2">Núm. pedido</span>
-                                        <span class="my-auto col-10">{{ orders.bill_obj.array_bills[index].order_number }}</span>
+                                        <span class="my-auto col-10">{{ invoice_validations.bill_obj.array_bills[index].order_number }}</span>
                                     </div>
                                 </td>
                             </tr>    
@@ -222,14 +222,14 @@
                                 <td class="p-5" colspan="5">
                                     <div class="d-flex">
                                         <span class="my-auto col-2">Observaciones Internas</span>
-                                        <span class="my-auto col-10" >{{ orders.bill_obj.array_bills[index].internal_observations }}</span>
+                                        <span class="my-auto col-10" >{{ invoice_validations.bill_obj.array_bills[index].internal_observations }}</span>
                                     </div>
                                 </td>
                             </tr>   
                         </template>       
                         <tr class="tr-total-datatable">
                             <td colspan="4" class="py-6"><span class="ml-5 font-weight-bolder">TOTAL</span></td>
-                            <td class="text-align-right"><span class="font-weight-bolder mr-7">{{ $utils.roundAndFix(orders.bill_obj.total_bill) }}€</span></td>
+                            <td class="text-align-right"><span class="font-weight-bolder mr-7">{{ $utils.roundAndFix(invoice_validations.bill_obj.total_bill) }}€</span></td>
                         </tr>    
                     </tbody>
                 </table>
@@ -268,6 +268,7 @@ export default {
             name_company: '',
             nif_company: '',
             address_company: '',
+            advertiser: '',
             id_company: 0,
             offer: 0,
             total: 0,
@@ -317,7 +318,7 @@ export default {
         };
     },
     computed: {
-        ...mapState(["errors", "orders"]),
+        ...mapState(["errors", "invoice_validations"]),
     },
     methods: {
         ...mapMutations(["clearError", "changeViewStatusOrders", "changeProposalObj", "changeValueIsChangeArticle", "generateBill", "clearObjectsOrders", "deleteArticleOrder", "deleteConsultant"]),
@@ -374,9 +375,9 @@ export default {
             me.value_form1 = [];
                 
             //Rellenar los modelos de los inputs de la tabla
-            me.orders.proposal_obj.chapters.map(function(chapter, key_chapter) {
+            me.invoice_validations.proposal_obj.chapters.map(function(chapter, key_chapter) {
                 chapter.articles.map(function(article, key_article) {
-                    me.orders.proposal_obj.array_dates.map(function(date_obj, key_arr_dates) {
+                    me.invoice_validations.proposal_obj.array_dates.map(function(date_obj, key_arr_dates) {
                         article.dates_prices.map(function(date, key_dates) {
                             if(date_obj.date == date.date){
                                 date.arr_pvp_date.map(function(pvp_date, key_pvp_date) {
@@ -590,6 +591,7 @@ export default {
             me.select_type_proposal = '1';
             me.is_show_buttons_bill = false;
             me.is_updating_order = 0;
+            me.advertiser = '';
         },
         returnView(){
             this.changeViewStatusOrders(1);
@@ -597,14 +599,15 @@ export default {
         },
         //Cargar datos de la propuesta
         loadViewInfoProposal(){
-            this.is_change_get_info = this.orders.is_change_get_info;
-            this.orders.is_change_get_info = 0;
-            this.id_company = this.orders.id_company;
+            this.is_change_get_info = this.invoice_validations.is_change_get_info;
+            this.invoice_validations.is_change_get_info = 0;
+            this.id_company = this.invoice_validations.id_company;
+            this.advertiser = this.invoice_validations.proposal_bd_obj.advertiser;
             this.select_company = this.id_company;
-            this.array_companies = this.orders.company_aux;
+            this.array_companies = this.invoice_validations.company_aux;
             this.getNameCompany(this.select_company, 2);
             this.is_show_buttons_bill = true;
-            this.offer = Math.round(Number(this.orders.bill_obj.total_bill) * 100) / 100; //this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.bill_obj.total_bill));
+            this.offer = Math.round(Number(this.invoice_validations.bill_obj.total_bill) * 100) / 100; //this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.bill_obj.total_bill));
             this.loadFormObj(); 
         },
     },
@@ -613,7 +616,11 @@ export default {
         if(this.errors.type_error == "get_info_proposal"){
             this.loadViewInfoProposal();  
         }
-        this.getInfoOrder(this.$route.params.id);   
+        var params = {
+            id: this.$route.params.id,
+            type: 2
+        }
+        this.getInfoOrder(params);   
         this.clearError();
     },
     watch: {
