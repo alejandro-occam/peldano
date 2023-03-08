@@ -54,9 +54,9 @@ class getCodeFromClientSage extends Command
             $company->code_sage = $data['value'][0]['Code'];
             $company->save();
             $cont++;
-            if($cont == 50){
+            if($cont == 30){
                 $cont = 0;
-                sleep(5);
+                sleep(30);
             }
         }
     }   

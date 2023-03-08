@@ -53,7 +53,7 @@
                                 <td class="pl-3 py-5 text-dark text-align-center">{{ index_bill_order }}</td>
                                 <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].type_order == 0" class="text-align-center text-dark">S </td>
                                 <td v-else class="text-align-center text-dark">P </td>
-                                <td class="text-align-center text-dark" style="color: red !important;">{{ invoice_validations.array_bill_orders[index_bill_order - 1].id_company_sage }}</td>
+                                <td class="text-align-center text-dark">{{ invoice_validations.array_bill_orders[index_bill_order - 1].id_company_sage }}</td>
                                 <td class="text-dark">{{ invoice_validations.array_bill_orders[index_bill_order - 1].name_company }}</td>
                                 <td class="text-align-center text-dark"><a class="url-order" target="_blank" :href="'/admin/orders/'+invoice_validations.array_bill_orders[index_bill_order - 1].id_order">{{ invoice_validations.array_bill_orders[index_bill_order - 1].id_order }}</a></td>
                                 <td class="text-align-center text-dark">{{ this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(invoice_validations.array_bill_orders[index_bill_order - 1].amount)) }}</td>
