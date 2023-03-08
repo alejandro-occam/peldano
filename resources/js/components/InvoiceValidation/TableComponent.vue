@@ -29,7 +29,7 @@
                 <table width="100%" cellpadding="2" cellspacing="1" v-if="Number(invoice_validations.array_bill_orders.length) > 0 && invoice_validations.array_bill_orders != undefined">
                     <thead class="custom-columns-datatable">
                         <tr class="">
-                            <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 25px;"><span style="width: 20px;"><label class="checkbox checkbox-single checkbox-all ml-2"><input  class="input-checkbox-all" type="checkbox" @change="selectAllCheck">&nbsp;<span></span></label></span></th>
+                            <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 25px;"><span style="width: 20px;"><label class="ml-2"><input  class="input-checkbox-all" type="checkbox" @change="selectAllCheck">&nbsp;<span></span></label></span></th>
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 25px;"><span>N</span></th>
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 25px;"><span>F</span></th>
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 125px;"><span>Código</span></th>
@@ -48,7 +48,7 @@
                         <template v-for="index_bill_order in Number(invoice_validations.array_bill_orders.length)" :key="index_bill_order.id">
                             <!--ROW 1-->
                             <tr class="row-product bg-blue-light-white">
-                                <td><input :checked="true" class="input-checkbox-single" type="checkbox" :value="invoice_validations.array_bill_orders[index_bill_order - 1].id" v-on:click="selectSingleCheck(index_bill_order - 1)"/></td>
+                                <td><input class="input-checkbox-single" :id="'input-checkbox-single-'+invoice_validations.array_bill_orders[index_bill_order - 1].id" type="checkbox" :value="invoice_validations.array_bill_orders[index_bill_order - 1].id" v-on:click="selectSingleCheck(index_bill_order - 1)"/></td>
                                 <td class="pl-3 py-5 text-dark text-align-center">{{ index_bill_order }}</td>
                                 <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].type_order == 0" class="text-align-center text-dark">S </td>
                                 <td v-else class="text-align-center text-dark">P </td>
@@ -300,7 +300,7 @@
                 this.validateBill(params)
             },
             selectAllCheck(){
-                var check_all = document.getElementsByClassName("input-checkbox-all");
+                /*var check_all = document.getElementsByClassName("input-checkbox-all");
                 var list = document.getElementsByClassName("input-checkbox-single");
                 if(check_all[0].checked){
                     for (var index = 0; index < list.length; ++index) {
@@ -310,7 +310,11 @@
                     for (var index = 0; index < list.length; ++index) {
                         list[index].removeAttribute("checked", "true");
                     }
-                }                
+                } */
+                invoice_validations.array_bill_orders.forEach(element => {
+                    document.getElementById('input-checkbox-single-'+element.id).checked = true;
+                });
+                //invoice_validations.array_bill_orders[index_bill_order - 1].id            
             },
             selectSingleCheck(id){
                 var check_single = document.getElementsByClassName("input-checkbox-single")[id];
