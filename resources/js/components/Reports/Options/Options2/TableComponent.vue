@@ -12,14 +12,13 @@
                     :height="16"
                     v-on:click="changeViewStatusProposals(3)"
                 />
-                <AddButtonComponent
+                <RouterButton
                     :columns="'ml-auto mr-7'"
                     :text="'Volver'"
                     :id="'btn_return'"
                     :src="'/media/custom-imgs/flecha_btn_volver.svg'"
                     :width="16"
                     :height="16"
-                    v-on:click="changeViewStatusReports(1)"
                 />
             </div>
         </div>
@@ -27,7 +26,7 @@
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Departamento</span>
             <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_department" :name="'select_department'" :id="'select_department'" data-style="select-lightgreen" @change="getSectionSelect">
-                <option value="" selected>
+                <option value="0" selected>
                     Filtro por departamento
                 </option>
                 <option :value="department.id" v-for="department in config.articles.filter.array_departments" :key="department.id" v-text="department.nomenclature + '-' + department.name" ></option>
@@ -37,7 +36,7 @@
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Sección</span>
             <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_section" :name="'select_section'" :id="'select_section'" data-style="select-lightgreen" @change="getChannelSelect">
-                <option value="" selected>
+                <option value="0" selected>
                     Filtro por sección
                 </option>
                 <option :value="section.id" v-for="section in config.articles.filter.array_sections"  :key="section.id" v-text="section.nomenclature + '-' + section.name" ></option>
@@ -47,7 +46,7 @@
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Canal</span>
             <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_channel" :name="'select_channel'" :id="'select_channel'" data-style="select-lightgreen" @change="getProjectSelect">
-                <option value="" selected>
+                <option value="0" selected>
                     Filtro por canal
                 </option>
                 <option :value="channel.id" v-for="channel in config.articles.filter.array_channels" :key="channel.id" v-text="channel.nomenclature + '-' + channel.name" ></option>
@@ -57,7 +56,7 @@
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Proyecto</span>
             <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_project" :name="'select_project'" :id="'select_project'" data-style="select-lightgreen" @change="getChaptersSelect">
-                <option value="" selected>
+                <option value="0" selected>
                     Filtro por proyecto
                 </option>
                 <option :value="project.id" v-for="project in config.articles.filter.array_projects" :key="project.id" v-text="project.nomenclature + '-' + project.name" ></option>
@@ -67,7 +66,7 @@
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Capítulo</span>
             <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_chapter" :name="'select_chapter'" :id="'select_chapter'" data-style="select-lightgreen" @change="getBatchsSelect">
-                <option value="" selected>
+                <option value="0" selected>
                     Filtro por capítulo
                 </option>
                 <option :value="chapter.id" v-for="chapter in config.articles.filter.array_chapters" :key="chapter.id" v-text="chapter.nomenclature + '-' + chapter.name" ></option>
@@ -77,7 +76,7 @@
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Lote</span>
             <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_batch" :name="'select_batch'" :id="'select_batch'" data-style="select-lightgreen" @change="getArticlesSelect">
-                <option value="" selected>
+                <option value="0" selected>
                     Filtro por lote
                 </option>
                 <option :value="batch.id" v-for="batch in config.articles.filter.array_batchs" :key="batch.id" v-text="batch.nomenclature + '-' + batch.name" ></option>
@@ -87,7 +86,7 @@
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Artículo</span>
             <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_article" :name="'select_article'" :id="'select_article'" data-style="select-lightgreen">
-                <option value="" selected>
+                <option value="0" selected>
                     Filtro por artículo
                 </option>
                 <option :value="article.id" v-for="article in config.articles.filter.array_articles"  :key="article.id" v-text="article.name" ></option>
@@ -109,7 +108,7 @@
         <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Consultor</span>
             <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_consultant" :name="'select_consultant'" :id="'select_consultant'" data-style="select-lightgreen">
-                <option value="" selected>
+                <option value="0" selected>
                     Selecciona un consultor
                 </option>
                 <option :value="user.id" v-for="user in proposals.array_users" :key="user.id" v-text="user.name + ' ' + user.surname"></option>
@@ -146,7 +145,7 @@
             <h3 class="color-blue my-auto">Resultados</h3>
         </div>
     </div>
-    <div class="col-12 mt-15">
+    <div class="col-12 mt-15" v-if="Number(reports.array_bills_orders.length) > 0">
         <table width="100%" cellpadding="2" cellspacing="1">
             <thead class="custom-columns-datatable">
                 <tr class="">
@@ -197,6 +196,7 @@
     import Calendar from 'primevue/calendar';
     import Divider from 'primevue/divider';
     import Chart from 'primevue/chart';
+    import RouterButton from "../../../Partials/RouterButton.vue";
 
     export default {
         name: "TableComponentOption2",
@@ -204,21 +204,24 @@
             AddButtonComponent,
             Calendar,
             Divider,
-            Chart
+            Chart,
+            RouterButton
         },
         data() {
             return {
                 publicPath: window.location.origin,
-                select_department: '',
-                select_section: '',
-                select_channel: '',
-                select_project: '',
-                select_chapter: '',
-                select_batch: '',
-                select_article: '',
+                select_department: '0',
+                select_section: '0',
+                select_channel: '0',
+                select_project: '0',
+                select_chapter: '0',
+                select_batch: '0',
+                select_article: '0',
                 date_from: '',
+                date_from_custom: '',
                 date_to: '',
-                select_consultant: '',  
+                date_to_custom: '',
+                select_consultant: '0',  
                 select_sort_by: '1',  
                 select_exchange: '2',  
             };
@@ -237,6 +240,20 @@
         methods: {
             ...mapActions(["getUsers", "getDepartments", "getSections", "getChannels", "getProjects", "getChapters", "getBatchs", "getArticles", "reportInsertions"]),
             ...mapMutations(["changeViewStatusReports"]),
+            // Validates that the input string is a valid date formatted as "mm/dd/yyyy"
+            isValidDate(dateString) {
+                var regEx = /^\d{2}-\d{2}-\d{4}$/;
+                // First check for the pattern
+                try {
+                    if(!dateString.match(regEx)){
+                        return false;
+                    }else{
+                        return true;
+                    }
+                } catch (error) {
+                    return false;
+                }
+            },
             //Consultar fecha actual
             getNow() {
                 const today = new Date();
@@ -253,12 +270,12 @@
                 this.date_to = date;
             },
             getSectionSelect(){
-                this.select_section = '',
-                this.select_channel = '',
-                this.select_project = '',
-                this.select_chapter = '',
-                this.select_batch = '',
-                this.select_article = '',
+                this.select_section = '0',
+                this.select_channel = '0',
+                this.select_project = '0',
+                this.select_chapter = '0',
+                this.select_batch = '0',
+                this.select_article = '0',
                 this.amount = '';
                 this.date = [];
                 this.show_amount_dates = false;
@@ -269,11 +286,11 @@
                 this.getSections(params);
             },
             getChannelSelect(){
-                this.select_channel = '',
-                this.select_project = '',
-                this.select_chapter = '',
-                this.select_batch = '',
-                this.select_article = '',
+                this.select_channel = '0',
+                this.select_project = '0',
+                this.select_chapter = '0',
+                this.select_batch = '0',
+                this.select_article = '0',
                 this.amount = '';
                 this.date = [];
                 this.show_amount_dates = false;
@@ -284,10 +301,10 @@
                 this.getChannels(params);
             },
             getProjectSelect(){
-                this.select_project = '',
-                this.select_chapter = '',
-                this.select_batch = '',
-                this.select_article = '',
+                this.select_project = '0',
+                this.select_chapter = '0',
+                this.select_batch = '0',
+                this.select_article = '0',
                 this.amount = '';
                 this.date = [];
                 this.show_amount_dates = false;
@@ -298,9 +315,9 @@
                 this.getProjects(params);
             },
             getChaptersSelect(){
-                this.select_chapter = '',
-                this.select_batch = '',
-                this.select_article = '',
+                this.select_chapter = '0',
+                this.select_batch = '0',
+                this.select_article = '0',
                 this.amount = '';
                 this.date = [];
                 this.show_amount_dates = false;
@@ -311,8 +328,8 @@
                 this.getChapters(params);
             },
             getBatchsSelect(){
-                this.select_batch = '',
-                this.select_article = '',
+                this.select_batch = '0',
+                this.select_article = '0',
                 this.amount = '';
                 this.date = [];
                 this.show_amount_dates = false;
@@ -323,7 +340,7 @@
                 this.getBatchs(params);
             },
             getArticlesSelect(){
-                this.select_article = '',
+                this.select_article = '0',
                 this.amount = '';
                 this.date = [];
                 this.show_amount_dates = false;
@@ -333,9 +350,33 @@
                 }
                 this.getArticles(params);
             },
-
             filterReportInsertions(){
+                var date_from = this.date_from;
+                if(!this.isValidDate(this.date_from)){
+                    var date_ms_from = Date.parse(this.date_from);
+                    date_from = this.$utils.customFormDate(date_ms_from);
+                }
+                this.date_from_custom = date_from;
+               
+                var date_to = this.date_to;
+                if(!this.isValidDate(this.date_to)){
+                    var date_ms_to = Date.parse(this.date_to);
+                    date_to = this.$utils.customFormDate(date_ms_to);
+                }
+                this.date_to_custom = date_to;
+
                 var params = {
+                    select_department: this.select_department,
+                    select_section: this.select_section,
+                    select_channel: this.select_channel,
+                    select_project: this.select_project,
+                    select_chapter: this.select_chapter,
+                    select_batch: this.select_batch,
+                    select_article: this.select_article,
+                    select_consultant: this.select_consultant,
+                    date_from: date_from,
+                    date_to: date_to,
+                    select_sort_by: this.select_sort_by
                 }
 
                 this.reportInsertions(params);
