@@ -99,6 +99,19 @@ export default {
     },
     methods: {
         ...mapMutations(["clearError", "changeViewStatusReports"]),
+        clearReports(){
+            this.reports.status_view = 1;
+            this.reports.array_dates = [];
+            this.reports.array_bills_orders = [];
+            this.reports.percent_new = [];
+            this.reports.percent_old = [];
+            this.reports.period_new = '';
+            this.reports.period_old = '';
+            this.reports.total_amount = 0;
+        }
     },
+    mounted() {
+        this.clearReports();
+    }
 };
 </script>
