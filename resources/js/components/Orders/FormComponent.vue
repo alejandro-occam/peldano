@@ -1257,7 +1257,8 @@ export default {
                 select_expiration_options: this.select_expiration_options,
                 nun_custom_invoices: this.orders.num_custom_invoices,
                 array_consultants: this.orders.proposal_obj.array_consultants,
-                advertiser: this.advertiser
+                advertiser: this.advertiser,
+                select_type_proposal: this.select_type_proposal
             }
             if(this.orders.status_view == 2 && this.orders.proposal_bd_obj != null){
                 params.id_proposal = this.orders.proposal_bd_obj.id;

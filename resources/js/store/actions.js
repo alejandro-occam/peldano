@@ -1514,7 +1514,8 @@ function createObjectsStore({ state }, response, type){
         id_proposal_custom_aux: proposal.id_proposal_custom_aux,
         discount: proposal.discount,
         status: proposal.status,
-        advertiser: proposal.advertiser
+        advertiser: proposal.advertiser,
+        type_proposal: proposal.type_proposal
     }
     
     //Guardamos con un nuevo formato para las facturas los articulos
@@ -1953,7 +1954,8 @@ function createObjectsStoreInfo({ state }, response, type){
         id_proposal_custom_aux: proposal.id_proposal_custom_aux,
         discount: proposal.discount,
         status: proposal.status,
-        advertiser: proposal.advertiser
+        advertiser: proposal.advertiser,
+        type_proposal: proposal.type_proposal
     }
     
     //Guardamos con un nuevo formato para las facturas los articulos

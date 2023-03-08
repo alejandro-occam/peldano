@@ -328,6 +328,7 @@ class ProposalsController extends Controller
         }
 
         $advertiser = $request->get('advertiser');
+        $type_proposal = $request->get('select_type_proposal');
 
         $proposal = Proposal::create([
             'id_proposal_custom' => $id_proposal_custom,
@@ -351,7 +352,8 @@ class ProposalsController extends Controller
             'id_department' => $id_department,
             'is_custom' => $custom_bill,
             'status' => $status,
-            'advertiser' => $advertiser
+            'advertiser' => $advertiser,
+            'type_proposal' => $type_proposal
         ]);
 
         $fullname = Auth::user()->name.' '.Auth::user()->surnames;
@@ -451,7 +453,6 @@ class ProposalsController extends Controller
     function getInfoProposal($id){
         //Consultamos si existe la propuesta
         $custom_proposal = Proposal::find($id);
-        error_log('custom_proposal: '.$custom_proposal);
         $proposal = Proposal::select('proposals.*', 'contacts.name as contact_name', 'contacts.surnames as contact_surnames', 'contacts.email as contact_email', 'contacts.phone as contact_phone', 'contacts.id_company')
                                 ->leftJoin('contacts', 'contacts.id', 'proposals.id_contact')
                                 ->where('proposals.id', $id)
@@ -699,6 +700,7 @@ class ProposalsController extends Controller
         //Actualizamos la propuesta 
         $proposal_submission_settings = json_decode($request->get('proposal_submission_settings'));
         $advertiser = $request->get('advertiser');
+        $type_proposal = $request->get('select_type_proposal');
 
         $proposal->discount = $proposal_submission_settings->discount;
         $proposal->language = $proposal_submission_settings->language;
@@ -717,6 +719,7 @@ class ProposalsController extends Controller
         $proposal->show_invoices = $proposal_submission_settings->show_invoices;
         $proposal->is_custom = $custom_bill;
         $proposal->advertiser = $advertiser;
+        $proposal->type_proposal = $type_proposal;
 
         $status = 1;
         if($proposal_submission_settings->discount >= 20){
