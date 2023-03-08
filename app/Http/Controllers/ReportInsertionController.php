@@ -86,6 +86,21 @@ class ReportInsertionController extends Controller
             $array_services_bills_orders_custom = $array_services_bills_orders_custom->where('proposals.id_user', $select_consultant);
         }
         
+        //Filtro orden
+        if($select_sort_by != 2){
+            if($select_sort_by == 1){
+                $array_services_bills_orders_custom = $array_services_bills_orders_custom->orderBy('articles.name');
+            }
+            if($select_sort_by == 3){
+                $array_services_bills_orders_custom = $array_services_bills_orders_custom->orderBy('bills_orders.date');
+            }
+            if($select_sort_by == 4){
+                $array_services_bills_orders_custom = $array_services_bills_orders_custom->orderBy('companies.name');
+            }
+            if($select_sort_by == 5){
+                $array_services_bills_orders_custom = $array_services_bills_orders_custom->orderBy('orders.type_proposal');
+            }
+        }
 
         $array_services_bills_orders_custom = $array_services_bills_orders_custom->groupBy('services_bills_orders.id')->get();
 
