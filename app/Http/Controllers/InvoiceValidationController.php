@@ -150,6 +150,7 @@ class InvoiceValidationController extends Controller
 
         $array_bill_orders = array();
         foreach($array_bill_orders_custom as $bill_order_custom){
+            $bill_order_custom_2['id'] = $bill_order_custom['id'];
             $bill_order_custom_2['type_order'] = $bill_order_custom['type_order'];
             $bill_order_custom_2['id_company_sage'] = $bill_order_custom['id_company_sage'];
             $bill_order_custom_2['name_company'] = $bill_order_custom['name_company'];
@@ -165,6 +166,7 @@ class InvoiceValidationController extends Controller
             $bill_order_custom_2['array_articles'] = $bill_order_custom['array_articles'];
             $bill_order_custom_2['custom_date'] = $bill_order_custom['custom_date'];
             $bill_order_custom_2['advertiser'] = $bill_order_custom['advertiser'];
+            $bill_order_custom_2['status_validate'] = $bill_order_custom['status_validate'];
             
             $array_bill_orders[] = $bill_order_custom_2;
         }
@@ -180,76 +182,75 @@ class InvoiceValidationController extends Controller
 
     //Validar factura
     function validateBill(Request $request){
-        if(!$request->has('id_bill')){
+        if(!$request->has('array_ids_bill')){
             $response['code'] = 10011;
             return response()->json($response);
         }
 
-        $id_bill = $request->get('id_bill');
+        $array_ids_bill_custom = $request->get('array_ids_bill');
 
-        if(empty($id_bill)){
-            $response['code'] = 10012;
+        if(count($array_ids_bill_custom) == 0){
+            $response['code'] = 1001;
             return response()->json($response);
         }
 
-        //Comprobamos si existe la factura
-        $bill_order = BillOrder::find($id_bill);
-        if(!$bill_order){
-            $response['code'] = 10013;
-            return response()->json($response);
+        foreach($array_ids_bill_custom as $id_bill){
+            //Comprobamos si existe la factura
+            $bill_order = BillOrder::where('id', $id_bill)->where('id_sage', null)->where('status_validate', 0)->first();
+            if($bill_order){
+                $bill_order->status_validate = 1;
+                $bill_order->save();
+
+                //Generamos el albarán y la factura en SAGE
+                $date = Date('d-m-Y');
+                //Creamos un objeto para el controller ExternalRequest
+                $requ_external_request = new ExternalRequestController();
+
+                //Creamos el objeto request
+                $request = new \Illuminate\Http\Request();
+
+                //Consultamos la orden
+                $order = Order::find($bill_order->id_order);
+                    
+                //Consultamos la propuesta de la orden
+                $proposal = Proposal::find($order->id_proposal);
+
+                //Consultamos la empresa a la que pertenece la propuesta
+                $company = Company::select('companies.*')->leftJoin('contacts', 'contacts.id_company', 'companies.id')->where('contacts.id', $proposal->id_contact)->first();
+
+                //Creamos un array para guardar los id_sage de cada artículo-producto
+                $array_sage_products = array();
+
+                //Consultamos los artículos de la factura
+                $services_bills_orders = ServiceBillOrder::where('id_bill_order', $bill_order->id)->get();
+                foreach($services_bills_orders as $service_bill_order){
+                    $service = Service::find($service_bill_order->id_service);
+                    $article = Article::find($service->id_article);
+
+                    //Consultamos el id_sage del artículo
+                    $request->replace(['code_sage' => $article->id_sage]);
+                    $id_sage = $requ_external_request->getProductSage($request);
+                    $product['id'] = $id_sage;
+                    $product['pvp'] = $service->pvp;
+                    $array_sage_products[] = $product;
+                }
+
+                error_log(print_r($array_sage_products, true));
+                //Generamos el albarán en Sage
+                $number = Date('ymd').$bill_order->id;
+                $request->replace(['array_sage_products' => $array_sage_products, 'customer_id' => $company->id_sage, 'id_bill_order' => $bill_order->id, 'id_order' => $bill_order->id_order, 'amount' => $bill_order->amount, 'number' => $number]);
+                $invoice_custom = $requ_external_request->generateDeliveryNoteSage($request);
+                error_log('invoice_custom: '.print_r($invoice_custom, true));
+                if($id_sage != null && !empty($invoice_custom)){
+                    $bill_order->id_sage = $invoice_custom['Id'];
+                    $bill_order->receipt_order_sage = $invoice_custom['receipt_order_sage'];
+                    $bill_order->save();
+                }
+
+                $bill_order->date = $date;
+                $bill_order->save();
+            }
         }
-
-        $bill_order->status_validate = 1;
-        $bill_order->save();
-
-        //Generamos el albarán y la factura en SAGE
-        $date = Date('d-m-Y');
-        //Creamos un objeto para el controller ExternalRequest
-        $requ_external_request = new ExternalRequestController();
-
-        //Creamos el objeto request
-        $request = new \Illuminate\Http\Request();
-
-        //Consultamos la orden
-        $order = Order::find($bill_order->id_order);
-            
-        //Consultamos la propuesta de la orden
-        $proposal = Proposal::find($order->id_proposal);
-
-        //Consultamos la empresa a la que pertenece la propuesta
-        $company = Company::select('companies.*')->leftJoin('contacts', 'contacts.id_company', 'companies.id')->where('contacts.id', $proposal->id_contact)->first();
-
-        //Creamos un array para guardar los id_sage de cada artículo-producto
-        $array_sage_products = array();
-
-        //Consultamos los artículos de la factura
-        $services_bills_orders = ServiceBillOrder::where('id_bill_order', $bill_order->id)->get();
-        foreach($services_bills_orders as $service_bill_order){
-            $service = Service::find($service_bill_order->id_service);
-            $article = Article::find($service->id_article);
-
-            //Consultamos el id_sage del artículo
-            $request->replace(['code_sage' => $article->id_sage]);
-            $id_sage = $requ_external_request->getProductSage($request);
-            $product['id'] = $id_sage;
-            $product['pvp'] = $service->pvp;
-            $array_sage_products[] = $product;
-        }
-
-        error_log(print_r($array_sage_products, true));
-        //Generamos el albarán en Sage
-        $number = Date('ymd').$bill_order->id;
-        $request->replace(['array_sage_products' => $array_sage_products, 'customer_id' => $company->id_sage, 'id_bill_order' => $bill_order->id, 'id_order' => $bill_order->id_order, 'amount' => $bill_order->amount, 'number' => $number]);
-        $invoice_custom = $requ_external_request->generateDeliveryNoteSage($request);
-        error_log('invoice_custom: '.print_r($invoice_custom, true));
-        if($id_sage != null && !empty($invoice_custom)){
-            $bill_order->id_sage = $invoice_custom['Id'];
-            $bill_order->receipt_order_sage = $invoice_custom['receipt_order_sage'];
-            $bill_order->save();
-        }
-
-        $bill_order->date = $date;
-        $bill_order->save();
 
         $response['code'] = 1000;
         return response()->json($response);

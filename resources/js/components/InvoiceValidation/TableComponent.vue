@@ -7,7 +7,6 @@
                     <option value="0" selected>Todas</option>
                     <option value="1">Facturas personalizadas</option>
                     <option value="2">Facturas simples</option>
-                    <!--<option :value="department.id" v-for="department in config.articles.filter.array_departments" :key="department.id" v-text="department.nomenclature + '-' + department.name" ></option>-->
                 </select>
             </div>
             <div class="mx-2 col-2 mt-5">
@@ -20,8 +19,10 @@
                     <option value="0" selected>Todas</option>
                     <option value="1">SI</option>
                     <option value="2">NO</option>
-                    <!--<option :value="department.id" v-for="department in config.articles.filter.array_departments" :key="department.id" v-text="department.nomenclature + '-' + department.name" ></option>-->
                 </select>
+            </div>
+            <div class="ml-auto col-2 mt-auto">
+                <button class="btn bg-azul color-white float-right" v-if="this.array_ids_bill.length > 1" v-on:click="validateSomeBillTable()">Validar facturas</button>
             </div>
         </div>
         <div class="col-12 mt-2">
@@ -29,7 +30,7 @@
                 <table width="100%" cellpadding="2" cellspacing="1" v-if="Number(invoice_validations.array_bill_orders.length) > 0 && invoice_validations.array_bill_orders != undefined">
                     <thead class="custom-columns-datatable">
                         <tr class="">
-                            <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 25px;"><span style="width: 20px;"><label class="ml-2"><input  class="input-checkbox-all" type="checkbox" @change="selectAllCheck">&nbsp;<span></span></label></span></th>
+                            <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 25px;"><span style="width: 20px;"><label class="ml-2 checkbox"><input  class="input-checkbox-all" type="checkbox" @change="selectAllCheck">&nbsp;<span></span></label></span></th>
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 25px;"><span>N</span></th>
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 25px;"><span>F</span></th>
                             <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 125px;"><span>Código</span></th>
@@ -48,7 +49,7 @@
                         <template v-for="index_bill_order in Number(invoice_validations.array_bill_orders.length)" :key="index_bill_order.id">
                             <!--ROW 1-->
                             <tr class="row-product bg-blue-light-white">
-                                <td><input class="input-checkbox-single" :id="'input-checkbox-single-'+invoice_validations.array_bill_orders[index_bill_order - 1].id" type="checkbox" :value="invoice_validations.array_bill_orders[index_bill_order - 1].id" v-on:click="selectSingleCheck(index_bill_order - 1)"/></td>
+                                <td class="pl-3 py-5 text-dark text-align-center"><span style="width: 20px;"><label class="checkbox"><input class="input-checkbox-single" :id="'input-checkbox-single-'+invoice_validations.array_bill_orders[index_bill_order - 1].id" type="checkbox" :value="invoice_validations.array_bill_orders[index_bill_order - 1].id" v-on:click="selectSingleCheck(invoice_validations.array_bill_orders[index_bill_order - 1].id)"/>&nbsp;<span></span></label></span></td>
                                 <td class="pl-3 py-5 text-dark text-align-center">{{ index_bill_order }}</td>
                                 <td v-if="invoice_validations.array_bill_orders[index_bill_order - 1].type_order == 0" class="text-align-center text-dark">S </td>
                                 <td v-else class="text-align-center text-dark">P </td>
@@ -244,7 +245,8 @@
                 select_type: 0,
                 select_validate: 0,
                 date_to: '',
-                date_to_custom: ''
+                date_to_custom: '',
+                array_ids_bill: []
             };
         },
         methods: {
@@ -293,35 +295,50 @@
             },
             //Validar factura
             validateBillTable(id){
+                this.array_ids_bill.push(id);
                 var params = {
-                    id_bill: id
+                    array_ids_bill: this.array_ids_bill
+                }
+                this.invoice_validations.is_loading = true;
+                this.validateBill(params)
+            },
+            //Validar varias facturas
+            validateSomeBillTable(){
+                var params = {
+                    array_ids_bill: this.array_ids_bill
                 }
                 this.invoice_validations.is_loading = true;
                 this.validateBill(params)
             },
             selectAllCheck(){
-                /*var check_all = document.getElementsByClassName("input-checkbox-all");
-                var list = document.getElementsByClassName("input-checkbox-single");
-                if(check_all[0].checked){
-                    for (var index = 0; index < list.length; ++index) {
-                        list[index].setAttribute("checked", "true");
+                var check_all = document.getElementsByClassName("input-checkbox-all");
+                this.invoice_validations.array_bill_orders.forEach(element => {
+                    if(check_all[0].checked){
+                        document.getElementById('input-checkbox-single-'+element.id).checked = true;
+                        this.array_ids_bill.push(document.getElementById('input-checkbox-single-'+element.id).value);
+
+                    }else{
+                        document.getElementById('input-checkbox-single-'+element.id).checked = false;
                     }
-                }else{
-                    for (var index = 0; index < list.length; ++index) {
-                        list[index].removeAttribute("checked", "true");
-                    }
-                } */
-                invoice_validations.array_bill_orders.forEach(element => {
-                    document.getElementById('input-checkbox-single-'+element.id).checked = true;
                 });
-                //invoice_validations.array_bill_orders[index_bill_order - 1].id            
+                if(!check_all[0].checked){
+                    this.array_ids_bill = [];
+                }
             },
             selectSingleCheck(id){
-                var check_single = document.getElementsByClassName("input-checkbox-single")[id];
+                let me = this;
+                var check_single = document.getElementById("input-checkbox-single-"+id);
                 if(check_single.checked){
                     check_single.setAttribute("checked", "true");
+                    me.array_ids_bill.push(document.getElementById('input-checkbox-single-'+id).value);
+
                 }else{
                     check_single.removeAttribute("checked", "false");
+                    me.array_ids_bill.map(function(bill, key) {
+                        if(bill == id){
+                            me.array_ids_bill.splice(key, 1);
+                        }
+                    });
                 }
             }
         },
@@ -343,6 +360,11 @@
                     if(this.errors.code != ''){
                         if(this.errors.code == 1000){
                             this.loadBillsValidation();
+                            document.getElementsByClassName("input-checkbox-all")[0].checked = false;
+                            this.array_ids_bill = [];
+                            this.invoice_validations.array_bill_orders.forEach(element => {
+                                document.getElementById('input-checkbox-single-'+element.id).checked = false;
+                            });
                             swal("", "Factura validada correctamente", "success");
 
                         }else{
