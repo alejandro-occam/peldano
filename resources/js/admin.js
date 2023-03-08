@@ -14,6 +14,7 @@ import OrdersIndex from "./components/Orders/ContentComponent.vue";
 import ProposalsIndex from "./components/Proposals/ContentComponent.vue";
 import ReportsIndex from "./components/Reports/ContentComponent.vue";
 import ReportOption1 from "./components/Reports/Options/Options1/ContentComponent.vue";
+import ReportOption2 from "./components/Reports/Options/Options2/ContentComponent.vue";
 import ReportOption4 from "./components/Reports/Options/Options4/ContentComponent.vue";
 import ReportOption5 from "./components/Reports/Options/Options5/ContentComponent.vue";
 import ReportOption7 from "./components/Reports/Options/Options7/ContentComponent.vue";
@@ -41,6 +42,10 @@ const routes = [
     {
       path: "/admin/reports/report_recruiment_channel",
       component: ReportOption1,
+    },
+    {
+      path: "/admin/reports/report_insertion",
+      component: ReportOption2,
     },
     {
       path: "/admin/reports/report_sales_orders_signed",

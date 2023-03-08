@@ -35,7 +35,8 @@ class Proposal extends Model
         'pdf_file',
         'is_custom',
         'status',
-        'advertiser'
+        'advertiser',
+        'type_proposal'
     ];
 
     /**
@@ -67,7 +68,8 @@ class Proposal extends Model
         'pdf_file' => 'string',
         'is_custom' => 'boolean',
         'status' => 'integer',
-        'advertiser' => 'string'
+        'advertiser' => 'string',
+        'type_proposal' => 'integer'
     ];
 
     /**
@@ -99,7 +101,8 @@ class Proposal extends Model
         'pdf_file',
         'is_custom',
         'status',
-        'advertiser'
+        'advertiser',
+        'type_proposal'
     ];
 
     public function department()

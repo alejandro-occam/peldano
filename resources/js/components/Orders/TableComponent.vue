@@ -212,6 +212,7 @@ import { off } from "process";
                                     date_from: date_from,
                                     date_to: date_to,
                                     num_order: me.num_order,
+                                    show_all: this.show_all
                                 }
 
                             },

@@ -18,7 +18,8 @@ class Order extends Model
         'discount',
         'status',
         'reason_update',
-        'advertiser'
+        'advertiser',
+        'type_proposal'
     ];
 
     /**
@@ -33,7 +34,8 @@ class Order extends Model
         'discount' => 'string',
         'status' => 'integer',
         'reason_update' => 'string',
-        'advertiser' => 'string'
+        'advertiser' => 'string',
+        'type_proposal' => 'integer'
     ];
 
     /**
@@ -48,6 +50,7 @@ class Order extends Model
         'discount',
         'status',
         'reason_update',
-        'advertiser'
+        'advertiser',
+        'type_proposal'
     ];
 }

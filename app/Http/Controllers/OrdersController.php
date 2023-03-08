@@ -52,7 +52,7 @@ class OrdersController extends Controller
                         ->leftJoin('proposals_bills', 'proposals.id', 'proposals_bills.id_proposal')
                         ->leftJoin('bills', 'bills.id', 'proposals_bills.id_bill');
 
-        /*if($request->get('type') == 1){
+        if($request->get('type') == 1){
             if($request->get('num_order') != ''){
                 $array_orders = $array_orders->where('proposals.id_proposal_custom', $request->get('num_order'));
             }
@@ -72,14 +72,20 @@ class OrdersController extends Controller
             if($request->get('date_to') != '' && $request->get('date_to') != 'Invalid Date-undefined-undefined'){
                 $array_orders = $array_orders->where('proposals.date_proyect', '<=', $request->get('date_to'));
             }
-        }*/
+        }
+        
 
         $array_orders = $array_orders->groupBy('orders.id')
-                                            ->orderBy('orders.created_at', 'desc')
-                                            ->skip($start)
-                                            ->take($skip)
-                                            ->get();
+                                            ->orderBy('orders.created_at', 'desc');
 
+        if($request->get('type') == 1){
+            if($request->get('show_all') == 0){
+                $array_orders = $array_orders->skip($start)
+                                                ->take($skip);
+            }
+        }
+
+        $array_orders = $array_orders->get();
 
         $total_orders = $array_orders->groupBy('orders.id')
                                         ->count();

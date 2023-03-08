@@ -1324,7 +1324,8 @@ export default {
                 select_expiration_options: this.select_expiration_options,
                 nun_custom_invoices: this.proposals.num_custom_invoices,
                 array_consultants: this.proposals.proposal_obj.array_consultants,
-                advertiser: this.advertiser
+                advertiser: this.advertiser,
+                select_type_proposal: this.select_type_proposal
             }
             if(this.proposals.status_view == 2 && this.proposals.proposal_bd_obj != null){
                 params.id_proposal = this.proposals.proposal_bd_obj.id;
@@ -1368,6 +1369,7 @@ export default {
             me.proposal_submission_settings.sales_possibilities = 6;
             me.proposal_submission_settings.discount = 0;
             me.proposal_submission_settings.advertiser = '';
+            me.proposal_submission_settings.type_proposal = 0;
         },
         //Copiar propuesta
         copyOrderView(){
@@ -1466,6 +1468,8 @@ export default {
             this.proposal_submission_settings.discount = this.proposals.proposal_bd_obj.discount;
             this.proposal_submission_settings.advertiser = this.proposals.proposal_bd_obj.advertiser;
             this.advertiser = this.proposals.proposal_bd_obj.advertiser;
+            this.proposal_submission_settings.type_proposal = this.proposals.proposal_bd_obj.type_proposal;
+            this.select_type_proposal = this.proposals.proposal_bd_obj.type_proposal;
             this.discount = this.proposal_submission_settings.discount;
             this.offer = Math.round(Number(this.proposals.bill_obj.total_bill) * 100) / 100; //this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.bill_obj.total_bill));
             this.loadFormObj(); 

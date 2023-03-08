@@ -137,7 +137,7 @@
         </div>
 
         <div class="mx-2 col-12 d-flex mt-10">
-            <button type="submit" class="btn bg-azul color-white px-35 font-weight-bolder">Generar informe</button>
+            <button type="submit" class="btn bg-azul color-white px-35 font-weight-bolder" v-on:click="filterReportInsertions()">Generar informe</button>
         </div>
     </div>
     <Divider class="my-15" />
@@ -163,46 +163,28 @@
                 </tr>
             </thead>
             <tbody>  
-                <tr class="row-product bg-white ">
-                    <td class="pl-3 py-5 text-dark text-align-center">1</td>
-                    <td class="text-align-center text-dark">17228</td>
-                    <td class="text-align-center text-dark">Arena Media Comunications España, SA</td>
-                    <td class="text-align-center text-dark">ECKES GRANINI IBERICA</td>
-                    <td class="text-align-center text-gray">39179</td>
-                    <td class="text-dark">001797: <br>Manifone Iberia, SL</td>
-                    <td class="text-align-center text-gray">N</td>
-                    <td class="text-align-center text-gray">P</td>
-                    <td class="text-align-center text-gray">1.275,00</td>
-                    <td class="text-align-center text-gray">081</td>
-                </tr>   
-                <tr class="row-product bg-white ">
-                    <td class="pl-3 py-5 text-dark text-align-center">1</td>
-                    <td class="text-align-center text-dark">17228</td>
-                    <td class="text-align-center text-dark">Arena Media Comunications España, SA</td>
-                    <td class="text-align-center text-dark">ECKES GRANINI IBERICA</td>
-                    <td class="text-align-center text-gray">39179</td>
-                    <td class="text-dark">001797: <br>Manifone Iberia, SL</td>
-                    <td class="text-align-center text-gray">N</td>
-                    <td class="text-align-center text-gray">P</td>
-                    <td class="text-align-center text-gray">1.275,00</td>
-                    <td class="text-align-center text-gray">081</td>
-                </tr>   
-                <tr class="row-product bg-white ">
-                    <td class="pl-3 py-5 text-dark text-align-center">1</td>
-                    <td class="text-align-center text-dark">17228</td>
-                    <td class="text-align-center text-dark">Arena Media Comunications España, SA</td>
-                    <td class="text-align-center text-dark">ECKES GRANINI IBERICA</td>
-                    <td class="text-align-center text-gray">39179</td>
-                    <td class="text-dark">001797: <br>Manifone Iberia, SL</td>
-                    <td class="text-align-center text-gray">N</td>
-                    <td class="text-align-center text-gray">P</td>
-                    <td class="text-align-center text-gray">1.275,00</td>
-                    <td class="text-align-center text-gray">081</td>
-                </tr>   
+                <template v-for="index_bill_order in Number(reports.array_bills_orders.length)" :key="index_bill_order.id">
+                    <tr class="row-product bg-white ">
+                        <td class="pl-3 py-5 text-dark text-align-center">{{ reports.array_bills_orders[index_bill_order - 1].index }}</td>
+                        <td class="text-align-center text-dark">17228</td>
+                        <td class="text-align-center text-dark">{{ reports.array_bills_orders[index_bill_order - 1].client_name }}</td>
+                        <td class="text-align-center text-dark">{{ reports.array_bills_orders[index_bill_order - 1].advertise }}</td>
+                        <td class="text-align-center text-gray">{{ reports.array_bills_orders[index_bill_order - 1].id_order }}</td>
+                        <td class="text-dark">{{ reports.array_bills_orders[index_bill_order - 1].id_sage }}: <br>{{ reports.array_bills_orders[index_bill_order - 1].name }}</td>
+                        <td class="text-align-center text-gray" v-if="reports.array_bills_orders[index_bill_order - 1].type_proposal == 1">N</td>
+                        <td class="text-align-center text-gray" v-else-if="reports.array_bills_orders[index_bill_order - 1].type_proposal == 2">IF</td>
+                        <td class="text-align-center text-gray" v-else-if="reports.array_bills_orders[index_bill_order - 1].type_proposal == 3">NP</td>
+                        <td class="text-align-center text-gray" v-else>A</td>
+                        <td class="text-align-center text-gray" v-if="reports.array_bills_orders[index_bill_order - 1].type_order == 1">P</td>
+                        <td class="text-align-center text-gray" v-else>S</td>
+                        <td class="text-align-center text-gray">{{ $utils.numberWithDotAndComma($utils.roundAndFix(reports.array_bills_orders[index_bill_order - 1].amount)) }}</td>
+                        <td class="text-align-center text-gray">{{ reports.array_bills_orders[index_bill_order - 1].consultant }}</td>
+                    </tr>   
+                </template>
                 <tr class="tr-total-datatable ">
                     <td colspan="9" class="py-6"><span class="ml-5 font-weight-bolder">TOTAL</span></td>
-                    <td  class="text-align-center"><span class="font-weight-bolder">2.895,00€</span></td>
-                </tr>    
+                    <td  class="text-align-center"><span class="font-weight-bolder">{{ $utils.numberWithDotAndComma($utils.roundAndFix(reports.total_amount)) }}€</span></td>
+                </tr>
             </tbody>
         </table>
     </div>
@@ -242,7 +224,7 @@
             };
         },
         computed: {
-            ...mapState(["errors", "config", "proposals"]),
+            ...mapState(["errors", "config", "proposals", "reports"]),
         },
         mounted() {
             this.getUsers(1);
@@ -253,7 +235,7 @@
             this.getNow();
         },
         methods: {
-            ...mapActions(["getUsers", "getDepartments", "getSections", "getChannels", "getProjects", "getChapters", "getBatchs", "getArticles"]),
+            ...mapActions(["getUsers", "getDepartments", "getSections", "getChannels", "getProjects", "getChapters", "getBatchs", "getArticles", "reportInsertions"]),
             ...mapMutations(["changeViewStatusReports"]),
             //Consultar fecha actual
             getNow() {
@@ -351,6 +333,14 @@
                 }
                 this.getArticles(params);
             },
+
+            filterReportInsertions(){
+                var params = {
+                }
+
+                this.reportInsertions(params);
+            }
+            
         }
     };
 </script>

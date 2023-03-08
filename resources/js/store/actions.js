@@ -1075,6 +1075,26 @@ const actions = {
             return error;
         }
     },
+
+    //Listado de facturas insercciones
+    async reportInsertions({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/report_intertions",
+                params: params,
+                method: 'post'
+            });
+
+            state.errors.type_error = 'report_intertions';
+            state.errors.code = response.data.code;
+            state.reports.array_bills_orders = response.data.array_articles;
+            state.reports.total_amount = response.data.total_amount;
+
+        } catch (error) {
+            console.error(error);
+            return error;
+        }
+    },
     
     //Abonar pago
     async payInvoice({ state }, id){
@@ -1146,7 +1166,7 @@ const actions = {
         }
     },
 
-    //Consultar calendatios para las suscripciones
+    //Consultar calendarios para las suscripciones
     async getCalendarsSuscriptions({ state }){
         try {
             const response = await http({
@@ -1494,7 +1514,8 @@ function createObjectsStore({ state }, response, type){
         id_proposal_custom_aux: proposal.id_proposal_custom_aux,
         discount: proposal.discount,
         status: proposal.status,
-        advertiser: proposal.advertiser
+        advertiser: proposal.advertiser,
+        type_proposal: proposal.type_proposal
     }
     
     //Guardamos con un nuevo formato para las facturas los articulos
@@ -1933,7 +1954,8 @@ function createObjectsStoreInfo({ state }, response, type){
         id_proposal_custom_aux: proposal.id_proposal_custom_aux,
         discount: proposal.discount,
         status: proposal.status,
-        advertiser: proposal.advertiser
+        advertiser: proposal.advertiser,
+        type_proposal: proposal.type_proposal
     }
     
     //Guardamos con un nuevo formato para las facturas los articulos

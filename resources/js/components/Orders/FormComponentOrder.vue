@@ -938,6 +938,8 @@ export default {
             this.proposal_submission_settings.sales_possibilities = this.orders.proposal_bd_obj.sales_possibilities;
             this.proposal_submission_settings.discount = this.orders.proposal_bd_obj.discount;
             this.proposal_submission_settings.advertiser = this.orders.proposal_bd_obj.advertiser;
+            this.proposal_submission_settings.type_proposal = this.orders.proposal_bd_obj.type_proposal;
+            this.select_type_proposal = this.orders.proposal_bd_obj.type_proposal;
             this.advertiser = this.orders.proposal_bd_obj.advertiser;
             this.discount = this.proposal_submission_settings.discount;
             this.offer = Math.round(Number(this.orders.bill_obj.total_bill) * 100) / 100; //this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.bill_obj.total_bill));
