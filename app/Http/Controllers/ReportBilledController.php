@@ -24,14 +24,6 @@ class ReportBilledController extends Controller
         $date_from = $request->get('date_from');
         $date_to = $request->get('date_to');
 
-        error_log('select_department: '.$select_department);
-        error_log('select_section: '.$select_section);
-        error_log('select_channel: '.$select_channel);
-        error_log('select_order: '.$select_order);
-        error_log('select_compare: '.$select_compare);
-        error_log('date_from: '.$date_from);
-        error_log('date_to: '.$date_to);
-
         //Generamos array de fechas
         $array_dates = array();
         $num_months = $this->calculateMonthsNumber($date_from, $date_to);
