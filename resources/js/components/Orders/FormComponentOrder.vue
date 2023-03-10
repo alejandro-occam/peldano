@@ -158,6 +158,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="col-12 mt-15 pl-0" v-if="(orders.proposal_obj.chapters.length > 0) || (orders.proposal_obj.chapters.length > 0 && this.is_change_get_info == 1)">
                 <table width="100%" cellpadding="2" cellspacing="1">
                     <thead class="custom-columns-datatable">
@@ -188,16 +189,19 @@
                                                 <template v-for="index_pvp_date in Number(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date.length)">
                                                     <template v-for="index_pvp in Number(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)" >
                                                         <div class="d-flex">
-                                                            <input v-if="this.value_form1.length > 0 && this.is_updating_order" v-model="this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1]" 
-                                                            
-                                                            @input="changeValuesOffer($event)"
-                                                            type="text" class="form-control discount bg-blue-light-white text-align-center not-border my-2" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0"/>
-                                                            <span v-for="index_pvp in Number(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)" v-if="this.value_form1.length > 0 && this.is_change_get_info == 1 && this.is_updating_order == 0" class="mx-auto py-3">{{ this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1] }}€</span>
-                                                            <button v-on:click="deleteOneArticle(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].date, 
+                                                            <template v-if="this.value_form1.length > 0 && this.is_updating_order && !orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_status_validate[index_pvp - 1]" >
+                                                                <input v-model="this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1]" 
+                                                                @input="changeValuesOffer($event)"
+                                                                type="text" class="form-control discount bg-blue-light-white text-align-center not-border my-2" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0"/>
+                                                                <!--<button v-on:click="deleteOneArticle(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].date, 
                                                                                                             orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].date)" 
                                                                                 v-if="this.value_form1.length > 0 && this.is_updating_order && !orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_status_validate[index_pvp - 1]" type="button" class="btn p-0 mx-2 btn-delete">
                                                                     <img class="edit-hover" src="/media/custom-imgs/icono_tabla_eliminar.svg" height="30" width="30">
-                                                            </button>
+                                                                </button>-->
+                                                            </template>
+                                                            <span v-else-if="this.value_form1.length > 0 && this.is_change_get_info == 1" class="mx-auto py-3">{{ this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1] }}€</span>
+
+                                                            
                                                         </div>            
                                                     </template>                                    
                                                 </template>
@@ -235,6 +239,7 @@
                     </tbody>
                 </table>
             </div>
+            
             <div class="col-12 pl-0 mt-10" v-if="orders.proposal_obj.chapters.length > 0 && this.is_updating_order">
                 <span class="text-dark font-weight-bold mb-2">Tipo de propuesta</span>
                 <select class="form-control bg-gray text-dark select-custom select-filter mt-3 col-2" :name="'select_type_proposal'" :id="'select_type_proposal'" v-model="select_type_proposal" data-style="select-lightgreen">
