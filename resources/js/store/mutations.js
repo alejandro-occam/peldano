@@ -1063,6 +1063,7 @@ const mutations = {
         });
         custom_state.proposal_obj.array_consultants[0].percentage += Number(percentage_aux);
     },
+
     //Actualizar consultor
     updateConsultant(state, params){
         var custom_state = state.proposals;
@@ -1116,16 +1117,27 @@ function saveProposalOrdersObject(state, params, article){
                 if(article.article_obj.id == article_obj.article_obj.id){
                     article_obj.dates_prices.map(function(date_price, key) {
                         article.dates.map(function(date_new_article, key) {
-                            var exist = false;
+                            //var exist = false;
                             if(date_price.date == changeFormatDate(date_new_article)){
+                                var exist_2 = false;
                                 date_price.arr_pvp_date.map(function(pvp_date, key) {
                                     if(pvp_date.date == date_new_article){
                                         pvp_date.arr_pvp.push(article.article_obj.pvp);
                                         pvp_date.arr_status_validate.push(0);
                                         article_obj.dates.push(date_new_article);
+                                        exist_2 = true;
                                         exist = true;
                                     }
                                 });
+                                if(!exist_2){
+                                    var pvp_date = {
+                                        arr_pvp: [article.article_obj.pvp],
+                                        arr_status_validate: [0],
+                                        date: date_new_article
+                                    };
+                                    date_price.arr_pvp_date.push(pvp_date);
+                                    exist = true;
+                                }
                             }
                         });
                     });
