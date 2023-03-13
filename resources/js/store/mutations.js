@@ -66,6 +66,13 @@ const mutations = {
             custom_state = state.orders;
             saveProposalOrdersObject(state, params, article);
         }else{
+            custom_state = state.proposals;
+            if(params.type == 2){
+                custom_state = state.orders;
+                if(custom_state.proposal_obj.chapters[0].articles[0].article_obj.name == ''){
+                    custom_state.proposal_obj.chapters[0].articles = [];
+                }
+            }
 
             //Consultamos si tenemos algún producto creado y si no, lo creamos
             if(custom_state.proposal_obj.chapters.length > 0){
@@ -190,8 +197,21 @@ const mutations = {
                 });
                 
                 //Guardamos los artículos creados en nuestro objeto principal
+                var exist_article = false;
                 array_articles.map(function(article_obj, key) {
-                    chapter_obj.articles.push(article_obj);
+                    if(chapter_obj.articles == undefined){
+                        chapter_obj.articles = [];
+                    }
+                    chapter_obj.articles.map(function(article, key) {
+                        if(article.article_obj.id == article_obj.article_obj.id){
+                            exist_article = true;
+                        }
+                    });
+                    
+                    if(!exist_article){
+                        chapter_obj.articles.push(article_obj);
+                    }
+                    
                 });
             });
 
@@ -1117,7 +1137,6 @@ function saveProposalOrdersObject(state, params, article){
                 if(article.article_obj.id == article_obj.article_obj.id){
                     article_obj.dates_prices.map(function(date_price, key) {
                         article.dates.map(function(date_new_article, key) {
-                            //var exist = false;
                             if(date_price.date == changeFormatDate(date_new_article)){
                                 var exist_2 = false;
                                 date_price.arr_pvp_date.map(function(pvp_date, key) {
