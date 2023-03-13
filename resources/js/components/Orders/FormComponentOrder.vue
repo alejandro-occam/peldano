@@ -194,10 +194,15 @@
                                                                 @input="changeValuesOffer($event)"
                                                                 type="text" class="form-control discount bg-blue-light-white text-align-center not-border my-2" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0"/>
                                                                 <!--<button v-on:click="deleteOneArticle(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].date, 
-                                                                                                            orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].date)" 
+                                                                                                            orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].date,
+                                                                                                            orders.proposal_obj.chapters[index - 1].articles[index_article - 1].article_obj.id)" 
                                                                                 v-if="this.value_form1.length > 0 && this.is_updating_order && !orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_status_validate[index_pvp - 1]" type="button" class="btn p-0 mx-2 btn-delete">
                                                                     <img class="edit-hover" src="/media/custom-imgs/icono_tabla_eliminar.svg" height="30" width="30">
                                                                 </button>-->
+                                                                <button v-on:click="deleteOneArticle(orders.proposal_obj.chapters[index - 1].articles[index_article - 1], index_article, index_dates, index_pvp_date, index_pvp)" 
+                                                                                v-if="this.value_form1.length > 0 && this.is_updating_order && !orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_status_validate[index_pvp - 1]" type="button" class="btn p-0 mx-2 btn-delete">
+                                                                    <img class="edit-hover" src="/media/custom-imgs/icono_tabla_eliminar.svg" height="30" width="30">
+                                                                </button>
                                                             </template>
                                                             <span v-else-if="this.value_form1.length > 0 && this.is_change_get_info == 1" class="mx-auto py-3">{{ this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1] }}€</span>
 
@@ -1048,35 +1053,108 @@ export default {
             console.log(id);
         },
         //Eliminar un articulo de una fecha
-        deleteOneArticle(date_custom, date){
+        /*deleteOneArticle(date_custom, date, id){
             let me = this;
             me.orders.proposal_obj.chapters.map(function(chapter, key_chapter) {
                 chapter.articles.map(function(article, key_article) {
-                    article.dates_prices.map(function(date_price, key_date_price) {
-                        if(date_price.date == date_custom){
-                            date_price.arr_pvp_date.map(function(pvp_date, key_pvp_date) {
-                                if(pvp_date.date == date){
-                                    article.amount -= 1;
-                                    article.total -= pvp_date.arr_pvp[0];
-                                    me.orders.proposal_obj.total_amount_global -= 1;
-                                    me.orders.proposal_obj.total_global_normal -= pvp_date.arr_pvp[0];
-                                    me.orders.proposal_obj.total_global -= pvp_date.arr_pvp[0];
-                                    date_price.arr_pvp_date.splice(key_pvp_date, 1);
-                                    me.orders.proposal_obj.array_dates.map(function(date_arr, key_date_arr) {
-                                        if(date_arr.date == date_custom){
-                                            date_arr.total -= pvp_date.arr_pvp[0];
+                    if(article.article_obj.id == id){
+                        article.dates_prices.map(function(date_price, key_date_price) {
+                            if(date_price.date == date_custom){
+                                date_price.arr_pvp_date.map(function(pvp_date, key_pvp_date) {
+                                    if(pvp_date.date == date){
+                                        article.amount -= 1;
+                                        article.total -= pvp_date.arr_pvp[0];
+                                        me.orders.proposal_obj.total_amount_global -= 1;
+                                        me.orders.proposal_obj.total_global_normal -= pvp_date.arr_pvp[0];
+                                        me.orders.proposal_obj.total_global -= pvp_date.arr_pvp[0];
+                                        date_price.arr_pvp_date.splice(key_pvp_date, 1);
+                                        me.orders.proposal_obj.array_dates.map(function(date_arr, key_date_arr) {
+                                            if(date_arr.date == date_custom){
+                                                date_arr.total -= pvp_date.arr_pvp[0];
+                                            }
+                                        });
+                                        if(date_price.arr_pvp_date.length == 0){
+                                            article.dates_prices.splice(key_date_price, 1);
+                                            me.orders.proposal_obj.array_dates.splice(key_date_price, 1);
+                                        }
+                                    }
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+        }*/
+        deleteOneArticle(articles, index_article, index_dates, index_pvp_date, index_pvp){
+            let me = this;
+            me.orders.proposal_obj.chapters.map(function(chapter, key_chapter) {
+                if(articles.chapter_obj.id == chapter.chapter_obj.id){
+                    chapter.articles.map(function(article, key_article) {
+                        if(article.article_obj.id == articles.article_obj.id){
+                            article.dates_prices.map(function(date_price, key_date_price) {
+                                if(key_date_price == (index_dates - 1)){
+                                    date_price.arr_pvp_date.map(function(pvp_date, key_pvp_date) {
+                                        if(key_pvp_date == (index_pvp_date - 1)){
+                                            pvp_date.arr_pvp.map(function(pvp, key_pvp) {
+                                                if(key_pvp == (index_pvp - 1)){
+                                                    me.orders.proposal_obj.array_dates.map(function(date, key_pvp) {
+                                                        if(article.dates_prices[key_date_price].date == date.date){
+                                                            date.total -= pvp;
+                                                        }
+                                                    });
+
+                                                    article.dates_prices[key_date_price].arr_pvp_date[key_pvp_date].arr_pvp.splice(key_pvp, 1);
+                                                    article.dates_prices[key_date_price].arr_pvp_date[key_pvp_date].arr_status_validate.splice(key_pvp, 1);
+
+                                                    if(article.dates_prices[key_date_price].arr_pvp_date[key_pvp_date].arr_pvp.length == 0){
+                                                        me.orders.proposal_obj.chapters[key_chapter].articles[key_article].dates_prices[key_date_price].arr_pvp_date.splice(key_pvp_date, 1);
+                                                    }
+
+                                                    if(article.dates_prices[key_date_price].arr_pvp_date.length == 0){
+                                                        me.orders.proposal_obj.chapters[key_chapter].articles[key_article].dates_prices.splice(key_date_price, 1);
+                                                        me.orders.proposal_obj.chapters[key_chapter].articles[key_article].dates.splice(key_date_price, 1);
+                                                        //me.orders.proposal_obj.array_dates.splice(key_date_price, 1);
+                                                    }
+
+                                                    if(article.dates_prices.length == 0){
+                                                        me.orders.proposal_obj.chapters[key_chapter].articles.splice(key_article, 1);
+                                                    }
+
+                                                    article.amount -= 1;
+                                                    article.total -= pvp;
+                                                    me.orders.proposal_obj.total_amount_global -= 1;
+                                                    me.orders.proposal_obj.total_global_normal -= pvp;
+                                                    me.orders.proposal_obj.total_global -= pvp;
+                                                }
+                                            });
                                         }
                                     });
-                                    if(date_price.arr_pvp_date.length == 0){
-                                        article.dates_prices.splice(key_date_price, 1);
-                                        me.orders.proposal_obj.array_dates.splice(key_date_price, 1);
-                                    }
                                 }
                             });
                         }
                     });
-                });
+                }
             });
+
+            //Consultamos si tenemos que eliminar alguna columna de fechas
+            me.orders.proposal_obj.array_dates.map(function(date, key_date) {
+                var exist = false;
+                me.orders.proposal_obj.chapters.map(function(chapter, key_chapter) {
+                    chapter.articles.map(function(article, key_article) {
+                        article.dates_prices.map(function(date_price, key_date_price) {
+                            if(date_price.date == date.date){
+                                exist = true;
+                            }
+                        });
+                    });
+                });
+                if(!exist){
+                    me.orders.proposal_obj.array_dates.splice(key_date, 1);
+                }
+            });
+
+            me.loadFormObj();
+            me.createBills();
         }
     },
     mounted() {
