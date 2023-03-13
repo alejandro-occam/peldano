@@ -519,11 +519,13 @@ class OrdersController extends Controller
             }else{
                 $array_articles = [];
                 $array_services_obj = Service::select('services.*')
-                                        ->leftJoin('services_bills_orders', 'services.id', 'services_bills_orders.id_service')
-                                        ->where('services_bills_orders.id_bill_order', $bill_order->id)
-                                        ->with('article')
-                                        ->get();
+                                                ->leftJoin('services_bills_orders', 'services.id', 'services_bills_orders.id_service')
+                                                ->where('services_bills_orders.id_bill_order', $bill_order->id)
+                                                ->with('article')
+                                                ->get();
 
+                
+                error_log('array_services_obj: '.$array_services_obj);
                 foreach($array_services_obj as $service){
                     //Consultamos el capitulo
                     $batch = Batch::find($service->article->id_batch);
@@ -539,6 +541,7 @@ class OrdersController extends Controller
                     }
 
                     $service['chapter'] = $chapter;
+                    $service['status_validate'] = $bill_order->status_validate;
                     $array_services[] = $service;
                     $article = Article::find($service->id_article);
                     $array_articles[] = $article;
@@ -815,15 +818,15 @@ class OrdersController extends Controller
 
         //Limpiamos la bd de los datos anteriores
         $array_bills = array();
-        $array_orders_bills = BillOrder::where('id_order', $order->id)->get();
+        $array_orders_bills = BillOrder::where('id_order', $order->id)->where('status_validate', 0)->get();
         foreach($array_orders_bills as $order_bill){
-            $array_bills[] = $order_bill->id;
+            $array_bills[] = $order_bill;
         }
 
         $array_services = array();
         $is_save = 0;
         foreach($array_bills as $bill){
-            $array_services_bills_orders = ServiceBillOrder::where('id_bill_order', $bill)->get();
+            $array_services_bills_orders = ServiceBillOrder::where('id_bill_order', $bill->id)->get();
             foreach($array_services_bills_orders as $service_bill_order){
                 if(($order->is_custom && !$is_save)){
                     $array_services[] = $service_bill_order->id_service;
@@ -831,7 +834,7 @@ class OrdersController extends Controller
                 $service_bill_order->delete();
             }
             $is_save = 1;
-            BillOrder::find($bill)->delete();
+            BillOrder::find($bill->id)->delete();
         }
         //Hay que duplicar los servicios para la ordenes
         foreach($array_services as $service){
@@ -853,56 +856,58 @@ class OrdersController extends Controller
         }
 
         $array_bills_aux = array();
-
+        
         //Consultamos las facturas
         foreach(json_decode($bill_obj)->array_bills as $key => $bill_obj){
-            $bill = BillOrder::create([
-                'number' => $key + 1,
-                'amount' => $bill_obj->amount,
-                'date' => $bill_obj->date,
-                'observations' => $bill_obj->observations,
-                'num_order' => $bill_obj->order_number,
-                'internal_observations' => $bill_obj->internal_observations,
-                'way_to_pay' => $bill_obj->select_way_to_pay,
-                'expiration' => $bill_obj->select_expiration,
-                'id_order' => $order->id
-            ]);
+            if($bill_obj->status_validate == 0){
+                $bill = BillOrder::create([
+                    'number' => $key + 1,
+                    'amount' => $bill_obj->amount,
+                    'date' => $bill_obj->date,
+                    'observations' => $bill_obj->observations,
+                    'num_order' => $bill_obj->order_number,
+                    'internal_observations' => $bill_obj->internal_observations,
+                    'way_to_pay' => $bill_obj->select_way_to_pay,
+                    'expiration' => $bill_obj->select_expiration,
+                    'id_order' => $order->id
+                ]);
 
-            $array_bills_aux[] = $bill;
+                $array_bills_aux[] = $bill;
 
-            $custom_bill = $order->is_custom;
-            
-            if(!$custom_bill){
-                //Creamos la relación entre las facturas y los artículos
-                foreach($array_services_aux as $service){
-                    //Consultamos el capitulo del servicio
-                    $article = Article::find($service->id_article);
-                    if(!$article){
-                        $response['code'] = 1002;
-                        return response()->json($response);
+                $custom_bill = $order->is_custom;
+                
+                if(!$custom_bill){
+                    //Creamos la relación entre las facturas y los artículos
+                    foreach($array_services_aux as $service){
+                        //Consultamos el capitulo del servicio
+                        $article = Article::find($service->id_article);
+                        if(!$article){
+                            $response['code'] = 1002;
+                            return response()->json($response);
+                        }
+
+                        $batch = Batch::find($article->id_batch);
+                        if(!$batch){
+                            $response['code'] = 1003;
+                            return response()->json($response);
+                        }
+
+                        if($service->date == $bill->date && $bill_obj->article->id_chapter == $batch->id_chapter){
+                            ServiceBillOrder::create([
+                                'id_service' => $service->id,
+                                'id_bill_order' => $bill->id,
+                            ]);
+                        }
                     }
+                }
 
-                    $batch = Batch::find($article->id_batch);
-                    if(!$batch){
-                        $response['code'] = 1003;
-                        return response()->json($response);
-                    }
-
-                    if($service->date == $bill->date && $bill_obj->article->id_chapter == $batch->id_chapter){
+                if($custom_bill){
+                    foreach($array_services_aux as $service){
                         ServiceBillOrder::create([
                             'id_service' => $service->id,
                             'id_bill_order' => $bill->id,
                         ]);
                     }
-                }
-            }
-
-            if($custom_bill){
-                foreach($array_services_aux as $service){
-                    ServiceBillOrder::create([
-                        'id_service' => $service->id,
-                        'id_bill_order' => $bill->id,
-                    ]);
                 }
             }
         }
@@ -974,9 +979,12 @@ class OrdersController extends Controller
         $will_delete = true;
 
         foreach($array_bills_orders as $bill_order){
-            $array_date_custom_bill = explode("-", $bill_order->date);
+            /*$array_date_custom_bill = explode("-", $bill_order->date);
             $date_custom_bill = $array_date_custom_bill[2].'-'.$array_date_custom_bill[1].'-'.$array_date_custom_bill[0];
             if ($date_custom_bill < $date_now){
+                $will_delete = false;
+            }*/
+            if($bill_order->status_validate == 1){
                 $will_delete = false;
             }
         }

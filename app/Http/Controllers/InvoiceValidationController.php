@@ -225,6 +225,9 @@ class InvoiceValidationController extends Controller
                 $services_bills_orders = ServiceBillOrder::where('id_bill_order', $bill_order->id)->get();
                 foreach($services_bills_orders as $service_bill_order){
                     $service = Service::find($service_bill_order->id_service);
+                    //Modificamos la fecha del servicio al crearse la factura ahora
+                    $service->date = $date;
+                    $service->save();
                     $article = Article::find($service->id_article);
 
                     //Consultamos el id_sage del artículo

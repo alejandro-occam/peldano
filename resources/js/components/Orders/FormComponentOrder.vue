@@ -158,6 +158,7 @@
                     </div>
                 </div>
             </div>
+
             <div class="col-12 mt-15 pl-0" v-if="(orders.proposal_obj.chapters.length > 0) || (orders.proposal_obj.chapters.length > 0 && this.is_change_get_info == 1)">
                 <table width="100%" cellpadding="2" cellspacing="1">
                     <thead class="custom-columns-datatable">
@@ -171,7 +172,6 @@
                         </tr>
 					</thead>
                     <tbody>
-                        
                         <div class="d-contents" v-for="index in Number(orders.proposal_obj.chapters.length)">
                             <tr class="row-product">
                                 <td class="py-2" :colspan="orders.proposal_obj.array_dates.length + 5">
@@ -184,17 +184,29 @@
                                 <td valign="middle" class="td-border-right text-align-center"><span class="">{{ orders.proposal_obj.chapters[index - 1].articles[index_article - 1].amount }}</span></td>
                                 <td v-for="index_arr_date in Number(orders.proposal_obj.array_dates.length)" valign="middle" class="td-border-right">
                                     <template v-for="index_dates in Number(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices.length)">
-                                        <template v-if="orders.proposal_obj.array_dates[index_arr_date - 1].date == orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].date">
-                                            <div class="d-grid px-5">
+                                        <div class="d-grid px-5">
+                                            <template v-if="orders.proposal_obj.array_dates[index_arr_date - 1].date == orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].date">
                                                 <template v-for="index_pvp_date in Number(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date.length)">
-                                                    <input v-if="this.value_form1.length > 0 && this.is_updating_order" v-model="this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1]" 
-                                                    v-for="index_pvp in Number(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)" 
-                                                    @input="changeValuesOffer($event)"
-                                                    type="text" class="form-control discount bg-blue-light-white text-align-center not-border my-2" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0"/>
-                                                    <span v-for="index_pvp in Number(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)" v-if="this.value_form1.length > 0 && this.is_change_get_info == 1 && this.is_updating_order == 0" class="mx-auto py-3">{{ this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1] }}€</span>
+                                                    <template v-for="index_pvp in Number(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_pvp.length)" >
+                                                        <div class="d-flex">
+                                                            <template v-if="this.value_form1.length > 0 && this.is_updating_order && !orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_status_validate[index_pvp - 1]" >
+                                                                <input v-model="this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1]" 
+                                                                @input="changeValuesOffer($event)"
+                                                                type="text" class="form-control discount bg-blue-light-white text-align-center not-border my-2" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0"/>
+                                                                <!--<button v-on:click="deleteOneArticle(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].date, 
+                                                                                                            orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].date)" 
+                                                                                v-if="this.value_form1.length > 0 && this.is_updating_order && !orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_status_validate[index_pvp - 1]" type="button" class="btn p-0 mx-2 btn-delete">
+                                                                    <img class="edit-hover" src="/media/custom-imgs/icono_tabla_eliminar.svg" height="30" width="30">
+                                                                </button>-->
+                                                            </template>
+                                                            <span v-else-if="this.value_form1.length > 0 && this.is_change_get_info == 1" class="mx-auto py-3">{{ this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1] }}€</span>
+
+                                                            
+                                                        </div>            
+                                                    </template>                                    
                                                 </template>
-                                            </div>
-                                        </template>
+                                            </template>
+                                        </div>
                                     </template>
                                 </td>
                                 <td v-if="this.discount != 0" valign="middle" class="td-border-right text-align-center">
@@ -227,6 +239,7 @@
                     </tbody>
                 </table>
             </div>
+            
             <div class="col-12 pl-0 mt-10" v-if="orders.proposal_obj.chapters.length > 0 && this.is_updating_order">
                 <span class="text-dark font-weight-bold mb-2">Tipo de propuesta</span>
                 <select class="form-control bg-gray text-dark select-custom select-filter mt-3 col-2" :name="'select_type_proposal'" :id="'select_type_proposal'" v-model="select_type_proposal" data-style="select-lightgreen">
@@ -346,7 +359,7 @@
             </div>
         </div>
     </div>
-    <FormAddArticleComponent :type="2"></FormAddArticleComponent>
+    <FormAddArticleComponent :type="3"></FormAddArticleComponent>
     <ModalUpdateOrder></ModalUpdateOrder>
     <ModalAddConsultantComponent ref="modal_add_consultant" :type="2"></ModalAddConsultantComponent>
 </template>
@@ -458,7 +471,7 @@ export default {
         ...mapState(["errors", "orders"]),
     },
     methods: {
-        ...mapMutations(["clearError", "changeViewStatusOrders", "changeProposalObj", "changeValueIsChangeArticle", "generateBill", "clearObjectsOrders", "deleteArticleOrder", "deleteConsultant"]),
+        ...mapMutations(["clearError", "changeViewStatusOrders", "changeProposalObj", "changeValueIsChangeArticle", "generateBill", "generateBillOrder",  "clearObjectsOrders", "deleteArticleOrder", "deleteConsultant"]),
         ...mapActions(["getCompanies", "updateOrder", "deleteOrder", "copyOrder", "payInvoice"]),
         openFormArticle(){
             $('#modal_form_article_proposals').modal('show');
@@ -632,7 +645,7 @@ export default {
                 num_custom_invoices: this.orders.num_custom_invoices,
                 type: 2
             }
-            this.generateBill(params);
+            this.generateBillOrder(params);
         },
         loadFormObj(){
             let me = this;
@@ -654,12 +667,14 @@ export default {
                                                         date_pvp: [{
                                                             date: pvp_date.date,
                                                             pvp: [],
-                                                            pvp_default: []
+                                                            pvp_default: [],
+                                                            arr_status_validate: []
                                                         }]
                                                     }]
                                                 }]
                                             });
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].arr_status_validate.push(pvp_date.arr_status_validate[key_pvp]);
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
 
                                         }else if(me.value_form1[key_chapter].article[key_article] == undefined){
@@ -669,11 +684,13 @@ export default {
                                                     date_pvp: [{
                                                         date: pvp_date.date,
                                                         pvp: [],
-                                                        pvp_default: []
+                                                        pvp_default: [],
+                                                        arr_status_validate: []
                                                     }]
                                                 }]
                                             });
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].arr_status_validate.push(pvp_date.arr_status_validate[key_pvp]);
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
 
                                         }else if(me.value_form1[key_chapter].article[key_article].dates[key_dates] == undefined){
@@ -682,24 +699,29 @@ export default {
                                                 date_pvp: [{
                                                     date: pvp_date.date,
                                                     pvp: [],
-                                                    pvp_default: []
+                                                    pvp_default: [],
+                                                    arr_status_validate: []
                                                 }]
                                             });
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].arr_status_validate.push(pvp_date.arr_status_validate[key_pvp]);
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
 
                                         }else if(me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date] == undefined){
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp.push({
                                                 date: pvp_date.date,
                                                 pvp: [],
-                                                pvp_default: []
+                                                pvp_default: [],
+                                                arr_status_validate: []
                                             });
 
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].arr_status_validate.push(pvp_date.arr_status_validate[key_pvp]);
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
 
                                         }else{
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp.push(pvp);
+                                            me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].arr_status_validate.push(pvp_date.arr_status_validate[key_pvp]);
                                             me.value_form1[key_chapter].article[key_article].dates[key_dates].date_pvp[key_pvp_date].pvp_default.push(article.article_obj.pvp);
                                         }
                                     });
@@ -1024,6 +1046,37 @@ export default {
         payInvoiceForm(id){
             this.payInvoice(id);
             console.log(id);
+        },
+        //Eliminar un articulo de una fecha
+        deleteOneArticle(date_custom, date){
+            let me = this;
+            me.orders.proposal_obj.chapters.map(function(chapter, key_chapter) {
+                chapter.articles.map(function(article, key_article) {
+                    article.dates_prices.map(function(date_price, key_date_price) {
+                        if(date_price.date == date_custom){
+                            date_price.arr_pvp_date.map(function(pvp_date, key_pvp_date) {
+                                if(pvp_date.date == date){
+                                    article.amount -= 1;
+                                    article.total -= pvp_date.arr_pvp[0];
+                                    me.orders.proposal_obj.total_amount_global -= 1;
+                                    me.orders.proposal_obj.total_global_normal -= pvp_date.arr_pvp[0];
+                                    me.orders.proposal_obj.total_global -= pvp_date.arr_pvp[0];
+                                    date_price.arr_pvp_date.splice(key_pvp_date, 1);
+                                    me.orders.proposal_obj.array_dates.map(function(date_arr, key_date_arr) {
+                                        if(date_arr.date == date_custom){
+                                            date_arr.total -= pvp_date.arr_pvp[0];
+                                        }
+                                    });
+                                    if(date_price.arr_pvp_date.length == 0){
+                                        article.dates_prices.splice(key_date_price, 1);
+                                        me.orders.proposal_obj.array_dates.splice(key_date_price, 1);
+                                    }
+                                }
+                            });
+                        }
+                    });
+                });
+            });
         }
     },
     mounted() {
@@ -1099,7 +1152,7 @@ export default {
                             num_custom_invoices: this.orders.num_custom_invoices,
                             type: 2
                         }
-                        this.generateBill(params);
+                        this.generateBillOrder(params);
                     }
                 }
             }else if(this.errors.type_error == 'pay_invoice'){
