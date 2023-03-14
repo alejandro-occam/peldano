@@ -421,6 +421,8 @@ class ProposalsController extends Controller
             $data['select_expiration_options'] = $request->get('select_expiration_options');
             $data['advertiser'] = $request->get('advertiser');
             $data['base64'] = $base64;
+
+            error_log(print_r($bill_obj2, true));
                     
             //Generamos el pdf
             $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pdf.invoice', $data);
