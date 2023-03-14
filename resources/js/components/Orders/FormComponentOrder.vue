@@ -210,7 +210,7 @@
                                     <span class="">{{ this.value_form1[index - 1].article[index_article - 1].total_aux }}€</span>
                                 </td>
                                 <td v-else valign="middle" class="td-border-right text-align-center"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].total)) }}€</span></td>
-                                <td v-if="this.is_updating_order" class="text-align-center bg-white"><span class="font-weight-bolder"><button type="button" class="btn" v-on:click="deleteArticle(orders.proposal_obj.chapters[index - 1].articles[0].article_obj.id)"><img  width="40" height="40" src="/media/custom-imgs/icono_tabla_eliminar.svg" v-on:click="this.is_show_buttons_bill=false"/></button></span></td>
+                                <td v-if="this.is_updating_order && !this.orders.proposal_obj.chapters[index - 1].articles[index_article - 1].is_article_billing" class="text-align-center bg-white"><span class="font-weight-bolder"><button type="button" class="btn" v-on:click="deleteArticle(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].article_obj.id)"><img  width="40" height="40" src="/media/custom-imgs/icono_tabla_eliminar.svg" v-on:click="this.is_show_buttons_bill=false"/></button></span></td>
                             </tr>
                         </div>
                         <tr class="tr-total-datatable">
@@ -461,7 +461,8 @@ export default {
             is_change_get_info_input: 0,
             is_updating: 0,
             date_now: '',
-            is_updating_order: 0
+            is_updating_order: 0,
+            is_article_billing: false
         };
     },
     computed: {
@@ -962,6 +963,22 @@ export default {
             this.advertiser = this.orders.proposal_bd_obj.advertiser;
             this.discount = this.proposal_submission_settings.discount;
             this.offer = Math.round(Number(this.orders.bill_obj.total_bill) * 100) / 100; //this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.bill_obj.total_bill));
+
+            //Comprobamos si alguno de los artículos está facturado para pintar o no el botón de eliminar
+            this.orders.proposal_obj.chapters.map(function(chapter, key_chapter) {
+                chapter.articles.map(function(article, key_article) {
+                    article.dates_prices.map(function(date_price, key_date_price) {
+                        date_price.arr_pvp_date.map(function(pvp_date, key_pvp_date) {
+                            pvp_date.arr_status_validate.map(function(status_validate, key_status_validate) {
+                                if(status_validate == 1){
+                                    article.is_article_billing = 1;
+                                }
+                            });
+                        });
+                    });
+                });
+            });
+
             this.loadFormObj(); 
         },
         //Eliminar propuesta
@@ -1013,14 +1030,33 @@ export default {
         },
         //Eliminar articulo de la tabla
         deleteArticle(id){
-            /*let me = this;
+            let me = this;
             me.orders.proposal_obj.chapters.map(function(chapter, key_chapter) {
                 chapter.articles.map(function(article, key_article) {
                     if(article.article_obj.id == id){
                         me.orders.proposal_obj.chapters[key_chapter].articles.splice(key_article, 1);
                     }
                 });
-            });*/
+            });
+
+            //Consultamos si existe algún artículo
+            var reload = false;
+            var article_exist = false;
+            me.orders.proposal_obj.chapters.map(function(chapter, key_chapter) {
+                chapter.articles.map(function(article, key_article) {
+                    article_exist = true;
+                });
+                if(!article_exist){
+                    me.orders.proposal_obj.chapters.splice(key_chapter, 1);
+                    reload = true;
+                }
+            });
+            if(reload){
+                me.loadFormObj();
+            }
+
+            me.createBills();
+            
         },
         deleteConsultanForm(id){
             var params = {
