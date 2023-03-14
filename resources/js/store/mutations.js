@@ -524,6 +524,7 @@ const mutations = {
         });
 
         //Comprobamos si es una propuesta normal o personalizada
+        var total_bill = 0;
         if(params.num_custom_invoices == 0){
             var array_articles = [];
             
@@ -557,7 +558,7 @@ const mutations = {
             var amount = 0;
             var array_finish_bill = [];
             var last_key = 0;
-            var total_bill = 0;
+           
             custom_state.bill_obj.articles = array_articles;
 
             //Creamos el objeto factura
@@ -707,6 +708,7 @@ const mutations = {
                     status_validate: 1,
                     will_update: false
                 }
+                total_bill += Number(total_amount / Number(params.num_custom_invoices));
                 array_finish_bill.push(bill_month);
                 var newDate = new Date(today.setMonth(today.getMonth()+1));
                 var month = (newDate.getMonth()+1);

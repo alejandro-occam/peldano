@@ -2618,7 +2618,27 @@ function createObjectsStoreOrders({ state }, response, type){
         //});
 
     }else{
-
+        array_bills.map(function(bill_obj, key) {
+            amount = array_bills[key].amount;
+            date_aux = array_bills[key].date;
+            
+            total_bill += Number(amount);
+            var bill_month = {
+                id: array_bills[key].id,
+                date: date_aux,
+                amount: amount,
+                article: '',//article_obj,
+                select_way_to_pay: array_bills[key].way_to_pay,
+                select_expiration: array_bills[key].expiration,
+                observations: array_bills[key].observations,
+                order_number: array_bills[key].num_order,
+                internal_observations: array_bills[key].internal_observations,
+                will_update: array_bills[key].will_update,
+                status_validate: array_bills[key].status_validate,
+            }
+            
+            array_bills_custom.push(bill_month);
+        });
     }
     custom_state.bill_obj.array_bills = array_bills_custom;
     custom_state.bill_obj.total_bill = total_bill;
