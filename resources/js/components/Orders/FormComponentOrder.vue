@@ -193,20 +193,12 @@
                                                                 <input v-model="this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1]" 
                                                                 @input="changeValuesOffer($event)"
                                                                 type="text" class="form-control discount bg-blue-light-white text-align-center not-border my-2" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 46 || event.charCode == 0"/>
-                                                                <!--<button v-on:click="deleteOneArticle(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].date, 
-                                                                                                            orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].date,
-                                                                                                            orders.proposal_obj.chapters[index - 1].articles[index_article - 1].article_obj.id)" 
-                                                                                v-if="this.value_form1.length > 0 && this.is_updating_order && !orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_status_validate[index_pvp - 1]" type="button" class="btn p-0 mx-2 btn-delete">
-                                                                    <img class="edit-hover" src="/media/custom-imgs/icono_tabla_eliminar.svg" height="30" width="30">
-                                                                </button>-->
                                                                 <button v-on:click="deleteOneArticle(orders.proposal_obj.chapters[index - 1].articles[index_article - 1], index_article, index_dates, index_pvp_date, index_pvp)" 
                                                                                 v-if="this.value_form1.length > 0 && this.is_updating_order && !orders.proposal_obj.chapters[index - 1].articles[index_article - 1].dates_prices[index_dates - 1].arr_pvp_date[index_pvp_date - 1].arr_status_validate[index_pvp - 1]" type="button" class="btn p-0 mx-2 btn-delete">
                                                                     <img class="edit-hover" src="/media/custom-imgs/icono_tabla_eliminar.svg" height="30" width="30">
                                                                 </button>
                                                             </template>
                                                             <span v-else-if="this.value_form1.length > 0 && this.is_change_get_info == 1" class="mx-auto py-3">{{ this.value_form1[index - 1].article[index_article - 1].dates[index_dates - 1].date_pvp[index_pvp_date - 1].pvp[index_pvp - 1] }}€</span>
-
-                                                            
                                                         </div>            
                                                     </template>                                    
                                                 </template>
@@ -218,7 +210,7 @@
                                     <span class="">{{ this.value_form1[index - 1].article[index_article - 1].total_aux }}€</span>
                                 </td>
                                 <td v-else valign="middle" class="td-border-right text-align-center"><span class="">{{ $utils.numberWithDotAndComma($utils.roundAndFix(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].total)) }}€</span></td>
-                                <td v-if="this.is_updating_order" class="text-align-center bg-white"><span class="font-weight-bolder"><button type="button" class="btn" v-on:click="deleteArticle(orders.proposal_obj.chapters[index - 1].articles[0].article_obj.id)"><img  width="40" height="40" src="/media/custom-imgs/icono_tabla_eliminar.svg" v-on:click="this.is_show_buttons_bill=false"/></button></span></td>
+                                <td v-if="this.is_updating_order && !this.orders.proposal_obj.chapters[index - 1].articles[index_article - 1].is_article_billing" class="text-align-center bg-white"><span class="font-weight-bolder"><button type="button" class="btn" v-on:click="deleteArticle(orders.proposal_obj.chapters[index - 1].articles[index_article - 1].article_obj.id)"><img  width="40" height="40" src="/media/custom-imgs/icono_tabla_eliminar.svg" v-on:click="this.is_show_buttons_bill=false"/></button></span></td>
                             </tr>
                         </div>
                         <tr class="tr-total-datatable">
@@ -469,7 +461,8 @@ export default {
             is_change_get_info_input: 0,
             is_updating: 0,
             date_now: '',
-            is_updating_order: 0
+            is_updating_order: 0,
+            is_article_billing: false
         };
     },
     computed: {
@@ -970,6 +963,22 @@ export default {
             this.advertiser = this.orders.proposal_bd_obj.advertiser;
             this.discount = this.proposal_submission_settings.discount;
             this.offer = Math.round(Number(this.orders.bill_obj.total_bill) * 100) / 100; //this.$utils.numberWithDotAndComma(this.$utils.roundAndFix(this.proposals.bill_obj.total_bill));
+
+            //Comprobamos si alguno de los artículos está facturado para pintar o no el botón de eliminar
+            this.orders.proposal_obj.chapters.map(function(chapter, key_chapter) {
+                chapter.articles.map(function(article, key_article) {
+                    article.dates_prices.map(function(date_price, key_date_price) {
+                        date_price.arr_pvp_date.map(function(pvp_date, key_pvp_date) {
+                            pvp_date.arr_status_validate.map(function(status_validate, key_status_validate) {
+                                if(status_validate == 1){
+                                    article.is_article_billing = 1;
+                                }
+                            });
+                        });
+                    });
+                });
+            });
+
             this.loadFormObj(); 
         },
         //Eliminar propuesta
@@ -1021,8 +1030,33 @@ export default {
         },
         //Eliminar articulo de la tabla
         deleteArticle(id){
-            this.deleteArticleOrder(id);
-            //console.log(id);
+            let me = this;
+            me.orders.proposal_obj.chapters.map(function(chapter, key_chapter) {
+                chapter.articles.map(function(article, key_article) {
+                    if(article.article_obj.id == id){
+                        me.orders.proposal_obj.chapters[key_chapter].articles.splice(key_article, 1);
+                    }
+                });
+            });
+
+            //Consultamos si existe algún artículo
+            var reload = false;
+            var article_exist = false;
+            me.orders.proposal_obj.chapters.map(function(chapter, key_chapter) {
+                chapter.articles.map(function(article, key_article) {
+                    article_exist = true;
+                });
+                if(!article_exist){
+                    me.orders.proposal_obj.chapters.splice(key_chapter, 1);
+                    reload = true;
+                }
+            });
+            if(reload){
+                me.loadFormObj();
+            }
+
+            me.createBills();
+            
         },
         deleteConsultanForm(id){
             var params = {
@@ -1050,41 +1084,8 @@ export default {
         //Abonar factura
         payInvoiceForm(id){
             this.payInvoice(id);
-            console.log(id);
         },
         //Eliminar un articulo de una fecha
-        /*deleteOneArticle(date_custom, date, id){
-            let me = this;
-            me.orders.proposal_obj.chapters.map(function(chapter, key_chapter) {
-                chapter.articles.map(function(article, key_article) {
-                    if(article.article_obj.id == id){
-                        article.dates_prices.map(function(date_price, key_date_price) {
-                            if(date_price.date == date_custom){
-                                date_price.arr_pvp_date.map(function(pvp_date, key_pvp_date) {
-                                    if(pvp_date.date == date){
-                                        article.amount -= 1;
-                                        article.total -= pvp_date.arr_pvp[0];
-                                        me.orders.proposal_obj.total_amount_global -= 1;
-                                        me.orders.proposal_obj.total_global_normal -= pvp_date.arr_pvp[0];
-                                        me.orders.proposal_obj.total_global -= pvp_date.arr_pvp[0];
-                                        date_price.arr_pvp_date.splice(key_pvp_date, 1);
-                                        me.orders.proposal_obj.array_dates.map(function(date_arr, key_date_arr) {
-                                            if(date_arr.date == date_custom){
-                                                date_arr.total -= pvp_date.arr_pvp[0];
-                                            }
-                                        });
-                                        if(date_price.arr_pvp_date.length == 0){
-                                            article.dates_prices.splice(key_date_price, 1);
-                                            me.orders.proposal_obj.array_dates.splice(key_date_price, 1);
-                                        }
-                                    }
-                                });
-                            }
-                        });
-                    }
-                });
-            });
-        }*/
         deleteOneArticle(articles, index_article, index_dates, index_pvp_date, index_pvp){
             let me = this;
             me.orders.proposal_obj.chapters.map(function(chapter, key_chapter) {
