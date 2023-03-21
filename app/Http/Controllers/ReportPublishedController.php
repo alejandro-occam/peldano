@@ -36,7 +36,6 @@ class ReportPublishedController extends Controller
 
         //Generamos los arrays de fechas
         $array_dates = $this->generateDateArray($num_months, $date_from_custom, 1);
-        error_log(print_r($array_dates, true));
         $array_dates_old = $this->generateDateArray($num_months, $date_from_custom_old, 2);
 
         \DB::enableQueryLog();
@@ -55,23 +54,7 @@ class ReportPublishedController extends Controller
                                             ->leftJoin('sections', 'sections.id', 'channels.id_section')
                                             ->leftJoin('departments', 'departments.id', 'sections.id_department')
                                             ->where('services_bills_orders.id', '<>', null);
-                                                    
-        //error_log(print_r(\DB::getQueryLog(), true));   
-        error_log(print_r($array_dates, true)); 
-        foreach($array_bills_orders_dig as $service){
-            foreach($array_dates as $key_date => $date){
-                if(strtotime($date['last_date_custom2']) >= strtotime($service->date) && strtotime($date['first_date_custom2']) <= strtotime($service->date)){
-                    error_log('last_date_custom2: '.$date['last_date_custom2']);
-                    error_log('first_date_custom2: '.$date['first_date_custom2']);
-                    error_log('date: '.$service->date);
-                    $array_dates[$key_date]['amount'] += $service->pvp;
-                }
-            }
-        }
-
-        error_log(print_r($array_dates, true));
         
-        //error_log(print_r($array_bills_orders_dig->get(), true));
         //Filtro departamente
         if($select_department != '0'){
             $array_bills_orders_dig = $array_bills_orders_dig->where('proposals.id_department', $select_department);
@@ -450,7 +433,7 @@ class ReportPublishedController extends Controller
             $total_dig_old = 0;
 
             foreach ($array_bills_orders_custom_aux as $key => $order_custom_aux) {
-                if($order_custom_aux['dep'] == 'TOTAL'){
+                /*if($order_custom_aux['dep'] == 'TOTAL'){
                     $total_total_new = $order_custom_aux['new']['amounts'][$num_amounts];
                     $total_total_old = $order_custom_aux['old']['amounts'][$num_amounts];
                 }
@@ -468,7 +451,9 @@ class ReportPublishedController extends Controller
                 if($order_custom_aux['dep'] == 'DIG'){
                     $total_dig_new = $order_custom_aux['new']['amounts'][$num_amounts];
                     $total_dig_old = $order_custom_aux['old']['amounts'][$num_amounts];
-                }
+                }*/
+                $total_total_new = $order_custom_aux['new']['amounts'][$num_amounts];
+                $total_total_old = $order_custom_aux['old']['amounts'][$num_amounts];
             }
 
             $percent_others_new = 0;
