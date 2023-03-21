@@ -38,7 +38,6 @@ class ReportPublishedController extends Controller
         $array_dates = $this->generateDateArray($num_months, $date_from_custom, 1);
         $array_dates_old = $this->generateDateArray($num_months, $date_from_custom_old, 2);
 
-        \DB::enableQueryLog();
         $array_bills_orders_dig = Service::select('services.*', 'departments.nomenclature as department_nomenclature', 
                                                     'departments.name as department_name', 'departments.id as id_department', 'sections.nomenclature as section_nomenclature', 
                                                     'channels.nomenclature as channel_nomenclature')
@@ -86,6 +85,8 @@ class ReportPublishedController extends Controller
 
         //Facturas DIG
         $array_bills_orders_dig = $array_bills_orders_dig->get();
+
+        error_log($array_bills_orders_dig);
 
         //Creamos el objeto customizado
         $array_bills_orders_custom = array();
@@ -491,7 +492,7 @@ class ReportPublishedController extends Controller
         $response['array_dates'] = $array_dates;
         $response['array_bills_orders_custom'] = $array_bills_orders_custom_aux;
 
-        error_log(print_r($array_bills_orders_custom_aux, true));
+        //error_log(print_r($array_bills_orders_custom_aux, true));
 
         return response()->json($response);
     }
