@@ -20,6 +20,29 @@
             />
         </div>
         <div class="col-12 mt-2">
+            <div class="d-flex">
+                <div class="mx-2 col-2 mt-5">
+                    <span class="text-dark font-weight-bold mb-2">Revista</span>
+                    <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_magazine" :name="'select_magazine'" :id="'select_magazine'" data-style="select-lightgreen">
+                        <option value="0" selected>Filtro por revista</option>
+                        <option :value="calendar_magazine.id" v-for="calendar_magazine in suscriptions.array_calendars_magazines" :key="calendar_magazine.id" v-text="calendar_magazine.name_calendar + ' ' + calendar_magazine.title" ></option>
+                    </select>
+                </div>
+                <div class="mx-2 col-2 mt-5">
+                    <span class="text-dark font-weight-bold mb-2">Nº revista final</span>
+                    <input v-model="num_finish" type="number" class="form-control borders-box text-dark-gray mt-3" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 0"/>
+                </div>
+                <div class="mx-2 col-2 mt-5" >
+                    <span class="text-dark font-weight-bold mb-2">Forma de pago</span>
+                    <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_payment_method'" :id="'select_payment_method'" v-model="select_payment_method" data-style="select-lightgreen">
+                        <option value="0" selected> Selecciona una forma de pago </option>
+                        <option v-for="payment_method in suscriptions.array_payment_methods" :value="payment_method.id"  v-text="payment_method.name" :key="payment_method.id"></option>
+                    </select>
+                </div>
+            </div>
+            <div class="mx-2 col-12 d-flex mt-10">
+                <button type="submit" class="btn bg-azul color-white px-35 font-weight-bolder" v-on:click="listSuscriptions()">Aplicar filtro</button>
+            </div>
             <div class="col-12 mt-15">
                 <div class="datatable datatable-bordered datatable-head-custom" id="list_suscriptions" style="width: 100%" ></div>
             </div>
@@ -47,12 +70,15 @@
         data() {
             return {
                 publicPath: window.location.origin,
+                select_magazine: 0,
+                select_payment_method: 0,
+                num_finish: '',
                 array_ids_update: [],
                 is_update: false
             };
         },
         methods: {
-            ...mapActions(["deleteSuscription"]),
+            ...mapActions(["deleteSuscription", "getAllCalendarsMagazines"]),
             ...mapMutations(["clearError"]),
             listSuscriptions() {
                 let me = this;
@@ -72,7 +98,12 @@
                                         'meta[name="csrf-token"]'
                                     ).attr("content"),
                                 },
-                                method: 'POST'
+                                method: 'POST',
+                                params: {
+                                    select_magazine: this.select_magazine,
+                                    select_payment_method: this.select_payment_method,
+                                    num_finish: this.num_finish
+                                }
                             },
                         },
                         pageSize: 10,
@@ -269,7 +300,8 @@
                 ...mapState(["errors", "suscriptions"]),
         },
         mounted() {
-           this.listSuscriptions();
+            this.getAllCalendarsMagazines();
+            this.listSuscriptions();
         },
         watch: {
             '$store.state.errors.code': function() {
@@ -315,4 +347,4 @@
             }
         }
     };
-    </script>
+</script>

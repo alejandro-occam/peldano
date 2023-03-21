@@ -31,13 +31,33 @@ class SuscriptionsController extends Controller
             }
         }
 
+        //Recogemos los datos de los filtros
+        $select_magazine = $request->get('select_magazine');
+        $select_payment_method = $request->get('select_payment_method');
+        $num_finish = $request->get('num_finish');
+
         $array_suscriptions = Suscription::select('suscriptions.*', 'articles.name as article_name', 'calendars.name as calendars_magazines_name', 'contacts.name as contacts_name', 'contacts.surnames as contacts_surname')
                                             ->leftJoin('articles', 'articles.id', 'suscriptions.id_article')
                                             ->leftJoin('calendars', 'calendars.id', 'suscriptions.id_calendar')
-                                            ->leftJoin('contacts', 'contacts.id', 'suscriptions.id_contact')
-                                            ->skip($start)
-                                            ->take($skip)
-                                            ->get();
+                                            ->leftJoin('calendars_magazines', 'calendars.id', 'calendars_magazines.id_calendar')
+                                            ->leftJoin('contacts', 'contacts.id', 'suscriptions.id_contact');
+        
+        if($select_magazine != '0'){                    
+            $array_suscriptions = $array_suscriptions->where('calendars_magazines.id', $select_magazine);
+        }
+
+        if($select_payment_method != '0'){                    
+            $array_suscriptions = $array_suscriptions->where('suscriptions.payment_method', $select_payment_method);
+        }
+
+        if(!empty($num_finish)){                    
+            $array_suscriptions = $array_suscriptions->where('num_finish', $num_finish);
+        }
+
+        $array_suscriptions = $array_suscriptions->skip($start)
+                                                    ->take($skip)
+                                                    ->groupBy('suscriptions.id')
+                                                    ->get();
 
         $rowIds[] = array();
         foreach($array_suscriptions as $suscription){
@@ -78,11 +98,17 @@ class SuscriptionsController extends Controller
     }
 
     //Listar calendarios de revistas
-    function listCalendarsMagazines($id){
+    function listCalendarsMagazines($id = null){
         $array_calendars_magazines = CalendarMagazine::select('calendars_magazines.*' ,'calendars.name as name_calendar')
-                                                        ->leftJoin('calendars', 'calendars.id', 'calendars_magazines.id_calendar')
-                                                         ->where('calendars_magazines.id_calendar', $id)
-                                                        ->get();
+                                                        ->leftJoin('calendars', 'calendars.id', 'calendars_magazines.id_calendar');
+             
+        error_log('que pasa');
+        if(isset($id) && $id != null){
+            error_log('hola');
+            $array_calendars_magazines = $array_calendars_magazines->where('calendars_magazines.id_calendar', $id);
+        }
+
+        $array_calendars_magazines = $array_calendars_magazines->get();
 
         $response['array_calendars_magazines'] = $array_calendars_magazines;
         $response['code'] = 1000;
@@ -109,7 +135,7 @@ class SuscriptionsController extends Controller
 
     //Añadir suscripción
     function addSuscription(Request $request){
-        if (!$request->has('id_client') || !$request->has('id_calendar') || !$request->has('id_article') || !$request->has('num') || !$request->has('num_finish')) {
+        if (!$request->has('id_client') || !$request->has('id_calendar') || !$request->has('id_article') || !$request->has('num') || !$request->has('num_finish') || !$request->hash('id_payment_method')) {
             $response['code'] = 1001;
             return response()->json($response);
         }
@@ -119,8 +145,9 @@ class SuscriptionsController extends Controller
         $id_article = $request->get('id_article');
         $num = $request->get('num');
         $num_finish = $request->get('num_finish');
+        $id_payment_method = $request->get('id_payment_method');
 
-        if(!isset($id_client) || empty($id_client) || !isset($id_calendar) || empty($id_calendar) || !isset($id_article) || empty($id_article) || !isset($num) || empty($num) || !isset($num_finish) || empty($num_finish)){
+        if(!isset($id_client) || empty($id_client) || !isset($id_calendar) || empty($id_calendar) || !isset($id_article) || empty($id_article) || !isset($num) || empty($num) || !isset($num_finish) || empty($num_finish) || !isset($id_payment_method) || empty($id_payment_method)){
             $response['code'] = 1001;
             return response()->json($response);
         }
@@ -130,7 +157,8 @@ class SuscriptionsController extends Controller
             'id_calendar' => $id_calendar,
             'id_article' => $id_article,
             'num' => $num,
-            'num_finish' => $num_finish
+            'num_finish' => $num_finish,
+            'id_payment_method' => $id_payment_method
         ]);
 
         $this->generateDeliveryAndInvoice($suscription);
@@ -141,7 +169,7 @@ class SuscriptionsController extends Controller
 
     //Actualizar suscripción
     function updateSuscription(Request $request){
-        if (!$request->has('array_suscriptions') || !$request->has('num') || !$request->has('num_finish')){
+        if (!$request->has('array_suscriptions') || !$request->has('num') || !$request->has('num_finish') || !$request->hash('id_payment_method')){
             $response['code'] = 1001;
             return response()->json($response);
         }
@@ -149,10 +177,10 @@ class SuscriptionsController extends Controller
         $num = $request->get('num');
         $num_finish = $request->get('num_finish');
         $array_suscriptions_custom = $request->get('array_suscriptions');
+        $id_payment_method = $request->get('id_payment_method');
         $array_suscriptions = explode(",", $array_suscriptions_custom);
-        error_log('array_suscriptions: '.print_r($array_suscriptions, true));
 
-        if(!isset($num) || empty($num) || !isset($num_finish) || empty($num_finish) || !isset($array_suscriptions) || empty($array_suscriptions)){
+        if(!isset($num) || empty($num) || !isset($num_finish) || empty($num_finish) || !isset($array_suscriptions) || empty($array_suscriptions) || !isset($id_payment_method) || empty($id_payment_method)){
             $response['code'] = 1001;
             return response()->json($response);
         }
@@ -163,6 +191,7 @@ class SuscriptionsController extends Controller
             if($suscription){
                 $suscription->num = $num;
                 $suscription->num_finish = $num_finish;
+                $suscription->id_payment_method = $id_payment_method;
                 $suscription->save();
                 $this->generateDeliveryAndInvoice($suscription);
             }

@@ -30,7 +30,14 @@
                             <span class="my-auto w-25">Artículo</span>
                             <select class="form-control bg-gray text-dark select-custom select-filter mt-3 w-100" style="color: #181C32 !important;" :name="'select_article'" :id="'select_article'" v-model="select_article" data-style="select-lightgreen">
                                 <option value="0" selected> Selecciona un artículo </option>
-                                <option v-for="article in suscriptions.array_articles" :value="article.id"  v-text="article.name" :key="article.id"></option>-->
+                                <option v-for="article in suscriptions.array_articles" :value="article.id"  v-text="article.name" :key="article.id"></option>
+                            </select>
+                        </div>
+                        <div class="input-group mb-5 d-block" >
+                            <span class="my-auto w-25">Forma de pago</span>
+                            <select class="form-control bg-gray text-dark select-custom select-filter mt-3 w-100" style="color: #181C32 !important;" :name="'select_payment_method'" :id="'select_payment_method'" v-model="select_payment_method" data-style="select-lightgreen">
+                                <option value="0" selected> Selecciona una forma de pago </option>
+                                <option v-for="payment_method in suscriptions.array_payment_methods" :value="payment_method.id"  v-text="payment_method.name" :key="payment_method.id"></option>
                             </select>
                         </div>
                         <div class="input-group mb-5 d-block" >
@@ -78,6 +85,7 @@ import ProgressSpinner from 'primevue/progressspinner';
                 array_clients: [],
                 select_calendar: 0,
                 select_article: 0,
+                select_payment_method: 0,
                 num: '',
                 num_finish: '',
                 title_modal: 'Añadir suscriptor',
@@ -103,6 +111,7 @@ import ProgressSpinner from 'primevue/progressspinner';
                 if(this.select_client == "" || this.select_client == 0 || this.select_client == null
                     || this.select_calendar == "" || this.select_calendar == 0 || this.select_calendar == null
                     || this.select_article == "" || this.select_article == 0 || this.select_article == null
+                    || this.select_payment_method == "" || this.select_payment_method == 0 || this.select_payment_method == null
                     || this.num == "" || this.num == null || this.num <= 0
                     || this.num_finish == "" || this.num_finish == null || this.num_finish <= 0){
                     this.valid = false;
@@ -113,6 +122,7 @@ import ProgressSpinner from 'primevue/progressspinner';
                         id_client: this.select_client,
                         id_calendar: this.select_calendar,
                         id_article: this.select_article,
+                        id_payment_method: this.select_payment_method,
                         num: this.num,
                         num_finish: this.num_finish
                     }
@@ -127,6 +137,7 @@ import ProgressSpinner from 'primevue/progressspinner';
                 this.select_client = 0;
                 this.select_calendar = 0;
                 this.select_article = 0;
+                this.select_payment_method = 0;
                 this.num = '';
                 this.num_finish = '';
                 this.title_modal = 'Añadir suscriptor';

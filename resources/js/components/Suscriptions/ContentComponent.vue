@@ -7,7 +7,6 @@
             <div class="card card-custom shadow-none border-0">
                 <div class="card-body body-tab-step">
                     <TableComponent></TableComponent>
-                    
                 </div>
             </div>
         </div>

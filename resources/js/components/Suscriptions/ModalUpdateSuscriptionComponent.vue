@@ -14,6 +14,13 @@
                     </div>
                     <div class="modal-body">
                         <div class="input-group mb-5 d-block" >
+                            <span class="my-auto w-25">Forma de pago</span>
+                            <select class="form-control bg-gray text-dark select-custom select-filter mt-3 w-100" style="color: #181C32 !important;" :name="'select_payment_method'" :id="'select_payment_method'" v-model="select_payment_method" data-style="select-lightgreen">
+                                <option value="0" selected> Selecciona una forma de pago </option>
+                                <option v-for="payment_method in suscriptions.array_payment_methods" :value="payment_method.id"  v-text="payment_method.name" :key="payment_method.id"></option>
+                            </select>
+                        </div>
+                        <div class="input-group mb-5 d-block" >
                             <span class="my-auto w-25">Nº revista inicial</span>
                             <div class="mt-3">
                                 <input v-model="num" type="number" class="form-control borders-box text-dark-gray" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 0"/>
@@ -53,6 +60,7 @@
             return {
                 publicPath: window.location.origin,
                 array_suscriptions: [],
+                select_payment_method: 0,
                 num: '',
                 num_finish: '',
                 title_modal: 'Actualizar suscriptor',
@@ -74,7 +82,7 @@
             validateForm(){
                 this.valid = true;
                 
-                if(this.num == "" || this.num <= 0 ||  this.num == null || this.num_finish == "" || this.num_finish == null || this.num_finish <= 0){
+                if(this.num == "" || this.num <= 0 ||  this.num == null || this.num_finish == "" || this.select_payment_method == null || this.select_payment_method == 0 || this.num_finish == null || this.num_finish <= 0){
                     this.valid = false;
                 }
 
@@ -82,6 +90,7 @@
                 
                 if(this.valid){ 
                     var params = {
+                        id_payment_method: this.select_payment_method,
                         array_suscriptions: this.array_suscriptions,
                         num: this.num,
                         num_finish: this.num_finish
@@ -95,6 +104,7 @@
             },
             clearForm(){
                 this.id_suscriptor = 0;
+                this.select_payment_method = 0;
                 this.num = '';
                 this.num_finish = '';
                 this.title_modal = 'Actualizar suscriptor';

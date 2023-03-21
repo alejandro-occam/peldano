@@ -1206,6 +1206,26 @@ const actions = {
         }
     },
 
+    //Consultar todos los calendarios de revistas
+    async getAllCalendarsMagazines({ state }, id){
+        try {
+            const response = await http({
+                url: "/admin/get_calendars_magazines",
+                params: '',
+                method: 'get'
+            });
+
+            state.errors.type_error = 'get_calendars_magazines';
+            state.errors.code = response.data.code;
+            state.suscriptions.array_calendars_magazines = response.data.array_calendars_magazines;
+            
+
+        } catch (error) {
+            console.error(error);
+            return error;
+        }
+    },
+
     //Listar artículos para las suscripciones 
     async getArticlesSuscriptions({ state }, id){
         try {

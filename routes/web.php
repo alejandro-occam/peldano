@@ -156,7 +156,7 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
         //Listar calendarios 
         Route::get('/get_calendars_suscriptions', [App\Http\Controllers\SuscriptionsController::class, 'listCalendars'])->name('get_calendars_suscriptions');
         //Listar calendarios de revistas
-        Route::get('/get_calendars_magazines/{id}', [App\Http\Controllers\SuscriptionsController::class, 'listCalendarsMagazines'])->name('get_calendars_magazines');
+        Route::get('/get_calendars_magazines/{id?}', [App\Http\Controllers\SuscriptionsController::class, 'listCalendarsMagazines'])->name('get_calendars_magazines');
         //Listar artículos
         Route::get('/list_articles_suscriptions/{id}', [App\Http\Controllers\SuscriptionsController::class, 'listArticles'])->name('list_articles_suscriptions');
         //Añadir suscripción
