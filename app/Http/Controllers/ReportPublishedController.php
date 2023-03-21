@@ -54,9 +54,8 @@ class ReportPublishedController extends Controller
                                             ->leftJoin('channels', 'channels.id', 'projects.id_channel')
                                             ->leftJoin('sections', 'sections.id', 'channels.id_section')
                                             ->leftJoin('departments', 'departments.id', 'sections.id_department')
-                                            ->groupBy('services.id')
-                                            ->get();
-        
+                                            ->where('services_bills_orders.id', '<>', null);
+                                                    
         //error_log(print_r(\DB::getQueryLog(), true));   
         error_log(print_r($array_dates, true)); 
         foreach($array_bills_orders_dig as $service){
@@ -72,7 +71,6 @@ class ReportPublishedController extends Controller
 
         error_log(print_r($array_dates, true));
         
-        return;
         //error_log(print_r($array_bills_orders_dig->get(), true));
         //Filtro departamente
         if($select_department != '0'){
