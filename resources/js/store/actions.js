@@ -1095,6 +1095,31 @@ const actions = {
             return error;
         }
     },
+
+    //Listado de facturas publicadas
+    async reportPublished({ state }, params){
+        try {
+            const response = await http({
+                url: "/admin/report_published",
+                params: params,
+                method: 'post'
+            });
+
+            state.errors.type_error = 'report_published';
+            state.errors.code = response.data.code;
+            state.reports.array_dates = response.data.array_dates;
+            state.reports.array_bills_orders = response.data.array_bills_orders_custom;
+            state.reports.percent_old = response.data.percent_old;
+            state.reports.percent_new = response.data.percent_new;
+            state.reports.period_new = response.data.period_new;
+            state.reports.period_old = response.data.period_old;
+
+
+        } catch (error) {
+            console.error(error);
+            return error;
+        }
+    },
     
     //Abonar pago
     async payInvoice({ state }, id){

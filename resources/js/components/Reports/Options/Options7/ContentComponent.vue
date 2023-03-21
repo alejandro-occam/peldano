@@ -2,7 +2,7 @@
     <div class="d-flex mb-10 ">
         <h1 class="color-blue my-auto">Informes</h1>
         <div class="subheader-separator subheader-separator-ver my-auto mx-6" style="background-color: #c1c1cd;"></div>
-        <span class="my-auto font-weight-bold color-dark-gray">Informe de órdenes firmadas y ventas.</span>
+        <span class="my-auto font-weight-bold color-dark-gray">Informe publicado.</span>
     </div>
     <div class="mb-20">
         <div class="justify-content-center">

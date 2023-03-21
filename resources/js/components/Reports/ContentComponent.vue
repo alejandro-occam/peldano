@@ -31,10 +31,10 @@
                                         <span class="my-5 mx-2 f-14">Informe de facturas impagadas.</span>
                                         <img class="ml-auto mr-6 arrow" width="15" src=""/>
                                     </router-link>
-                                    <div class="p-2 d-flex mt-10 border-radius-10 bg-tarjet-reports" v-on:click="changeViewStatusReports(8)">
+                                    <router-link to="/admin/reports/published_report" class="p-2 d-flex mb-10 border-radius-10 bg-tarjet-reports bg-tarjet-reports">
                                         <span class="my-5 mx-2 f-14">Informe publicado.</span>
                                         <img class="ml-auto mr-6 arrow" width="15" src=""/>
-                                    </div>
+                                    </router-link>
                                 </div>
                                 <div class="col-6">
                                     <router-link to="/admin/reports/report_insertion" class="p-2 d-flex mb-10 border-radius-10 bg-tarjet-reports bg-tarjet-reports">

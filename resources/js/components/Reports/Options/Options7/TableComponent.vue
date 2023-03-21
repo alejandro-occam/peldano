@@ -119,7 +119,7 @@
         </div>
         
         <div class="mx-2 col-12 d-flex mt-10">
-            <button v-on:click="filteRreportListBilled()" type="submit" class="btn bg-azul color-white px-35 font-weight-bolder">Generar informe</button>
+            <button v-on:click="filteRreportListPublished()" type="submit" class="btn bg-azul color-white px-35 font-weight-bolder">Generar informe</button>
         </div>
     </div>
     <Divider class="my-15" />
@@ -139,38 +139,37 @@
             </thead>
             <tbody>  
                 <template v-for="index_bill_order in Number(reports.array_bills_orders.length)" :key="index_bill_order.id">
-                    <tr class="row-product bg-white" v-if="reports.array_bills_orders[index_bill_order - 1].type_obj == 1">
-                        <td class="td-border-right bg-light-blue-table pl-5" :rowspan="4">{{ reports.array_bills_orders[index_bill_order - 1].dep }}</td>
-                        <td class="td-border-right pl-5" :rowspan="4">{{ reports.array_bills_orders[index_bill_order - 1].sec_name }}</td>
-                        <td class="td-border-right pl-5" :rowspan="4">{{ reports.array_bills_orders[index_bill_order - 1].type }}</td>
-                    </tr>
-                    <tr class="row-product bg-white" v-else-if="reports.array_bills_orders[index_bill_order - 1].type_obj == 2">
-                        <td class="td-border-right bg-light-blue-table pl-5 text-align-center" :rowspan="4" colspan="3">{{ reports.array_bills_orders[index_bill_order - 1].dep.toUpperCase() }}</td>
-                    </tr>
-                    <tr class="row-product bg-white"  v-else-if="reports.array_bills_orders[index_bill_order - 1].type_obj == 3">
-                        <td class="td-border-right bg-light-blue-diference-table pl-5" :rowspan="4" colspan="3">{{ reports.array_bills_orders[index_bill_order - 1].dep }}</td>
-                    </tr>
-                    <tr class="row-product bg-white" v-else>
-                        <td class="td-border-right bg-light-blue-table pl-5" :rowspan="4" colspan="3">TOTAL</td>
-                    </tr>
-                    <tr class="row-product bg-white">
-                        <td class="td-border-right pl-3">{{ reports.array_bills_orders[index_bill_order - 1].old.period }}</td>
-                        <template v-for="index_amounts in Number(reports.array_bills_orders[index_bill_order - 1].new.amounts.length)" :key="index_amounts.id">
-                            <td class="text-align-center td-border-right">{{ reports.array_bills_orders[index_bill_order - 1].old.amounts[index_amounts - 1] }}</td>
-                        </template>
-                    </tr>   
-                    <tr class="row-product bg-white">
-                        <td class="td-border-right pl-3 bg-light-blue-table">{{ reports.array_bills_orders[index_bill_order - 1].new.period }}</td>
-                        <template v-for="index_amounts in Number(reports.array_bills_orders[index_bill_order - 1].new.amounts.length)" :key="index_amounts.id">
-                            <td class="text-align-center td-border-right bg-light-blue-table">{{ reports.array_bills_orders[index_bill_order - 1].new.amounts[index_amounts - 1] }}</td>
-                        </template>
-                    </tr>   
-                    <tr class="row-product bg-white">
-                        <td class="td-border-right pl-3 bg-purple color-white">{{ reports.array_bills_orders[index_bill_order - 1].diference.period }}</td>
-                        <template v-for="index_amounts in Number(reports.array_bills_orders[index_bill_order - 1].new.amounts.length)" :key="index_amounts.id">
-                            <td class="text-align-center td-border-right bg-light-blue-diference-table">{{ reports.array_bills_orders[index_bill_order - 1].diference.amounts[index_amounts - 1] }}</td>
-                        </template>
-                    </tr>
+                    <template v-if="reports.array_bills_orders[index_bill_order - 1].type_obj != 3">
+                        <tr class="row-product bg-white" v-if="reports.array_bills_orders[index_bill_order - 1].type_obj == 1">
+                            <td class="td-border-right bg-light-blue-table pl-5" :rowspan="4">{{ reports.array_bills_orders[index_bill_order - 1].dep }}</td>
+                            <td class="td-border-right pl-5" :rowspan="4">{{ reports.array_bills_orders[index_bill_order - 1].sec_name }}</td>
+                            <td class="td-border-right pl-5" :rowspan="4">{{ reports.array_bills_orders[index_bill_order - 1].type }}</td>
+                        </tr>
+                        <tr class="row-product bg-white" v-else-if="reports.array_bills_orders[index_bill_order - 1].type_obj == 2">
+                            <td class="td-border-right bg-light-blue-table pl-5 text-align-center" :rowspan="4" colspan="3">{{ reports.array_bills_orders[index_bill_order - 1].dep.toUpperCase() }}</td>
+                        </tr>
+                        <tr class="row-product bg-white"  v-else-if="reports.array_bills_orders[index_bill_order - 1].type_obj == 4">
+                            <td class="td-border-right bg-light-blue-table pl-5" :rowspan="4" colspan="3">TOTAL</td>
+                        </tr>
+                        <tr class="row-product bg-white">
+                            <td class="td-border-right pl-3">{{ reports.array_bills_orders[index_bill_order - 1].old.period }}</td>
+                            <template v-for="index_amounts in Number(reports.array_bills_orders[index_bill_order - 1].new.amounts.length)" :key="index_amounts.id">
+                                <td class="text-align-center td-border-right">{{ reports.array_bills_orders[index_bill_order - 1].old.amounts[index_amounts - 1] }}</td>
+                            </template>
+                        </tr>   
+                        <tr class="row-product bg-white">
+                            <td class="td-border-right pl-3 bg-light-blue-table">{{ reports.array_bills_orders[index_bill_order - 1].new.period }}</td>
+                            <template v-for="index_amounts in Number(reports.array_bills_orders[index_bill_order - 1].new.amounts.length)" :key="index_amounts.id">
+                                <td class="text-align-center td-border-right bg-light-blue-table">{{ reports.array_bills_orders[index_bill_order - 1].new.amounts[index_amounts - 1] }}</td>
+                            </template>
+                        </tr>   
+                        <tr class="row-product bg-white">
+                            <td class="td-border-right pl-3 bg-purple color-white">{{ reports.array_bills_orders[index_bill_order - 1].diference.period }}</td>
+                            <template v-for="index_amounts in Number(reports.array_bills_orders[index_bill_order - 1].new.amounts.length)" :key="index_amounts.id">
+                                <td class="text-align-center td-border-right bg-light-blue-diference-table">{{ reports.array_bills_orders[index_bill_order - 1].diference.amounts[index_amounts - 1] }}</td>
+                            </template>
+                        </tr>
+                    </template>
                 </template>
             </tbody>
         </table>
@@ -223,7 +222,7 @@
             this.getDepartments(params);
         },
         methods: {
-            ...mapActions(["getUsers",  "getDepartments", "getSections", "getChannels", "reportListBilled"]),
+            ...mapActions(["getUsers",  "getDepartments", "getSections", "getChannels", "reportPublished"]),
             ...mapMutations(["changeViewStatusReports"]),
             //Consultar fecha actual
             getNow() {
@@ -259,7 +258,7 @@
                 }
                 this.getChannels(params);
             },
-            filteRreportListBilled(){
+            filteRreportListPublished(){
                 var date_from = this.date_from;
                 if(!this.isValidDate(this.date_from)){
                     var date_ms_from = Date.parse(this.date_from);
@@ -280,11 +279,10 @@
                     select_channel: this.select_channel,
                     select_consultant: this.select_consultant,
                     select_order: this.select_order,
-                    select_compare: this.select_compare,
                     date_from: date_from,
                     date_to: date_to
                 }
-                this.reportListBilled(params);
+                this.reportPublished(params);
             },
             // Validates that the input string is a valid date formatted as "mm/dd/yyyy"
             isValidDate(dateString) {

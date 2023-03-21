@@ -17,6 +17,7 @@ import ReportOption1 from "./components/Reports/Options/Options1/ContentComponen
 import ReportOption2 from "./components/Reports/Options/Options2/ContentComponent.vue";
 import ReportOption4 from "./components/Reports/Options/Options4/ContentComponent.vue";
 import ReportOption5 from "./components/Reports/Options/Options5/ContentComponent.vue";
+import ReportOption6 from "./components/Reports/Options/Options6/ContentComponent.vue";
 import ReportOption7 from "./components/Reports/Options/Options7/ContentComponent.vue";
 import InvoiceValidation from "./components/InvoiceValidation/ContentComponent.vue";
 import InfoOrder from "./components/Orders/InfoOrderComponent.vue";
@@ -57,6 +58,10 @@ const routes = [
     },
     {
       path: "/admin/reports/report_billed",
+      component: ReportOption6,
+    },
+    {
+      path: "/admin/reports/published_report",
       component: ReportOption7,
     },
     {

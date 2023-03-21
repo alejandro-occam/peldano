@@ -41,6 +41,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::post('/report_unpaid_invoices', [App\Http\Controllers\ReportUnpaidInvoicesController::class, 'reportsList'])->name('report_unpaid_invoices');
     //Listar informe de insercciones
     Route::post('/report_intertions', [App\Http\Controllers\ReportInsertionController::class, 'reportsList'])->name('report_intertions');
+    //Listar informe publicado
+    Route::post('/report_published', [App\Http\Controllers\ReportPublishedController::class, 'reportsList'])->name('report_published');
 
     //PROPOSALS
     //Listar propuestas
