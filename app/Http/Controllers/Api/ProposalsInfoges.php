@@ -11,11 +11,16 @@ use App\Models\Service;
 use App\Models\SerBillvice;
 use App\Models\Article;
 use App\Models\Batch;
+use App\Models\Chapter;
+use App\Models\Project;
+use App\Models\Channel;
+use App\Models\Section;
 use App\Models\ServiceBill;
 use App\Models\Proposal;
 use App\Models\Bill;
 use App\Models\Department;
 use App\Models\ProposalBill;
+use App\Http\Controllers\CurlController;
 
 class ProposalsInfoges extends Controller
 {
@@ -442,5 +447,137 @@ class ProposalsInfoges extends Controller
         $response['code'] = 1000;
         return response()->json($response);
 
+    }
+
+    //Crear artículo
+    function createArticle(Request $request){
+        if (!$request->has('id_batch') || !$request->has('name') || !$request->has('name_eng') || !$request->has('price')) {
+            $response['code'] = 1001;
+            $response['msg'] = "Missing or empty parameters";
+            return response()->json($response);
+        }
+
+        $id_batch = $request->get('id_batch');
+        $name = $request->get('name');
+        $name_eng = $request->get('name_eng');
+        $price = $request->get('price');
+
+        if (!isset($id_batch) || empty($id_batch) || !isset($name) || empty($name) || !isset($price) || empty($price)) {
+            $response['code'] = 1002;
+            $response['msg'] = "Missing or empty parameters";
+            return response()->json($response);
+        }
+
+        if(!isset($name_eng) || empty($name_eng)){
+            $name_eng = $name.'_eng';
+        }
+
+        //Consultamos si existe el producto
+        $batch = Batch::find($id_batch);
+        if(!$batch){
+            $response['code'] = 1003;
+            return response()->json($response);
+        }
+
+        //Consultamos el Capítulo, Proyecto, Canal, Sección y Departamento del artículo
+        $chapter = Chapter::find($batch->id_chapter);
+        if(!$chapter){
+            $response['code'] = 1003;
+            return response()->json($response);
+        }
+
+        //Consultamos el Departamento, Sección, Canal y Proyecto del lote
+        $project = Project::find($chapter->id_project);
+        if(!$project){
+            $response['code'] = 1003;
+            return response()->json($response);
+        }
+
+        $channel = Channel::find($project->id_channel);
+        if(!$channel){
+            $response['code'] = 1003;
+            return response()->json($response);
+        }
+
+        $section = Section::find($channel->id_section);
+        if(!$section){
+            $response['code'] = 1003;
+            return response()->json($response);
+        }
+
+        $department = Department::find($section->id_department);
+        if(!$department){
+            $response['code'] = 1003;
+            return response()->json($response);
+        }
+
+        //Creamos un objeto para el controller curl
+        $requ_curls = new CurlController();
+
+        //Consultamos el product family del artículo
+        $company = config('constants.id_company_sage');
+        $url = 'https://sage200.sage.es/api/sales/ProductFamilies?api-version=1.0&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Name%20eq%20%27'.
+                        $department->nomenclature."-".
+                        $section->nomenclature."-".
+                        $channel->nomenclature."-".
+                        $project->nomenclature."-".
+                        $chapter->nomenclature."-".
+                        $batch->nomenclature.
+                        '%27';
+
+        $data = json_decode($requ_curls->getSageCurl($url)['response'], true);
+        $product_family_id = '';
+        
+        if(count($data['value']) == 0){
+            //Si no existe creamos un product family
+            $param['CompanyId'] = $company;
+            $param['Name'] = $department->nomenclature."-".$section->nomenclature."-".$channel->nomenclature."-".$project->nomenclature."-".$chapter->nomenclature."-".$batch->nomenclature;
+            $param['Code'] = $department->id.$section->id.$channel->id.$project->id.$chapter->id.$batch->id;
+            $url = 'https://sage200.sage.es/api/sales/ProductFamilies?api-version=1.0';
+            $response = json_decode($requ_curls->postSageCurl($url, $param)['response'], true);
+            
+            $product_family_id = $response['Id'];
+            $product_family_code = $response['Code'];
+
+        }else{
+            $array_product_family = $data['value'];
+            foreach($array_product_family as $product_family){
+                $product_family_id = $product_family['Id'];
+                $product_family_code = $product_family['Code'];
+            }
+        }
+
+        //Consultamos si existe el artículo con este product family y nombre
+        $custom_name = str_replace(' ', '%20', $name);
+        $url = 'https://sage200.sage.es/api/sales/Products?api-version=1.0&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Name%20eq%20%27'.$custom_name.'%27%20and%20FamilyId%20eq%20%27'.$product_family_id.'%27';
+        $data_product = json_decode($requ_curls->getSageCurl($url)['response'], true);
+        if(count($data_product['value']) == 0){
+            //Si no existe creamos un product family
+            $param['CompanyId'] = $company;
+            $param['Name'] = $name;
+            $param['SalesPriceIncludingTaxes'] = false;
+            $param['SalesPrice'] = $price;
+            $param['FamilyId'] = $product_family_id;
+            $url = 'https://sage200.sage.es/api/sales/Products?api-version=1.0';
+            $response = json_decode($requ_curls->postSageCurl($url, $param)['response'], true);
+            $product_code = $response['Code'];
+
+        }else{
+            $response['code'] = 1004;
+            return response()->json($response);
+        }
+
+        $article = Article::create([
+            'name' => $name,
+            'english_name' => $name_eng,
+            'pvp' => $price,
+            'id_batch' => $id_batch,
+            'id_sage' => $product_code,
+            'id_family_sage' => $product_family_code
+        ]);
+
+        $response['id_article'] = $article->id;
+        $response['code'] = 1000;
+        return response()->json($response);
     }
 }

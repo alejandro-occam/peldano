@@ -46,5 +46,7 @@ Route::group(['middleware' => ['jwt.verify']], function() {
 
     //Eliminar orden
     Route::get('/delete_order/{id}', [App\Http\Controllers\Api\OrdersInfoges::class, 'deleteOrder'])->name('delete_order');
-    
+
+    //Crear artículo
+    Route::post('/create_article', [App\Http\Controllers\Api\ProposalsInfoges::class, 'createArticle'])->name('create_article');
 });
