@@ -47,7 +47,7 @@ class ReportBilledController extends Controller
         $array_dates_old = $this->generateDateArray($num_months, $date_from_custom_old, 2);
 
         //Canales DIG Y PRINT
-        $array_bills_orders_dig = BillOrder::select('bills_orders.*', 'departments.nomenclature as department_nomenclature', 'departments.name as department_name', 'departments.id as id_department', 'sections.nomenclature as section_nomenclature', 'channels.nomenclature as channel_nomenclature')
+        $array_bills_orders_dig = BillOrder::select('bills_orders.*', 'departments.nomenclature as department_nomenclature', 'departments.name as department_name', 'departments.id as id_department', 'sections.nomenclature as section_nomenclature', 'channels.nomenclature as channel_nomenclature', 'projects.nomenclature as project_nomenclature')
                                         ->leftJoin('orders', 'orders.id', 'bills_orders.id_order')
                                         ->leftJoin('proposals', 'proposals.id', 'orders.id_proposal')
                                         ->leftJoin('contacts', 'proposals.id_contact', 'contacts.id')
@@ -162,6 +162,7 @@ class ReportBilledController extends Controller
                 $custom_obj['type'] = $bill_order_dig->channel_nomenclature;
                 $custom_obj['id_type'] = $bill_order_dig->id_channel;
                 $custom_obj['sec_name'] = $bill_order_dig->section_nomenclature;
+                $custom_obj['pro_name'] = $bill_order_dig->project_nomenclature;
                 
                 $custom_obj_old['period'] = 'Hace 1 año';
                 foreach($array_dates_old as $key_date => $date){
@@ -192,19 +193,21 @@ class ReportBilledController extends Controller
                 $exist = false;
                 $position = 0;
                 foreach($array_bills_orders_custom as $key_array_bills_orders_custom => $bill_order_custom){
-                    if($bill_order_custom['dep'] == $bill_order_dig->department_nomenclature && $bill_order_custom['type'] == $bill_order_dig->channel_nomenclature){
+                    if($bill_order_custom['dep'] == $bill_order_dig->department_nomenclature && $bill_order_custom['type'] == $bill_order_dig->channel_nomenclature && $bill_order_custom['pro_name'] == $bill_order_dig->project_nomenclature){
                         $exist = true;
                         $position = $key_array_bills_orders_custom;
                     }
                 }
 
                 if(!$exist){
+                    error_log($bill_order_custom['pro_name']);
                     $custom_obj['dep'] = $bill_order_dig->department_nomenclature;
                     $custom_obj['dep_name'] = $bill_order_dig->department_name;
                     $custom_obj['id_dep'] = $bill_order_dig->id_department;
                     $custom_obj['type'] = $bill_order_dig->channel_nomenclature;
                     $custom_obj['id_type'] = $bill_order_dig->id_channel;
                     $custom_obj['sec_name'] = $bill_order_dig->section_nomenclature;
+                    $custom_obj['pro_name'] = $bill_order_dig->project_nomenclature;
 
                     $custom_obj_old['period'] ='Hace 1 año';
                     foreach($array_dates_old as $key_date => $date){
@@ -333,12 +336,10 @@ class ReportBilledController extends Controller
                 }
 
                 if(!$exist){
-                    $custom_array_type_bills_orders_custom[$bill_order_custom['type']][] = $bill_order_custom;
+                    $custom_array_type_bills_orders_custom[$bill_order_custom['pro_name']][] = $bill_order_custom;
                 }
             }
         }
-
-        //error_log(print_r($custom_array_dep_bills_orders_custom, true));
 
         foreach($custom_array_dep_bills_orders_custom as $key => $custom_bill_order_custom){
             $amounts_new = array();
@@ -558,7 +559,7 @@ class ReportBilledController extends Controller
         $response['array_dates'] = $array_dates;
         $response['array_bills_orders_custom'] = $array_bills_orders_custom_aux;
 
-        error_log('array_bills_orders_custom: '.print_r($array_bills_orders_custom, true));
+        //error_log('array_bills_orders_custom: '.print_r($array_bills_orders_custom, true));
 
         return response()->json($response);
     }

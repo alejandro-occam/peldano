@@ -130,6 +130,7 @@
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 50px;"><span>DEP</span></th>
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 50px;"><span>SEC</span></th>
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 50px;"><span>CAN</span></th>
+                    <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="4" colspan="1" style="width: 50px;"><span>PRO</span></th>
                     <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 125px;"><span>PERIODO</span></th>
                     <template v-for="index_report_date in Number(reports.array_dates.length)" :key="index_report_date.id">
                         <th tabindex="0" class="pb-3 text-align-center" aria-controls="example" rowspan="1" colspan="1" style="width: 75px;"><span>{{ reports.array_dates[index_report_date - 1].date }}</span></th>
@@ -143,15 +144,16 @@
                         <td class="td-border-right bg-light-blue-table pl-5" :rowspan="4">{{ reports.array_bills_orders[index_bill_order - 1].dep }}</td>
                         <td class="td-border-right pl-5" :rowspan="4">{{ reports.array_bills_orders[index_bill_order - 1].sec_name }}</td>
                         <td class="td-border-right pl-5" :rowspan="4">{{ reports.array_bills_orders[index_bill_order - 1].type }}</td>
+                        <td class="td-border-right pl-5" :rowspan="4">{{ reports.array_bills_orders[index_bill_order - 1].pro_name }}</td>
                     </tr>
                     <tr class="row-product bg-white" v-else-if="reports.array_bills_orders[index_bill_order - 1].type_obj == 2">
-                        <td class="td-border-right bg-light-blue-table pl-5 text-align-center" :rowspan="4" colspan="3">{{ reports.array_bills_orders[index_bill_order - 1].dep.toUpperCase() }}</td>
+                        <td class="td-border-right bg-light-blue-table pl-5 text-align-center" :rowspan="4" colspan="4">{{ reports.array_bills_orders[index_bill_order - 1].dep.toUpperCase() }}</td>
                     </tr>
                     <tr class="row-product bg-white"  v-else-if="reports.array_bills_orders[index_bill_order - 1].type_obj == 3">
-                        <td class="td-border-right bg-light-blue-diference-table pl-5" :rowspan="4" colspan="3">{{ reports.array_bills_orders[index_bill_order - 1].dep }}</td>
+                        <td class="td-border-right bg-light-blue-diference-table pl-5" :rowspan="4" colspan="4">{{ reports.array_bills_orders[index_bill_order - 1].dep }}</td>
                     </tr>
                     <tr class="row-product bg-white" v-else>
-                        <td class="td-border-right bg-light-blue-table pl-5" :rowspan="4" colspan="3">TOTAL</td>
+                        <td class="td-border-right bg-light-blue-table pl-5" :rowspan="4" colspan="4">TOTAL</td>
                     </tr>
                     <tr class="row-product bg-white">
                         <td class="td-border-right pl-3">{{ reports.array_bills_orders[index_bill_order - 1].old.period }}</td>
