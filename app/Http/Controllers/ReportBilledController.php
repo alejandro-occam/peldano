@@ -384,6 +384,7 @@ class ReportBilledController extends Controller
                     }
 
                     $custom_obj['diference']['amounts'] = $amounts_diference;
+                    $custom_obj['diference']['period'] = 'Diferencia%';
                     $array_bills_orders_custom_aux[] = $custom_obj;
                 }
             }  
@@ -437,6 +438,7 @@ class ReportBilledController extends Controller
                         }
                     }
 
+                    $custom_obj['diference']['period'] = 'Diferencia%';
                     $custom_obj['diference']['amounts'] = $amounts_diference;
                     $array_bills_orders_custom_aux[] = $custom_obj;
 
