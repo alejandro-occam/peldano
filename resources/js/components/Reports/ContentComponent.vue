@@ -49,6 +49,10 @@
                                         <span class="my-5 mx-2 f-14">Informe facturado.</span>
                                         <img class="ml-auto mr-6 arrow" width="15" src=""/>
                                     </router-link>
+                                    <router-link to="/admin/reports/goal_report" class="p-2 d-flex mb-10 border-radius-10 bg-tarjet-reports bg-tarjet-reports">
+                                        <span class="my-5 mx-2 f-14">Informe de objetivos.</span>
+                                        <img class="ml-auto mr-6 arrow" width="15" src=""/>
+                                    </router-link>
                                 </div>
                             </div>
                         </div>

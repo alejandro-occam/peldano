@@ -43,6 +43,8 @@ Route::group(['prefix' => 'admin', 'middleware' => 'auth'], function () {
     Route::post('/report_intertions', [App\Http\Controllers\ReportInsertionController::class, 'reportsList'])->name('report_intertions');
     //Listar informe publicado
     Route::post('/report_published', [App\Http\Controllers\ReportPublishedController::class, 'reportsList'])->name('report_published');
+    //Listar informe de objetivos
+    Route::post('/report_goal', [App\Http\Controllers\ReportGoalController::class, 'reportsList'])->name('report_goal');
 
     //PROPOSALS
     //Listar propuestas

@@ -47,7 +47,7 @@ class ReportBilledController extends Controller
         $array_dates_old = $this->generateDateArray($num_months, $date_from_custom_old, 2);
 
         //Canales DIG Y PRINT
-        $array_bills_orders_dig = BillOrder::select('bills_orders.*', 'departments.nomenclature as department_nomenclature', 'departments.name as department_name', 'departments.id as id_department', 'sections.nomenclature as section_nomenclature', 'channels.nomenclature as channel_nomenclature', 'projects.nomenclature as project_nomenclature')
+        $array_bills_orders_dig = BillOrder::select('proposals.id_user', 'bills_orders.*', 'departments.nomenclature as department_nomenclature', 'departments.name as department_name', 'departments.id as id_department', 'sections.nomenclature as section_nomenclature', 'channels.nomenclature as channel_nomenclature', 'projects.nomenclature as project_nomenclature')
                                         ->leftJoin('orders', 'orders.id', 'bills_orders.id_order')
                                         ->leftJoin('proposals', 'proposals.id', 'orders.id_proposal')
                                         ->leftJoin('contacts', 'proposals.id_contact', 'contacts.id')
@@ -90,7 +90,7 @@ class ReportBilledController extends Controller
                                         ->leftJoin('chapters', 'chapters.id', 'batchs.id_chapter')
                                         ->leftJoin('projects', 'projects.id', 'chapters.id_project')
                                         ->leftJoin('channels', 'channels.id', 'projects.id_channel');*/
-                                        
+                    
         //Filtro departamente
         if($select_department != '0'){
             $array_bills_orders_dig = $array_bills_orders_dig->where('proposals.id_department', $select_department);
