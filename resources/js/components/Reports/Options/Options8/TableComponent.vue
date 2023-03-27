@@ -164,7 +164,9 @@
                     <tr class="row-product bg-white">
                         <td class="td-border-right pl-3 bg-purple color-white">{{ reports.array_bills_orders[index_bill_order - 1].cum_men.period }}</td>
                         <template v-for="index_amounts in Number(reports.array_bills_orders[index_bill_order - 1].cum_men.amounts.length)" :key="index_amounts.id">
-                            <td class="text-align-center td-border-right bg-light-blue-diference-table">{{ reports.array_bills_orders[index_bill_order - 1].cum_men.amounts[index_amounts - 1] }}</td>
+                            <td v-if="reports.array_bills_orders[index_bill_order - 1].cum_men.amounts[index_amounts - 1].situation == '+'" style="color: #090;" class="text-align-center td-border-right bg-light-blue-diference-table">{{ reports.array_bills_orders[index_bill_order - 1].cum_men.amounts[index_amounts - 1].amount }}</td>
+                            <td v-else-if="reports.array_bills_orders[index_bill_order - 1].cum_men.amounts[index_amounts - 1].situation == '-'" style="color: #F00;" class="text-align-center td-border-right bg-light-blue-diference-table">{{ reports.array_bills_orders[index_bill_order - 1].cum_men.amounts[index_amounts - 1].amount }}</td>
+                            <td v-else class="text-align-center td-border-right bg-light-blue-diference-table">{{ reports.array_bills_orders[index_bill_order - 1].cum_men.amounts[index_amounts - 1].amount }}</td>
                         </template>
                     </tr>
                     
@@ -183,7 +185,9 @@
                     <tr class="row-product bg-white">
                         <td class="td-border-right pl-3 bg-purple color-white">{{ reports.array_bills_orders[index_bill_order - 1].cum_total.period }}</td>
                         <template v-for="index_amounts in Number(reports.array_bills_orders[index_bill_order - 1].cum_total.amounts.length)" :key="index_amounts.id">
-                            <td class="text-align-center td-border-right bg-light-blue-diference-table">{{ reports.array_bills_orders[index_bill_order - 1].cum_total.amounts[index_amounts - 1] }}</td>
+                            <td v-if="reports.array_bills_orders[index_bill_order - 1].cum_total.amounts[index_amounts - 1].situation == '+'" style="color: #090;" class="text-align-center td-border-right bg-light-blue-diference-table">{{ reports.array_bills_orders[index_bill_order - 1].cum_total.amounts[index_amounts - 1].amount }}</td>
+                            <td v-else-if="reports.array_bills_orders[index_bill_order - 1].cum_total.amounts[index_amounts - 1].situation == '-'" style="color: #F00;" class="text-align-center td-border-right bg-light-blue-diference-table">{{ reports.array_bills_orders[index_bill_order - 1].cum_total.amounts[index_amounts - 1].amount }}</td>
+                            <td v-else class="text-align-center td-border-right bg-light-blue-diference-table">{{ reports.array_bills_orders[index_bill_order - 1].cum_total.amounts[index_amounts - 1].amount }}</td>
                         </template>
                     </tr>
                 </template>
