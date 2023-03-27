@@ -140,37 +140,50 @@
             </thead>
             <tbody>  
                 <template v-for="index_bill_order in Number(reports.array_bills_orders.length)" :key="index_bill_order.id">
-                    <tr class="row-product bg-white" v-if="reports.array_bills_orders[index_bill_order - 1].type_obj == 1">
-                        <td class="td-border-right bg-light-blue-table pl-5" :rowspan="4">{{ reports.array_bills_orders[index_bill_order - 1].dep }}</td>
-                        <td class="td-border-right pl-5" :rowspan="4">{{ reports.array_bills_orders[index_bill_order - 1].sec_name }}</td>
-                        <td class="td-border-right pl-5" :rowspan="4">{{ reports.array_bills_orders[index_bill_order - 1].type }}</td>
-                        <td class="td-border-right pl-5" :rowspan="4">{{ reports.array_bills_orders[index_bill_order - 1].pro_name }}</td>
+                    <tr class="row-product bg-white">
+                        <td class="td-border-right bg-light-blue-table pl-5" :rowspan="7">{{ reports.array_bills_orders[index_bill_order - 1].dep }}</td>
+                        <td class="td-border-right pl-5" :rowspan="7">{{ reports.array_bills_orders[index_bill_order - 1].sec_name }}</td>
+                        <td class="td-border-right pl-5" :rowspan="7">{{ reports.array_bills_orders[index_bill_order - 1].type }}</td>
+                        <td class="td-border-right pl-5" :rowspan="7">{{ reports.array_bills_orders[index_bill_order - 1].pro_name }}</td>
                     </tr>
-                    <tr class="row-product bg-white" v-else-if="reports.array_bills_orders[index_bill_order - 1].type_obj == 2">
+                    <tr class="row-product bg-white" v-if="reports.array_bills_orders[index_bill_order - 1].type_obj == 2">
                         <td class="td-border-right bg-light-blue-table pl-5 text-align-center" :rowspan="4" colspan="4">{{ reports.array_bills_orders[index_bill_order - 1].dep.toUpperCase() }}</td>
                     </tr>
-                    <tr class="row-product bg-white"  v-else-if="reports.array_bills_orders[index_bill_order - 1].type_obj == 3">
-                        <td class="td-border-right bg-light-blue-diference-table pl-5" :rowspan="4" colspan="4">{{ reports.array_bills_orders[index_bill_order - 1].dep }}</td>
-                    </tr>
-                    <tr class="row-product bg-white" v-else>
-                        <td class="td-border-right bg-light-blue-table pl-5" :rowspan="4" colspan="4">TOTAL</td>
-                    </tr>
                     <tr class="row-product bg-white">
-                        <td class="td-border-right pl-3">{{ reports.array_bills_orders[index_bill_order - 1].old.period }}</td>
-                        <template v-for="index_amounts in Number(reports.array_bills_orders[index_bill_order - 1].new.amounts.length)" :key="index_amounts.id">
-                            <td class="text-align-center td-border-right">{{ reports.array_bills_orders[index_bill_order - 1].old.amounts[index_amounts - 1] }}</td>
+                        <td class="td-border-right pl-3">{{ reports.array_bills_orders[index_bill_order - 1].obj_men.period }}</td>
+                        <template v-for="index_amounts in Number(reports.array_bills_orders[index_bill_order - 1].obj_men.amounts.length)" :key="index_amounts.id">
+                            <td class="text-align-center td-border-right">{{ reports.array_bills_orders[index_bill_order - 1].obj_men.amounts[index_amounts - 1] }}</td>
                         </template>
                     </tr>   
                     <tr class="row-product bg-white">
-                        <td class="td-border-right pl-3 bg-light-blue-table">{{ reports.array_bills_orders[index_bill_order - 1].new.period }}</td>
-                        <template v-for="index_amounts in Number(reports.array_bills_orders[index_bill_order - 1].new.amounts.length)" :key="index_amounts.id">
-                            <td class="text-align-center td-border-right bg-light-blue-table">{{ reports.array_bills_orders[index_bill_order - 1].new.amounts[index_amounts - 1] }}</td>
+                        <td class="td-border-right pl-3 bg-light-blue-table">{{ reports.array_bills_orders[index_bill_order - 1].fac_men.period }}</td>
+                        <template v-for="index_amounts in Number(reports.array_bills_orders[index_bill_order - 1].fac_men.amounts.length)" :key="index_amounts.id">
+                            <td class="text-align-center td-border-right bg-light-blue-table">{{ reports.array_bills_orders[index_bill_order - 1].fac_men.amounts[index_amounts - 1] }}</td>
                         </template>
                     </tr>   
                     <tr class="row-product bg-white">
-                        <td class="td-border-right pl-3 bg-purple color-white">{{ reports.array_bills_orders[index_bill_order - 1].diference.period }}</td>
-                        <template v-for="index_amounts in Number(reports.array_bills_orders[index_bill_order - 1].new.amounts.length)" :key="index_amounts.id">
-                            <td class="text-align-center td-border-right bg-light-blue-diference-table">{{ reports.array_bills_orders[index_bill_order - 1].diference.amounts[index_amounts - 1] }}</td>
+                        <td class="td-border-right pl-3 bg-purple color-white">{{ reports.array_bills_orders[index_bill_order - 1].cum_men.period }}</td>
+                        <template v-for="index_amounts in Number(reports.array_bills_orders[index_bill_order - 1].cum_men.amounts.length)" :key="index_amounts.id">
+                            <td class="text-align-center td-border-right bg-light-blue-diference-table">{{ reports.array_bills_orders[index_bill_order - 1].cum_men.amounts[index_amounts - 1] }}</td>
+                        </template>
+                    </tr>
+                    
+                    <tr class="row-product bg-white">
+                        <td class="td-border-right pl-3">{{ reports.array_bills_orders[index_bill_order - 1].obj_total.period }}</td>
+                        <template v-for="index_amounts in Number(reports.array_bills_orders[index_bill_order - 1].obj_total.amounts.length)" :key="index_amounts.id">
+                            <td class="text-align-center td-border-right">{{ reports.array_bills_orders[index_bill_order - 1].obj_total.amounts[index_amounts - 1] }}</td>
+                        </template>
+                    </tr>   
+                    <tr class="row-product bg-white">
+                        <td class="td-border-right pl-3 bg-light-blue-table">{{ reports.array_bills_orders[index_bill_order - 1].fac_total.period }}</td>
+                        <template v-for="index_amounts in Number(reports.array_bills_orders[index_bill_order - 1].fac_total.amounts.length)" :key="index_amounts.id">
+                            <td class="text-align-center td-border-right bg-light-blue-table">{{ reports.array_bills_orders[index_bill_order - 1].fac_total.amounts[index_amounts - 1] }}</td>
+                        </template>
+                    </tr>   
+                    <tr class="row-product bg-white">
+                        <td class="td-border-right pl-3 bg-purple color-white">{{ reports.array_bills_orders[index_bill_order - 1].cum_total.period }}</td>
+                        <template v-for="index_amounts in Number(reports.array_bills_orders[index_bill_order - 1].cum_total.amounts.length)" :key="index_amounts.id">
+                            <td class="text-align-center td-border-right bg-light-blue-diference-table">{{ reports.array_bills_orders[index_bill_order - 1].cum_total.amounts[index_amounts - 1] }}</td>
                         </template>
                     </tr>
                 </template>
@@ -189,7 +202,7 @@
     import Chart from 'primevue/chart';
 
     export default {
-        name: "TableComponentOption7",
+        name: "TableComponentOption8",
         components: {
             AddButtonComponent,
             RouterButton,

@@ -20,6 +20,8 @@ class ReportGoalController extends Controller
 
         //Generamos array de fechas
         $array_dates = array();
+        $date_from = '01-01-2023';
+        $date_to = '31-12-2023';
         $num_months = $this->calculateMonthsNumber($date_from, $date_to);
 
         $date_from_array = explode("-", $date_from);
@@ -33,11 +35,11 @@ class ReportGoalController extends Controller
         $date_to_custom_old = date('d-m-Y', strtotime("-".$select_compare." year", $date_to_custom_old_time));
 
         //Generamos los arrays de fechas
-        $array_dates = $this->generateDateArray($num_months, $date_from_custom, 1);
-        $array_dates_old = $this->generateDateArray($num_months, $date_from_custom_old, 2);
+        $array_dates = $this->generateDateArray($num_months, $date_from_custom, 1, false);
+        $array_dates_old = $this->generateDateArray($num_months, $date_from_custom_old, 2, false);
 
         //Canales DIG Y PRINT
-        $array_bills_orders_dig = BillOrder::select('users_objetives.id', 'proposals.id_user', 'bills_orders.*', 'departments.nomenclature as department_nomenclature', 'departments.name as department_name', 'departments.id as id_department', 'sections.nomenclature as section_nomenclature', 'channels.nomenclature as channel_nomenclature', 'projects.nomenclature as project_nomenclature')
+        $array_bills_orders_dig = BillOrder::select('users_objetives.id', 'users_objetives.obj_print', 'proposals.id_user', 'bills_orders.*', 'departments.nomenclature as department_nomenclature', 'departments.name as department_name', 'departments.id as id_department', 'sections.nomenclature as section_nomenclature', 'channels.nomenclature as channel_nomenclature', 'projects.nomenclature as project_nomenclature')
                                         ->leftJoin('orders', 'orders.id', 'bills_orders.id_order')
                                         ->leftJoin('proposals', 'proposals.id', 'orders.id_proposal')
                                         ->leftJoin('contacts', 'proposals.id_contact', 'contacts.id')
@@ -63,6 +65,9 @@ class ReportGoalController extends Controller
             $custom_obj_men = null;
             $custom_fac_men = null;
             $custom_cum_men = null;
+            $custom_obj_total = null;
+            $custom_fac_total = null;
+            $custom_cum_total = null;
 
             if($key == 0){
                 //Consultamos el departamento, la sección y el canal de la factura
@@ -80,30 +85,136 @@ class ReportGoalController extends Controller
                 $custom_fac_men['period'] = 'Fac. mensual';
                 $custom_cum_men['period'] = 'Cum. mensual%';
 
-                foreach($array_dates_old as $key_date => $date){
-                    if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
-                    //if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
-                        $custom_obj_men['amounts'][] = round($bill_order_dig->amount, 2);
-                    }else{
-                        $custom_obj_men['amounts'][] = 0;
+                $custom_obj_total['period'] = 'Obj. acumulado';
+                $custom_fac_total['period'] = 'Fac. acumulado';
+                $custom_cum_total['period'] = 'Cum. acumulado%';
+
+                //Obj. mensual
+                $trim = 0;
+                $total = 0;
+                foreach($array_dates as $key_date => $date){
+                    $custom_obj_men['amounts'][] = round(($bill_order_dig->obj_print + $bill_order_dig->obj_dig + $bill_order_dig->obj_eve) / 12, 2);
+                    $trim += round(($bill_order_dig->obj_print + $bill_order_dig->obj_dig + $bill_order_dig->obj_eve) / 12, 2);
+
+
+                    if($key_date == 2 || $key_date == 5 || $key_date == 8 || $key_date == 11){
+                        $custom_obj_men['amounts'][] = $trim;
+                        $trim = 0;
                     }
+
+                    $total += round(($bill_order_dig->obj_print + $bill_order_dig->obj_dig + $bill_order_dig->obj_eve) / 12, 2);
                 }
-                $custom_obj_new['period'] = 'Selección';
+                $custom_obj_men['amounts'][] = ($bill_order_dig->obj_print + $bill_order_dig->obj_dig + $bill_order_dig->obj_eve);
+
+                //Fac. mensual
+                $trim = 0;
+                $total = 0;
                 foreach($array_dates as $key_date => $date){
                     if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
                     //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
                         $custom_fac_men['amounts'][] = round($bill_order_dig->amount, 2);
+                        $trim += round($bill_order_dig->amount, 2);
+                        $total += round($bill_order_dig->amount, 2);
+
                     }else{
                         $custom_fac_men['amounts'][] = 0;
                     }
+                    if($key_date == 2 || $key_date == 5 || $key_date == 8 || $key_date == 11){
+                        $custom_fac_men['amounts'][] = $trim;
+                        $trim = 0;
+                    }
+                    
                 }
+                $custom_fac_men['amounts'][] = $total;
+
+                //Cum. mensual
+                $trim = 0;
+                foreach($array_dates as $key_date => $date){
+                    if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
+                    //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                        $custom_cum_men['amounts'][] = round($bill_order_dig->amount, 2);
+                        $trim += round($bill_order_dig->amount, 2);
+
+                    }else{
+                        $custom_cum_men['amounts'][] = 0;
+                    }
+                    if($key_date == 2 || $key_date == 5 || $key_date == 8 || $key_date == 11){
+                        $custom_cum_men['amounts'][] = $trim;
+                        $trim = 0;
+                    }
+                }
+
+                //Obj. acumulado
+                $trim = 0;
+                $total = 0;
+                foreach($array_dates as $key_date => $date){
+                    /*if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
+                    //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                        $custom_obj_total['amounts'][] = round($bill_order_dig->amount, 2);
+                        $trim += round($bill_order_dig->amount, 2);
+
+                    }else{
+                        $custom_obj_total['amounts'][] = 0;
+                    }*/
+
+                    $total += round(($bill_order_dig->obj_print + $bill_order_dig->obj_dig + $bill_order_dig->obj_eve) / 12, 2);
+                    $custom_obj_total['amounts'][] = round($total, 2);
+                    
+
+                    if($key_date == 2 || $key_date == 5 || $key_date == 8 || $key_date == 11){
+                        $custom_obj_total['amounts'][] = round($total, 2);
+                        //$trim = 0;
+                    }
+                }
+
+                //Fac. acumulado
+                $trim = 0;
+                $total  =0;
+                foreach($array_dates as $key_date => $date){
+                    if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
+                    //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                        $custom_fac_total['amounts'][] = (round($bill_order_dig->amount, 2) + $custom_fac_total['amounts'][$key_date - 1]);
+                        $trim += round($bill_order_dig->amount, 2);
+                        $total += round($bill_order_dig->amount, 2);
+
+                    }else{
+                        $custom_fac_total['amounts'][] = 0;
+                    }
+                    if($key_date == 2 || $key_date == 5 || $key_date == 8 || $key_date == 11){
+                        $custom_fac_total['amounts'][] = $trim;
+                        $trim = 0;
+                    }
+                }
+                $custom_fac_total['amounts'][] = round($total, 2);
+
+                //Cum. acumulado%
+                $trim = 0;
+                foreach($array_dates as $key_date => $date){
+                    if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
+                    //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                        $custom_cum_total['amounts'][] = round($bill_order_dig->amount, 2);
+                        $trim += round($bill_order_dig->amount, 2);
+
+                    }else{
+                        $custom_cum_total['amounts'][] = 0;
+                    }
+                    if($key_date == 2 || $key_date == 5 || $key_date == 8 || $key_date == 11){
+                        $custom_cum_total['amounts'][] = $trim;
+                        $trim = 0;
+                    }
+                }
+
 
                 $custom_obj['obj_men'] = $custom_obj_men;
                 $custom_obj['fac_men'] = $custom_fac_men;
                 $custom_obj['cum_men'] = $custom_cum_men;
+                $custom_obj['obj_total'] = $custom_obj_total;
+                $custom_obj['fac_total'] = $custom_fac_total;
+                $custom_obj['cum_total'] = $custom_cum_total;
+                $custom_obj['type_obj'] = 1;
                 $array_bills_orders_custom[] = $custom_obj;
 
-            }/*else{
+            }else{
                 $exist = false;
                 $position = 0;
                 foreach($array_bills_orders_custom as $key_array_bills_orders_custom => $bill_order_custom){
@@ -114,7 +225,6 @@ class ReportGoalController extends Controller
                 }
 
                 if(!$exist){
-                    error_log($bill_order_custom['pro_name']);
                     $custom_obj['dep'] = $bill_order_dig->department_nomenclature;
                     $custom_obj['dep_name'] = $bill_order_dig->department_name;
                     $custom_obj['id_dep'] = $bill_order_dig->id_department;
@@ -122,51 +232,185 @@ class ReportGoalController extends Controller
                     $custom_obj['id_type'] = $bill_order_dig->id_channel;
                     $custom_obj['sec_name'] = $bill_order_dig->section_nomenclature;
                     $custom_obj['pro_name'] = $bill_order_dig->project_nomenclature;
+                    
+                    $custom_obj_men['period'] = 'Obj. mensual';
+                    $custom_fac_men['period'] = 'Fac. mensual';
+                    $custom_cum_men['period'] = 'Cum. mensual%';
 
-                    $custom_obj_old['period'] ='Hace 1 año';
-                    foreach($array_dates_old as $key_date => $date){
-                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
-                            $custom_obj_old['amounts'][] = round($bill_order_dig->amount, 2);
+                    $custom_obj_total['period'] = 'Obj. acumulado';
+                    $custom_fac_total['period'] = 'Fac. acumulado';
+                    $custom_cum_total['period'] = 'Cum. acumulado%';
+
+                    //Obj. mensual
+                    $trim = 0;
+                    foreach($array_dates as $key_date => $date){
+                        /*if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
+                        //if(strtotime($date['last_date_custom2']) >= strtotime($custom_date) && strtotime($date['first_date_custom2']) <= strtotime($custom_date)){
+                            $custom_obj_men['amounts'][] = round(($bill_order_dig->obj_print + $bill_order_dig->obj_dig + $bill_order_dig->obj_eve) / 12, 2);
+                            $trim += round(($bill_order_dig->obj_print + $bill_order_dig->obj_dig + $bill_order_dig->obj_eve) / 12, 2);
+
                         }else{
-                            $custom_obj_old['amounts'][] = 0;
+                            $custom_obj_men['amounts'][] = 0;
+                        }*/
+                        $custom_obj_men['amounts'][] = round(($bill_order_dig->obj_print + $bill_order_dig->obj_dig + $bill_order_dig->obj_eve) / 12, 2);
+                        $trim += round(($bill_order_dig->obj_print + $bill_order_dig->obj_dig + $bill_order_dig->obj_eve) / 12, 2);
+
+
+                        if($key_date == 2 || $key_date == 5 || $key_date == 8 || $key_date == 11){
+                            $custom_obj_men['amounts'][] = $trim;
+                            $trim = 0;
                         }
                     }
 
-                    $custom_obj_new['period'] = 'Selección';
+                    //Fac. mensual
+                    $trim = 0;
                     foreach($array_dates as $key_date => $date){
                         if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
                         //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
-                            $custom_obj_new['amounts'][] = round($bill_order_dig->amount, 2);
+                            $custom_fac_men['amounts'][] = round($bill_order_dig->amount, 2);
+                            $trim += round($bill_order_dig->amount, 2);
+
                         }else{
-                            $custom_obj_new['amounts'][] = 0;
+                            $custom_fac_men['amounts'][] = 0;
+                        }
+                        if($key_date == 2 || $key_date == 5 || $key_date == 8 || $key_date == 11){
+                            $custom_fac_men['amounts'][] = $trim;
+                            $trim = 0;
                         }
                     }
-                    $custom_obj_diference['period'] = 'Diferencia%';
-                    $custom_obj['old'] = $custom_obj_old;
-                    $custom_obj['new'] = $custom_obj_new;
-                    $custom_obj['diference'] = $custom_obj_diference;
+
+                    //Cum. mensual
+                    $trim = 0;
+                    foreach($array_dates as $key_date => $date){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
+                        //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                            $custom_cum_men['amounts'][] = round($bill_order_dig->amount, 2);
+                            $trim += round($bill_order_dig->amount, 2);
+
+                        }else{
+                            $custom_cum_men['amounts'][] = 0;
+                        }
+                        if($key_date == 2 || $key_date == 5 || $key_date == 8 || $key_date == 11){
+                            $custom_cum_men['amounts'][] = $trim;
+                            $trim = 0;
+                        }
+                    }
+
+                    //Obj. acumulado
+                    $trim = 0;
+                    $total = 0;
+                    foreach($array_dates as $key_date => $date){
+                        /*if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
+                        //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                            $custom_obj_total['amounts'][] = round($bill_order_dig->amount, 2);
+                            $trim += round($bill_order_dig->amount, 2);
+
+                        }else{
+                            $custom_obj_total['amounts'][] = 0;
+                        }*/
+
+                        $total += round(($bill_order_dig->obj_print + $bill_order_dig->obj_dig + $bill_order_dig->obj_eve) / 12, 2);
+                        $custom_obj_total['amounts'][] = round($total, 2);
+                        
+
+                        if($key_date == 2 || $key_date == 5 || $key_date == 8 || $key_date == 11){
+                            $custom_obj_total['amounts'][] = round($total, 2);
+                            //$trim = 0;
+                        }
+                    }
+
+                    //Fac. acumulado
+                    $trim = 0;
+                    foreach($array_dates as $key_date => $date){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
+                        //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                            $custom_fac_total['amounts'][] = round($bill_order_dig->amount, 2);
+                            $trim += round($bill_order_dig->amount, 2);
+
+                        }else{
+                            $custom_fac_total['amounts'][] = 0;
+                        }
+                        if($key_date == 2 || $key_date == 5 || $key_date == 8 || $key_date == 11){
+                            $custom_fac_total['amounts'][] = $trim;
+                            $trim = 0;
+                        }
+                    }
+
+                    //Cum. acumulado%
+                    $trim = 0;
+                    foreach($array_dates as $key_date => $date){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
+                        //if(strtotime($date['last_date_custom']) >= strtotime($custom_date) && strtotime($date['first_date_custom']) <= strtotime($custom_date)){
+                            $custom_cum_total['amounts'][] = round($bill_order_dig->amount, 2);
+                            $trim += round($bill_order_dig->amount, 2);
+
+                        }else{
+                            $custom_cum_total['amounts'][] = 0;
+                        }
+                        if($key_date == 2 || $key_date == 5 || $key_date == 8 || $key_date == 11){
+                            $custom_cum_total['amounts'][] = $trim;
+                            $trim = 0;
+                        }
+                    }
+
+
+                    $custom_obj['obj_men'] = $custom_obj_men;
+                    $custom_obj['fac_men'] = $custom_fac_men;
+                    $custom_obj['cum_men'] = $custom_cum_men;
+                    $custom_obj['obj_total'] = $custom_obj_total;
+                    $custom_obj['fac_total'] = $custom_fac_total;
+                    $custom_obj['cum_total'] = $custom_cum_total;
+                    $custom_obj['type_obj'] = 1;
                     $array_bills_orders_custom[] = $custom_obj;
                 }
 
                 if($exist){
-                    //Aquí sumariamos precios de las ordenes
-                    foreach($array_dates_old as $key_date => $date){
-                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
-                            $array_bills_orders_custom[$position]['old']['amounts'][$key_date] += round($bill_order_dig->amount, 2);
-                        }
-                    }
+                    //Fac. mensual
+                    $trim = 0;
+                    $total = 0;
                     foreach($array_dates as $key_date => $date){
                         if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
-                        //if($date['last_date_custom'] >= $custom_date && $date['first_date_custom'] <= $custom_date){
-                            $array_bills_orders_custom[$position]['new']['amounts'][$key_date] += round($bill_order_dig->amount, 2);
+                            $array_bills_orders_custom[$position]['fac_men']['amounts'][$key_date] += round($bill_order_dig->amount, 2);
+                            $trim += round($bill_order_dig->amount, 2);
+                            $total += round($bill_order_dig->amount, 2);
+                        }
+
+                        if($key_date == 2 || $key_date == 5 || $key_date == 8 || $key_date == 11){
+                            $array_bills_orders_custom[$position]['fac_men']['amounts'][$key_date + 1] += round($trim, 2);
+                            $trim = 0;
                         }
                     }
+                    $array_bills_orders_custom[$position]['fac_men']['amounts'][count($array_bills_orders_custom[$position]['fac_men']['amounts']) - 1] += $total;
+
+                    //Fac. acumulado
+                    $trim = 0;
+                    $total = 0;
+                    
+                    foreach($array_dates as $key_date => $date){
+                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
+                            error_log('1: '.$array_bills_orders_custom[$position]['fac_total']['amounts'][$key_date]);
+                            error_log('2: '.round($bill_order_dig->amount, 2));
+                            $array_bills_orders_custom[$position]['fac_total']['amounts'][$key_date] = (round($bill_order_dig->amount, 2) + $array_bills_orders_custom[$position]['fac_total']['amounts'][$key_date - 1]);
+                            error_log('3: '.$array_bills_orders_custom[$position]['fac_total']['amounts'][$key_date]);
+                            $trim +=  $array_bills_orders_custom[$position]['fac_total']['amounts'][$key_date];
+                            $total += $array_bills_orders_custom[$position]['fac_total']['amounts'][$key_date];
+
+                        }
+                        if($key_date == 2 || $key_date == 5 || $key_date == 8 || $key_date == 11){
+                            $array_bills_orders_custom[$position]['fac_total']['amounts'][$key_date + 1] += round($trim, 2);
+                            $trim = 0;
+                        }
+                    }
+                    $array_bills_orders_custom[$position]['fac_total']['amounts'][count($array_bills_orders_custom[$position]['fac_total']['amounts']) - 1] += $total;
                 }
-            }*/
+            }
         }
 
+        $array_dates_finish = $this->generateDateArray($num_months, $date_from_custom, 1, true);
+
+
         $response['code'] = 1000;
-        $response['array_dates'] = $array_dates;
+        $response['array_dates'] = $array_dates_finish;
         //$response['array_bills_orders_custom'] = $array_bills_orders_custom_aux;
         $response['array_bills_orders_custom'] = $array_bills_orders_custom;
 
@@ -175,7 +419,7 @@ class ReportGoalController extends Controller
     }
 
     //Generar array de fechas
-    function generateDateArray($num_months, $date_from_custom, $type){
+    function generateDateArray($num_months, $date_from_custom, $type, $trim){
         if($type == 2){
             $date_from_array = explode("-", $date_from_custom);
             $date_from_custom = $date_from_array[1].'-01-'.$date_from_array[2];
@@ -208,6 +452,7 @@ class ReportGoalController extends Controller
                 $date_obj['first_date_custom2'] = $first_newformat_custom2;
                 $date_obj['last_date_custom2'] = $last_newformat_custom2;
                 $array_dates[] = $date_obj;
+
             }else{
                 $newformat = date('M-y', strtotime("+".$i." months", $time));
                 $first_newformat_custom = date('m-d-Y', strtotime("+".$i." months", $time));
@@ -220,6 +465,21 @@ class ReportGoalController extends Controller
                 $date_obj['first_date_custom2'] = $first_newformat_custom2;
                 $date_obj['last_date_custom2'] = $last_newformat_custom2;
                 $array_dates[] = $date_obj;
+            }
+
+            if($trim){
+                if($i == 2){
+                    $array_dates[]['date'] = '1/TRIM.';
+                }
+                if($i == 5){
+                    $array_dates[]['date'] = '2/TRIM.';
+                }
+                if($i == 8){
+                    $array_dates[]['date'] = '3/TRIM.';
+                }
+                if($i == 11){
+                    $array_dates[]['date'] = '4/TRIM.';
+                }
             }
         }
         return $array_dates;
