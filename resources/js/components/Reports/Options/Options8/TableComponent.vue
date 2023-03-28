@@ -80,43 +80,6 @@
                 <option :value="2">Editando</option>
             </select>
         </div>
-
-        <div class="mx-2 col-2 mt-auto">
-            <select class="form-control bg-gray text-dark select-custom select-filter" v-model="select_exchange" :name="'select_exchange'" :id="'select_exchange'" data-style="select-lightgreen">
-                <option :value="1">Sin intercambios</option>
-                <option :value="2">Con intercambios</option>
-                <option :value="3">Sólo intercambios</option>
-            </select>
-        </div>
-
-        <div class="mx-2 col-2 mt-5">
-            <span class="text-dark font-weight-bold mb-2">Fecha desde</span>
-            <Calendar class="w-100 select-filter input-custom-calendar mt-3" v-model="date_from" inputId="date_from" autocomplete="off" dateFormat="dd-mm-yy" />
-        </div>
-
-        <div class="mx-2 col-2 mt-5">
-            <span class="text-dark font-weight-bold mb-2">Fecha hasta</span>
-            <Calendar class="w-100 select-filter input-custom-calendar mt-3" v-model="date_to" inputId="date_to" autocomplete="off" dateFormat="dd-mm-yy"  />
-        </div>
-
-        <div class="mx-2 col-2 mt-5">
-            <span class="text-dark font-weight-bold mb-2">Limitadas por fechas</span>
-            <span class="switch switch-outline switch-icon switch-success mt-3">
-                <label class="mr-auto">
-                    <input class="switch-exempt" input type="checkbox" checked="checked" name="date_limit_switch" v-model="date_limit_switch"/>
-                    <span></span>
-                </label>
-            </span>
-        </div>
-
-        <div class="mx-2 col-2 mt-5">
-            <span class="text-dark font-weight-bold mb-2">Datos a usar</span>
-            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_data_to_use" :name="'select_data_to_use'" :id="'select_data_to_use'" data-style="select-lightgreen">
-                <option :value="1">Del consultor</option>
-                <option :value="2">De la cartera asignada al consultor</option>
-                <option :value="3">Responsable de publicaciones</option>
-            </select>
-        </div>
         
         <div class="mx-2 col-12 d-flex mt-10">
             <button v-on:click="filteRreportListGoal()" type="submit" class="btn bg-azul color-white px-35 font-weight-bolder">Generar informe</button>
