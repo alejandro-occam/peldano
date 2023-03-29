@@ -577,6 +577,7 @@ class ProposalsInfoges extends Controller
         ]);
 
         $response['id_article'] = $article->id;
+        $response['code_sage'] = $product_code;
         $response['code'] = 1000;
         return response()->json($response);
     }
