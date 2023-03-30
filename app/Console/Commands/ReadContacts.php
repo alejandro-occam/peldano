@@ -56,20 +56,20 @@ class ReadContacts extends Command
 
         $cont = 1;
         foreach($array_data as $data){
+            $info_contact = explode(";", $data);
             //Comprobamos si existe el contacto
-            $contact = User::where('name', $data)->first();
+            $contact = User::where('name', $info_contact[0])->where('email', $info_contact[1])->first();
             if(!$contact){
                 $user_obj = User::create([
-                    'email' => $cont.'@gmai.com',
-                    'password' => Hash::make($cont.'@gmai.com'),
-                    'name' => $this->remove_accents($data),
+                    'email' => $info_contact[1],
+                    'password' => Hash::make($info_contact[1]),
+                    'name' => $this->remove_accents($info_contact[0]),
                     'id_position' => 1
                 ]);
             }
             $cont++;
         }
         fclose($content);
-        error_log(print_r($array_data, true));
     }
 
     function remove_accents($string) {

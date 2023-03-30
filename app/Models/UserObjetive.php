@@ -16,7 +16,8 @@ class UserObjetive extends Model
         'id_user',
         'obj_print',
         'obj_dig',
-        'obj_eve'
+        'obj_eve',
+        'year'
     ];
 
     /**
@@ -29,7 +30,8 @@ class UserObjetive extends Model
         'id_user' => 'integer',
         'obj_print' => 'string',
         'obj_dig' => 'string',
-        'obj_eve' => 'string'
+        'obj_eve' => 'string',
+        'year' => 'integer'
     ];
 
     /**
@@ -42,6 +44,7 @@ class UserObjetive extends Model
         'id_user',
         'obj_print',
         'obj_dig',
-        'obj_eve'
+        'obj_eve',
+        'year'
     ];
 }
