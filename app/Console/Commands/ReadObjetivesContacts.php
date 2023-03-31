@@ -3,6 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
+use App\Models\User;
+use App\Models\UserObjetive;
 
 class ReadObjetivesContacts extends Command
 {
@@ -11,7 +13,7 @@ class ReadObjetivesContacts extends Command
      *
      * @var string
      */
-    protected $signature = 'command:name';
+    protected $signature = 'readObjetivesContacts:cron';
 
     /**
      * The console command description.
@@ -40,29 +42,55 @@ class ReadObjetivesContacts extends Command
         //Leemos las filas del csv
         $content = fopen(public_path().'/objetives_consultant.csv','r');
         $data = '';
-        $fila = 1;
         $array_data = array();
+        $fila = 1;
+
         while (($datos = fgetcsv($content, 1000, ",")) !== FALSE) {
             $numero = count($datos);
             $fila++;
-            if($fila > 1){
-                for ($c=0; $c < $numero; $c++) {
-                    $array_data[] = $datos[$c];
-                }
+            for ($c=0; $c < $numero; $c++) {
+                $array_data[] = $datos[$c];
             }
         }
 
+        //error_log('datoos: '.print_r($array_data, true));
         $cont = 1;
         foreach($array_data as $data){
             $info_contact = explode(";", $data);
             //Comprobamos si existe el contacto
-            $contact = User::where('name', $info_contact[0])->where('email', $info_contact[1])->first();
-            if(!$contact){
-                $user_obj = User::create([
-                    'email' => $info_contact[1],
-                    'password' => Hash::make($info_contact[1]),
-                    'name' => $this->remove_accents($info_contact[0]),
-                    'id_position' => 1
+            $contact = User::where('email', $info_contact[0])->first();
+            if($contact){
+                //Preparamos los datos de los obejtivos
+                if($info_contact[1] != '-'){
+                    $obj_print_aux = explode("€", $info_contact[1]);
+                    $obj_print = $obj_print_aux[0];
+
+                }else{
+                    $obj_print = 0;
+                }
+                
+                if($info_contact[2] != '-'){
+                    $obj_dig_aux = explode("€", $info_contact[2]);
+                    $obj_dig = $obj_dig_aux[0];
+
+                }else{
+                    $obj_dig = 0;
+                }
+                
+                if($info_contact[3] != '-'){
+                    $obj_eve_aux = explode("€", $info_contact[3]);
+                    $obj_eve = $obj_eve_aux[0];
+
+                }else{
+                    $obj_eve = 0;
+                }
+                
+                $user_objetive = UserObjetive::create([
+                    'id_user' => $contact->id,
+                    'obj_print' => $obj_print,
+                    'obj_dig' => $obj_dig,
+                    'obj_eve' => $obj_eve,
+                    'year' => 2023
                 ]);
             }
             $cont++;
