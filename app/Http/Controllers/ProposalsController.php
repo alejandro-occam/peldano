@@ -26,6 +26,9 @@ use App\Models\Batch;
 use App\Models\ServiceBillOrder;
 use App\Models\ConsultantProposal;
 use App\Models\ConsultanOrder;
+use App\Models\Project;
+use App\Models\Channel;
+
 use App\Http\Controllers\CurlController;
 
 class ProposalsController extends Controller
@@ -506,6 +509,19 @@ class ProposalsController extends Controller
                             return response()->json($response);
                         }
 
+                        $project = Project::find($chapter->id_project);
+                        if(!$project){
+                            $response['code'] = 1004;
+                            return response()->json($response);
+                        }
+
+                        $channel = Channel::find($project->id_channel);
+                        if(!$channel){
+                            $response['code'] = 1004;
+                            return response()->json($response);
+                        }
+
+                        $service['channel'] = $channel;
                         $service['chapter'] = $chapter;
                         $array_services[] = $service;
                         $article = Article::find($service->id_article);
@@ -535,6 +551,19 @@ class ProposalsController extends Controller
                         return response()->json($response);
                     }
 
+                    $project = Project::find($chapter->id_project);
+                    if(!$project){
+                        $response['code'] = 1004;
+                        return response()->json($response);
+                    }
+
+                    $channel = Channel::find($project->id_channel);
+                    if(!$channel){
+                        $response['code'] = 1004;
+                        return response()->json($response);
+                    }
+
+                    $service['channel'] = $channel;
                     $service['chapter'] = $chapter;
                     $array_services[] = $service;
                     $article = Article::find($service->id_article);

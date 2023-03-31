@@ -191,6 +191,7 @@ import Calendar from 'primevue/calendar';
                 department_obj: null,
                 select_section: '',
                 select_section_error: false,
+                channel_obj: null,
                 select_channel: '',
                 select_channel_error: false,
                 select_project: '',
@@ -342,12 +343,7 @@ import Calendar from 'primevue/calendar';
             },
             getChannelSelect(){
                 let me = this;
-                //Guardamos el objeto del sector elegido
-                /*me.config.articles.form.array_sectors.forEach(function callback(value, index, array) {
-                    if(value.id == me.select_sector){
-                        me.sector_obj = value;
-                    }
-                });*/
+                
                 me.select_channel = '';
                 me.select_project = '';
                 me.select_chapter = '';
@@ -363,6 +359,13 @@ import Calendar from 'primevue/calendar';
                 me.getChannels(params);
             },
             getProjectsSelect(){
+                let me = this;
+                //Guardamos el objeto del sector elegido
+                me.config.articles.form.array_channels.forEach(function callback(value, index, array) {
+                    if(value.id == me.select_channel){
+                        me.channel_obj = value;
+                    }
+                });
                 this.select_project = '';
                 this.select_chapter = '';
                 this.select_batch = '';
@@ -447,6 +450,7 @@ import Calendar from 'primevue/calendar';
                 var params = {
                     department_obj: this.department_obj,
                     chapter_obj: this.chapter_obj,
+                    channel_obj: this.channel_obj,
                     article_obj: this.article_obj,
                     amount: this.amount,
                     dates: this.date,

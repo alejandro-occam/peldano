@@ -1391,13 +1391,15 @@ function createObjectsStore({ state }, response, type){
                     }],
                     total: service.pvp,
                     chapter_obj: service.chapter,
+                    channel_obj: service.channel,
                     department_obj: proposal.department_obj
                 }
                 array_chapters.push({
                     id_chapter: service.chapter.id,
                     articles: [article],
                     articles_aux: [article],
-                    chapter_obj: service.chapter
+                    chapter_obj: service.chapter,
+                    channel_obj: service.channel,
                 });
     
             }else{
@@ -1460,6 +1462,7 @@ function createObjectsStore({ state }, response, type){
                                 }],
                                 total: service.pvp,
                                 chapter_obj: service.chapter,
+                                channel_obj: service.channel,
                                 department_obj: proposal.department_obj
                             }
                             chapter.articles.push(article);
@@ -1481,6 +1484,7 @@ function createObjectsStore({ state }, response, type){
                         }],
                         total: service.pvp,
                         chapter_obj: service.chapter,
+                        channel_obj: service.channel,
                         department_obj: proposal.department_obj
                     }
                     array_chapters.push({

@@ -53,6 +53,7 @@ const mutations = {
             article_obj: params.article_obj,
             department_obj: params.department_obj,
             chapter_obj: params.chapter_obj,
+            channel_obj: params.channel_obj,
             dates: params.dates,
             dates_prices_aux: [],
             dates_prices: [],

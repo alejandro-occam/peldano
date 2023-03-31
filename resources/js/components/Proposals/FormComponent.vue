@@ -805,7 +805,7 @@ export default {
             id_company: 0,
             offer: 0,
             total: 0,
-            discount: '0.00',
+            discount: '0',
             fullname: '',
             select_type_proposal: '1',
             value_form1: [], //Formulario presupuesto,
@@ -1367,7 +1367,7 @@ export default {
             me.proposal_submission_settings.show_invoices = 1;
             me.proposal_submission_settings.show_pvp = 1;
             me.proposal_submission_settings.sales_possibilities = 6;
-            me.proposal_submission_settings.discount = 0;
+            me.proposal_submission_settings.discount = 20;
             me.proposal_submission_settings.advertiser = '';
             me.proposal_submission_settings.type_proposal = 0;
         },
@@ -1674,14 +1674,38 @@ export default {
             me.is_show_buttons_bill = false;
             if(me.proposals.proposal_obj.is_change){
                 me.changeValueIsChangeArticle();
+                
                 me.offer = me.$utils.roundAndFix(me.proposals.proposal_obj.total_global);
                 me.total = me.$utils.roundAndFix(me.proposals.proposal_obj.total_global);
-                me.discount = 0;
+
+                //Comprovamos el número de canales de los artículos añadidos
+                me.discount = 20;
+                var is_diferent = false;
+                var channel_aux = '';
+                me.proposals.proposal_obj.chapters.map(function(chapter, key_chapter) {
+                    chapter.articles.map(function(article, key_article) {
+                        if(key_chapter == 0 && key_article == 0){
+                            channel_aux = article.channel_obj.nomenclature;
+                        }else{
+                            if(channel_aux != article.channel_obj.nomenclature){
+                                is_diferent = true;
+                            }
+                        }
+                    });
+                });
+                
+                if(is_diferent){
+                    me.discount = 30;
+                }
+
                 me.is_change_get_info = 1;
+                me.loadFormObj();
+                this.changeValueBox(2, 0);
             }else{
                 me.is_change_get_info = 0;
+                //me.loadFormObj();
             }
-            me.loadFormObj();
+           
         },
         '$store.state.proposals.num_custom_invoices': function() {
             let me = this;
