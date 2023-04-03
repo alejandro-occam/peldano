@@ -20,7 +20,7 @@ class ReadObjetivesContacts extends Command
      *
      * @var string
      */
-    protected $description = 'Command description';
+    protected $description = 'Read objetives contacts';
 
     /**
      * Create a new command instance.
@@ -53,7 +53,6 @@ class ReadObjetivesContacts extends Command
             }
         }
 
-        //error_log('datoos: '.print_r($array_data, true));
         $cont = 1;
         foreach($array_data as $data){
             $info_contact = explode(";", $data);

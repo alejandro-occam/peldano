@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\BillOrder;
+use App\Models\UserObjetive;
 
 class ReportGoalController extends Controller
 {
@@ -38,7 +39,7 @@ class ReportGoalController extends Controller
         $array_dates = $this->generateDateArray($num_months, $date_from_custom, 1, false);
         $array_dates_old = $this->generateDateArray($num_months, $date_from_custom_old, 2, false);
 
-        //Canales DIG Y PRINT
+        //Cantidades facturadas
         $array_bills_orders_dig = BillOrder::select('users_objetives.id', 'users_objetives.obj_print', 'proposals.id_user', 'bills_orders.*', 'departments.nomenclature as department_nomenclature', 'departments.name as department_name', 'departments.id as id_department', 'sections.nomenclature as section_nomenclature', 'channels.nomenclature as channel_nomenclature', 'projects.nomenclature as project_nomenclature')
                                         ->leftJoin('orders', 'orders.id', 'bills_orders.id_order')
                                         ->leftJoin('proposals', 'proposals.id', 'orders.id_proposal')
@@ -53,7 +54,15 @@ class ReportGoalController extends Controller
                                         ->leftJoin('sections', 'sections.id', 'channels.id_section')
                                         ->leftJoin('departments', 'departments.id', 'sections.id_department')
                                         ->leftJoin('users_objetives', 'users_objetives.id_user', 'proposals.id_user')
-                                        ->where('users_objetives.id', '<>', null)->get();
+                                        ->where('users_objetives.id', '<>', null)
+                                        ->whereIn('channels.nomenclature', ['DIG', 'PRINT', 'EVE']);
+
+        if(isset($select_consultant) && !empty($select_consultant)){
+            $array_bills_orders_dig = $array_bills_orders_dig->where('proposals.id_user', $select_consultant);
+        }
+
+        $array_bills_orders_dig = $array_bills_orders_dig->get();
+        error_log($array_bills_orders_dig);
 
         //Creamos el objeto customizado
         $array_bills_orders_custom = array();
@@ -86,6 +95,9 @@ class ReportGoalController extends Controller
                 $custom_obj_total['period'] = 'Obj. acumulado';
                 $custom_fac_total['period'] = 'Fac. acumulado';
                 $custom_cum_total['period'] = 'Cum. acumulado%';
+
+                //Consultamos el objetivo mensual del canal para este usuario
+                $user_objetive = UserObjetive::where('id_user', $bill_order_dig->id_user)->where('year', 2023)->first();
 
                 //Obj. mensual
                 $trim = 0;
@@ -392,10 +404,7 @@ class ReportGoalController extends Controller
         }
         $custom_fac_total['amounts'][] = round($total, 2);
 
-       
-
         $array_dates_finish = $this->generateDateArray($num_months, $date_from_custom, 1, true);
-
 
         $response['code'] = 1000;
         $response['array_dates'] = $array_dates_finish;
