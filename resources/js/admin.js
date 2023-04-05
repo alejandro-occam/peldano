@@ -8,6 +8,7 @@ require('./bootstrap');
 import { createApp, h } from "vue";
 
 import { createWebHistory, createRouter } from "vue-router";
+import * as Sentry from "@sentry/vue";
 
 import ConfigurationIndex from "./components/Configuration/ContentComponent.vue";
 import OrdersIndex from "./components/Orders/ContentComponent.vue";
@@ -123,6 +124,12 @@ import { func } from "./utils";
 
 const app = createApp({
 });
+
+Sentry.init({
+  app,
+  dsn: "https://3634c1dfa8c14e34a04d2ff6e16a76b7@o4504949124038656.ingest.sentry.io/4504949231321088",
+});
+
 app.use(router);
 app.use(PrimeVue, {
   ripple: true,
