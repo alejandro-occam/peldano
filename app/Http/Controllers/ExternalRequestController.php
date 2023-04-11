@@ -123,8 +123,6 @@ class ExternalRequestController extends Controller
                         }
                     }
                 }else{
-                    $company = Company::create([
-                    ]);
                     $stop_companies_association_contacts = 1;
                 }
             }
