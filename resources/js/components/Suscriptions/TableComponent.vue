@@ -32,7 +32,7 @@
                     <span class="text-dark font-weight-bold mb-2">Nº revista final</span>
                     <input v-model="num_finish" type="number" class="form-control borders-box text-dark-gray mt-3" placeholder="" onkeypress="return (event.charCode >= 48 && event.charCode <= 57) || event.charCode == 0"/>
                 </div>
-                <div class="mx-2 col-2 mt-5" >
+                <div class="mx-2 col-3 mt-5" >
                     <span class="text-dark font-weight-bold mb-2">Forma de pago</span>
                     <select class="form-control bg-gray text-dark select-custom select-filter mt-3" :name="'select_payment_method'" :id="'select_payment_method'" v-model="select_payment_method" data-style="select-lightgreen">
                         <option value="0" selected> Selecciona una forma de pago </option>
