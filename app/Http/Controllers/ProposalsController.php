@@ -1161,6 +1161,9 @@ class ProposalsController extends Controller
                 'date' => $bill->date,
                 'way_to_pay' => $bill->way_to_pay,
                 'expiration' => $bill->expiration,
+                'observations' => $bill->observations,
+                'num_order' => $bill->num_order,
+                'internal_observations' => $bill->internal_observations,
                 'amount' => $bill->amount,
                 'iva' => round($iva, 2),
                 'id_order' => $order->id
