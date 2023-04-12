@@ -127,14 +127,16 @@ class ExternalRequestController extends Controller
                 }
             }
 
-            $contact = Contact::create([
-                'name' => $request->get('firstname'),
-                'surnames' => $request->get('lastname'),
-                'email' => $request->get('email'),
-                'phone' => $request->get('phone'),
-                'id_company' => $company->id,
-                'id_hubspot' => $hub_id
-            ]);
+            if(isset($company)){
+                $contact = Contact::create([
+                    'name' => $request->get('firstname'),
+                    'surnames' => $request->get('lastname'),
+                    'email' => $request->get('email'),
+                    'phone' => $request->get('phone'),
+                    'id_company' => $company->id,
+                    'id_hubspot' => $hub_id
+                ]);
+            }
         }
     }
 
