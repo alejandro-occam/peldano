@@ -53,6 +53,7 @@ class addContactsHubspot extends Command
         }
         fclose($content);
 
+        $enter = false;
         //Creamos un array custom para los articlulos
         $array_articles_calendars_custom = [];
         foreach($array_data as $key => $line){
@@ -88,6 +89,7 @@ class addContactsHubspot extends Command
                         $contact->phone = $phone;
                         $contact->id_company = $company->id;
                         $contact->save();
+                        $enter = true;
 
                     }else{
                         Contact::create([
@@ -98,9 +100,15 @@ class addContactsHubspot extends Command
                             'id_company' => $company->id,
                             'id_hubspot' => $words[0]
                         ]);
+                        $enter = true;
                     }
                 }
             }
+
+            if(!$enter){
+                error_log('id: '.$words[0]);
+            }
+            $enter = false;
         }
     }
 }
