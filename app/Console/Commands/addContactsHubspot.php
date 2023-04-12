@@ -55,7 +55,7 @@ class addContactsHubspot extends Command
 
         //Creamos un array custom para los articlulos
         $array_articles_calendars_custom = [];
-        foreach($array_data as $line){
+        foreach($array_data as $key => $line){
             $words = explode(";", $line);
 
             if(!empty($words[3])){
@@ -63,6 +63,7 @@ class addContactsHubspot extends Command
                 $company = Company::where('name', $words[5])->first();
 
                 if($company){
+                    error_log($key);
                     $name = null;
                     if(!empty($words[1])){
                         $name = $words[1];
