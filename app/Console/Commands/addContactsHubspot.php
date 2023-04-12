@@ -57,15 +57,11 @@ class addContactsHubspot extends Command
         $array_articles_calendars_custom = [];
         foreach($array_data as $key => $line){
             $words = explode(";", $line);
-            error_log('hola1');
             if(!empty($words[3])){
-                error_log('hola2');
                 //Consultamos si existe la empresa
                 $company = Company::where('name', $words[5])->first();
 
                 if($company){
-                    error_log('hola3');
-                    error_log($key);
                     $name = null;
                     if(!empty($words[1])){
                         $name = $words[1];
@@ -105,7 +101,6 @@ class addContactsHubspot extends Command
                     }
                 }
             }
-            return;
         }
     }
 }
