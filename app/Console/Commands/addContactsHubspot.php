@@ -86,7 +86,7 @@ class addContactsHubspot extends Command
                         $contact->name = $name;
                         $contact->surname = $surname;
                         $contact->phone = $phone;
-                        $contact->id_company = $$company->id;
+                        $contact->id_company = $company->id;
                         $contact->save();
 
                     }else{
