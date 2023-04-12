@@ -39,6 +39,7 @@ class addContactsHubspot extends Command
      */
     public function handle()
     {
+        error_log('hola');
         //Leemos las filas del csv de Canales
         $content = fopen(public_path().'/contacts_hubspot.csv','r');
         $data = '';
