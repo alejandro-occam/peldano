@@ -57,7 +57,7 @@ class ReadCompanies extends Command
             $info_company = explode(";", $data);
             //Comprobamos si existe la empresa
             $company = Company::where('id_hubspot', $info_company[0])->first();
-            if($company){
+            if(!$company){
                 //Preparamos los datos de las empresas
                 $name = null;
                 if(!empty($info_company[1])){
