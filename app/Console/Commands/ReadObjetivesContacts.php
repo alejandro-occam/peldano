@@ -5,6 +5,7 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use App\Models\User;
 use App\Models\UserObjetive;
+use App\Models\Department;
 
 class ReadObjetivesContacts extends Command
 {
@@ -40,7 +41,7 @@ class ReadObjetivesContacts extends Command
     public function handle()
     {
         //Leemos las filas del csv
-        $content = fopen(public_path().'/objetives_consultant.csv','r');
+        $content = fopen(public_path().'/contacts_objetives.csv','r');
         $data = '';
         $array_data = array();
         $fila = 1;
@@ -84,13 +85,19 @@ class ReadObjetivesContacts extends Command
                     $obj_eve = 0;
                 }
                 
-                $user_objetive = UserObjetive::create([
-                    'id_user' => $contact->id,
-                    'obj_print' => $obj_print,
-                    'obj_dig' => $obj_dig,
-                    'obj_eve' => $obj_eve,
-                    'year' => 2023
-                ]);
+                //Consultamos el departamento
+                $department = Department::where('nomenclature', $info_contact[4])->first();
+
+                if($department){
+                    $user_objetive = UserObjetive::create([
+                        'id_user' => $contact->id,
+                        'obj_print' => $obj_print,
+                        'obj_dig' => $obj_dig,
+                        'obj_eve' => $obj_eve,
+                        'id_department' => $department->id,
+                        'year' => 2023
+                    ]);
+                }
             }
             $cont++;
         }

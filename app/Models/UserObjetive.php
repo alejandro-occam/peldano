@@ -17,7 +17,8 @@ class UserObjetive extends Model
         'obj_print',
         'obj_dig',
         'obj_eve',
-        'year'
+        'year',
+        'id_department'
     ];
 
     /**
@@ -31,7 +32,8 @@ class UserObjetive extends Model
         'obj_print' => 'string',
         'obj_dig' => 'string',
         'obj_eve' => 'string',
-        'year' => 'integer'
+        'year' => 'integer',
+        'id_department' => 'integer'
     ];
 
     /**
@@ -45,6 +47,7 @@ class UserObjetive extends Model
         'obj_print',
         'obj_dig',
         'obj_eve',
-        'year'
+        'year',
+        'id_department'
     ];
 }

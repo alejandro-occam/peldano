@@ -51,12 +51,14 @@ class getCodeFromClientSage extends Command
         foreach($array_companies as $company){
             $custom_url = $url.$company->id_sage.'%27';
             $data = json_decode($requ_curls->getSageCurl($custom_url)['response'], true);
+            error_log($cont);
+            $company->id_sage = $data['value'][0]['Id'];
             $company->code_sage = $data['value'][0]['Code'];
             $company->save();
             $cont++;
             if($cont == 30){
                 $cont = 0;
-                sleep(30);
+                sleep(60);
             }
         }
     }   
