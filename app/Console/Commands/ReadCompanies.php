@@ -97,7 +97,7 @@ class ReadCompanies extends Command
                     'name' => $name,
                     'nif' => $nif,
                     'address' => $address,
-                    'id_hubspot' => $$info_company[0]
+                    'id_hubspot' => $info_company[0]
                 ]);
             }
             $cont++;
