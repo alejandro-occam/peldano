@@ -24,6 +24,7 @@ import ReportOption8 from "./components/Reports/Options/Options8/ContentComponen
 import InvoiceValidation from "./components/InvoiceValidation/ContentComponent.vue";
 import InfoOrder from "./components/Orders/InfoOrderComponent.vue";
 import Suscriptions from "./components/Suscriptions/ContentComponent.vue";
+import Consts from "./consts";
 
 const routes = [
     {
@@ -127,7 +128,7 @@ const app = createApp({
 
 Sentry.init({
   app,
-  dsn: "https://3634c1dfa8c14e34a04d2ff6e16a76b7@o4504949124038656.ingest.sentry.io/4504949231321088",
+  dsn: Consts.key_sentry,//"https://3634c1dfa8c14e34a04d2ff6e16a76b7@o4504949124038656.ingest.sentry.io/4504949231321088",
 });
 
 app.use(router);
