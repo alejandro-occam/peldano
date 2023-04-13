@@ -21,7 +21,7 @@ Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //Guardar o actualizar empresa desde Hubspot
 Route::post('/save_companies_from_hubspot', [App\Http\Controllers\ExternalRequestController::class, 'saveCompaniesFromHubspot'])->name('save_companies_from_hubspot');
 //Guardar o actualizar contacto desde Hubspot
-Route::post('/save_contacts_from_hubspot', [App\Http\Controllers\ExternalRequestController::class, 'saveContactsFromHubspot'])->name('save_contacts_from_hubspot');
+//Route::post('/save_contacts_from_hubspot', [App\Http\Controllers\ExternalRequestController::class, 'saveContactsFromHubspot'])->name('save_contacts_from_hubspot');
 //Enviar pdf de la propuesto a hubspot
 Route::post('/save_deal_hubspot', [App\Http\Controllers\ExternalRequestController::class, 'saveDealFromHubspot'])->name('save_deal_hubspot');
 
