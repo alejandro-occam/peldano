@@ -21,6 +21,8 @@ use App\Models\Bill;
 use App\Models\Department;
 use App\Models\ProposalBill;
 use App\Http\Controllers\CurlController;
+use Illuminate\Support\Facades\Log;
+
 
 class ProposalsInfoges extends Controller
 {
@@ -535,6 +537,7 @@ class ProposalsInfoges extends Controller
             $param['Code'] = $department->id.$section->id.$channel->id.$project->id.$chapter->id.$batch->id;
             $url = 'https://sage200.sage.es/api/sales/ProductFamilies?api-version=1.0';
             $response = json_decode($requ_curls->postSageCurl($url, $param)['response'], true);
+            Log::info('$response: ' . print_r($response, true));
             
             $product_family_id = $response['Id'];
             $product_family_code = $response['Code'];
