@@ -5,11 +5,13 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\BillOrder;
 use App\Models\UserObjetive;
+use App\Models\Department;
+use App\Models\ServiceBillOrder;
 
 class ReportGoalController extends Controller
 {
     //Listado de facturas según el filtro Old
-    function reportsList(Request $request){
+    function reportsListOld(Request $request){
         $select_department = $request->get('select_department');
         $select_section = $request->get('select_section');
         $select_channel = $request->get('select_channel');
@@ -418,7 +420,7 @@ class ReportGoalController extends Controller
     }
 
     //Listado de facturas según el filtro
-    function reportsListNew(Request $request){
+    function reportsList(Request $request){
         $select_department = $request->get('select_department');
         $select_section = $request->get('select_section');
         $select_channel = $request->get('select_channel');
@@ -472,40 +474,61 @@ class ReportGoalController extends Controller
                                                 ->where('proposals.id_user', '<>', null)
                                                 ->groupBy('users_objetives.id')
                                                 ->get();
-
-        //error_log($array_users_objetives);
+        $array_bill_orders_custom_object = array();
         foreach($array_users_objetives as $user_objetive){
             $array_bill_orders = BillOrder::select('bills_orders.*')
                                         ->leftJoin('orders', 'orders.id', 'bills_orders.id_order')
                                         ->leftJoin('proposals', 'proposals.id', 'orders.id_proposal')
-                                        ->leftJoin('services_bills_orders', 'services_bills_orders.id_bill_order', 'bills_orders.id')
-                                        ->leftJoin('services', 'services.id', 'services_bills_orders.id_service')
-                                        ->leftJoin('articles', 'articles.id', 'services.id_article')
-                                        ->leftJoin('batchs', 'batchs.id', 'articles.id_batch')
-                                        ->leftJoin('chapters', 'chapters.id', 'batchs.id_chapter')
-                                        ->leftJoin('projects', 'projects.id', 'chapters.id_project')
-                                        ->leftJoin('channels', 'channels.id', 'projects.id_channel')
-                                        ->leftJoin('sections', 'sections.id', 'channels.id_section')
-                                        ->leftJoin('departments', 'departments.id', 'sections.id_department')
-                                        ->leftJoin('users_objetives', 'users_objetives.id_user', 'proposals.id_user')
-                                        ->whereIn('channels.nomenclature', ['DIG', 'PRINT', 'EVE'])
-                                        ->where('proposals.id_user', $user_objetive->id_user);
+                                        ->where('proposals.id_user', $user_objetive->id_user)
+                                        ->groupBy('bills_orders.id')
+                                        ->get();
 
-            $array_bill_orders = $array_bill_orders->get();
-            error_log($array_bill_orders);
+            foreach($array_bill_orders as $bill_order){
+                //Consultamos el departamento, sección, canal y projeto al que pertence la factura
+                $option_bill = ServiceBillOrder::select('departments.nomenclature as department_nomenclature', 'departments.name as department_name', 'departments.id as id_department', 
+                                                'sections.nomenclature as section_nomenclature', 'channels.nomenclature as channel_nomenclature', 
+                                                'projects.nomenclature as project_nomenclature')
+                                                ->leftJoin('services', 'services.id', 'services_bills_orders.id_service')
+                                                ->leftJoin('articles', 'articles.id', 'services.id_article')
+                                                ->leftJoin('batchs', 'batchs.id', 'articles.id_batch')
+                                                ->leftJoin('chapters', 'chapters.id', 'batchs.id_chapter')
+                                                ->leftJoin('projects', 'projects.id', 'chapters.id_project')
+                                                ->leftJoin('channels', 'channels.id', 'projects.id_channel')
+                                                ->leftJoin('sections', 'sections.id', 'channels.id_section')
+                                                ->leftJoin('departments', 'departments.id', 'sections.id_department')
+                                                ->whereIn('channels.nomenclature', ['DIG', 'PRINT', 'EVE'])
+                                                ->where('id_bill_order', $bill_order->id)
+                                                ->first();
+                if($option_bill){
+                    $bill_order['department_nomenclature'] = $option_bill['department_nomenclature'];
+                    $bill_order['department_name'] = $option_bill['department_name'];
+                    $bill_order['department_noid_departmentmenclature'] = $option_bill['id_department'];
+                    $bill_order['section_nomenclature'] = $option_bill['section_nomenclature'];
+                    $bill_order['channel_nomenclature'] = $option_bill['channel_nomenclature'];
+                    $bill_order['project_nomenclature'] = $option_bill['project_nomenclature'];
+                    $array_bill_orders_custom_object[] = $bill_order;
+                }
+            }
+        }
+        foreach($array_bill_orders_custom_object as $custom_object){
+            error_log('=======================');
+            error_log($custom_object->id);
+            error_log($custom_object->amount);
+            error_log($custom_object->date);
+            error_log('=======================');
         }
         /*if(isset($select_consultant) && !empty($select_consultant)){
             $array_bills_orders_dig = $array_bills_orders_dig->where('proposals.id_user', $select_consultant);
         }
 
         $array_bills_orders_dig = $array_bills_orders_dig->groupBy('bills_orders.id')->get();
-        error_log($array_bills_orders_dig);
-
+        error_log($array_bills_orders_dig);*/
+    
         //Creamos el objeto customizado
         $array_bills_orders_custom = array();
 
-        foreach($array_bills_orders_dig as $key => $bill_order_dig){
-            $custom_date_array = explode("-", $bill_order_dig->date);
+        foreach($array_bill_orders_custom_object as $key => $bill_order){
+            $custom_date_array = explode("-", $bill_order->date);
             $custom_date = $custom_date_array[1].'-'.$custom_date_array[0].'-'.$custom_date_array[2];
             $custom_obj = null;
             $custom_obj_men = null;
@@ -517,13 +540,13 @@ class ReportGoalController extends Controller
 
             if($key == 0){
                 //Consultamos el departamento, la sección y el canal de la factura
-                $custom_obj['dep'] = $bill_order_dig->department_nomenclature;
-                $custom_obj['dep_name'] = $bill_order_dig->department_name;
-                $custom_obj['id_dep'] = $bill_order_dig->id_department;
-                $custom_obj['type'] = $bill_order_dig->channel_nomenclature;
-                $custom_obj['id_type'] = $bill_order_dig->id_channel;
-                $custom_obj['sec_name'] = $bill_order_dig->section_nomenclature;
-                $custom_obj['pro_name'] = $bill_order_dig->project_nomenclature;
+                $custom_obj['dep'] = $bill_order->department_nomenclature;
+                $custom_obj['dep_name'] = $bill_order->department_name;
+                $custom_obj['id_dep'] = $bill_order->id_department;
+                $custom_obj['type'] = $bill_order->channel_nomenclature;
+                $custom_obj['id_type'] = $bill_order->id_channel;
+                $custom_obj['sec_name'] = $bill_order->section_nomenclature;
+                $custom_obj['pro_name'] = $bill_order->project_nomenclature;
                 
                 $custom_obj_men['period'] = 'Obj. mensual';
                 $custom_fac_men['period'] = 'Fac. mensual';
@@ -534,14 +557,14 @@ class ReportGoalController extends Controller
                 $custom_cum_total['period'] = 'Cum. acumulado%';
 
                 //Consultamos el objetivo mensual del canal para este usuario
-                $user_objetive = UserObjetive::where('id_user', $bill_order_dig->id_user)->where('year', 2023)->first();
+                $user_objetive = UserObjetive::where('id_user', $bill_order->id_user)->where('year', 2023)->first();
 
                 //Obj. mensual
                 $trim = 0;
                 $total = 0;
                 foreach($array_dates as $key_date => $date){
-                    $custom_obj_men['amounts'][] = round(($bill_order_dig->obj_print + $bill_order_dig->obj_dig + $bill_order_dig->obj_eve) / 12, 2);
-                    $trim += round(($bill_order_dig->obj_print + $bill_order_dig->obj_dig + $bill_order_dig->obj_eve) / 12, 2);
+                    $custom_obj_men['amounts'][] = round(($bill_order->obj_print + $bill_order->obj_dig + $bill_order->obj_eve) / 12, 2);
+                    $trim += round(($bill_order->obj_print + $bill_order->obj_dig + $bill_order->obj_eve) / 12, 2);
 
 
                     if($key_date == 2 || $key_date == 5 || $key_date == 8 || $key_date == 11){
@@ -549,18 +572,25 @@ class ReportGoalController extends Controller
                         $trim = 0;
                     }
 
-                    $total += round(($bill_order_dig->obj_print + $bill_order_dig->obj_dig + $bill_order_dig->obj_eve) / 12, 2);
+                    $total += round(($bill_order->obj_print + $bill_order->obj_dig + $bill_order->obj_eve) / 12, 2);
                 }
-                $custom_obj_men['amounts'][] = ($bill_order_dig->obj_print + $bill_order_dig->obj_dig + $bill_order_dig->obj_eve);
+                $custom_obj_men['amounts'][] = ($bill_order->obj_print + $bill_order->obj_dig + $bill_order->obj_eve);
 
                 //Fac. mensual
                 $trim = 0;
                 $total = 0;
                 foreach($array_dates as $key_date => $date){
-                    if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
-                        $custom_fac_men['amounts'][] = round($bill_order_dig->amount, 2);
-                        $trim += round($bill_order_dig->amount, 2);
-                        $total += round($bill_order_dig->amount, 2);
+                    /*error_log('=========================');
+                    error_log('last_date_custom2: '.$date['last_date_custom2']);
+                    error_log('bill_order->date: '.$bill_order->date);
+                    error_log('first_date_custom2: '.$date['first_date_custom2']);
+                    error_log('bill_order->date: '.$bill_order->date);*/
+                    
+                    if(strtotime($date['last_date_custom2']) >= strtotime($bill_order->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order->date)){
+                        error_log('entro');
+                        $custom_fac_men['amounts'][] = round($bill_order->amount, 2);
+                        $trim += round($bill_order->amount, 2);
+                        $total += round($bill_order->amount, 2);
 
                     }else{
                         $custom_fac_men['amounts'][] = 0;
@@ -569,10 +599,11 @@ class ReportGoalController extends Controller
                         $custom_fac_men['amounts'][] = $trim;
                         $trim = 0;
                     }
+                    //error_log('=========================');
                     
                 }
                 $custom_fac_men['amounts'][] = $total;
-
+        
                 //Cum. mensual
                 $trim = 0;
                 foreach($custom_fac_men['amounts'] as $key_date => $date){
@@ -601,7 +632,7 @@ class ReportGoalController extends Controller
                 $trim = 0;
                 $total = 0;
                 foreach($array_dates as $key_date => $date){
-                    $total += round(($bill_order_dig->obj_print + $bill_order_dig->obj_dig + $bill_order_dig->obj_eve) / 12, 2);
+                    $total += round(($bill_order->obj_print + $bill_order->obj_dig + $bill_order->obj_eve) / 12, 2);
                     $custom_obj_total['amounts'][] = round($total, 2);
                     
 
@@ -614,6 +645,7 @@ class ReportGoalController extends Controller
 
                 $custom_obj['obj_men'] = $custom_obj_men;
                 $custom_obj['fac_men'] = $custom_fac_men;
+
                 $custom_obj['cum_men'] = $custom_cum_men;
                 $custom_obj['obj_total'] = $custom_obj_total;
                 $custom_obj['fac_total'] = $custom_fac_total;
@@ -625,7 +657,7 @@ class ReportGoalController extends Controller
                 $exist = false;
                 $position = 0;
                 foreach($array_bills_orders_custom as $key_array_bills_orders_custom => $bill_order_custom){
-                    if($bill_order_custom['dep'] == $bill_order_dig->department_nomenclature && $bill_order_custom['type'] == $bill_order_dig->channel_nomenclature && $bill_order_custom['pro_name'] == $bill_order_dig->project_nomenclature){
+                    if($bill_order_custom['dep'] == $bill_order->department_nomenclature && $bill_order_custom['type'] == $bill_order->channel_nomenclature && $bill_order_custom['pro_name'] == $bill_order->project_nomenclature){
                         $exist = true;
                         $position = $key_array_bills_orders_custom;
                     }
@@ -633,13 +665,13 @@ class ReportGoalController extends Controller
 
                 if(!$exist){
                     //Consultamos el departamento, la sección y el canal de la factura
-                    $custom_obj['dep'] = $bill_order_dig->department_nomenclature;
-                    $custom_obj['dep_name'] = $bill_order_dig->department_name;
-                    $custom_obj['id_dep'] = $bill_order_dig->id_department;
-                    $custom_obj['type'] = $bill_order_dig->channel_nomenclature;
-                    $custom_obj['id_type'] = $bill_order_dig->id_channel;
-                    $custom_obj['sec_name'] = $bill_order_dig->section_nomenclature;
-                    $custom_obj['pro_name'] = $bill_order_dig->project_nomenclature;
+                    $custom_obj['dep'] = $bill_order->department_nomenclature;
+                    $custom_obj['dep_name'] = $bill_order->department_name;
+                    $custom_obj['id_dep'] = $bill_order->id_department;
+                    $custom_obj['type'] = $bill_order->channel_nomenclature;
+                    $custom_obj['id_type'] = $bill_order->id_channel;
+                    $custom_obj['sec_name'] = $bill_order->section_nomenclature;
+                    $custom_obj['pro_name'] = $bill_order->project_nomenclature;
                     
                     $custom_obj_men['period'] = 'Obj. mensual';
                     $custom_fac_men['period'] = 'Fac. mensual';
@@ -653,8 +685,8 @@ class ReportGoalController extends Controller
                     $trim = 0;
                     $total = 0;
                     foreach($array_dates as $key_date => $date){
-                        $custom_obj_men['amounts'][] = round(($bill_order_dig->obj_print + $bill_order_dig->obj_dig + $bill_order_dig->obj_eve) / 12, 2);
-                        $trim += round(($bill_order_dig->obj_print + $bill_order_dig->obj_dig + $bill_order_dig->obj_eve) / 12, 2);
+                        $custom_obj_men['amounts'][] = round(($bill_order->obj_print + $bill_order->obj_dig + $bill_order->obj_eve) / 12, 2);
+                        $trim += round(($bill_order->obj_print + $bill_order->obj_dig + $bill_order->obj_eve) / 12, 2);
 
 
                         if($key_date == 2 || $key_date == 5 || $key_date == 8 || $key_date == 11){
@@ -662,18 +694,18 @@ class ReportGoalController extends Controller
                             $trim = 0;
                         }
 
-                        $total += round(($bill_order_dig->obj_print + $bill_order_dig->obj_dig + $bill_order_dig->obj_eve) / 12, 2);
+                        $total += round(($bill_order->obj_print + $bill_order->obj_dig + $bill_order->obj_eve) / 12, 2);
                     }
-                    $custom_obj_men['amounts'][] = ($bill_order_dig->obj_print + $bill_order_dig->obj_dig + $bill_order_dig->obj_eve);
+                    $custom_obj_men['amounts'][] = ($bill_order->obj_print + $bill_order->obj_dig + $bill_order->obj_eve);
 
                     //Fac. mensual
                     $trim = 0;
                     $total = 0;
                     foreach($array_dates as $key_date => $date){
-                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
-                            $custom_fac_men['amounts'][] = round($bill_order_dig->amount, 2);
-                            $trim += round($bill_order_dig->amount, 2);
-                            $total += round($bill_order_dig->amount, 2);
+                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order->date)){
+                            $custom_fac_men['amounts'][] = round($bill_order->amount, 2);
+                            $trim += round($bill_order->amount, 2);
+                            $total += round($bill_order->amount, 2);
 
                         }else{
                             $custom_fac_men['amounts'][] = 0;
@@ -714,7 +746,7 @@ class ReportGoalController extends Controller
                     $trim = 0;
                     $total = 0;
                     foreach($array_dates as $key_date => $date){
-                        $total += round(($bill_order_dig->obj_print + $bill_order_dig->obj_dig + $bill_order_dig->obj_eve) / 12, 2);
+                        $total += round(($bill_order->obj_print + $bill_order->obj_dig + $bill_order->obj_eve) / 12, 2);
                         $custom_obj_total['amounts'][] = round($total, 2);
                         
 
@@ -740,15 +772,25 @@ class ReportGoalController extends Controller
                     $trim = 0;
                     $total = 0;
                     foreach($array_dates as $key_date => $date){
-                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order_dig->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order_dig->date)){
-                            $array_bills_orders_custom[$position]['fac_men']['amounts'][$key_date] += round($bill_order_dig->amount, 2);
-                            $trim += round($bill_order_dig->amount, 2);
-                            $total += round($bill_order_dig->amount, 2);
+                        /*error_log('=========================');
+                        error_log('last_date_custom2: '.$date['last_date_custom2']);
+                        error_log('bill_order->date: '.$bill_order->date);
+                        error_log('first_date_custom2: '.$date['first_date_custom2']);
+                        error_log('bill_order->date: '.$bill_order->date);*/
+
+                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order->date)){
+                            if($key_date != 3 && $key_date != 6 && $key_date != 9 && $key_date != 12){
+                                error_log(print_r($array_bills_orders_custom[$position]['fac_men']['amounts'], true));
+                                $array_bills_orders_custom[$position]['fac_men']['amounts'][$key_date] += round($bill_order->amount, 2);
+                                $trim += round($bill_order->amount, 2);
+                                $total += round($bill_order->amount, 2);
+                            }
                         }
 
                         if($key_date == 2 || $key_date == 5 || $key_date == 8 || $key_date == 11){
                             $array_bills_orders_custom[$position]['fac_men']['amounts'][$key_date + 1] += round($trim, 2);
                             $trim = 0;
+
                         }
                     }
                     $array_bills_orders_custom[$position]['fac_men']['amounts'][count($array_bills_orders_custom[$position]['fac_men']['amounts']) - 1] += $total;
@@ -838,8 +880,9 @@ class ReportGoalController extends Controller
         $response['array_dates'] = $array_dates_finish;
         //$response['array_bills_orders_custom'] = $array_bills_orders_custom_aux;
         $response['array_bills_orders_custom'] = $array_bills_orders_custom;
+        //error_log(print_r($array_bills_orders_custom, true));
 
-        return response()->json($response);*/
+        return response()->json($response);
 
     }
 
