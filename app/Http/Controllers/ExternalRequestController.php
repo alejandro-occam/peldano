@@ -267,6 +267,8 @@ class ExternalRequestController extends Controller
         $delivery_note['Period'] = Date('Y');
         $delivery_note['Serie'] = 'A';
         $delivery_note['TotalNet'] = floatval(round($request->get('amount'), 2));
+        $delivery_note['ExternalSalesOrderNumber'] = $request->get('num_order');
+        $delivery_note['Notes'] = $request->get('observations');
 
         if($delivery_note['TotalNet'] > 0){
             //Creamos el objeto de Lines
@@ -321,8 +323,11 @@ class ExternalRequestController extends Controller
                 $order['TotalTaxes'] = $delivery_note_obj['TotalTaxes']; //floatval($request->get('amount')) * 0.21;
                 $order['Total'] = $delivery_note_obj['Total'];//floatval($request->get('amount')) * 1.21;
                 $order['Lines'] = $array_lines_to_order;
+                //$order['ExternalSalesOrderNumber'] = $request->get('num_order');
+                $order['Notes'] = $request->get('observations');
                 $url = 'https://sage200.sage.es/api/sales/SalesInvoices?api-version=1.0';
                 $response = json_decode($requ_curls->postSageCurl($url, $order)['response'], true);
+                error_log('response '.print_r($response, true));
 
                 //Paramos 4 segundos para que aparezca en el listado
                 sleep(4);
@@ -355,6 +360,8 @@ class ExternalRequestController extends Controller
         $delivery_note['Number'] = $request->get('number');//Date('y').$request->get('id_bill_order').$request->get('id_order');
         $delivery_note['Period'] = Date('Y');
         $delivery_note['Serie'] = 'FREC';
+        $delivery_note['ExternalSalesOrderNumber'] = $request->get('num_order');
+        $delivery_note['Notes'] = $request->get('observations');
         $delivery_note['TotalNet'] = '-'.floatval(round($request->get('amount'), 2));
 
         //if($delivery_note['TotalNet'] > 0){
@@ -411,6 +418,8 @@ class ExternalRequestController extends Controller
                 $order['TotalTaxes'] = $delivery_note_obj['TotalTaxes']; //floatval($request->get('amount')) * 0.21;
                 $order['Total'] = $delivery_note_obj['Total'];//floatval($request->get('amount')) * 1.21;
                 $order['Lines'] = $array_lines_to_order;
+                $order['ExternalSalesOrderNumber'] = $request->get('num_order');
+                $order['Notes'] = $request->get('observations');
                 $url = 'https://sage200.sage.es/api/sales/SalesInvoices?api-version=1.0';
                 $response = json_decode($requ_curls->postSageCurl($url, $order)['response'], true);
 

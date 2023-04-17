@@ -241,7 +241,20 @@ class InvoiceValidationController extends Controller
                 error_log(print_r($array_sage_products, true));
                 //Generamos el albarán en Sage
                 $number = Date('ymd').$bill_order->id;
-                $request->replace(['array_sage_products' => $array_sage_products, 'customer_id' => $company->id_sage, 'id_bill_order' => $bill_order->id, 'id_order' => $bill_order->id_order, 'amount' => $bill_order->amount, 'number' => $number]);
+                $observations = '';
+                if(isset($bill_order->observations)){
+                    $observations.= $bill_order->observations.' ';
+                }
+                if(isset($bill_order->internal_observations)){
+                    $observations.= $bill_order->internal_observations;
+                }
+
+                $num_order = '';
+                if(isset($bill_order->num_order)){
+                    $num_order.= $bill_order->num_order;
+                }
+
+                $request->replace(['array_sage_products' => $array_sage_products, 'customer_id' => $company->id_sage, 'id_bill_order' => $bill_order->id, 'id_order' => $bill_order->id_order, 'amount' => $bill_order->amount, 'number' => $number, 'observations' => $observations, 'num_order' => $num_order]);
                 $invoice_custom = $requ_external_request->generateDeliveryNoteSage($request);
                 error_log('invoice_custom: '.print_r($invoice_custom, true));
                 if($id_sage != null && !empty($invoice_custom)){
