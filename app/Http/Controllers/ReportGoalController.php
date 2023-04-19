@@ -1039,6 +1039,7 @@ class ReportGoalController extends Controller
         //Row total
         $position_total = 0;
 
+        error_log(count($array_bills_orders_custom));
         foreach($array_bills_orders_custom as $key => $bill_order){
             if($bill_order['type_obj'] == 2){
                 if($key == 0){
@@ -1094,49 +1095,39 @@ class ReportGoalController extends Controller
                     $custom_obj['cum_total'] = $custom_cum_total;
                     $custom_obj['type_obj'] = 3;
                     $array_bills_orders_custom[] = $custom_obj;
-                    $position = count($array_bills_orders_custom) - 1;
+                    $position_total = (count($array_bills_orders_custom) - 1);
 
                 }else{
+                    error_log('position: '. $position_total);
                     //Obj. mensual
-                    //error_log(print_r($array_bills_orders_custom[$position]['obj_men']['amounts'], true));
-                    //error_log(print_r($bill_order['obj_men']['amounts'], true));
                     foreach($bill_order['obj_men']['amounts'] as $key => $obj_men){
-                        $array_bills_orders_custom[$position]['obj_men']['amounts'][$key] += $obj_men;
+                        $array_bills_orders_custom[$position_total]['obj_men']['amounts'][$key] += $obj_men;
                     }
 
                     //Fac. mensual
                     foreach($bill_order['fac_men']['amounts'] as $key => $fac_men){
-                        $array_bills_orders_custom[$position]['fac_men']['amounts'][$key] += $fac_men;
+                        $array_bills_orders_custom[$position_total]['fac_men']['amounts'][$key] += $fac_men;
                     }
 
                     //Cum. mensual
                     foreach($bill_order['cum_men']['amounts'] as $key => $cum_men){
-                        $array_bills_orders_custom[$position]['cum_men']['amounts'][$key] += $cum_men;
+                        $array_bills_orders_custom[$position_total]['cum_men']['amounts'][$key] += $cum_men;
                     }
 
                     //Obj. total
                     foreach($bill_order['obj_total']['amounts'] as $key => $obj_total){
-                        $array_bills_orders_custom[$position]['obj_total']['amounts'][$key] += $obj_total;
+                        $array_bills_orders_custom[$position_total]['obj_total']['amounts'][$key] += $obj_total;
                     }
 
                     //Fac. total
                     foreach($bill_order['fac_total']['amounts'] as $key => $fac_total){
-                        $array_bills_orders_custom[$position]['fac_total']['amounts'][$key] += $fac_total;
+                        $array_bills_orders_custom[$position_total]['fac_total']['amounts'][$key] += $fac_total;
                     }
 
                     //Cum. total
                     foreach($bill_order['cum_total']['amounts'] as $key => $cum_total){
-                        $array_bills_orders_custom[$position]['cum_total']['amounts'][$key] += $cum_total;
+                        $array_bills_orders_custom[$position_total]['cum_total']['amounts'][$key] += $cum_total;
                     }
-
-                    $custom_obj['obj_men'] = $custom_obj_men;
-                    $custom_obj['fac_men'] = $custom_fac_men;
-                    $custom_obj['cum_men'] = $custom_cum_men;
-                    $custom_obj['obj_total'] = $custom_obj_total;
-                    $custom_obj['fac_total'] = $custom_fac_total;
-                    $custom_obj['cum_total'] = $custom_cum_total;
-                    $custom_obj['type_obj'] = 3;
-                    $array_bills_orders_custom[] = $custom_obj;
                 }
             }
         }
