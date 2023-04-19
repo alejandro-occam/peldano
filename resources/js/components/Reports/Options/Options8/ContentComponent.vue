@@ -22,7 +22,7 @@ import TableComponent from "./TableComponent.vue";
 
 
 export default {
-    name: "Option7ContentComponen",
+    name: "Option8ContentComponen",
     components: {
         AddButtonComponent,
         TableComponent
