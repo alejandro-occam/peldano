@@ -110,7 +110,7 @@
                         <td class="td-border-right pl-5" :rowspan="7">{{ reports.array_bills_orders[index_bill_order - 1].pro_name }}</td>
                     </tr>
                     <tr class="row-product bg-white" v-if="reports.array_bills_orders[index_bill_order - 1].type_obj == 2">
-                        <td class="td-border-right bg-light-blue-table pl-5 text-align-center" :rowspan="7" colspan="4">{{ reports.array_bills_orders[index_bill_order - 1].dep.toUpperCase() }}</td>
+                        <td class="td-border-right bg-light-blue-table pl-5 text-align-center" :rowspan="7" colspan="4">{{ reports.array_bills_orders[index_bill_order - 1].dep_name.toUpperCase() }}</td>
                     </tr>
                     <tr class="row-product bg-white"  v-else-if="reports.array_bills_orders[index_bill_order - 1].type_obj == 3">
                             <td class="td-border-right bg-light-blue-table pl-5" :rowspan="7" colspan="4">TOTAL</td>
