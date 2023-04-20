@@ -416,7 +416,7 @@ class ProposalsController extends Controller
             }
         }
         
-
+        Log::info('status: '.$status);
         if($status == 1){
             error_log('hola');
             $path = 'media/custom-imgs/logo_azul.png';
