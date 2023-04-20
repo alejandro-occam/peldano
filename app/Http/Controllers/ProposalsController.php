@@ -28,6 +28,8 @@ use App\Models\ConsultantProposal;
 use App\Models\ConsultanOrder;
 use App\Models\Project;
 use App\Models\Channel;
+use Illuminate\Support\Facades\Log;
+
 
 use App\Http\Controllers\CurlController;
 
@@ -224,8 +226,15 @@ class ProposalsController extends Controller
         error_log('id_company: '.$id_company);
         //END COMENTARIO PARA EL OBJETO
 
+        //Consultamos si existe el contacto
+        $contact = Contact::find($id_company);
+        if(!$contact){
+            $response['code'] = 1001;
+            return response()->json($response);
+        }
+
         //Consultamos si existe la empresa
-        $company = Company::find($id_company);
+        $company = Company::find($contact->id_company);
         if(!$company){
             $response['code'] = 1001;
             return response()->json($response);
@@ -409,6 +418,7 @@ class ProposalsController extends Controller
         
 
         if($status == 1){
+            error_log('hola');
             $path = 'media/custom-imgs/logo_azul.png';
             $type = pathinfo($path, PATHINFO_EXTENSION);
             $data_base64 = file_get_contents($path);
@@ -433,6 +443,8 @@ class ProposalsController extends Controller
             Storage::put('pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf',$content);
 
             //Guardamos el fichero
+            error_log('pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf');
+            Log::info('pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf');
             $proposal->pdf_file = 'pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf';
             $proposal->save();
             $response['pdf_file'] = $proposal->pdf_file;
