@@ -440,11 +440,12 @@ class ProposalsController extends Controller
             //Generamos el pdf
             $pdf = PDF::setOptions(['isHtml5ParserEnabled' => true, 'isRemoteEnabled' => true])->loadView('pdf.invoice', $data);
             $content = $pdf->download()->getOriginalContent();
+            Log::info('pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf');
             Storage::put('pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf',$content);
 
             //Guardamos el fichero
             error_log('pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf');
-            Log::info('pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf');
+            
             $proposal->pdf_file = 'pdfs_bills/propuesta-'.$proposal->id_proposal_custom.'.pdf';
             $proposal->save();
             $response['pdf_file'] = $proposal->pdf_file;
