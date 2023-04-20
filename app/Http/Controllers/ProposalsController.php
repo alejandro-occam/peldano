@@ -220,6 +220,7 @@ class ProposalsController extends Controller
 
     //Guardar y generar la propuesta
     function saveAndGenerateProposal(Request $request){
+        Log::info('hola');
         $id_company = $request->get('id_company');
 
         //COMENTARIO PARA EL OBJETO
@@ -418,7 +419,6 @@ class ProposalsController extends Controller
         
         Log::info('status: '.$status);
         if($status == 1){
-            error_log('hola');
             $path = 'media/custom-imgs/logo_azul.png';
             $type = pathinfo($path, PATHINFO_EXTENSION);
             $data_base64 = file_get_contents($path);
