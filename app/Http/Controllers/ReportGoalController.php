@@ -534,9 +534,6 @@ class ReportGoalController extends Controller
                 $custom_fac_total['period'] = 'Fac. acumulado';
                 $custom_cum_total['period'] = 'Cum. acumulado%';
 
-                //Consultamos el objetivo mensual del canal para este usuario
-                $user_objetive = UserObjetive::where('id_user', $bill_order->id_user)->where('year', 2023)->first();
-
                 //Obj. mensual
                 $trim = 0;
                 $total = 0;
@@ -1040,21 +1037,6 @@ class ReportGoalController extends Controller
         //Ordenamos las row por departamentos
         $array_order_custom = array();
         foreach($array_bills_orders_custom as $key => $bill_order){
-            /*if($key == 0){
-                $array_order_custom[$bill_order['dep_name']][] = $bill_order;
-
-            }else{
-                foreach($array_order_custom as $key_custom => $custom){
-                    $exist = false;
-                    if($key_custom == $bill_order['dep_name']){
-                        $exist = true;
-                    }
-
-                    if($exist){
-                        $array_order_custom[$bill_order['dep_name']][] = $bill_order;
-                    }
-                }
-            }*/
             $array_order_custom[$bill_order['dep_name']][] = $bill_order;
         }
 
@@ -1069,8 +1051,6 @@ class ReportGoalController extends Controller
         //Row total
         $position_total = 0;
         $is_first = true;
-
-        error_log(print_r($array_bills_orders_custom, true));
 
         foreach($array_bills_orders_custom as $key => $bill_order){
             if($bill_order['type_obj'] == 2){
