@@ -3,7 +3,7 @@
         <div class="col-12 d-flex flex-wrap justify-content-between mb-10">
             <h3 class="color-blue my-auto">Opciones de informe</h3>
             <div class="d-flex">
-                <AddButtonComponent
+                <!--<AddButtonComponent
                     :columns="'px-4 ml-auto mr-7'"
                     :text="'Exportar'"
                     :id="'btn_export'"
@@ -11,7 +11,7 @@
                     :width="16"
                     :height="16"
                     v-on:click="changeViewStatusProposals(3)"
-                />
+                />-->
                 <RouterButton
                     :columns="'ml-auto mr-7'"
                     :text="'Volver'"
@@ -34,26 +34,6 @@
         </div>
 
         <div class="mx-2 col-2 mt-5">
-            <span class="text-dark font-weight-bold mb-2">Sección</span>
-            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_section" :name="'select_section'" :id="'select_section'" data-style="select-lightgreen" @change="getChannelSelect">
-                <option value="0" selected>
-                    Filtro por sección
-                </option>
-                <option :value="section.id" v-for="section in config.articles.filter.array_sections"  :key="section.id" v-text="section.nomenclature + '-' + section.name" ></option>
-            </select>
-        </div>
-
-        <div class="mx-2 col-2 mt-5">
-            <span class="text-dark font-weight-bold mb-2">Canal</span>
-            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_channel" :name="'select_channel'" :id="'select_channel'" data-style="select-lightgreen">
-                <option value="0" selected>
-                    Filtro por canal
-                </option>
-                <option :value="channel.id" v-for="channel in config.articles.filter.array_channels" :key="channel.id" v-text="channel.nomenclature + '-' + channel.name" ></option>
-            </select>
-        </div>
-
-        <div class="mx-2 col-2 mt-5">
             <span class="text-dark font-weight-bold mb-2">Consultor</span>
             <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_consultant" :name="'select_consultant'" :id="'select_consultant'" data-style="select-lightgreen">
                 <option value="0" selected>
@@ -64,23 +44,18 @@
         </div>
 
         <div class="mx-2 col-2 mt-5">
-            <span class="text-dark font-weight-bold mb-2">Productos desactivados</span>
-            <span class="switch switch-outline switch-icon switch-success mt-3">
-                <label class="mr-auto">
-                    <input class="switch-exempt" input type="checkbox" checked="checked" name="deactivated_products_switch" v-model="deactivated_products_switch"/>
-                    <span></span>
-                </label>
-            </span>
+            <span class="text-dark font-weight-bold mb-2">Objetivo del año</span>
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="date_from" :name="'select_date_from'" :id="'select_date_from'" data-style="select-lightgreen">
+                <option :value="year" v-for="year in array_dates_from" :key="year" v-text="year" ></option>
+            </select>
         </div>
 
         <div class="mx-2 col-2 mt-5">
-            <span class="text-dark font-weight-bold mb-2">Órdenes</span>
-            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="select_order" :name="'select_order'" :id="'select_order'" data-style="select-lightgreen">
-                <option :value="1">Firmadas</option>
-                <option :value="2">Editando</option>
+            <span class="text-dark font-weight-bold mb-2">Comparado con meses de</span>
+            <select class="form-control bg-gray text-dark select-custom select-filter mt-3" v-model="date_to" :name="'select_date_to'" :id="'select_date_to'" data-style="select-lightgreen">
+                <option :value="year" v-for="year in array_dates_to" :key="year" v-text="year" ></option>            
             </select>
         </div>
-        
         <div class="mx-2 col-12 d-flex mt-10">
             <button v-on:click="filteRreportListGoal()" type="submit" class="btn bg-azul color-white px-35 font-weight-bolder">Generar informe</button>
         </div>
@@ -193,15 +168,30 @@
                 date_from: '',
                 date_to: '',
                 date_limit_switch: '0',
-                select_data_to_use: '1'
+                select_data_to_use: '1',
+                array_dates_from: [],
+                array_dates_to: []
             };
         },
         computed: {
             ...mapState(["errors", "config", "proposals", "reports"]),
         },
         mounted() {
+            //Objetivo del año
+            this.date_from = new Date().getFullYear();
+            this.array_dates_from.push(new Date().getFullYear());
+            for(var i=1; i<=4; i++){
+                this.array_dates_from.push(new Date().getFullYear() - i);
+            }
+
+            //Comparado con meses de
+            this.date_to = new Date().getFullYear() - 1;
+            this.array_dates_to.push(new Date().getFullYear() - 1);
+            for(var i=1; i<=4; i++){
+                this.array_dates_to.push(new Date().getFullYear() - (i + 1));
+            }
             this.getUsers(1);
-            this.getNow();
+            //this.getNow();
             var params = {
                 type: 1
             }
@@ -245,7 +235,7 @@
                 this.getChannels(params);
             },
             filteRreportListGoal(){
-                var date_from = this.date_from;
+                /*var date_from = this.date_from;
                 if(!this.isValidDate(this.date_from)){
                     var date_ms_from = Date.parse(this.date_from);
                     date_from = this.$utils.customFormDate(date_ms_from);
@@ -257,16 +247,16 @@
                     var date_ms_to = Date.parse(this.date_to);
                     date_to = this.$utils.customFormDate(date_ms_to);
                 }
-                this.date_to_custom = date_to;
+                this.date_to_custom = date_to;*/
 
                 var params = {
                     select_department: this.select_department,
-                    select_section: this.select_section,
-                    select_channel: this.select_channel,
+                    /*select_section: this.select_section,
+                    select_channel: this.select_channel,*/
                     select_consultant: this.select_consultant,
-                    select_order: this.select_order,
-                    date_from: date_from,
-                    date_to: date_to
+                    //select_order: this.select_order,
+                    date_from: this.date_from,
+                    date_to: this.date_to
                 }
                 this.reportGoal(params);
             },
