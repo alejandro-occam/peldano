@@ -430,7 +430,7 @@ class ReportGoalController extends Controller
         $date_from = $request->get('date_from');
         $date_to = $request->get('date_to');
 
-        //Generamos array de fechas
+        //Generamos array de fechas actuales
         $array_dates = array();
         $date_from = '01-01-2023';
         $date_to = '31-12-2023';
@@ -438,8 +438,6 @@ class ReportGoalController extends Controller
 
         $date_from_array = explode("-", $date_from);
         $date_from_custom = $date_from_array[1].'-01-'.$date_from_array[2];
-        $date_from_custom_old_time = strtotime($date_from);
-        $date_from_custom_old = date('d-m-Y', strtotime("-".$select_compare." year", $date_from_custom_old_time));
 
         $date_to_array = explode("-", $date_to);
         $date_to_custom = $date_to_array[1].'-01-'.$date_to_array[2];
@@ -448,7 +446,20 @@ class ReportGoalController extends Controller
 
         //Generamos los arrays de fechas
         $array_dates = $this->generateDateArray($num_months, $date_from_custom, 1, false);
-        $array_dates_old = $this->generateDateArray($num_months, $date_from_custom_old, 2, false);
+
+        //Generamos array de fechas actuales de hace un año
+        $array_dates_old = array();
+        $date_from_old = '01-01-2022';
+        $date_to_old = '31-12-2022';
+        $num_months_old = $this->calculateMonthsNumber($date_from, $date_to);
+
+        $date_from_array_old = explode("-", $date_from_old);
+        $date_from_custom_old = $date_from_array_old[1].'-01-'.$date_from_array_old[2];
+        $date_to_array_old = explode("-", $date_to);
+        $date_to_custom_old = $date_to_array_old[1].'-01-'.$date_to_array_old[2];
+
+        //Generamos los arrays de fechas
+        $array_dates_old = $this->generateDateArray($num_months_old, $date_from_custom_old, 1, false);
 
         //Cantidades facturadas
         $array_users_objetives = UserObjetive::select('users_objetives.*', 'departments.nomenclature as department_nomenclature')
@@ -537,8 +548,8 @@ class ReportGoalController extends Controller
                 //Obj. mensual
                 $trim = 0;
                 $total = 0;
-                foreach($array_dates as $key_date => $date){
-                    $custom_obj_men['amounts'][] = round(($bill_order->obj_print + $bill_order->obj_dig + $bill_order->obj_eve) / 12, 2);
+                foreach($array_dates_old as $key_date => $date){
+                    /*$custom_obj_men['amounts'][] = round(($bill_order->obj_print + $bill_order->obj_dig + $bill_order->obj_eve) / 12, 2);
                     $trim += round(($bill_order->obj_print + $bill_order->obj_dig + $bill_order->obj_eve) / 12, 2);
 
 
@@ -547,9 +558,21 @@ class ReportGoalController extends Controller
                         $trim = 0;
                     }
 
-                    $total += round(($bill_order->obj_print + $bill_order->obj_dig + $bill_order->obj_eve) / 12, 2);
+                    $total += round(($bill_order->obj_print + $bill_order->obj_dig + $bill_order->obj_eve) / 12, 2);*/
+                    if(strtotime($date['last_date_custom2']) >= strtotime($bill_order->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order->date)){
+                        $custom_obj_men['amounts'][] = round($bill_order->amount, 2);
+                        $trim += round($bill_order->amount, 2);
+                        $total += round($bill_order->amount, 2);
+                    }else{
+                        $custom_obj_men['amounts'][] = 0;
+                    }
+
+                    if($key_date == 2 || $key_date == 5 || $key_date == 8 || $key_date == 11){
+                        $custom_obj_men['amounts'][] = round($trim, 2);
+                        $trim = 0;
+                    }
                 }
-                $custom_obj_men['amounts'][] = ($bill_order->obj_print + $bill_order->obj_dig + $bill_order->obj_eve);
+                $custom_obj_men['amounts'][] = round($total, 2);
 
                 //Fac. mensual
                 $trim = 0;
@@ -661,7 +684,7 @@ class ReportGoalController extends Controller
                     $trim = 0;
                     $total = 0;
                     foreach($array_dates as $key_date => $date){
-                        $custom_obj_men['amounts'][] = round(($bill_order->obj_print + $bill_order->obj_dig + $bill_order->obj_eve) / 12, 2);
+                        /*$custom_obj_men['amounts'][] = round(($bill_order->obj_print + $bill_order->obj_dig + $bill_order->obj_eve) / 12, 2);
                         $trim += round(($bill_order->obj_print + $bill_order->obj_dig + $bill_order->obj_eve) / 12, 2);
 
 
@@ -670,9 +693,21 @@ class ReportGoalController extends Controller
                             $trim = 0;
                         }
 
-                        $total += round(($bill_order->obj_print + $bill_order->obj_dig + $bill_order->obj_eve) / 12, 2);
+                        $total += round(($bill_order->obj_print + $bill_order->obj_dig + $bill_order->obj_eve) / 12, 2);*/
+                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order->date)){
+                            $custom_obj_men['amounts'][] = round($bill_order->amount, 2);
+                            $trim += round($bill_order->amount, 2);
+                            $total += round($bill_order->amount, 2);
+                        }else{
+                            $custom_obj_men['amounts'][] = 0;
+                        }
+    
+                        if($key_date == 2 || $key_date == 5 || $key_date == 8 || $key_date == 11){
+                            $custom_obj_men['amounts'][] = round($trim, 2);
+                            $trim = 0;
+                        }
                     }
-                    $custom_obj_men['amounts'][] = ($bill_order->obj_print + $bill_order->obj_dig + $bill_order->obj_eve);
+                    $custom_obj_men['amounts'][] = round($total, 2);
 
                     //Fac. mensual
                     $trim = 0;
@@ -789,6 +824,45 @@ class ReportGoalController extends Controller
 
                     $array_bills_orders_custom[$position]['fac_men']['amounts'][count($array_bills_orders_custom[$position]['fac_men']['amounts']) - 1] = round($array_bills_orders_custom[$position]['fac_men']['amounts'][count($array_bills_orders_custom[$position]['fac_men']['amounts']) - 1] + $total, 2);
 
+                    //Obj. mensula
+                    $trim = 0;
+                    $total = 0;
+                    foreach($array_dates_old as $key_date => $date){ 
+                        if(strtotime($date['last_date_custom2']) >= strtotime($bill_order->date) && strtotime($date['first_date_custom2']) <= strtotime($bill_order->date)){
+                            $trim += round($bill_order->amount, 2);
+                            $total += round($bill_order->amount, 2);
+                            if($key_date == 0 || $key_date == 1 || $key_date == 2){
+                                $array_bills_orders_custom[$position]['obj_men']['amounts'][$key_date] += round($bill_order->amount, 2);
+
+                            }else{
+                                $array_bills_orders_custom[$position]['obj_men']['amounts'][$key_date + 1] += round($bill_order->amount, 2);
+                            }
+                        }
+
+                        if($key_date == 2 || $key_date == 5 || $key_date == 8 || $key_date == 11){
+                            if($key_date == 2){
+                                $array_bills_orders_custom[$position]['obj_men']['amounts'][3] += round($trim, 2);
+                            }
+
+                            if($key_date == 5){
+                                $array_bills_orders_custom[$position]['obj_men']['amounts'][7] += round($trim, 2);
+                            }
+
+                            if($key_date == 8){
+                                $array_bills_orders_custom[$position]['obj_men']['amounts'][11] += round($trim, 2);
+                            }
+
+                            if($key_date == 11){
+                                $array_bills_orders_custom[$position]['obj_men']['amounts'][15] += round($trim, 2);
+                            }
+                            
+                            $trim = 0;
+
+                        }
+                    }
+
+                    $array_bills_orders_custom[$position]['obj_men']['amounts'][count($array_bills_orders_custom[$position]['obj_men']['amounts']) - 1] = round($array_bills_orders_custom[$position]['obj_men']['amounts'][count($array_bills_orders_custom[$position]['obj_men']['amounts']) - 1] + $total, 2);
+
                     //Cum. mensual
                     $trim = 0;
                     foreach($array_bills_orders_custom[$position]['fac_men']['amounts'] as $key_date => $date){
@@ -880,7 +954,6 @@ class ReportGoalController extends Controller
                 $custom_obj_total['period'] = 'Obj. acumulado';
                 $custom_fac_total['period'] = 'Fac. acumulado';
                 $custom_cum_total['period'] = 'Cum. acumulado%';
-                //error_log(print_r($bill_order, true));
 
                 //Obj. mensual
                 $custom_obj_men['amounts'] = array();
@@ -897,7 +970,26 @@ class ReportGoalController extends Controller
                 //Cum. mensual
                 $custom_cum_men['amounts'] = array();
                 foreach($bill_order['cum_men']['amounts'] as $cum_men){
-                    $custom_cum_men['amounts'][]['amount'] = 0;
+                    //$custom_cum_men['amounts'][]['amount'] = 0;
+                    if(isset($custom_obj_men['amounts'][$key_date]) && isset($custom_fac_men['amounts'][$key_date])){
+                        if($custom_obj_men['amounts'][$key_date] > 0 && $custom_fac_men['amounts'][$key_date] > 0){
+                            $cum_total_obj['amount'] = round(($custom_fac_men['amounts'][$key_date] * 100) / $custom_obj_men['amounts'][$key_date], 2);
+                            $cum_total_obj['situation'] = '+';
+                            if($custom_obj_men['amounts'][$key_date] > $custom_fac_men['amounts'][$key_date]){
+                                $cum_total_obj['situation'] = '-';
+                            }
+                            $custom_cum_men['amounts'][] = $cum_total_obj;
+
+                        }else{
+                            $cum_total_obj['amount'] = '-';
+                            $cum_total_obj['situation'] = '';
+                            $custom_cum_men['amounts'][] = $cum_total_obj;
+                        }
+                    }else{
+                        $cum_total_obj['amount'] = '-';
+                        $cum_total_obj['situation'] = '';
+                        $custom_cum_men['amounts'][] = $cum_total_obj;
+                    }
                 }
 
                 //Obj. total
@@ -915,8 +1007,29 @@ class ReportGoalController extends Controller
                 //Cum. total
                 $custom_cum_total['amounts'] = array();
                 foreach($bill_order['cum_total']['amounts'] as $cum_total){
-                    $custom_cum_total['amounts'][]['amount'] = 0;
+                    //$custom_cum_total['amounts'][]['amount'] = 0;
+                    if(isset($custom_obj_total['amounts'][$key_date]) && isset($custom_fac_total['amounts'][$key_date])){
+                        if($custom_obj_total['amounts'][$key_date] > 0 && $custom_fac_total['amounts'][$key_date] > 0){
+                            $cum_total_obj['amount'] = round(($custom_fac_total['amounts'][$key_date] * 100) / $custom_obj_total['amounts'][$key_date], 2);
+                            $cum_total_obj['situation'] = '+';
+                            if($custom_obj_total['amounts'][$key_date] > $custom_fac_total['amounts'][$key_date]){
+                                $cum_total_obj['situation'] = '-';
+                            }
+                            $custom_cum_total['amounts'][] = $cum_total_obj;
+    
+                        }else{
+                            $cum_total_obj['amount'] = '-';
+                            $cum_total_obj['situation'] = '';
+                            $custom_cum_total['amounts'][] = $cum_total_obj;
+                        }
+                    }else{
+                        $cum_total_obj['amount'] = '-';
+                        $cum_total_obj['situation'] = '';
+                        $custom_cum_total['amounts'][] = $cum_total_obj;
+                    }
                 }
+                
+                //error_log(print_r($custom_cum_total, true));
 
                 $custom_obj['obj_men'] = $custom_obj_men;
                 $custom_obj['fac_men'] = $custom_fac_men;
@@ -934,38 +1047,6 @@ class ReportGoalController extends Controller
                     if($bill_order_custom['dep_name'] == $bill_order['dep_name']){
                         $exist = true;
                         $position = $key_array_bills_orders_custom;
-                    }
-                }
-
-                if($exist){
-                    //Obj. mensual
-                    foreach($bill_order['obj_men']['amounts'] as $obj_men){
-                        $array_dep_custom[$position]['obj_men']['amounts'][count($array_bills_orders_custom[$position]['obj_men']['amounts']) - 1] += $obj_men;
-                    }
-
-                    //Fac. mensual
-                    foreach($bill_order['fac_men']['amounts'] as $fac_men){
-                        $array_dep_custom[$position]['fac_men']['amounts'][count($array_bills_orders_custom[$position]['fac_men']['amounts']) - 1] += $fac_men;
-                    }
-
-                    //Cum. mensual
-                    foreach($bill_order['cum_men']['amounts'] as $cum_men){
-                        $array_dep_custom[$position]['cum_men']['amounts'][count($array_bills_orders_custom[$position]['cum_men']['amounts']) - 1] += $cum_men;
-                    }
-
-                    //Obj. total
-                    foreach($bill_order['obj_total']['amounts'] as $obj_total){
-                        $array_dep_custom[$position]['obj_total']['amounts'][count($array_bills_orders_custom[$position]['obj_total']['amounts']) - 1] += $obj_total;
-                    }
-
-                    //Fac. total
-                    foreach($bill_order['fac_total']['amounts'] as $fac_total){
-                        $array_dep_custom[$position]['fac_total']['amounts'][count($array_bills_orders_custom[$position]['fac_total']['amounts']) - 1] += $fac_total;
-                    }
-
-                    //Cum. total
-                    foreach($bill_order['cum_total']['amounts'] as $cum_total){
-                        $array_dep_custom[$position]['cum_total']['amounts'][count($array_bills_orders_custom[$position]['cum_total']['amounts']) - 1] += $cum_total;
                     }
                 }
 
@@ -996,7 +1077,26 @@ class ReportGoalController extends Controller
                     //Cum. mensual
                     $custom_cum_men['amounts'] = array();
                     foreach($bill_order['cum_men']['amounts'] as $cum_men){
-                        $custom_cum_men['amounts'][]['amount'] = 0;
+                        //$custom_cum_men['amounts'][]['amount'] = 0;
+                        if(isset($custom_obj_men['amounts'][$key_date]) && isset($custom_fac_men['amounts'][$key_date])){
+                            if($custom_obj_men['amounts'][$key_date] > 0 && $custom_fac_men['amounts'][$key_date] > 0){
+                                $cum_total_obj['amount'] = round(($custom_fac_men['amounts'][$key_date] * 100) / $custom_obj_men['amounts'][$key_date], 2);
+                                $cum_total_obj['situation'] = '+';
+                                if($custom_obj_men['amounts'][$key_date] > $custom_fac_men['amounts'][$key_date]){
+                                    $cum_total_obj['situation'] = '-';
+                                }
+                                $custom_cum_men['amounts'][] = $cum_total_obj;
+
+                            }else{
+                                $cum_total_obj['amount'] = '-';
+                                $cum_total_obj['situation'] = '';
+                                $custom_cum_men['amounts'][] = $cum_total_obj;
+                            }
+                        }else{
+                            $cum_total_obj['amount'] = '-';
+                            $cum_total_obj['situation'] = '';
+                            $custom_cum_men['amounts'][] = $cum_total_obj;
+                        }
                     }
 
                     //Obj. total
@@ -1014,7 +1114,26 @@ class ReportGoalController extends Controller
                     //Cum. total
                     $custom_cum_total['amounts'] = array();
                     foreach($bill_order['cum_total']['amounts'] as $cum_total){
-                        $custom_cum_total['amounts'][]['amount'] = 0;
+                        //$custom_cum_total['amounts'][]['amount'] = 0;
+                        if(isset($custom_obj_total['amounts'][$key_date]) && isset($custom_fac_total['amounts'][$key_date])){
+                            if($custom_obj_total['amounts'][$key_date] > 0 && $custom_fac_total['amounts'][$key_date] > 0){
+                                $cum_total_obj['amount'] = round(($custom_fac_total['amounts'][$key_date] * 100) / $custom_obj_total['amounts'][$key_date], 2);
+                                $cum_total_obj['situation'] = '+';
+                                if($custom_obj_total['amounts'][$key_date] > $custom_fac_total['amounts'][$key_date]){
+                                    $cum_total_obj['situation'] = '-';
+                                }
+                                $custom_cum_total['amounts'][] = $cum_total_obj;
+        
+                            }else{
+                                $cum_total_obj['amount'] = '-';
+                                $cum_total_obj['situation'] = '';
+                                $custom_cum_total['amounts'][] = $cum_total_obj;
+                            }
+                        }else{
+                            $cum_total_obj['amount'] = '-';
+                            $cum_total_obj['situation'] = '';
+                            $custom_cum_total['amounts'][] = $cum_total_obj;
+                        }
                     }
 
                     $custom_obj['obj_men'] = $custom_obj_men;
@@ -1025,6 +1144,76 @@ class ReportGoalController extends Controller
                     $custom_obj['cum_total'] = $custom_cum_total;
                     $custom_obj['type_obj'] = 2;
                     $array_dep_custom[] = $custom_obj;
+                }
+
+                if($exist){
+                    //Obj. mensual
+                    foreach($bill_order['obj_men']['amounts'] as $obj_men){
+                        $array_dep_custom[$position]['obj_men']['amounts'][count($array_bills_orders_custom[$position]['obj_men']['amounts']) - 1] += $obj_men;
+                    }
+
+                    //Fac. mensual
+                    foreach($bill_order['fac_men']['amounts'] as $fac_men){
+                        $array_dep_custom[$position]['fac_men']['amounts'][count($array_bills_orders_custom[$position]['fac_men']['amounts']) - 1] += $fac_men;
+                    }
+
+                    //Cum. mensual
+                    foreach($bill_order['cum_men']['amounts'] as $cum_men){
+                        //$array_dep_custom[$position]['cum_men']['amounts'][count($array_bills_orders_custom[$position]['cum_men']['amounts']) - 1] += $cum_men;
+                        if(isset($array_dep_custom[$position]['obj_men']['amounts'][$key_date]) && isset($array_dep_custom[$position]['fac_men']['amounts'][$key_date])){
+                            if($array_dep_custom[$position]['obj_men']['amounts'][$key_date] > 0 && $array_dep_custom[$position]['fac_men']['amounts'][$key_date] > 0){
+                                $cum_total_obj['amount'] = round(($array_dep_custom[$position]['fac_men']['amounts'][$key_date] * 100) / $array_dep_custom[$position]['obj_men']['amounts'][$key_date], 2);
+                                $cum_total_obj['situation'] = '+';
+                                if($array_dep_custom[$position]['obj_men']['amounts'][$key_date] > $array_dep_custom[$position]['fac_men']['amounts'][$key_date]){
+                                    $cum_total_obj['situation'] = '-';
+                                }
+                                $array_dep_custom[$position]['cum_men']['amounts'][$key_date] = $cum_total_obj;
+
+                            }else{
+                                $cum_total_obj['amount'] = '-';
+                                $cum_total_obj['situation'] = '';
+                                $array_dep_custom[$position]['cum_men']['amounts'][$key_date] = $cum_total_obj;
+                            }
+                        }else{
+                            $cum_total_obj['amount'] = '-';
+                            $cum_total_obj['situation'] = '';
+                            $array_dep_custom[$position]['cum_men']['amounts'][$key_date] = $cum_total_obj;
+                        }
+                    }
+
+                    //Obj. total
+                    foreach($bill_order['obj_total']['amounts'] as $obj_total){
+                        $array_dep_custom[$position]['obj_total']['amounts'][count($array_bills_orders_custom[$position]['obj_total']['amounts']) - 1] += $obj_total;
+                    }
+
+                    //Fac. total
+                    foreach($bill_order['fac_total']['amounts'] as $fac_total){
+                        $array_dep_custom[$position]['fac_total']['amounts'][count($array_bills_orders_custom[$position]['fac_total']['amounts']) - 1] += $fac_total;
+                    }
+
+                    //Cum. total
+                    foreach($bill_order['cum_total']['amounts'] as $cum_total){
+                        //$array_dep_custom[$position]['cum_total']['amounts'][count($array_bills_orders_custom[$position]['cum_total']['amounts']) - 1] += $cum_total;
+                        if(isset($array_dep_custom[$position]['obj_total']['amounts'][$key_date]) && isset($array_dep_custom[$position]['fac_total']['amounts'][$key_date])){
+                            if($array_dep_custom[$position]['obj_total']['amounts'][$key_date] > 0 && $array_dep_custom[$position]['fac_total']['amounts'][$key_date] > 0){
+                                $cum_total_obj['amount'] = round(($array_dep_custom[$position]['fac_total']['amounts'][$key_date] * 100) / $array_dep_custom[$position]['obj_total']['amounts'][$key_date], 2);
+                                $cum_total_obj['situation'] = '+';
+                                if($array_dep_custom[$position]['obj_total']['amounts'][$key_date] > $array_dep_custom[$position]['fac_total']['amounts'][$key_date]){
+                                    $cum_total_obj['situation'] = '-';
+                                }
+                                $array_dep_custom[$position]['cum_total']['amounts'][count($array_bills_orders_custom[$position]['cum_total']['amounts']) - 1] += $cum_total_obj;
+        
+                            }else{
+                                $cum_total_obj['amount'] = '-';
+                                $cum_total_obj['situation'] = '';
+                                $array_dep_custom[$position]['cum_total']['amounts'][count($array_bills_orders_custom[$position]['cum_total']['amounts']) - 1] += $cum_total_obj;
+                            }
+                        }else{
+                            $cum_total_obj['amount'] = '-';
+                            $cum_total_obj['situation'] = '';
+                            $array_dep_custom[$position]['cum_total']['amounts'][count($array_bills_orders_custom[$position]['cum_total']['amounts']) - 1] += $cum_total_obj;
+                        }
+                    }
                 }
             }
             
@@ -1078,7 +1267,26 @@ class ReportGoalController extends Controller
                     //Cum. mensual
                     $custom_cum_men['amounts'] = array();
                     foreach($bill_order['cum_men']['amounts'] as $cum_men){
-                        $custom_cum_men['amounts'][]['amount'] = 0;
+                        //$custom_cum_men['amounts'][]['amount'] = 0;
+                        if(isset($custom_obj_men['amounts'][$key_date]) && isset($custom_fac_men['amounts'][$key_date])){
+                            if($custom_obj_men['amounts'][$key_date] > 0 && $custom_fac_men['amounts'][$key_date] > 0){
+                                $cum_total_obj['amount'] = round(($custom_fac_men['amounts'][$key_date] * 100) / $custom_obj_men['amounts'][$key_date], 2);
+                                $cum_total_obj['situation'] = '+';
+                                if($custom_obj_men['amounts'][$key_date] > $custom_fac_men['amounts'][$key_date]){
+                                    $cum_total_obj['situation'] = '-';
+                                }
+                                $custom_cum_men['amounts'][] = $cum_total_obj;
+    
+                            }else{
+                                $cum_total_obj['amount'] = '-';
+                                $cum_total_obj['situation'] = '';
+                                $custom_cum_men['amounts'][] = $cum_total_obj;
+                            }
+                        }else{
+                            $cum_total_obj['amount'] = '-';
+                            $cum_total_obj['situation'] = '';
+                            $custom_cum_men['amounts'][] = $cum_total_obj;
+                        }
                     }
 
                     //Obj. total
@@ -1096,7 +1304,26 @@ class ReportGoalController extends Controller
                     //Cum. total
                     $custom_cum_total['amounts'] = array();
                     foreach($bill_order['cum_total']['amounts'] as $cum_total){
-                        $custom_cum_total['amounts'][]['amount'] = 0;
+                        //$custom_cum_total['amounts'][]['amount'] = 0;
+                        if(isset($custom_obj_total['amounts'][$key_date]) && isset($custom_fac_total['amounts'][$key_date])){
+                            if($custom_obj_total['amounts'][$key_date] > 0 && $custom_fac_total['amounts'][$key_date] > 0){
+                                $cum_total_obj['amount'] = round(($custom_fac_total['amounts'][$key_date] * 100) / $custom_obj_total['amounts'][$key_date], 2);
+                                $cum_total_obj['situation'] = '+';
+                                if($custom_obj_total['amounts'][$key_date] > $custom_fac_total['amounts'][$key_date]){
+                                    $cum_total_obj['situation'] = '-';
+                                }
+                                $custom_cum_total['amounts'][] = $cum_total_obj;
+        
+                            }else{
+                                $cum_total_obj['amount'] = '-';
+                                $cum_total_obj['situation'] = '';
+                                $custom_cum_total['amounts'][] = $cum_total_obj;
+                            }
+                        }else{
+                            $cum_total_obj['amount'] = '-';
+                            $cum_total_obj['situation'] = '';
+                            $custom_cum_total['amounts'][] = $cum_total_obj;
+                        }
                     }
 
                     $custom_obj['obj_men'] = $custom_obj_men;
@@ -1123,7 +1350,26 @@ class ReportGoalController extends Controller
 
                     //Cum. mensual
                     foreach($bill_order['cum_men']['amounts'] as $key => $cum_men){
-                        $array_bills_orders_custom[$position_total]['cum_men']['amounts'][$key] += $cum_men;
+                        //$array_bills_orders_custom[$position_total]['cum_men']['amounts'][$key] += $cum_men;
+                        if(isset($array_bills_orders_custom[$position_total]['obj_men']['amounts'][$key_date]) && isset($array_bills_orders_custom[$position_total]['fac_men']['amounts'][$key_date])){
+                            if($array_bills_orders_custom[$position_total]['obj_men']['amounts'][$key_date] > 0 && $array_bills_orders_custom[$position_total]['fac_men']['amounts'][$key_date] > 0){
+                                $cum_total_obj['amount'] = round(($array_bills_orders_custom[$position_total]['fac_men']['amounts'][$key_date] * 100) / $array_bills_orders_custom[$position_total]['obj_men']['amounts'][$key_date], 2);
+                                $cum_total_obj['situation'] = '+';
+                                if($array_bills_orders_custom[$position_total]['obj_men']['amounts'][$key_date] > $array_bills_orders_custom[$position_total]['fac_men']['amounts'][$key_date]){
+                                    $cum_total_obj['situation'] = '-';
+                                }
+                                $array_bills_orders_custom[$position_total]['cum_men']['amounts'][$key_date] = $cum_total_obj;
+
+                            }else{
+                                $cum_total_obj['amount'] = '-';
+                                $cum_total_obj['situation'] = '';
+                                $array_bills_orders_custom[$position_total]['cum_men']['amounts'][$key_date] = $cum_total_obj;
+                            }
+                        }else{
+                            $cum_total_obj['amount'] = '-';
+                            $cum_total_obj['situation'] = '';
+                            $array_bills_orders_custom[$position_total]['cum_men']['amounts'][$key_date] = $cum_total_obj;
+                        }
                     }
 
                     //Obj. total
@@ -1138,7 +1384,26 @@ class ReportGoalController extends Controller
 
                     //Cum. total
                     foreach($bill_order['cum_total']['amounts'] as $key => $cum_total){
-                        $array_bills_orders_custom[$position_total]['cum_total']['amounts'][$key] += $cum_total;
+                        //$array_bills_orders_custom[$position_total]['cum_total']['amounts'][$key] += $cum_total;
+                        if(isset($array_bills_orders_custom[$position_total]['obj_total']['amounts'][$key_date]) && isset($array_bills_orders_custom[$position_total]['fac_total']['amounts'][$key_date])){
+                            if($array_bills_orders_custom[$position_total]['obj_total']['amounts'][$key_date] > 0 && $array_bills_orders_custom[$position_total]['fac_total']['amounts'][$key_date] > 0){
+                                $cum_total_obj['amount'] = round(($array_bills_orders_custom[$position_total]['fac_total']['amounts'][$key_date] * 100) / $array_bills_orders_custom[$position_total]['obj_total']['amounts'][$key_date], 2);
+                                $cum_total_obj['situation'] = '+';
+                                if($array_bills_orders_custom[$position_total]['obj_total']['amounts'][$key_date] > $array_bills_orders_custom[$position_total]['fac_total']['amounts'][$key_date]){
+                                    $cum_total_obj['situation'] = '-';
+                                }
+                                $array_bills_orders_custom[$position_total]['cum_total']['amounts'][count($array_bills_orders_custom[$position]['cum_total']['amounts']) - 1] += $cum_total_obj;
+        
+                            }else{
+                                $cum_total_obj['amount'] = '-';
+                                $cum_total_obj['situation'] = '';
+                                $array_bills_orders_custom[$position_total]['cum_total']['amounts'][count($array_bills_orders_custom[$position]['cum_total']['amounts']) - 1] += $cum_total_obj;
+                            }
+                        }else{
+                            $cum_total_obj['amount'] = '-';
+                            $cum_total_obj['situation'] = '';
+                            $array_bills_orders_custom[$position_total]['cum_total']['amounts'][count($array_bills_orders_custom[$position]['cum_total']['amounts']) - 1] += $cum_total_obj;
+                        }
                     }
                 }
             }
