@@ -1270,7 +1270,7 @@ class ProposalsController extends Controller
         $params['CustomerId'] = '6972a7f8-a876-49fd-856b-19b86d5425f5'; // Esto sería la empresa o contacto a quien se lo asociamos
         $params['InvoiceType'] = 0; //Lo ponemos de momento Undefined
         $params['TaxNumber'] = 'C28325769'; // Es el nuestro inventado de momento 
-        $params['TaxNumberType'] = 1;
+        $params['TaxNumberType'] = 'TaxID';
         $custom_date = date('Y-m-dTH:i:s:').substr((string)microtime(), 2, 3).'Z';
         $params['Timestamp'] = $custom_date;
         $line['ProductId'] = 'fa4b8984-e114-413d-8d7a-b77a1e1947cc';
