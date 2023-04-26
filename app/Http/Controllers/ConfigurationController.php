@@ -938,7 +938,7 @@ class ConfigurationController extends Controller
         //Creamos un objeto para el controller curl
         $requ_curls = new CurlController();
 
-        //Consultamos el product family del artículo
+        //Consultamos el product family del artículo por nombre
         $company = config('constants.id_company_sage');
         $url = 'https://sage200.sage.es/api/sales/ProductFamilies?api-version=1.0&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Name%20eq%20%27'.
                         $department->nomenclature."-".
@@ -953,15 +953,32 @@ class ConfigurationController extends Controller
         $product_family_id = '';
         
         if(count($data['value']) == 0){
-            //Si no existe creamos un product family
-            $param['CompanyId'] = $company;
-            $param['Name'] = $department->nomenclature."-".$section->nomenclature."-".$channel->nomenclature."-".$project->nomenclature."-".$chapter->nomenclature."-".$batch->nomenclature;
-            $param['Code'] = $department->id.$section->id.$channel->id.$project->id.$chapter->id.$batch->id;
-            $url = 'https://sage200.sage.es/api/sales/ProductFamilies?api-version=1.0';
-            $response = json_decode($requ_curls->postSageCurl($url, $param)['response'], true);
-            
-            $product_family_id = $response['Id'];
-            $product_family_code = $response['Code'];
+            //Consultamos si existe el product famili por code
+            $url = 'https://sage200.sage.es/api/sales/ProductFamilies?api-version=1.0&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Code%20eq%20%27'.
+            $channel->id.
+            $project->id.
+            $chapter->id.
+            $batch->id.
+            '%27';
+            $data = json_decode($requ_curls->getSageCurl($url)['response'], true);
+            if(count($data['value']) == 0){
+                //Si no existe creamos un product family
+                $param['CompanyId'] = $company;
+                $param['Name'] = $department->nomenclature."-".$section->nomenclature."-".$channel->nomenclature."-".$project->nomenclature."-".$chapter->nomenclature."-".$batch->nomenclature;
+                $param['Code'] = $department->id.$section->id.$channel->id.$project->id.$chapter->id.$batch->id;
+                $url = 'https://sage200.sage.es/api/sales/ProductFamilies?api-version=1.0';
+                $response = json_decode($requ_curls->postSageCurl($url, $param)['response'], true);
+                
+                $product_family_id = $response['Id'];
+                $product_family_code = $response['Code'];
+
+            }else{
+                $array_product_family = $data['value'];
+                foreach($array_product_family as $product_family){
+                    $product_family_id = $product_family['Id'];
+                    $product_family_code = $product_family['Code'];
+                }
+            }
 
         }else{
             $array_product_family = $data['value'];
@@ -975,6 +992,7 @@ class ConfigurationController extends Controller
         $custom_name = str_replace(' ', '%20', $name);
         $url = 'https://sage200.sage.es/api/sales/Products?api-version=1.0&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Name%20eq%20%27'.$custom_name.'%27%20and%20FamilyId%20eq%20%27'.$product_family_id.'%27';
         $data_product = json_decode($requ_curls->getSageCurl($url)['response'], true);
+        error_log(print_r($data_product, true));
         if(count($data_product['value']) == 0){
             //Si no existe creamos un product family
             $param['CompanyId'] = $company;
