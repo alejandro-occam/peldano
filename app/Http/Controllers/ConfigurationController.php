@@ -953,7 +953,7 @@ class ConfigurationController extends Controller
         $product_family_id = '';
         
         if(count($data['value']) == 0){
-            //Consultamos si existe el product famili por code
+            //Consultamos si existe el product family por code
             $url = 'https://sage200.sage.es/api/sales/ProductFamilies?api-version=1.0&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Code%20eq%20%27'.
             $channel->id.
             $project->id.
@@ -992,7 +992,7 @@ class ConfigurationController extends Controller
         $custom_name = str_replace(' ', '%20', $name);
         $url = 'https://sage200.sage.es/api/sales/Products?api-version=1.0&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Name%20eq%20%27'.$custom_name.'%27%20and%20FamilyId%20eq%20%27'.$product_family_id.'%27';
         $data_product = json_decode($requ_curls->getSageCurl($url)['response'], true);
-        error_log(print_r($data_product, true));
+
         if(count($data_product['value']) == 0){
             //Si no existe creamos un product family
             $param['CompanyId'] = $company;

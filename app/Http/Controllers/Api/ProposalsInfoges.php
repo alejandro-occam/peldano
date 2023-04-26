@@ -531,17 +531,35 @@ class ProposalsInfoges extends Controller
         $product_family_id = '';
         
         if(count($data['value']) == 0){
-            //Si no existe creamos un product family
-            $param['CompanyId'] = $company;
-            $param['Name'] = $department->nomenclature."-".$section->nomenclature."-".$channel->nomenclature."-".$project->nomenclature."-".$chapter->nomenclature."-".$batch->nomenclature;
-            //$param['Code'] = $department->id.$section->id.$channel->id.$project->id.$chapter->id.$batch->id;
-            $url = 'https://sage200.sage.es/api/sales/ProductFamilies?api-version=1.0';
-            $response = json_decode($requ_curls->postSageCurl($url, $param)['response'], true);
-            Log::info('$param: ' . print_r($param, true));
-            Log::info('$response: ' . print_r($response, true));
-            
-            $product_family_id = $response['Id'];
-            $product_family_code = $response['Code'];
+            //Consultamos si existe el product family por code
+            $url = 'https://sage200.sage.es/api/sales/ProductFamilies?api-version=1.0&$filter=CompanyId%20eq%20%27'.$company.'%27%20and%20Code%20eq%20%27'.
+            $channel->id.
+            $project->id.
+            $chapter->id.
+            $batch->id.
+            '%27';
+            $data = json_decode($requ_curls->getSageCurl($url)['response'], true);
+
+            if(count($data['value']) == 0){
+                //Si no existe creamos un product family
+                $param['CompanyId'] = $company;
+                $param['Name'] = $department->nomenclature."-".$section->nomenclature."-".$channel->nomenclature."-".$project->nomenclature."-".$chapter->nomenclature."-".$batch->nomenclature;
+                //$param['Code'] = $department->id.$section->id.$channel->id.$project->id.$chapter->id.$batch->id;
+                $url = 'https://sage200.sage.es/api/sales/ProductFamilies?api-version=1.0';
+                $response = json_decode($requ_curls->postSageCurl($url, $param)['response'], true);
+                Log::info('$param: ' . print_r($param, true));
+                Log::info('$response: ' . print_r($response, true));
+                
+                $product_family_id = $response['Id'];
+                $product_family_code = $response['Code'];
+
+            }else{
+                $array_product_family = $data['value'];
+                foreach($array_product_family as $product_family){
+                    $product_family_id = $product_family['Id'];
+                    $product_family_code = $product_family['Code'];
+                }
+            }
 
         }else{
             $array_product_family = $data['value'];
