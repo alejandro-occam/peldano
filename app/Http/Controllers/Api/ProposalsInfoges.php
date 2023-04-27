@@ -582,7 +582,7 @@ class ProposalsInfoges extends Controller
             $param['FamilyId'] = $product_family_id;
             $url = 'https://sage200.sage.es/api/sales/Products?api-version=1.0';
             $response = json_decode($requ_curls->postSageCurl($url, $param)['response'], true);
-            error_log(print_r($response, true));
+            Log::info('$response: ' . print_r($response, true));
             $product_code = $response['Code'];
 
         }else{
