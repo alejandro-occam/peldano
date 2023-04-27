@@ -965,7 +965,7 @@ class ConfigurationController extends Controller
                 //Si no existe creamos un product family
                 $param['CompanyId'] = $company;
                 $param['Name'] = $department->nomenclature."-".$section->nomenclature."-".$channel->nomenclature."-".$project->nomenclature."-".$chapter->nomenclature."-".$batch->nomenclature;
-                //$param['Code'] = $department->id.$section->id.$channel->id.$project->id.$chapter->id.$batch->id;
+                $param['Code'] = $channel->id.$project->id.$chapter->id.$batch->id;
                 $url = 'https://sage200.sage.es/api/sales/ProductFamilies?api-version=1.0';
                 $response = json_decode($requ_curls->postSageCurl($url, $param)['response'], true);
                 
