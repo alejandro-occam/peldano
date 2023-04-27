@@ -464,7 +464,7 @@ class ProposalsInfoges extends Controller
         $name_eng = $request->get('name_eng');
         $price = $request->get('price');
 
-        if (!isset($id_batch) || empty($id_batch) || !isset($name) || empty($name) || !isset($price) || empty($price)) {
+        if (!isset($id_batch) || empty($id_batch) || !isset($name) || empty($name) || !isset($price)) {
             $response['code'] = 1002;
             $response['msg'] = "Missing or empty parameters";
             return response()->json($response);
