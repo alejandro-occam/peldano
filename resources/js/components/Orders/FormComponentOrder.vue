@@ -851,7 +851,7 @@ export default {
                 }       
 
                 if(typeof bill.date.getMonth === 'function'){
-                    if(bill.date.toISOString().includes('000Z')){
+                    if(bill.date.toISOString().includes('Z')){
                         bill.date = me.$utils.customFormDate(bill.date);
                     }
                 }

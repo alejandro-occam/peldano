@@ -1249,9 +1249,8 @@ export default {
                 if(bill.select_expiration == '' || bill.select_way_to_pay == ''){
                     is_empty = true;
                 }       
-
                 if(typeof bill.date.getMonth === 'function'){
-                    if(bill.date.toISOString().includes('000Z')){
+                    if(bill.date.toISOString().includes('Z')){
                         bill.date = me.$utils.customFormDate(bill.date);
                     }
                 }
@@ -1291,7 +1290,7 @@ export default {
         },
         generateProposal(){
             if(typeof this.proposal_submission_settings.date_proyect.getMonth === 'function'){
-                if(this.proposal_submission_settings.date_proyect.toISOString().includes('000Z')){
+                if(this.proposal_submission_settings.date_proyect.toISOString().includes('Z')){
                     this.proposal_submission_settings.date_proyect = this.$utils.customFormDate(this.proposal_submission_settings.date_proyect);
                 }
             }
