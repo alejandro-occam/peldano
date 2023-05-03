@@ -4,6 +4,11 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\Article;
+use App\Models\Department;
+use App\Models\Section;
+use App\Models\Channel;
+use App\Models\Project;
+use App\Models\Chapter;
 use App\Models\Batch;
 
 class addArticlesLosts extends Command
