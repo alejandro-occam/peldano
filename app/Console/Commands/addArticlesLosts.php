@@ -56,23 +56,41 @@ class addArticlesLosts extends Command
         foreach($array_data as $line){
             $words = explode(";", $line);
 
-            //Consultamos si existe el lote
-            $batch = Batch::where('nomenclature', $words[4])->first();
-
-            if($batch){
-                //Consultamos si existe ya el artículo
-                $article = Article::where('id_sage', $words[0])->orWhere('name', $words[1])->first();
-                if(!$article){
-                    //Creamos el artóculo
-                    Article::create([
-                        "name" => $words[1],
-                        "english_name" => null,
-                        "pvp" => $words[3],
-                        "id_sage" => $words[0],
-                        "id_family_sage" => $words[2],
-                        "id_batch" => $batch->id
-                    ]);
-                    error_log('hola');
+            //Consultamos el departamento
+            $department = Department::where('nomenclature', $words[4])->first();
+            if($department){
+                //Consultamos la sección
+                $section = Section::where('nomenclature', $words[5])->where('id_department', $department->id)->first();
+                if($section){
+                    //Consultamos el canal
+                    $channel = Channel::where('nomenclature', $words[6])->where('id_section', $section->id)->first();
+                    if($channel){
+                        //Consultamos el proyecto
+                        $project = Project::where('nomenclature', $words[7])->where('id_channel', $channel->id)->first();
+                        if($project){
+                            //Consultamos el capitulo
+                            $chapter = Chapter::where('nomenclature', $words[8])->where('id_project', $project->id)->first();
+                            if($chapter){
+                                //Consultamos el capitulo
+                                $batch = Batch::where('nomenclature', $words[9])->where('id_chapter', $chapter->id)->first();
+                                if($batch){
+                                    //Consultamos si existe ya el artículo
+                                    $article = Article::where('id_sage', $words[0])->orWhere('name', $words[1])->first();
+                                    if(!$article){
+                                        //Creamos el artóculo
+                                        Article::create([
+                                            "name" => $words[1],
+                                            "english_name" => null,
+                                            "pvp" => $words[3],
+                                            "id_sage" => $words[0],
+                                            "id_family_sage" => $words[2],
+                                            "id_batch" => $batch->id
+                                        ]);
+                                    }
+                                }
+                            }
+                        }
+                    }
                 }
             }
         }
