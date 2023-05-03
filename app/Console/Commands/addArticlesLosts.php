@@ -60,15 +60,20 @@ class addArticlesLosts extends Command
             $batch = Batch::where('nomenclature', $words[4])->first();
 
             if($batch){
-                //Creamos el artóculo
-                Article::create([
-                    "name" => $words[1],
-                    "english_name" => null,
-                    "pvp" => $words[3],
-                    "id_sage" => $words[0],
-                    "id_family_sage" => $words[2],
-                    "id_batch" => $batch->id
-                ]);
+                //Consultamos si existe ya el artículo
+                $article = Article::where('id_sage', $words[0])->orWhere('name', $words[1])->first();
+                if(!$article){
+                    //Creamos el artóculo
+                    Article::create([
+                        "name" => $words[1],
+                        "english_name" => null,
+                        "pvp" => $words[3],
+                        "id_sage" => $words[0],
+                        "id_family_sage" => $words[2],
+                        "id_batch" => $batch->id
+                    ]);
+                    error_log('hola');
+                }
             }
         }
     }
