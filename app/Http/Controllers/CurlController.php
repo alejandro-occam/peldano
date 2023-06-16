@@ -32,6 +32,24 @@ class CurlController extends Controller
        
     }
 
+    public function getNormalCurl($url){
+        $endpoint = $url; 
+        $ch = @curl_init();
+        @curl_setopt($ch, CURLOPT_POST, false);
+        @curl_setopt($ch, CURLOPT_URL, $endpoint);
+        @curl_setopt($ch, CURLOPT_HTTPHEADER, array('Content-Type: application/json'));
+        @curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
+        $result = array(
+            "response"      => @curl_exec($ch),
+            "statusCode"    => @curl_getinfo($ch, CURLINFO_HTTP_CODE),
+            "curlErrors"    => curl_error($ch)
+        );
+        @curl_close($ch);
+
+        return $result;
+       
+    }
+
     public function postCurl($url, $type, $arr = null){
         $bearer = '';
         if($type == 1){
